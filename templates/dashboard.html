@@ -1,0 +1,16 @@
+{% if dashboard %}
+	{% for k in dashboard %}
+	<div class='wrap rounded' id={{k[0]}}>
+		<table style="width:100%;" class='table'>
+			<tr><td>Title:</td><td>{{k[1]}}</td><td>User:</td><td>{{k[2]}}</td></tr>
+			<tr><td>Date:</td><td>{{k[3]}}</td>
+			{% if user == "admin" %}
+			<td style='width:10px'><a href='#' id={{k[0]}} class="edit_report" style='width:5px'>Edit</a></td>
+			{% endif %}
+			<td style='width:10px'><a href='#' id={{k[0]}} class="open_jira" style='width:5px'>Jira</a></td></tr>
+			<tr><td colspan="4">Description: <a href='#' id={{k[0]}} class="glyphicon glyphicon-chevron-down" style='width:15px'></a><a href='#' id={{k[0]}} class="glyphicon glyphicon-chevron-up" style='width:15px'></a></td></tr>
+			<tr id={{k[0]}} class="text_area"><td colspan="4" style="width:100%"><textarea id={{k[0]}} class="text_area" rows="5" maxlength="10000" style="width:90%;background-color:#777;color:#eee;" readonly>{{k[4]}}</textarea></td></tr>
+		</table>
+	</div>
+	{% endfor %}
+{% endif %}

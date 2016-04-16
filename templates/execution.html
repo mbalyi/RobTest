@@ -1,0 +1,127 @@
+{% if execution %}
+	<p><b>Executions</b></p>
+	{% for k in execution %}
+		<a href='#' class='execution' data-dbid='{{k[0]}}'>{{k[1]}}</a><br>
+    {% endfor %}
+{% endif %}
+
+{% if newExe %}
+<div class='exeHeader'>
+	<table style='width:100%'>
+		<tr>
+			<th>Name:</th>
+			<th><input type='text' name='title' class='form-control' value='Name'></th>
+		</tr>
+		<tr>
+			<th>Date:</th>
+			<th><input type='date' name='priority' class='form-control' readonly></th>
+		</tr>
+		<tr>
+			<th>Test Object:</th>
+			<th class='objectDD'>
+				<select class='form-control'>
+					{% for l in newExe %}
+						<option data-dbid='{{l[0]}}' value='{{l[1]}}'>{{l[1]}}</option>
+					{% endfor %}
+				</select>
+			</th>
+		</tr>
+	</table>
+	<p>Included Cases</p>
+	<div class='incExeCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
+	</div>
+</div>
+{% endif %}
+
+{% if loadExe %}
+	<p><b>Execution</b></p>
+	<a name='editExe' data-dbid='{{loadExe[0][0]}}' class='btn btn-default btn-sm' href='#' role='button'>Edit</a>
+	<a name='deleteExe' data-dbid='{{loadExe[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
+	<br>
+	<div style='width:100%'>
+		<table style='width:100%'>
+			{% for k in loadExe%}
+			<tr>
+				<td class='exe_staic_name'>Name:</td><td class='exe_staic_input'><input type='text' name='name' value='{{k[1]}}' class='set_input form-control' readonly></td>
+			</tr>
+			<tr>
+				<td>Date:</td><td><input type='date' name='date' class='exe_input form-control' readonly></td>
+			</tr>
+			{% endfor %}
+			<tr>
+				<td>Test Object:</td>
+				<td class='objectDD'>
+					{% if loadObject %}
+						<input type='text' name='object' value='{{loadObject[1]}}' class='object form-control' readonly>
+					{% endif %}
+				</td>
+		</tr>
+		</table>
+	</div>
+	<div class='textAreas'>
+		<p>Text Areas:</p>
+		<span><input type='checkbox' readonly>Admin</span>
+		<span><input type='checkbox' readonly>Security Policy</span>
+		<span><input type='checkbox' readonly>Set Form Test</span>
+	</div>
+	<p>Included Cases</p>
+	<div class='incCases' style='height: 300px; background-color: #777;'>
+	{% if loadCase %}
+		<table>
+			<tr>
+				<th>Case</th><th>Result</th>
+			</tr>
+			{% for l in loadCase %}
+			<tr>
+				<th>{{l[1]}}</th><th>{{l[4]}}</th>
+			</tr>
+			{% endfor %}
+		</table>
+	{% endif %}
+	</div>
+{% endif %}
+
+{% if loadEditableExe %}
+<div class='exeHeader'>
+	<table style='width:100%'>
+		<tr>
+			<th>Name:</th>
+			<th><input type='text' name='title' class='form-control' value='{{loadEditableExe[0][1]}}'></th>
+		</tr>
+		<tr>
+			<th>Date:</th>
+			<th><input type='date' name='priority' class='form-control' readonly></th>
+		</tr>
+		<tr>
+			<th>Test Object:</th>
+			<th class='objectDD'>
+				<select class='form-control'>
+						<option data-dbid='{{loadEditableObject[0]}}'>{{loadEditableObject[1]}}</option>
+					{% for l in loadObjects %}
+						<option data-dbid='{{l[0]}}' value='{{l[1]}}'>{{l[1]}}</option>
+					{% endfor %}
+				</select>
+			</th>
+		</tr>
+	</table>
+	<p>Included Cases</p>
+	<div class='incExeCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
+	{% if loadEditableCase %}
+		<table>
+			<tr>
+				<th>Case</th><th>Result</th>
+			</tr>
+		</table>
+		{% for l in loadEditableCase %}
+			<div data-dbid='case{{l[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+				<table>
+					<tr>
+						<td><a href="#" data-dbid='{{l[0]}}' class="case">{{l[1]}}</a></td><td>{{l[4]}}</td>
+					</tr>
+				</table>
+			</div>
+		{% endfor %}
+	{% endif %}
+	</div>
+</div>
+{% endif %}

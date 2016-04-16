@@ -1,0 +1,60 @@
+{% if object %}
+	<p><b>Objects</b></p>
+	{% for k in object %}
+		<a href='#' id={{k[0]}} class='object'>{{k[1]}}</a><br>
+	{% endfor %}
+{% endif %}
+
+{% if loadObject %}
+	<h1>Object</h1>
+	<a href='#' name='editObject' id='{{loadObject[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
+	<a name='deleteObject' id='{{loadObject[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
+	<div style='width:100%'>
+		<table style='width:100%'>
+			{% for k in loadObject %}
+				<tr>
+					<td class='object_staic_name'>Name:</td>
+					<td class='object_staic_input'><input type='text' name='name' value='{{k[1]}}' class='object_input form-control' readonly></td>
+				</tr>
+				<tr>
+					<td class='object_static_date'>Date</td>
+					<td class='object_static_input'><input type='date' name='date' class='object_input form-control' readonly></td>
+				</tr>
+				<tr>
+					<td class='object_staic_name'>Hardware:</td>
+					<td class='object_staic_input'><input type='test' name='hardware' value='{{k[2]}}' class='object_input form-control' readonly></td>
+				</tr>
+				<tr>
+					<td class='object_staic_name'>Description:</td>
+					<td class='object_staic_input'><input type='text' name='desc' value='{{k[3]}}' class='object_input form-control' readonly></td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+{%endif%}
+
+{% if editObject %}
+	<h1>Object</h1>
+	<div style='width:100%'>
+		<table style='width:100%'>
+			{% for k in editObject %}
+				<tr>
+					<td class='object_staic_name'>Name:</td>
+					<td class='object_staic_input'><input type='text' name='name' value='{{k[1]}}' class='object_input form-control'></td>
+				</tr>
+				<tr>
+					<td class='object_static_date'>Date</td>
+					<td class='object_static_input'><input type='date' name='date' class='object_input form-control' readonly></td>
+				</tr>
+				<tr>
+					<td class='object_staic_name'>Hardware:</td>
+					<td class='object_staic_input'><input type='test' name='hardware' value='{{k[2]}}' class='object_input form-control'></td>
+				</tr>
+				<tr>
+					<td class='object_staic_name'>Description:</td>
+					<td class='object_staic_input'><input type='text' name='desc' value='{{k[3]}}' class='object_input form-control'></td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+{%endif%}

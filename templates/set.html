@@ -1,0 +1,92 @@
+{% if set %}
+	<p><b>Sets</b></p>
+	{% for k in set %}
+		<div data-dbid='set{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+			<a href='#' data-dbid='{{k[0]}}' class='set'>{{k[1]}}</a>
+		</div>
+    {% endfor %}
+{% endif %}
+
+{% if loadSet %}
+	<h1>Set</h1>
+	<a name='editSet' id='{{loadSet[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
+	<a name='deleteset' id='{{loadSet[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
+	<div style='width:100%'>
+		<table style='width:100%' class='set_no'>
+			{% for k in loadSet%}
+			<tr>
+				<td class='set_staic_name'>Name:</td><td class='set_staic_input'><input type='text' name='name' value={{k[1]}} class='set_input form-control' readonly></td>
+			</tr>
+			<tr>
+				<td>Date:</td><td><input type='date' name='date' class='set_input form-control' readonly></td>
+			</tr>
+			<tr>
+				<td>Priority:</td><td><input type='text' name='priority' value='high' class='set_input form-control' readonly></td>
+			</tr>
+			{% endfor %}
+		</table>
+		<div class='textAreas'>
+			<p>Text Areas:</p>
+			<span><input type='checkbox' readonly>Admin</span>
+			<span><input type='checkbox' readonly>Security Policy</span>
+			<span><input type='checkbox' readonly>Set Form Test</span>
+		</div>
+		<p>Included Cases</p>
+		<div class='incCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
+		{% if loadCase %}
+			<table>
+				{% for l in loadCase %}
+				<tr>
+					<th>{{l[1]}}</th>
+				</tr>
+				{% endfor %}
+			</table>
+		{% endif %}
+		</div>
+	</div>
+{% endif %}
+
+{% if loadEditableSet %}
+	<h1>Set</h1>
+	<a name='editSet' id='{{loadEditableSet[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
+	<a name='deleteset' id='{{loadEditableSet[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
+	<div style='width:100%'>
+		<table style='width:100%' class='set_no'>
+			{% for k in loadEditableSet%}
+			<tr>
+				<td class='set_staic_name'>Name:</td><td class='set_staic_input'><input type='text' name='name' value={{k[1]}} class='set_input form-control'></td>
+			</tr>
+			<tr>
+				<td>Date:</td><td><input type='date' name='date' class='set_input form-control'></td>
+			</tr>
+			<tr>
+				<td>Priority:</td><td><input type='text' name='priority' value='high' class='set_input form-control'></td>
+			</tr>
+			{% endfor %}
+		</table>
+		<div class='textAreas'>
+			<p>Text Areas:</p>
+			<span><input type='checkbox'>Admin</span>
+			<span><input type='checkbox'>Security Policy</span>
+			<span><input type='checkbox'>Set Form Test</span>
+		</div>
+		<p>Included Cases</p>
+		<div class='incCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
+		{% if editCase %}
+			{% for o in editCase %}
+				<div draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+					<a href='#' data-dbid='{{o[0]}}' class='case'>{{o[1]}}</a>
+				</div>
+			{% endfor %}
+		{% endif %}
+		</div>
+	</div>
+{% endif %}
+
+{% if exeCasesBySet %}
+	{% for k in exeCasesBySet %}
+		<div data-dbid='case{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+			<a href='#' data-dbid='{{k[0]}}' class='case'>{{k[1]}}</a>
+		</div>
+	{% endfor %}
+{% endif %}

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="CAE Engineering">
+
+    <title>Rob</title>
+
+    <!-- Bootstrap Core CSS -->
+	<link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='css/bootstrap-theme.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}" rel="stylesheet">
+	
+	<link href="{{ url_for('static', filename='css/other.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='css/box.css') }}" rel="stylesheet">
+	
+	<script type='text/javascript' src="{{ url_for('static', filename='jquery-2.1.4.js') }}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='script1.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='setup.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='mouse_on_header.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='add_case.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='case_template_scripts.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='add_set.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='set_template_scripts.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='add_execution.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='execution_template_scripts.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='object_template_script.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='add_object.js') }}"></script>
+	
+	<script type='text/javascript' src="{{ url_for('static', filename='test_template_scripts.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='test.js') }}"></script>
+	
+	<script type='text/javascript' src="{{ url_for('static', filename='report.js') }}"></script>
+	<script type='text/javascript' src="{{ url_for('static', filename='report_template_scripts.js') }}"></script>
+	
+	<script type='text/javascript' src="{{ url_for('static', filename='dragndrop.js') }}"></script>
+	
+	<!-- Canvas -->
+	<script type="text/javascript" src="{{ url_for('static', filename='source/canvasjs.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='canvasjs.min.js') }}"></script>
+	
+	<div class='canvasHeader'></div>
+
+</head>
+
+<body style="background-color:#333;color: #eee">
+
+    <!-- Navigation -->
+    <nav class="col-md-12 navbar navbar-inverse" role="navigation">
+        <div class="col-md-12 container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Rob Inc</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="nav navbar-nav navbar-right">
+                <ul class="nav navbar-nav navbar-right">
+					<li>
+						<a href="#"><span>logged as {% if user %}{{user}}{% endif %}</span></a>
+					</li>
+                    <li>
+						<a href="#" id="logout">Logout</a>
+                    </li>					
+                </ul>
+            </div>
+        </div>
+    </nav>
+	<div class="col-md-12" style="height: 50px;"></div>
+	<div class="col-md-12  navbar navbar-inverse" style="width:100%;">
+	 
+		<div class="navbar-header" style="width:100%;">
+			<ul class="nav nav-tabs nav-inverse">
+				<li role="presentation">
+					<a href="#" id="dashboard">Dashboard</a>
+				</li>
+				<li role="presentation">
+					<a href="#" id="design">Design</a>
+				</li>
+				<li role="presentation">
+					<a href="#" id='test'>Test</a>
+				</li>
+				<li role="presentation">
+					<a href="#" id="setup" onclick="setup">Setup</a>
+				</li>
+				{% if user == "admin" %}
+				<li role="presentation">
+					<a href="#" id='admin'>Admin</a>
+				</li>
+				{% endif %}					
+			</ul>
+		</div>
+		<div class="nav navbar-nav navbar-left" id="collapse_submenu">
+			<ul class="nav navbar-nav navbar-left" id="submenu">
+			</ul>
+		</div>
+    
+	</div>
+    <!-- Page Content -->
+    <div class="col-md-12 container">
+        <!-- Features Section -->
+        <div class="row">
+			<div class="setup_buttons col-md-12">
+			</div>
+			<div class="search_form_place">
+			</div>
+			<hr>
+			<div class="setup col-md-3">
+				<div class="col-md-12-set">
+					
+				</div>
+				<div class="col-md-12-case">
+					
+				</div>
+				<div class="col-md-12-execution">
+					
+				</div>
+				<div class="col-md-12-object">
+					
+				</div>
+            </div>
+            <div class="col-md-9" id='chartID' style='overflow-y:scroll;height:500px;color: #eee' >
+			
+				<div class='new_form'>
+				</div>
+            </div>
+			<div class="col-md-3">
+			</div>
+        </div>
+        <!-- /.row -->
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; CAE Engineering</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <!-- /.container -->
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src='{{ url_for('static', filename='js/bootstrap.min.js') }}'></script>
+</body>
+
+</html>

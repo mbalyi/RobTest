@@ -1,0 +1,25 @@
+{% if editablestep %}
+	<tr>
+		<th>Action</th>
+		<th>Result</th>
+	</tr>
+	{% for k in editablestep %}
+		<tr>
+			<th><input id='{{k[0]}}' class='action form-control' type='text' name='action[]' value='{{k[1]}}' style='font-color:#000000'></th>
+			<th><input id='{{k[0]}}' class='result form-control' type='text' name='result[]' value='{{k[2]}}' style='font-color:#000000'></th>
+		</tr>
+	{% endfor %}
+{% endif %}
+
+{% if step %}
+	<tr>
+		<th>Action</th>
+			<th>Result</th>
+		</tr>
+		{% for k in step%}
+		<tr>
+			<th>{{k[1]}}</th>
+			<th>{{k[2]}}</th>
+		{% endfor %}
+	</tr>
+{% endif %}

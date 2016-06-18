@@ -1,5 +1,6 @@
 var divId;
 var caseIdInExe;
+var caseIterator;
 
 function testSetup(){
 	$(".col-md-9").empty().append();
@@ -57,7 +58,8 @@ function loadTest(exeId){
 		function(data,status){
 			if(status){
 				testPage(data);
-				$(".caseMarker"+"#"+data).empty().append(cursor);
+				caseIterator=0;
+				$($(".caseMarker")[0]).empty().append(cursor);
 			};
 		},
 		"json"
@@ -133,21 +135,28 @@ $(function(){
 			$(".stepMarker"+"#"+divId).empty().append(cursor);
 		}
 		if( $(event.target).attr('class') == "caseInExe"){
-			$(".caseMarker"+"#"+caseIdInExe).empty()
+			$($(".caseMarker")[caseIterator]).empty();
+			caseIterator=$(event.target).attr('data-index')-1;
 			testPage($(event.target).attr('data-dbid'));
 			caseIdInExe=$(event.target).attr('data-dbid');
-			$(".caseMarker"+"#"+caseIdInExe).empty().append(cursor);
+			$($(".caseMarker")[caseIterator]).empty().append(cursor);
 			divId=$($('.col-md-9').children()[1]).attr('class');
 		}
 		if( event.target.id == "NEXTCASE"){
-			/*$(".caseMarker"+"#"+caseIdInExe).empty()
-			$($('.caseInExe'+'#'+caseIdInExe).next()).attr('id')
-			caseIdInExe=$(event.target).attr('data-dbid');
-			$(".caseMarker"+"#"+caseIdInExe).empty().append(cursor);
-			divId=$($('.col-md-9').children()[1]).attr('class');*/
+			$($(".caseMarker")[caseIterator]).empty();
+			caseIterator++;
+			caseIdInExe=$($('.caseMain'+'#'+caseIdInExe).next()).attr('id');
+			testPage(caseIdInExe);
+			$($(".caseMarker")[caseIterator]).empty().append(cursor);
+			divId=$($('.col-md-9').children()[1]).attr('class');
 		}
 		if( event.target.id == "BACKCASE"){
-			
+			$($(".caseMarker")[caseIterator]).empty();
+			caseIterator--;
+			caseIdInExe=$($('.caseMain'+'#'+caseIdInExe).prev()).attr('id');
+			testPage(caseIdInExe);
+			$($(".caseMarker")[caseIterator]).empty().append(cursor);
+			divId=$($('.col-md-9').children()[1]).attr('class');
 		}
 	});
 });

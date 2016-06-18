@@ -28,30 +28,30 @@
 		<th style='width:8%;'>Duration</th>
 	</tr>
 	{% for k in loadTest %}
-	<tr style='width:100%;'>
+	<tr class='caseMain'  id='{{k[2]}}' data-index='{{loop.index}}' style='width:100%;'>
 		<td class='caseMarker' id='{{k[2]}}' style='width:2%;color:red;'></td>
 		<td style='width:2%;'>
-			<a href='#' class='caseInExe' data-dbid='{{k[2]}}'>
+			<a href='#' class='caseInExe'  id='{{k[2]}}' data-dbid='{{k[2]}}' data-index='{{loop.index}}'>
 				{{loop.index}}
 			</a>
 		</td>
 		<td style='width:50%;'>
-			<a href='#' class='caseInExe' data-dbid='{{k[2]}}'>
+			<a href='#' class='caseInExe' data-dbid='{{k[2]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
 				{{k[4]}}
 			</a>
 		</td>
 		<td style='width:20%;'>
-			<a href='#' class='caseInExe' data-dbid='{{k[2]}}'>
+			<a href='#' class='caseInExe' data-dbid='{{k[2]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
 				<p class='Res' id='{{k[2]}}'>{{k[3]}}</p>
 			</a>
 		</td>
 		<td style='width:18%;'>
-			<a href='#' class='caseInExe' data-dbid='{{k[2]}}'>
+			<a href='#' class='caseInExe' data-dbid='{{k[2]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
 				
 			</a>
 		</td>
 		<td style='width:8%;'>
-			<a href='#' class='caseInExe' data-dbid='{{k[0]}}'>
+			<a href='#' class='caseInExe' data-dbid='{{k[0]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
 				{{k[5]}}
 			</a>
 		</td>
@@ -99,7 +99,7 @@
 			Case: &nbsp
 		</td>
 		<td>
-			<a class='btn btn-default btn-xs' href='#' role='button' id=''>Back</a> &nbsp
+			<a class='btn btn-default btn-xs' href='#' role='button' id='BACKCASE'>Back</a> &nbsp
 		</td>
 		<td>
 			<a class='btn btn-default btn-xs' href='#' role='button' id='NEXTCASE'>Next</a> &nbsp

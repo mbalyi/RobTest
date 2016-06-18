@@ -1,46 +1,114 @@
-<!DOCTYPE HTML>
-<html>
+{% if Exe %}
+<table>
+	<tr style='width:100%;'>
+		<td style='width:85%;'>
+			<select class="form-control" style='width:100%;'>
+			{% for k in Exe %}
+				<option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+			{% endfor %}
+			</select>
+		</td>
+		<td style='width:10px;'></td>
+		<td style='width: 50 px;'>
+			<a class='btn btn-info' href='#' role='button' id='selectExe'>Submit</a>
+			<!--<button class="btn btn-info" id='selectExe' type='button'>Submit!</button>-->
+		</td>
+	</tr>
+</table>
+{% endif %}
 
-<head>
-<script type="text/javascript">
-window.onload = function () {
-	var chart = new CanvasJS.Chart("chartContainer",
-	{
-		animationEnabled: true,
-		title:{
-			text: "Chart with Labels on X Axis"
-		},
-		data: [
-		{
-			type: "column", //change type to bar, line, area, pie, etc
-			dataPoints: [
-				{ label: "banana", y: 18 },
-				{ label: "orange", y: 29 },
-				{ label: "apple",  y: 40 },                                    
-				{ label: "mango",  y: 34 },
-				{ label: "grape",  y: 24 }
-			]
-		},
-          {
-			type: "column", //change type to bar, line, area, pie, etc
-			dataPoints: [
-				{ label: "banana", y: 10 },
-				{ label: "orange", y: 9 },
-				{ label: "apple",  y: 87 },                                    
-				{ label: "mango",  y: 34 },
-				{ label: "grape",  y: 24 }
-			]
-		}
-		]
-		});
+{% if loadTest %}
+<table>
+	<tr style='width:100%;'>
+		<th style='width:2%;'></th>
+		<th style='width:2%;'>ID</th>
+		<th style='width:50%;'>Title</th>
+		<th style='width:20%;'>Result</th>
+		<th style='width:18%;'>History</th>
+		<th style='width:8%;'>Duration</th>
+	</tr>
+	{% for k in loadTest %}
+	<tr style='width:100%;'>
+		<td class='caseMarker' id='{{k[2]}}' style='width:2%;color:red;'></td>
+		<td style='width:2%;'>
+			<a href='#' class='caseInExe' data-dbid='{{k[0]}}'>
+				{{loop.index}}
+			</a>
+		</td>
+		<td style='width:50%;'>
+			<a href='#' class='caseInExe' data-dbid='{{k[0]}}'>
+				{{k[4]}}
+			</a>
+		</td>
+		<td style='width:20%;'>
+			<a href='#' class='caseInExe' data-dbid='{{k[0]}}'>
+				<p class='Res' id='{{k[2]}}'>{{k[3]}}</p>
+			</a>
+		</td>
+		<td style='width:18%;'>
+			<a href='#' class='caseInExe' data-dbid='{{k[0]}}'>
+				
+			</a>
+		</td>
+		<td style='width:8%;'>
+			<a href='#' class='caseInExe' data-dbid='{{k[0]}}'>
+				{{k[5]}}
+			</a>
+		</td>
+	</tr>
+	{% endfor %}	
+</table>
+{% endif %}
 
-	chart.render();
-}
-</script>
-<script type="text/javascript" src="/assets/script/canvasjs.min.js"></script>
-</head>
-<body>
-<div id="chartContainer" style="height: 300px; width: 100%;"></div>
-</body>
-
-</html>
+{% if step %}
+<table style='width:100%;'>
+	<tr style='width:100%;'>
+		<th style='width:2%;'></th>
+		<th style='width:2%;'>ID</th>
+		<th style='width:40%;'>Description</th>
+		<th style='width:31%;'>Result</th>
+		<th style='width:10%;'>Result</th>
+		<th style='width:15%;'>Comment</th>
+	</tr>
+</table>
+{% for k in step %}
+<table class='{{k[0][0]}}' style='width:100%;'>
+	<tr style='width:100%;'>
+		<td class='stepMarker'  data-dbid='{{k[0][0]}}' id='{{k[0][0]}}' style='color:red;width:2%;'></td>
+		<td style='width:2%;'>{{loop.index}}</td>
+		<td style='width:40%;'>{{k[0][1]}}</td>
+		<td style='width:31%;'>{{k[0][2]}}</td>
+		<td class='Result' id='{{k[0][0]}}' style='width:10%;'>{{k[1][0]}}</td>
+		<td style='width:15%;'>{{k[1][1]}}</td>
+	</tr>
+</table>
+{% endfor %}
+<table class='testButtons'>
+	<tr>
+		<td>
+			<a class='btn btn-info' href='#' role='button' id=''>Back</a>
+		</td>
+		<td>
+			<a class='btn btn-info' href='#' role='button' id=''>Next</a>
+		</td>
+		<td>
+			<a class='btn btn-info' href='#' role='button' id='BACK'>Back</a>
+		</td>
+		<td>
+			<a class='btn btn-info' href='#' role='button' id='NEXT'>Next</a>
+		</td>
+		<td>
+			<a class='btn btn-info' href='#' role='button' id='RUN'>RUN</a>
+		</td>
+		<td>
+			<a class='btn btn-info' href='#' role='button' id='NOTRUN'>NOTRUN</a>
+		</td>
+		<td>
+			<a class='btn btn-info' href='#' role='button' id='FAILED'>FAILED</a>
+		</td>
+		<td>
+			<a class='btn btn-info' href='#' role='button' id='NOTIMP'>NOTIMP</a>
+		</td>
+	</tr>
+</table>
+{% endif %}

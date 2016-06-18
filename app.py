@@ -239,9 +239,9 @@ def testSetup():
 	
 @app.route('/loadTest/<int:id>', methods=['GET'])
 def loadTest(id):
-	iterator=1;
 	query = DB.getExeFromCases(id=id)
-	return render_template('test.html', loadTest=query, it=iterator)
+	print(query)
+	return render_template('test.html', loadTest=query)
 
 @app.route('/testPage/<int:id>/<int:exeId>', methods=['GET'])
 def testPage(id,exeId):

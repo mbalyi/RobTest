@@ -22,10 +22,14 @@ function requestChart(){
 		function(data,status){
 			if(status){
 				$(".canvasHeader").empty().append(data);
-				load();
+				//load();
 			};
 		}
 	);
+}
+
+function dashboardChartSetup(){
+	$(".setup_buttons").empty();
 }
 
 var submenu = {

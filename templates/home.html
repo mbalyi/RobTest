@@ -41,6 +41,8 @@
 	
 	<script type='text/javascript' src="{{ url_for('static', filename='dragndrop.js') }}"></script>
 	
+	<script type='text/javascript' src="{{ url_for('static', filename='add_chart.js') }}"></script>
+	
 	<!-- Canvas -->
 	<script type="text/javascript" src="{{ url_for('static', filename='source/canvasjs.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='canvasjs.min.js') }}"></script>
@@ -147,7 +149,7 @@
     <!-- /.container -->
 
     <!-- Bootstrap Core JavaScript -->
-    <script src='{{ url_for('static', filename='js/bootstrap.min.js') }}'></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 </body>
 
 </html>

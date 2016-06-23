@@ -192,9 +192,11 @@ $(function(){
 				//window.location.reload();
 				$(".col-md-9").empty().append(newform)
 				$(".col-md-9").append(res);
-				$(".text_area").hide()
-				$(".insert_jira_button").empty()
+				$(".text_area").hide();
+				$(".insert_jira_button").empty();
 				addButtons();
+				addChart();
+				chartLoad();
 			}
 		);
 		$(".setup").hide();

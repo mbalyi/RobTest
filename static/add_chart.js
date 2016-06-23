@@ -1,7 +1,17 @@
 
-<script type="text/javascript">
 
-function chartLoad() {
+function addChart(){
+	$.get("/requestChart",
+		function(data,status){
+			if(status){
+				chartLoad();
+			};
+		}
+	);
+	chartLoad();
+}
+
+/*function chartLoad() {
 		var chart = new CanvasJS.Chart("chartID",
 		{
 			theme: "theme3",
@@ -77,7 +87,8 @@ function chartLoad() {
         });
 
 chart.render();
-}
+}*/
 
-
-</script>
+$(function(){
+	
+});

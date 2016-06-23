@@ -77,7 +77,7 @@ $(function(){
 			deleteSet(event.target.id);
 		}
 		if( $(event.target).attr('name')=="editSet" ){
-			loadSet($(event.target).attr('data-dbid'),"editSet");
+			loadSet($(event.target).attr('id'),"editSet");
 		}
 	});
 });

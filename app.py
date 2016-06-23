@@ -46,6 +46,7 @@ def case_page():
 		
 @app.route('/save_case', methods=['POST'])
 def save_case():
+	print(request.form["title"]+" "+request.form["priority"]+" "+request.form["data"])
 	ID=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"])
 	DB.save_steps(id=ID,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'))
 	return json.dumps(ID)
@@ -77,7 +78,7 @@ def deleteCase(ID):
 def updateCase(ID):
 	DB.updateCase(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],caseId=ID)
 	DB.updateStep(caseId=ID,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'))
-	query = DB.upDateCase(id=ID)
+	query = DB.updateCase(id=ID)
 	return "OK"
 	
 #-----object page-----	
@@ -170,6 +171,7 @@ def deleteExe(ID):
 @app.route('/getFirstCaseID/<int:id>', methods=['GET'])
 def getFirstCaseID(id):
 	query = DB.getExeFromCases(id=id)
+	print(query[0][2])
 	return json.dumps(query[0][2])
 	
 #-----Report-----	
@@ -239,6 +241,7 @@ def testSetup():
 	
 @app.route('/loadTest/<int:id>', methods=['GET'])
 def loadTest(id):
+	print(id)
 	query = DB.getExeFromCases(id=id)
 	print(query)
 	return render_template('test.html', loadTest=query)
@@ -246,7 +249,11 @@ def loadTest(id):
 @app.route('/testPage/<int:id>/<int:exeId>', methods=['GET'])
 def testPage(id,exeId):
 	query = DB.get_step_parameters(id=id)
+	print(id)
+	print(exeId)
 	res = DB.getStatusFromStepExe(exeId=exeId, caseId=id)
+	print(query)
+	print(res)
 	query=zip(query,res)
 	return render_template('test.html', step=query, status=res)
 

@@ -28,7 +28,7 @@ function testPage(pageID){
 			if(status){
 				$(".col-md-9").empty().append(data);
 				divId=$($('.col-md-9').children()[1]).attr('class');
-				$(".stepMarker"+"#"+divId).empty().append(cursor);
+				$("#"+divId+".stepMarker").empty().append(cursor);
 				caseIdInExe=pageID;
 			};
 		}
@@ -100,9 +100,9 @@ $(function(){
 		if( event.target.id == "RUN"){
 			saveStatus("RUN",divId);
 			$("#"+divId+".Result").empty().append(statusRun);
-			$(".stepMarker"+"#"+divId).empty();
+			$("#"+divId+".stepMarker").empty();
 			checkDivId("NEXT");
-			$(".stepMarker"+"#"+divId).empty().append(cursor);
+			$("#"+divId+".stepMarker").empty().append(cursor);
 			saveCaseStatus();
 			
 		}
@@ -114,25 +114,25 @@ $(function(){
 		if( event.target.id == "FAILED"){
 			saveStatus("FAILED",divId);
 			$("#"+divId+".Result").empty().append(statusFailed);
-			$(".stepMarker"+"#"+divId).empty();
+			$("#"+divId+".stepMarker").empty();
 			checkDivId("NEXT");
-			$(".stepMarker"+"#"+divId).empty().append(cursor);
+			$("#"+divId+".stepMarker").empty().append(cursor);
 			saveCaseStatus();
 		}
 		if( event.target.id == "NEXT"){
-			$(".stepMarker"+"#"+divId).empty();
+			$("#"+divId+".stepMarker").empty();
 			checkDivId("NEXT");
-			$(".stepMarker"+"#"+divId).empty().append(cursor);
+			$("#"+divId+".stepMarker").empty().append(cursor);
 		}
 		if( event.target.id == "BACK"){
-			$(".stepMarker"+"#"+divId).empty();
+			$("#"+divId+".stepMarker").empty();
 			checkDivId("PREV");
-			$(".stepMarker"+"#"+divId).empty().append(cursor);
+			$("#"+divId+".stepMarker").empty().append(cursor);
 		}
 		if( $(event.target).attr('class') == "Step" || $(event.target).attr('class') == "Result"){
-			$(".stepMarker"+"#"+divId).empty();
+			$("#"+divId+".stepMarker").empty();
 			divId=$(event.target).attr('data-dbid');
-			$(".stepMarker"+"#"+divId).empty().append(cursor);
+			$("#"+divId+".stepMarker").empty().append(cursor);
 		}
 		if( $(event.target).attr('class') == "caseInExe"){
 			$($(".caseMarker")[caseIterator]).empty();

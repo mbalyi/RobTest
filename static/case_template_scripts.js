@@ -8,12 +8,13 @@ stepBtn+="<table style='width:100%' class='case_table'>";
 stepBtn+="</table>";
 
 caseBtn="<table><tr><td class='newCase' style='width:50px'><a class='btn btn-default btn-sm' href='#' role='button' id='newCase'>New</a></td>";
-caseBtn+="<td class='saveCase' style='width:53px'><a class='btn btn-default btn-sm disabled' href='#' role='button' id='saveCase'>Save</a></td>";
+caseBtn+="<td class='saveCase' id='saveCase' style='width:53px'><a class='btn btn-default btn-sm disabled' id='saveCase' href='#' role='button'>Save</a></td>";
 caseBtn+="<td class='cancelCase' style='width:50px'><a class='btn btn-default btn-sm' href='#' role='button' id='cancelCase'>Cancel</a></td><td style='width:50px'></td>"
 caseBtn+="<td style='width: 20px'></td><td class='deleteCase'><td></tr></table><hr>"
 
 newCaseDis="<a class='btn btn-default btn-sm disabled' href='#' role='button' id='newCase'>New</a>"
-saveCaseEn="<a class='btn btn-default btn-sm' href='#' role='button' id='saveCase'>Save</a>"
+saveCaseEn1="<a class='editablecase btn btn-default btn-sm' id='saveCase' data-dbid='";
+saveCaseEn2="' href='#' role='button'>Save</a>";
 
 caseForm="<div class='case_header'><table class='editablecase' data-dbid='newCase' style='width:100%'><tr><th>Name:</th><th>";
 caseForm+="<input type='text' name='title' class='form-control' value='Name' readonly></th></tr>";

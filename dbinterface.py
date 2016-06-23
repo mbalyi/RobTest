@@ -64,6 +64,7 @@ class Database:
 		for k in result:
 			c.execute("SELECT * FROM Steps WHERE StepId=?",[k[0]])
 			case_parameter.append(c.fetchone())
+		print(result)
 		return case_parameter
 	
 	def deleteCase(self, **kwargs):
@@ -201,18 +202,24 @@ class Database:
 	def saveCaseExe(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
+		print(kwargs['ID'])
 		for k in kwargs['ID']:
+			print(k)
 			c.execute("SELECT Title FROM Cases WHERE CaseId=?",[k])
 			CaseTitle=c.fetchone()
 			c.execute("INSERT INTO Case_Execution (ExecutionId,CaseId,Result,title) VALUES (?,?,?,?)",[kwargs['exeID'],k,"NOTRUN",CaseTitle[0]])
 			conn.commit()
 			c.execute("SELECT Id FROM Case_Execution WHERE ExecutionId=? AND CaseId=? AND title=?",[kwargs['exeID'],k,CaseTitle[0]])
 			ID=c.fetchone()
-			c.execute("SELECT StepId FROM Case_Step WHERE CaseId=?",[ID[0]])
+			c.execute("SELECT StepId FROM Case_Step WHERE CaseId=?",[k])
 			StepId=c.fetchall()
+			print(ID)
+			print(StepId)
 			for l in StepId:
-				c.execute("INSERT INTO Step_Execution (StepId,ExecutionId,Case_ExecutionId) VALUES (?,?,?)",[l[0],k,ID[0]])
-	
+				c.execute("INSERT INTO Step_Execution (StepId,ExecutionId,Case_ExecutionId,Result) VALUES (?,?,?,?)",[l[0],kwargs['exeID'],ID[0],"NOTRUN"])
+				conn.commit()
+		return
+		
 	def getExeParameters(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -266,9 +273,11 @@ class Database:
 		c.execute("SELECT Id FROM Case_Execution WHERE ExecutionId=? AND CaseId=?",[kwargs['exeId'],kwargs['caseId']])
 		caseExeId=c.fetchall()
 		conn.commit()
-		c.execute("SELECT Result,Comment FROM Step_Execution WHERE ExecutionId=? AND Case_ExecutionId=?",[kwargs['exeId'],caseExeId[0][0]])
+		print(caseExeId)
+		c.execute("SELECT Result,Comment FROM Step_Execution WHERE Case_ExecutionId=?",[caseExeId[0][0]])
 		result=c.fetchall()
 		conn.commit()
+		print(result)
 		return result
 	
 	#-----test-----
@@ -287,6 +296,7 @@ class Database:
 		c.execute("SELECT Result FROM Step_Execution WHERE ExecutionId=? AND Case_ExecutionId=?",[kwargs['exeId'],caseExeId[0][0]])
 		Results=c.fetchall()
 		conn.commit()
+		print('result:')
 		print(Results)
 		for k in Results:
 			if k[0] == "FAILED":

@@ -23,7 +23,7 @@ function saveCase(){
 		function(data,status){
 			if(status){
 				requestCase();
-				loadCase(status,"loadCase");
+				loadCase(data,"loadCase");
 			};
 		},
 		"json"
@@ -34,7 +34,7 @@ function updateCase(caseId){
 	$.post("/updateCase/"+caseId, $("input").map(function(i,o){return o.name+"="+o.value}).toArray().join("&"),
 		function(data,status){
 			if(status){
-				loadCase(status,"loadCase");
+				loadCase(data,"loadCase");
 			};
 		}
 	);
@@ -101,7 +101,7 @@ $(function(){
 			$(".case_header").empty().append(editableCaseForm);
 			$(".stepBtn").empty().append(stepBtn);
 			$(".newCase").empty().append(newCaseDis);
-			$(".saveCase").empty().append(saveCaseEn);
+			$(".saveCase").empty().append(saveCaseEn1+"newCase"+saveCaseEn2);
 		}
 		if( event.target.id == "cancelCase"){
 			$(".setup_buttons").empty().append(caseBtn);
@@ -109,11 +109,11 @@ $(function(){
 			$(".stepBtn").empty().append(stepBtn);
 		}
 		if( event.target.id == "saveCase"){
-			if($(".editablecase".target).attr('data-dbid')=="newCase"){
+			if($(".editablecase").attr('data-dbid')=="newCase"){
 				saveCase();
 			}
 			else{
-				updateCase($(".editablecase".target).attr('data-dbid'));
+				updateCase($(".editablecase").attr('data-dbid'));
 			}
 			$(".setup_buttons").empty().append(caseBtn);
 		}
@@ -127,7 +127,7 @@ $(function(){
 			loadCase($(event.target).attr('id'),"editCase");
 			getStep($(event.target).attr('id'),"editStep");
 			$(".newCase").empty().append(newCaseDis);
-			$(".saveCase").empty().append(saveCaseEn);
+			$(".saveCase").empty().append(saveCaseEn1+$(event.target).attr('id')+saveCaseEn2);
 		}
 	});
 });

@@ -1,18 +1,22 @@
 
-
 function addChart(){
 	$.get("/requestChart",
 		function(data,status){
 			if(status){
-				chartLoad();
+				createChart(data)
 			};
 		}
 	);
-	chartLoad();
+	/*var temp;
+	$.ajax({
+		url: "/requestChart",
+		data: temp,
+		dataType: "json"
+	});
+	createChart(temp);*/
 }
-
-/*function chartLoad() {
-		var chart = new CanvasJS.Chart("chartID",
+function createChart(template){
+	var chart = new CanvasJS.Chart("chartID",
 		{
 			theme: "theme3",
                         animationEnabled: true,
@@ -26,52 +30,7 @@ function addChart(){
 			axisY: {
 				title: "Count"
 			},
-			data: [ 
-			{
-				type: "column",	
-				name: "Run",
-				legendText: "Run",
-              	color: "#2ECC71",
-				showInLegend: true, 
-				dataPoints:[
-				{label: "Demo Test", y: 10},
-				{label: "Chart Test", y: 11}
-				]
-			},
-			{
-				type: "column",	
-				name: "Failed",
-              	color: "#C0392B",
-				legendText: "Failed",
-				showInLegend: true,
-				dataPoints:[
-				{label: "Demo Test", y: 2},
-				{label: "Chart Test", y: 1}
-				]
-			},
-			{
-				type: "column",	
-				name: "Not Run",
-				legendText: "Not Run",
-              	color: "#7F8C8D",
-				showInLegend: true,
-				dataPoints:[
-				{label: "Demo Test", y: 3},
-				{label: "Chart Test", y: 3}
-				]
-			},
-			{
-				type: "column",	
-				name: "Not Implemented",
-				legendText: "Not Implemented",
-              	color: "#3498DB",
-				showInLegend: true,
-				dataPoints:[
-				{label: "Demo Test", y: 13},
-				{label: "Chart Test", y: 13}
-				]
-			}
-			],
+			data: [ ],
           legend:{
             cursor:"pointer",
             itemclick: function(e){
@@ -85,9 +44,9 @@ function addChart(){
             }
           },
         });
-
-chart.render();
-}*/
+		chart.options.data.push(template);
+		chart.render();
+}
 
 $(function(){
 	

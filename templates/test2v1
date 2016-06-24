@@ -1,4 +1,22 @@
 
+<script type="text/javascript">
+
+function chartLoad() {
+		var chart = new CanvasJS.Chart("chartID",
+		{
+			theme: "theme3",
+                        animationEnabled: true,
+			title:{
+				text: "Template chart",
+				fontSize: 30
+			},
+			toolTip: {
+				shared: true
+			},			
+			axisY: {
+				title: "Count"
+			},
+			data: [ 
 			{
 				type: "column",	
 				name: "Run",
@@ -43,4 +61,23 @@
 				{label: "Chart Test", y: 13}
 				]
 			}
-			
+			],
+          legend:{
+            cursor:"pointer",
+            itemclick: function(e){
+              if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+              	e.dataSeries.visible = false;
+              }
+              else {
+                e.dataSeries.visible = true;
+              }
+            	chart.render();
+            }
+          },
+        });
+
+chart.render();
+}
+
+
+</script>

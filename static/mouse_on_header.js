@@ -17,17 +17,6 @@ function caseSetUp(){
 	$(".setup").show();
 }
 
-function requestChart(){
-	$.get("/requestChart",
-		function(data,status){
-			if(status){
-				$(".canvasHeader").empty().append(data);
-				//load();
-			};
-		}
-	);
-}
-
 function dashboardChartSetup(){
 	$(".setup_buttons").empty();
 }
@@ -38,7 +27,7 @@ var submenu = {
 		"click": function(){
 			$(this).one("click",function(){
 				$(".col-md-9").empty();
-				requestChart();
+				addChart();
 				$(".text_area").hide();
 				$(".setup").hide();
 			})
@@ -196,7 +185,7 @@ $(function(){
 				$(".insert_jira_button").empty();
 				addButtons();
 				addChart();
-				chartLoad();
+				//chartLoad();
 			}
 		);
 		$(".setup").hide();

@@ -40,20 +40,11 @@ window.addEventListener("resize",function(ev){
 $(function(){
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "dashboard"){
-			requestDashboard(
-					{ active:true, filter:"" },
-					function(res){
-						//window.location.reload();
-						$(".col-md-9").empty().append(newform)
-						$(".col-md-9").append(res);
-						$(".text_area").hide();
-						$(".insert_jira_button").empty();
-						addButtons();
-						addChart();
-						//chartLoad();
-					}
-				);
-				$(".setup").hide();
+			$(".text_area").hide();
+			$(".insert_jira_button").empty();
+			addChart("pie","chartID");
+			$(".setup_buttons").empty();
+			chartFilterBar();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "reportBlog"){
 			requestDashboard(

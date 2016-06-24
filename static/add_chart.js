@@ -1,27 +1,38 @@
+var FilterNavbar="";
 
-function addChart(){
-	$.get("/requestChart",
+function chartFilterBar(){
+	$.get("/chartFilter",
 		function(data,status){
 			if(status){
-				createChart(data)
+				$(".col-md-12-object").empty().append(data);
+				$(".setup").show();
 			};
 		}
 	);
-	/*var temp;
-	$.ajax({
-		url: "/requestChart",
-		data: temp,
-		dataType: "json"
-	});
-	createChart(temp);*/
 }
-function createChart(template){
-	var chart = new CanvasJS.Chart("chartID",
+
+
+function addChart(type,direction){
+	$.get("/requestChart/"+type,
+		function(data,status){
+			if(status){
+				$(".col-md-9").append("<div id='chartID' style='width:90%'></div>")
+				if(type == "line")
+					createLineChart(data,direction)
+				if(type == "pie")
+					createPieChart(data,direction)
+			};
+		},
+		"json"
+	);
+}
+function createLineChart(template,direction){
+	var chart = new CanvasJS.Chart(direction,
 		{
 			theme: "theme3",
                         animationEnabled: true,
 			title:{
-				text: "Template chart",
+				text: "Template Line Chart",
 				fontSize: 30
 			},
 			toolTip: {
@@ -44,10 +55,28 @@ function createChart(template){
             }
           },
         });
-		chart.options.data.push(template);
+		chart.options.data=template;
+		chart.render();
+}
+
+function createPieChart(template,direction){
+	var chart = new CanvasJS.Chart(direction,
+		{
+			title:{
+				text: "Template Pie Chart"
+			},
+            animationEnabled: true,
+			legend:{
+				verticalAlign: "bottom",
+				horizontalAlign: "center"
+			},
+			data: [ ], 
+        });
+		chart.options.data=template;
 		chart.render();
 }
 
 $(function(){
-	
+	chartFilterBar();
+	addChart("pie","chartID");
 });

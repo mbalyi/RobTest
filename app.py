@@ -261,12 +261,14 @@ def saveCaseStatus(exeId,caseId):
 
 
 #-----Chart-----
-@app.route('/requestChart', methods=['GET'])
-def requestChart():
-	render = render_template('test2.html')
-	#return json.dumps(render)
-	return Response(response=json.dumps(render), status=200, mimetype='application/json')
-	#return jsonify(results=render)
+@app.route('/requestChart/<type>', methods=['GET'])
+def requestChart(type):
+	render = render_template('test2.html',type=type)
+	return render.replace('\n','')
+	
+@app.route('/chartFilter', methods=['GET'])
+def chartFilter():
+	return render_template('chartFilter.html')
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

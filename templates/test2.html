@@ -1,46 +1,71 @@
-
-			{
-				type: "column",	
-				name: "Run",
-				legendText: "Run",
-              	color: "#2ECC71",
-				showInLegend: true, 
-				dataPoints:[
-				{label: "Demo Test", y: 10},
-				{label: "Chart Test", y: 11}
-				]
-			},
-			{
-				type: "column",	
-				name: "Failed",
-              	color: "#C0392B",
-				legendText: "Failed",
-				showInLegend: true,
-				dataPoints:[
-				{label: "Demo Test", y: 2},
-				{label: "Chart Test", y: 1}
-				]
-			},
-			{
-				type: "column",	
-				name: "Not Run",
-				legendText: "Not Run",
-              	color: "#7F8C8D",
-				showInLegend: true,
-				dataPoints:[
-				{label: "Demo Test", y: 3},
-				{label: "Chart Test", y: 3}
-				]
-			},
-			{
-				type: "column",	
-				name: "Not Implemented",
-				legendText: "Not Implemented",
-              	color: "#3498DB",
-				showInLegend: true,
-				dataPoints:[
-				{label: "Demo Test", y: 13},
-				{label: "Chart Test", y: 13}
-				]
-			}
+{% if type == "line" %}
+[
+	{
+		"type": "column",	
+		"name": "Run",
+		"legendText": "Run",
+		"color": "#2ECC71",
+		"showInLegend": true, 
+		"dataPoints":[
+		{"label": "Demo Test", "y": 10},
+		{"label": "Chart Test", "y": 11}
+		]
+	},
+	{
+		"type": "column",	
+		"name": "Failed",
+		"color": "#C0392B",
+		"legendText": "Failed",
+		"showInLegend": true,
+		"dataPoints":[
+		{"label": "Demo Test", "y": 2},
+		{"label": "Chart Test", "y": 1}
+		]
+	},
+	{
+		"type": "column",	
+		"name": "Not Run",
+		"legendText": "Not Run",
+		"color": "#7F8C8D",
+		"showInLegend": true,
+		"dataPoints":[
+		{"label": "Demo Test", "y": 3},
+		{"label": "Chart Test", "y": 3}
+		]
+	},
+	{
+		"type": "column",	
+		"name": "Not Implemented",
+		"legendText": "Not Implemented",
+		"color": "#3498DB",
+		"showInLegend": true,
+		"dataPoints":[
+		{"label": "Demo Test", "y": 13},
+		{"label": "Chart Test", "y": 13}
+		]
+	}
 			
+]
+{% endif %}
+
+{% if type == "pie" %}
+[
+	{        
+		"indexLabelFontSize": 20,
+		"indexLabelFontFamily": "Monospace",       
+		"indexLabelFontColor": "darkgrey", 
+		"indexLabelLineColor": "darkgrey",        
+		"indexLabelPlacement": "outside",
+		"type": "pie",       
+		"showInLegend": true,
+		"toolTipContent": "{y}%",
+		"dataPoints": 
+		[
+			{  "y": 67, "legendText":"PASSED", "indexLabel": "Passed" },
+			{  "y": 21, "legendText":"FAILED","exploded": true, "indexLabel": "Failed" },
+			{  "y": 10, "legendText":"NOTRUN", "indexLabel": "Not Run" },
+			{  "y": 2, "legendText":"NOTIMP" , "indexLabel": "Not Implemented"}
+		]
+	}
+]
+{% endif %}

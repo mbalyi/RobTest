@@ -1,0 +1,40 @@
+<script>
+function () {
+	var chart = new CanvasJS.Chart("chartContainer",
+	{
+		title:{
+			text: "Template Pie Chart"
+		},
+                animationEnabled: true,
+		legend:{
+			verticalAlign: "bottom",
+			horizontalAlign: "center"
+		},
+		data: [
+		{        
+			indexLabelFontSize: 20,
+			indexLabelFontFamily: "Monospace",       
+			indexLabelFontColor: "darkgrey", 
+			indexLabelLineColor: "darkgrey",        
+			indexLabelPlacement: "outside",
+			type: "pie",       
+			showInLegend: true,
+			toolTipContent: "{y} - <strong>#percent%</strong>",
+			dataPoints: [
+				{  y: 67, legendText:"PASSED", indexLabel: "Passed" },
+				{  y: 21, legendText:"FAILED", indexLabel: "Failed" },
+				{  y: 10, legendText:"NOTRUN",exploded: true, indexLabel: "Not Run" },
+				{  y: 2, legendText:"NOTIMP" , indexLabel: "Not Implemented"}
+			]
+		}
+		]
+	});
+	chart.render();
+}
+</script>
+<script type="text/javascript" src="/assets/script/canvasjs.min.js"></script>
+</head>
+<body>
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+</body>
+</html>

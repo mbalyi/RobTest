@@ -35,17 +35,6 @@ function testPage(pageID){
 	)
 }
 
-/*function getFirstCaseID(exeId){
-	$.get("/getFirstCaseID/"+exeId,
-		function(data,status){
-			if(status){
-				return data;
-			};
-		},
-		"json"
-	)
-}*/
-
 function loadTest(exeId){
 	$.get("/loadTest/"+exeId,
 		function(data,status){

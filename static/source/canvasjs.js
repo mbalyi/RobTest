@@ -1,5 +1,5 @@
 ﻿/**
-* @preserve CanvasJS HTML5 & JavaScript Charts - v1.8.0 GA - http://canvasjs.com/ 
+* @preserve CanvasJS HTML5 & JavaScript Charts - v1.8.1 GA - http://canvasjs.com/ 
 * Copyright 2013 fenopix
 */
 
@@ -166,6 +166,8 @@
 			titleFontFamily: "arial",
 			titleFontWeight: "normal",
 			titleFontStyle: "normal",
+			titleWrap: true,
+			titleMaxWidth: null,
 
 			labelAngle: 0,
 			labelFontFamily: "arial",
@@ -173,7 +175,7 @@
 			labelFontSize: 12,
 			labelFontWeight: "normal",
 			labelFontStyle: "normal",
-			labelAutoFit: false,
+			labelAutoFit: true,
 			labelWrap: true,
 			labelMaxWidth: null,//null for auto
 			labelFormatter: null,
@@ -214,7 +216,11 @@
 			thickness: 2,
 			lineDashType: "solid",
 			label: "",
-			labelBackgroundColor: "#EEEEEE",
+			labelPlacement: "inside",//"outside"
+			labelAlign: "far",//"near" , "center" , "far"
+			labelWrap: true,
+			labelMaxWidth: null,
+			labelBackgroundColor: "transparent",
 			labelFontFamily: "arial",
 			labelFontColor: "orange",
 			labelFontSize: 12,
@@ -252,8 +258,11 @@
 
 			lineThickness: 2,
 			lineDashType: "solid",
+			connectNullData: false,
+			nullDataLineDashType: "dash",
 
 			color: null,
+			lineColor: null,
 			risingColor: "white",
 			fillOpacity: null,
 
@@ -876,7 +885,7 @@
 
 		lineDashType = lineDashType || "solid";
 
-		lineDashTypeMap = {
+		var lineDashTypeMap = {
 			"solid": [],
 			"shortDash": [3, 1],
 			"shortDot": [1, 1],
@@ -2222,104 +2231,92 @@
 		this.data = [];
 		var dataSeriesIndex = 0;
 
-		for (var series = 0; series < this._options.data.length; series++) {
-			//for (series in this._options.data) {
+		if (this._options.data) {
+			for (var series = 0; series < this._options.data.length; series++) {
+				//for (series in this._options.data) {
 
-			dataSeriesIndex++;
+				dataSeriesIndex++;
 
-			if (!(!this._options.data[series].type || Chart._supportedChartTypes.indexOf(this._options.data[series].type) >= 0))
-				continue;
+				if (!(!this._options.data[series].type || Chart._supportedChartTypes.indexOf(this._options.data[series].type) >= 0))
+					continue;
 
-			var dataSeries = new DataSeries(this, this._options.data[series], this.theme, dataSeriesIndex - 1, ++this._eventManager.lastObjectId);
-			if (dataSeries.name === null)
-				dataSeries.name = "DataSeries " + (dataSeriesIndex);
+				var dataSeries = new DataSeries(this, this._options.data[series], this.theme, dataSeriesIndex - 1, ++this._eventManager.lastObjectId);
+				if (dataSeries.name === null)
+					dataSeries.name = "DataSeries " + (dataSeriesIndex);
 
-			if (dataSeries.color === null) {
-				if (this._options.data.length > 1) {
-					dataSeries._colorSet = [this._selectedColorSet[dataSeries.index % this._selectedColorSet.length]];
-					dataSeries.color = this._selectedColorSet[dataSeries.index % this._selectedColorSet.length];
+				if (dataSeries.color === null) {
+					if (this._options.data.length > 1) {
+						dataSeries._colorSet = [this._selectedColorSet[dataSeries.index % this._selectedColorSet.length]];
+						dataSeries.color = this._selectedColorSet[dataSeries.index % this._selectedColorSet.length];
+					} else {
+						if (dataSeries.type === "line" || dataSeries.type === "stepLine" || dataSeries.type === "spline" || dataSeries.type === "area"
+							|| dataSeries.type === "stepArea" || dataSeries.type === "splineArea" || dataSeries.type === "stackedArea" || dataSeries.type === "stackedArea100"
+							|| dataSeries.type === "rangeArea" || dataSeries.type === "rangeSplineArea" || dataSeries.type === "candlestick" || dataSeries.type === "ohlc") {
+							dataSeries._colorSet = [this._selectedColorSet[0]];
+						}
+						else
+							dataSeries._colorSet = this._selectedColorSet;
+					}
 				} else {
-					if (dataSeries.type === "line" || dataSeries.type === "stepLine" || dataSeries.type === "spline" || dataSeries.type === "area"
-						|| dataSeries.type === "stepArea" || dataSeries.type === "splineArea" || dataSeries.type === "stackedArea" || dataSeries.type === "stackedArea100"
-						|| dataSeries.type === "rangeArea" || dataSeries.type === "rangeSplineArea" || dataSeries.type === "candlestick" || dataSeries.type === "ohlc") {
-						dataSeries._colorSet = [this._selectedColorSet[0]];
+					dataSeries._colorSet = [dataSeries.color];
+				}
+
+				if (dataSeries.markerSize === null) {
+					if (((dataSeries.type === "line" || dataSeries.type === "stepLine" || dataSeries.type === "spline" || dataSeries.type.toLowerCase().indexOf("area") >= 0) && dataSeries.dataPoints && dataSeries.dataPoints.length < this.width / 16) || dataSeries.type === "scatter") {
+						//if (dataSeries.type === "line") {
+						dataSeries.markerSize = 8;
+					}
+				}
+
+				if ((dataSeries.type === "bubble" || dataSeries.type === "scatter") && dataSeries.dataPoints) {
+					if (dataSeries.dataPoints.some) {
+						if (dataSeries.dataPoints.some(function (element) { return element.x; }))
+							dataSeries.dataPoints.sort(compareDataPointX);
 					}
 					else
-						dataSeries._colorSet = this._selectedColorSet;
-				}
-			} else {
-				dataSeries._colorSet = [dataSeries.color];
-			}
-
-			if (dataSeries.markerSize === null) {
-				if (((dataSeries.type === "line" || dataSeries.type === "stepLine" || dataSeries.type === "spline") && dataSeries.dataPoints && dataSeries.dataPoints.length < this.width / 16) || dataSeries.type === "scatter") {
-					//if (dataSeries.type === "line") {
-					dataSeries.markerSize = 8;
-				}
-			}
-
-			if ((dataSeries.type === "bubble" || dataSeries.type === "scatter") && dataSeries.dataPoints) {
-				if (dataSeries.dataPoints.some) {
-					if (dataSeries.dataPoints.some(function (element) { return element.x; }))
 						dataSeries.dataPoints.sort(compareDataPointX);
 				}
-				else
-					dataSeries.dataPoints.sort(compareDataPointX);
-			}
 
-			//if (dataSeries.markerBorderThickness === null && dataSeries.type === "scatter") {
-			//    dataSeries.markerBorderThickness = 2;
-			//}
+				this.data.push(dataSeries);
 
-			//if (dataSeries.markerType === null) {
-			//    if (dataSeries.type === "line" & dataSeries.dataPoints.length < 500) {
-			//        dataSeries.markerType = "circle";
-			//    }
-			//}
+				var seriesAxisPlacement = dataSeries.axisPlacement;
 
-			this.data.push(dataSeries);
+				var errorMessage;
 
-			var seriesAxisPlacement = dataSeries.axisPlacement;
+				if (seriesAxisPlacement === "normal") {
 
-			//if (isDebugMode && window.console)
-			//    window.console.log(dataSeries.type);
+					if (this.plotInfo.axisPlacement === "xySwapped") {
+						errorMessage = "You cannot combine \"" + dataSeries.type + "\" with bar chart";
+					} else if (this.plotInfo.axisPlacement === "none") {
+						errorMessage = "You cannot combine \"" + dataSeries.type + "\" with pie chart";
+					} else if (this.plotInfo.axisPlacement === null)
+						this.plotInfo.axisPlacement = "normal";
+				}
+				else if (seriesAxisPlacement === "xySwapped") {
 
-			var errorMessage;
+					if (this.plotInfo.axisPlacement === "normal") {
+						errorMessage = "You cannot combine \"" + dataSeries.type + "\" with line, area, column or pie chart";
+					} else if (this.plotInfo.axisPlacement === "none") {
+						errorMessage = "You cannot combine \"" + dataSeries.type + "\" with pie chart";
+					} else if (this.plotInfo.axisPlacement === null)
+						this.plotInfo.axisPlacement = "xySwapped";
+				}
+				else if (seriesAxisPlacement == "none") {
 
-			if (seriesAxisPlacement === "normal") {
+					if (this.plotInfo.axisPlacement === "normal") {
+						errorMessage = "You cannot combine \"" + dataSeries.type + "\" with line, area, column or bar chart";
+					} else if (this.plotInfo.axisPlacement === "xySwapped") {
+						errorMessage = "You cannot combine \"" + dataSeries.type + "\" with bar chart";
+					} else if (this.plotInfo.axisPlacement === null)
+						this.plotInfo.axisPlacement = "none";
+				}
 
-				if (this.plotInfo.axisPlacement === "xySwapped") {
-					errorMessage = "You cannot combine \"" + dataSeries.type + "\" with bar chart";
-				} else if (this.plotInfo.axisPlacement === "none") {
-					errorMessage = "You cannot combine \"" + dataSeries.type + "\" with pie chart";
-				} else if (this.plotInfo.axisPlacement === null)
-					this.plotInfo.axisPlacement = "normal";
-			}
-			else if (seriesAxisPlacement === "xySwapped") {
-
-				if (this.plotInfo.axisPlacement === "normal") {
-					errorMessage = "You cannot combine \"" + dataSeries.type + "\" with line, area, column or pie chart";
-				} else if (this.plotInfo.axisPlacement === "none") {
-					errorMessage = "You cannot combine \"" + dataSeries.type + "\" with pie chart";
-				} else if (this.plotInfo.axisPlacement === null)
-					this.plotInfo.axisPlacement = "xySwapped";
-			}
-			else if (seriesAxisPlacement == "none") {
-
-				if (this.plotInfo.axisPlacement === "normal") {
-					errorMessage = "You cannot combine \"" + dataSeries.type + "\" with line, area, column or bar chart";
-				} else if (this.plotInfo.axisPlacement === "xySwapped") {
-					errorMessage = "You cannot combine \"" + dataSeries.type + "\" with bar chart";
-				} else if (this.plotInfo.axisPlacement === null)
-					this.plotInfo.axisPlacement = "none";
-			}
-
-			if (errorMessage && window.console) {
-				window.console.log(errorMessage);
-				return;
+				if (errorMessage && window.console) {
+					window.console.log(errorMessage);
+					return;
+				}
 			}
 		}
-
 		//if (isDebugMode && window.console) {
 		//    window.console.log("xMin: " + this.plotInfo.viewPortXMin + "; xMax: " + this.plotInfo.viewPortXMax + "; yMin: " + this.plotInfo.yMin + "; yMax: " + this.plotInfo.yMax);
 		//}
@@ -2343,6 +2340,8 @@
 	Chart.prototype.render = function (options) {
 		if (options)
 			this._options = options;
+
+
 
 		this._initialize();
 		var plotAreaElements = []; //Elements to be rendered inside the plotArea
@@ -2816,6 +2815,7 @@
 			var i = 0;
 			var isFirstDPInViewPort = false;
 			var isLastDPInViewPort = false;
+			var prevNonNullX;
 
 			if (dataSeries.axisPlacement === "normal" || dataSeries.axisPlacement === "xySwapped") {
 
@@ -2879,6 +2879,8 @@
 
 				// This section makes sure that partially visible dataPoints are included in the begining
 				if (dataPointX < plotAreaXMin && !isFirstDPInViewPort) {
+					if (dataPointY !== null)
+						prevNonNullX = dataPointX;
 					continue;
 				} else if (!isFirstDPInViewPort) {
 					isFirstDPInViewPort = true;
@@ -2905,8 +2907,12 @@
 				if (dataPointX > axisXDataInfo.viewPortMax)
 					axisXDataInfo.viewPortMax = dataPointX;
 
-				if (dataPointY === null)
+				if (dataPointY === null) {
+					if (axisXDataInfo.viewPortMin === dataPointX && prevNonNullX < dataPointX)
+						axisXDataInfo.viewPortMin = prevNonNullX;
 					continue;
+				}
+
 
 				if (dataPointY < axisYDataInfo.viewPortMin)
 					axisYDataInfo.viewPortMin = dataPointY;
@@ -2940,6 +2946,7 @@
 			var i = 0;
 			var isFirstDPInViewPort = false;
 			var isLastDPInViewPort = false;
+			var prevNonNullX;
 
 			if (dataSeries.axisPlacement === "normal" || dataSeries.axisPlacement === "xySwapped") {
 
@@ -3004,6 +3011,8 @@
 
 				// This section makes sure that partially visible dataPoints are included in the begining
 				if (dataPointX < plotAreaXMin && !isFirstDPInViewPort) {
+					if (dataSeries.dataPoints[i].y !== null)
+						prevNonNullX = dataPointX;
 					continue;
 				} else if (!isFirstDPInViewPort) {
 					isFirstDPInViewPort = true;
@@ -3030,8 +3039,11 @@
 				if (dataPointX > axisXDataInfo.viewPortMax)
 					axisXDataInfo.viewPortMax = dataPointX;
 
-				if (dataPointY === null)
+				if (dataSeries.dataPoints[i].y === null) {
+					if (axisXDataInfo.viewPortMin === dataPointX && prevNonNullX < dataPointX)
+						axisXDataInfo.viewPortMin = prevNonNullX;
 					continue;
+				}
 
 				plotUnit.yTotals[dataPointX] = (!plotUnit.yTotals[dataPointX] ? 0 : plotUnit.yTotals[dataPointX]) + Math.abs(dataPointY);
 
@@ -3127,6 +3139,7 @@
 			var i = 0;
 			var isFirstDPInViewPort = false;
 			var isLastDPInViewPort = false;
+			var prevNonNullX;
 
 			if (dataSeries.axisPlacement === "normal" || dataSeries.axisPlacement === "xySwapped") {
 
@@ -3187,6 +3200,8 @@
 
 				// This section makes sure that partially visible dataPoints are included in the begining
 				if (dataPointX < plotAreaXMin && !isFirstDPInViewPort) {
+					if (dataPointY !== null)
+						prevNonNullX = dataPointX;
 					continue;
 				} else if (!isFirstDPInViewPort) {
 					isFirstDPInViewPort = true;
@@ -3212,8 +3227,11 @@
 				if (dataPointX > axisXDataInfo.viewPortMax)
 					axisXDataInfo.viewPortMax = dataPointX;
 
-				if (dataPointY === null)
+				if (dataPointY === null) {
+					if (axisXDataInfo.viewPortMin === dataPointX && prevNonNullX < dataPointX)
+						axisXDataInfo.viewPortMin = prevNonNullX;
 					continue;
+				}
 
 				plotUnit.yTotals[dataPointX] = (!plotUnit.yTotals[dataPointX] ? 0 : plotUnit.yTotals[dataPointX]) + Math.abs(dataPointY);
 
@@ -3271,6 +3289,9 @@
 			var i = 0;
 			var isFirstDPInViewPort = false;
 			var isLastDPInViewPort = false;
+			var prevNonNullX;
+			var currentDataNonNull;
+			var firstNonNullX;
 
 			if (dataSeries.axisPlacement === "normal" || dataSeries.axisPlacement === "xySwapped") {
 
@@ -3304,6 +3325,16 @@
 				if (dataPointY && dataPointY.length) {
 					dataPointYMin = Math.min.apply(null, dataPointY);
 					dataPointYMax = Math.max.apply(null, dataPointY);
+
+					currentDataNonNull = true;
+					for (var k = 0; k < dataPointY.length; k++)
+						if (dataPointY.k === null)
+							currentDataNonNull = false;
+					if (currentDataNonNull) {
+						if (!isFirstDPInViewPort)
+							firstNonNullX = prevNonNullX;
+						prevNonNullX = dataPointX;
+					}
 				}
 
 
@@ -3327,7 +3358,7 @@
 						axisXDataInfo.minDiff = xDiff;
 					}
 
-					if (dataPointY[0] !== null && dataSeries.dataPoints[i - 1].y[0] !== null) {
+					if (dataPointY && dataPointY[0] !== null && dataSeries.dataPoints[i - 1].y && dataSeries.dataPoints[i - 1].y[0] !== null) {
 						var yDiff = dataPointY[0] - dataSeries.dataPoints[i - 1].y[0];
 						yDiff < 0 && (yDiff = yDiff * -1); //If Condition shortcut
 
@@ -3345,6 +3376,7 @@
 
 					if (i > 0) {
 						i -= 2;
+						prevNonNullX = firstNonNullX;
 						continue;
 					}
 				}
@@ -3365,8 +3397,18 @@
 				if (dataPointX > axisXDataInfo.viewPortMax)
 					axisXDataInfo.viewPortMax = dataPointX;
 
-				if (dataPointY === null)
+				if (axisXDataInfo.viewPortMin === dataPointX && dataPointY)
+					for (var k = 0; k < dataPointY.length ; k++)
+						if (dataPointY[k] === null && prevNonNullX < dataPointX) {
+							axisXDataInfo.viewPortMin = prevNonNullX;
+							break;
+						}
+
+				if (dataPointY === null) {
+					if (axisXDataInfo.viewPortMin === dataPointX && prevNonNullX < dataPointX)
+						axisXDataInfo.viewPortMin = prevNonNullX;
 					continue;
+				}
 
 				if (dataPointYMin < axisYDataInfo.viewPortMin)
 					axisYDataInfo.viewPortMin = dataPointYMin;
@@ -3590,6 +3632,23 @@
 
 	Chart.prototype._mouseEventHandler = function (ev) {
 
+		//IE8- uses srcElement instead of target. So instead of checking this condition everytime, its better to create a reference called target.
+		if (typeof (ev.target) === "undefined" && ev.srcElement)
+			ev.target = ev.srcElement;
+
+		var xy = getMouseCoordinates(ev);
+		var type = ev.type;
+		var eventParam;
+		var rightclick;
+
+		if (!ev) var e = window.event;
+		if (ev.which) rightclick = (ev.which == 3);
+		else if (ev.button) rightclick = (ev.button == 2);
+
+		releaseCapturedEvent();
+
+		//console.log(ev.type);
+
 		if (!this.interactivityEnabled)
 			return;
 
@@ -3610,20 +3669,7 @@
 			ev.preventDefault();
 		}
 
-		//IE8- uses srcElement instead of target. So instead of checking this condition everytime, its better to create a reference called target.
-		if (typeof (ev.target) === "undefined" && ev.srcElement)
-			ev.target = ev.srcElement;
-
-		//console.log(ev.type);
-
-		var xy = getMouseCoordinates(ev);
-		var type = ev.type;
-		var eventParam;
-		var rightclick;
-
-		if (!ev) var e = window.event;
-		if (ev.which) rightclick = (ev.which == 3);
-		else if (ev.button) rightclick = (ev.button == 2);
+		var bounds;
 
 		//window.console.log(type + " --> x: " + xy.x + "; y:" + xy.y);
 
@@ -3650,33 +3696,40 @@
 		//    xy = {x: xy.y, y: xy.x};
 		//}
 
-		if (Chart.capturedEventParam) {
-			eventParam = Chart.capturedEventParam;
+		function releaseCapturedEvent() {
+			if (Chart.capturedEventParam) {
+				eventParam = Chart.capturedEventParam;
+				bounds = eventParam.bounds;
 
-			if (type === "mouseup") {
-				Chart.capturedEventParam = null;
+				if (type === "mouseup") {
+					Chart.capturedEventParam = null;
 
-				if (eventParam.chart.overlaidCanvas.releaseCapture)
-					eventParam.chart.overlaidCanvas.releaseCapture();
-				else
-					document.body.removeEventListener("mouseup", eventParam.chart._mouseEventHandler, false);
+					if (eventParam.chart.overlaidCanvas.releaseCapture)
+						eventParam.chart.overlaidCanvas.releaseCapture();
+					else
+						document.documentElement.removeEventListener("mouseup", eventParam.chart._mouseEventHandler, false);
+				}
 
+				if (eventParam.hasOwnProperty(type)) {
+
+					if (type === "mouseup" && !eventParam.chart.overlaidCanvas.releaseCapture) {
+						if (ev.target !== eventParam.chart.overlaidCanvas)
+							eventParam.chart.isDrag = false;
+					} else if (ev.target === eventParam.chart.overlaidCanvas)
+						eventParam[type].call(eventParam.context, xy.x, xy.y);
+
+				}
 			}
-
-			if (eventParam.hasOwnProperty(type))
-				eventParam[type].call(eventParam.context, xy.x, xy.y);
-
-
-
 		}
-		else if (this._events) {
+
+		if (!Chart.capturedEventParam && this._events) {
 
 			for (var i = 0; i < this._events.length; i++) {
 				if (!this._events[i].hasOwnProperty(type))
 					continue;
 
 				eventParam = this._events[i];
-				var bounds = eventParam.bounds;
+				bounds = eventParam.bounds;
 
 				if (xy.x >= bounds.x1 && xy.x <= bounds.x2 && xy.y >= bounds.y1 && xy.y <= bounds.y2) {
 					eventParam[type].call(eventParam.context, xy.x, xy.y);
@@ -3687,14 +3740,14 @@
 						if (this.overlaidCanvas.setCapture)
 							this.overlaidCanvas.setCapture();
 						else {
-							document.body.addEventListener("mouseup", this._mouseEventHandler, false);
+							document.documentElement.addEventListener("mouseup", this._mouseEventHandler, false);
 							//addEvent(document.body, "mouseup", this._mouseEventHandler);
 						}
 					} else if (type === "mouseup") {
 						if (eventParam.chart.overlaidCanvas.releaseCapture)
 							eventParam.chart.overlaidCanvas.releaseCapture();
 						else
-							document.body.removeEventListener("mouseup", this._mouseEventHandler, false);
+							document.documentElement.removeEventListener("mouseup", this._mouseEventHandler, false);
 					}
 
 					break;
@@ -3712,12 +3765,13 @@
 			//eventParam = 
 		}
 
-		if (this._toolTip && this._toolTip.enabled) {
-
-			var plotArea = this.plotArea;
-
-			if (xy.x < plotArea.x1 || xy.x > plotArea.x2 || xy.y < plotArea.y1 || xy.y > plotArea.y2)
+		var plotArea = this.plotArea;
+		if (xy.x < plotArea.x1 || xy.x > plotArea.x2 || xy.y < plotArea.y1 || xy.y > plotArea.y2) {
+			if (this._toolTip && this._toolTip.enabled) {
 				this._toolTip.hide();
+			} else {
+				this.resetOverlayedCanvas();
+			}
 		}
 
 
@@ -3734,10 +3788,13 @@
 	Chart.prototype._plotAreaMouseDown = function (x, y) {
 		this.isDrag = true;
 
-		this.dragStartPoint = { x: x, y: y };
+		this.dragStartPoint = {
+			x: x, y: y
+		};
 	}
 
 	Chart.prototype._plotAreaMouseUp = function (x, y) {
+		var plotArea = this.plotArea;
 
 		if (this.plotInfo.axisPlacement === "normal" || this.plotInfo.axisPlacement === "xySwapped") {
 			if (this.isDrag) {
@@ -3800,7 +3857,6 @@
 							if (this._zoomPanToSelectedRegion(selectedRegion.x1, selectedRegion.y1, selectedRegion.x2, selectedRegion.y2)) {
 
 								reRender = true;
-
 							}
 						}
 					}
@@ -3885,8 +3941,8 @@
 
 					alpha = this.overlaidCanvasCtx.globalAlpha;
 
-					this.overlaidCanvasCtx.globalAlpha = .7;
-					this.overlaidCanvasCtx.fillStyle = "#A0ABB8";
+
+					this.overlaidCanvasCtx.fillStyle = "#A89896";
 
 					var rect = {
 						x1: zoomPX ? this.dragStartPoint.x : this.plotArea.x1,
@@ -3895,6 +3951,12 @@
 						y2: zoomPY ? y - this.dragStartPoint.y : this.plotArea.y2 - this.plotArea.y1
 					};
 
+					if (this.validateRegion(rect.x1, rect.y1, zoomPX ? x : this.plotArea.x2 - this.plotArea.x1, zoomPY ? y : this.plotArea.y2 - this.plotArea.y1, this.zoomType !== "xy").isValid) {
+						this.resetOverlayedCanvas();
+						this.overlaidCanvasCtx.fillStyle = "#99B2B5"; //"#A0ABB8";
+					}
+
+					this.overlaidCanvasCtx.globalAlpha = .7;
 					this.overlaidCanvasCtx.fillRect(rect.x1, rect.y1, rect.x2, rect.y2);
 
 					this.overlaidCanvasCtx.globalAlpha = alpha;
@@ -3910,13 +3972,35 @@
 	//Sets the viewport range of Axis based on the given rect bounds (pixels). Also limits the zooming/panning based on axis bounds. Returns a boolean to indicate whether it was succesful or not based on the selected region.
 	Chart.prototype._zoomPanToSelectedRegion = function (px1, py1, px2, py2, keepAxisIndependent) {
 
+		var validateRegion = this.validateRegion(px1, py1, px2, py2, keepAxisIndependent);
+		var axesWithValidRange = validateRegion.axesWithValidRange,
+			axesRanges = validateRegion.axesRanges;
+
+
+		if (validateRegion.isValid) {
+			for (var i = 0; i < axesWithValidRange.length; i++) {
+				var axis = axesWithValidRange[i];
+				var param = axesRanges[i];
+
+				axis.setViewPortRange(param.val1, param.val2);
+			}
+		}
+		//else console.log(px1,px2, val2, "-", val1, "=", Math.abs(val2 - val1));
+
+		return validateRegion.isValid;
+	}
+
+	Chart.prototype.validateRegion = function (px1, py1, px2, py2, keepAxisIndependent) {
+
 		keepAxisIndependent = keepAxisIndependent || false;
 
 		var zoomPX = this.zoomType.indexOf("x") >= 0, //Whether to zoom horizontally
 			zoomPY = this.zoomType.indexOf("y") >= 0, //Whether to zoom vertically
-			validRegion = false;
+			isValid = false,
+            axesWithValidRange = [],
+            axes = [],
+            axesRanges = [];
 
-		var axes = [], axesWithValidRange = [];
 		if (this.axisX && zoomPX)
 			axes.push(this.axisX);
 		if (this.axisY && zoomPY)
@@ -3924,7 +4008,6 @@
 		if (this.axisY2 && zoomPY)
 			axes.push(this.axisY2);
 
-		var params = [];
 
 		for (var i = 0; i < axes.length; i++) {
 			var axis = axes[i];
@@ -3943,26 +4026,19 @@
 				if (!(Math.abs(val2 - val1) < 3 * Math.abs(axis.dataInfo.minDiff)
 				|| (val1 < axis.minimum) || (val2 > axis.maximum))) {
 					axesWithValidRange.push(axis);
-					params.push({ val1: val1, val2: val2 });
+					axesRanges.push({ val1: val1, val2: val2 });
 
-					validRegion = true;
+					isValid = true;
 				} else if (!keepAxisIndependent) {
-					validRegion = false;
+					isValid = false;
 					break;
 				}
 			}
 		}
 
-		if (validRegion) {
-			for (var i = 0; i < axesWithValidRange.length; i++) {
-				var axis = axesWithValidRange[i];
-				var param = params[i];
-
-				axis.setViewPortRange(param.val1, param.val2);
-			}
-		}
-
-		return validRegion;
+		return {
+			isValid: isValid, axesWithValidRange: axesWithValidRange, axesRanges: axesRanges
+		};
 	}
 
 	Chart.prototype.preparePlotArea = function () {
@@ -4034,6 +4110,7 @@
 		var xMaxLimit = 0;
 		var marginX = 0, marginY = 0; // Margin between label and dataPoint / PlotArea
 		var offSetX = 0, offSetY = 0; // Distance to offSet textBlock (top) from dataPoint inorder to position it
+		var offset = 0;
 		var visibleWidth = 0;
 		var visibleHeight = 0;
 
@@ -4052,6 +4129,12 @@
 			var backgroundColor = getProperty("indexLabelBackgroundColor", indexLabel.dataPoint, indexLabel.dataSeries);
 			var maxWidth = getProperty("indexLabelMaxWidth", indexLabel.dataPoint, indexLabel.dataSeries);
 			var indexLabelWrap = getProperty("indexLabelWrap", indexLabel.dataPoint, indexLabel.dataSeries);
+			var indexLabelLineDashType = getProperty("indexLabelLineDashType", indexLabel.dataPoint, indexLabel.dataSeries);
+			var indexLabelLineColor = getProperty("indexLabelLineColor", indexLabel.dataPoint, indexLabel.dataSeries);
+			var indexLabelLineThickness = isNullOrUndefined(indexLabel.dataPoint.indexLabelLineThickness) ?
+											isNullOrUndefined(indexLabel.dataSeries._options.indexLabelLineThickness) ? 0 : indexLabel.dataSeries._options.indexLabelLineThickness
+											: indexLabel.dataPoint.indexLabelLineThickness;
+			offset = indexLabelLineThickness > 0 ? Math.min(10, (this.plotInfo.axisPlacement === "normal" ? this.plotArea.height : this.plotArea.width) << 0) : 0;
 
 			var percentAndTotal = {
 				percent: null, total: null
@@ -4083,6 +4166,7 @@
 
 			var axisX = indexLabel.dataSeries.axisX;
 			var axisY = indexLabel.dataSeries.axisY;
+			var isInside = false;
 
 
 			var textBlock = new TextBlock(ctx, {
@@ -4164,27 +4248,29 @@
 					yMaxLimit = plotArea.y2;
 
 					if (direction > 0) {
-						y = indexLabel.point.y - visibleHeight - marginY;
+						y = indexLabel.point.y - visibleHeight - marginY - offset;
 
 						if (y < yMinLimit) {
 							if (placement === "auto") {
-								y = Math.max(indexLabel.point.y, yMinLimit) + marginY;
+								y = Math.max(indexLabel.point.y, yMinLimit) + marginY + offset;
 							}
 							else {
-								y = yMinLimit + marginY;
+								y = yMinLimit + marginY + offset;
 							}
+							isInside = y + visibleHeight > indexLabel.point.y;
 						}
 					}
 					else {
-						y = indexLabel.point.y + marginY;
+						y = indexLabel.point.y + marginY + offset;
 
-						if (y > yMaxLimit - visibleHeight - marginY) {
+						if (y > yMaxLimit - visibleHeight - marginY - offset) {
 							if (placement === "auto") {
-								y = Math.min(indexLabel.point.y, yMaxLimit) - visibleHeight - marginY;
+								y = Math.min(indexLabel.point.y, yMaxLimit) - visibleHeight - marginY - offset;
 							}
 							else {
-								y = yMaxLimit - visibleHeight - marginY;
+								y = yMaxLimit - visibleHeight - marginY - offset;
 							}
+							isInside = y < indexLabel.point.y;
 						}
 					}
 
@@ -4250,27 +4336,29 @@
 					xMaxLimit = plotArea.x2;
 
 					if (direction < 0) {
-						x = indexLabel.point.x - visibleWidth - marginX;
+						x = indexLabel.point.x - visibleWidth - marginX - offset;
 
 						if (x < xMinLimit) {
 							if (placement === "auto") {
-								x = Math.max(indexLabel.point.x, xMinLimit) + marginX;
+								x = Math.max(indexLabel.point.x, xMinLimit) + marginX + offset;
 							}
 							else {
-								x = xMinLimit + marginX;
+								x = xMinLimit + marginX + offset;
 							}
+							isInside = x + visibleWidth > indexLabel.point.x;
 						}
 					}
 					else {
-						x = indexLabel.point.x + marginX;
+						x = indexLabel.point.x + marginX + offset;
 
-						if (x > xMaxLimit - visibleWidth - marginX) {
+						if (x > xMaxLimit - visibleWidth - marginX - offset) {
 							if (placement === "auto") {
-								x = Math.min(indexLabel.point.x, xMaxLimit) - visibleWidth - marginX;
+								x = Math.min(indexLabel.point.x, xMaxLimit) - visibleWidth - marginX - offset;
 							}
 							else {
-								x = xMaxLimit - visibleWidth - marginX;
+								x = xMaxLimit - visibleWidth - marginX - offset;
 							}
+							isInside = x < indexLabel.point.x;
 						}
 					}
 
@@ -4308,17 +4396,39 @@
 				}
 			}
 
-
 			if (orientation === "vertical") {
 				y += visibleHeight;
 			}
 
+			//y -= 5;
 			textBlock.x = x;
 			textBlock.y = y;
 
 			//console.log(textBlock.text + ": " + textBlock.x + "; " + textBlock.y);
 
 			textBlock.render(true);
+
+			//indexLabel connection line rendering logic not for pie and doughnut, use textSize later on
+			if (indexLabelLineThickness && placement !== "inside" &&
+				(chartTypeLower.indexOf("bar") < 0 && indexLabel.point.x > plotArea.x1 && indexLabel.point.x < plotArea.x2 || !isInside) &&
+				(chartTypeLower.indexOf("column") < 0 && indexLabel.point.y > plotArea.y1 && indexLabel.point.y < plotArea.y2 || !isInside)) {
+
+				ctx.lineWidth = indexLabelLineThickness;
+				ctx.strokeStyle = indexLabelLineColor ? indexLabelLineColor : "gray";
+				if (ctx.setLineDash) {
+					ctx.setLineDash(getLineDashArray(indexLabelLineDashType, indexLabelLineThickness));
+				}
+				ctx.beginPath();
+				ctx.moveTo(indexLabel.point.x, indexLabel.point.y);
+
+				if (chartTypeLower.indexOf("bar") >= 0)
+					ctx.lineTo(x + (indexLabel.direction > 0 ? 0 : visibleWidth), y + (orientation === "horizontal" ? visibleHeight : -visibleHeight) / 2);
+				else if (chartTypeLower.indexOf("column") >= 0)
+					ctx.lineTo(x + visibleWidth / 2, y + ((indexLabel.direction > 0 ? visibleHeight : -visibleHeight) + (orientation === "horizontal" ? visibleHeight : -visibleHeight)) / 2);
+				else
+					ctx.lineTo(x + visibleWidth / 2, y + ((y < indexLabel.point.y ? visibleHeight : -visibleHeight) + (orientation === "horizontal" ? visibleHeight : -visibleHeight)) / 2);
+				ctx.stroke();
+			}
 		}
 
 		//source and dest would be same when animation is not enabled
@@ -4356,10 +4466,13 @@
 			var dataSeries = this.data[dataSeriesIndex];
 			ctx.lineWidth = dataSeries.lineThickness;
 			var dataPoints = dataSeries.dataPoints;
-
+			var currentLineDashType = "solid";
 
 			if (ctx.setLineDash) {
-				ctx.setLineDash(getLineDashArray(dataSeries.lineDashType, dataSeries.lineThickness));
+				var nullDataLineDashType = getLineDashArray(dataSeries.nullDataLineDashType, dataSeries.lineThickness);
+				currentLineDashType = dataSeries.lineDashType;
+				var lineDashType = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+				ctx.setLineDash(lineDashType);
 			}
 
 			var seriesId = dataSeries.id;
@@ -4372,7 +4485,8 @@
 			ghostCtx.lineWidth = dataSeries.lineThickness > 0 ? Math.max(dataSeries.lineThickness, 4) : 0;
 
 			var colorSet = dataSeries._colorSet;
-			var color = colorSet[0];
+			var color = dataSeries._options.lineColor ? dataSeries._options.lineColor : colorSet[0];
+			var currentStrokeStyle = color;
 			ctx.strokeStyle = color;
 
 			var isFirstDataPointInPlotArea = true;
@@ -4391,16 +4505,15 @@
 
 					dataPointX = dataPoints[i].x.getTime ? dataPoints[i].x.getTime() : dataPoints[i].x;
 
-					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax)
+					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax && !(dataSeries.connectNullData && prevDataNull))
 						continue;
 
 					//if (!isFinite(dataPoints[i].y))
 					//    continue;
 
 					if (typeof (dataPoints[i].y) !== "number") {
-						if (i > 0) {// if first dataPoint is null then no need to call stroke method
+						if (i > 0 && !(dataSeries.connectNullData || prevDataNull || isFirstDataPointInPlotArea)) {// if first dataPoint is null then no need to call stroke method
 							ctx.stroke();
-
 							if (isCanvasSupported) {
 								ghostCtx.stroke();
 							}
@@ -4423,13 +4536,30 @@
 					//dataSeries.noDataPointsInPlotArea++;
 
 					if (isFirstDataPointInPlotArea || prevDataNull) {
-						ctx.beginPath();
-						ctx.moveTo(x, y);
 
+						//For drawing line over nonNull dataPoints
+						if (!isFirstDataPointInPlotArea && dataSeries.connectNullData) {
+							//Applying nullLineDshType If lineDashType at dataPoints not mentoioned in prevuous dataPoints
+							if (ctx.setLineDash && (dataSeries._options.nullDataLineDashType || (currentLineDashType === dataSeries.lineDashType && dataSeries.lineDashType !== dataSeries.nullDataLineDashType))) {
+								ctx.stroke();
+								//if (isCanvasSupported) {
+								//	ghostCtx.stroke();
+								//}
+								currentLineDashType = dataSeries.nullDataLineDashType;
+								ctx.setLineDash(nullDataLineDashType);
+							}
 
-						if (isCanvasSupported) {
-							ghostCtx.beginPath();
-							ghostCtx.moveTo(x, y);
+							ctx.lineTo(x, y);
+							if (isCanvasSupported)
+								ghostCtx.lineTo(x, y);
+
+						} else { //If connectNullData = false
+							ctx.beginPath();
+							ctx.moveTo(x, y);
+							if (isCanvasSupported) {
+								ghostCtx.beginPath();
+								ghostCtx.moveTo(x, y);
+							}
 						}
 
 						isFirstDataPointInPlotArea = false;
@@ -4453,6 +4583,31 @@
 							}
 						}
 					}
+
+					if (i < dataPoints.length - 1 && (currentStrokeStyle !== (dataPoints[i].lineColor || color) || currentLineDashType !== (dataPoints[i].lineDashType || dataSeries.lineDashType))) { //Applieng new ctx on DataPoint
+
+						ctx.stroke();
+						ctx.beginPath();
+						ctx.moveTo(x, y);
+						//if (isCanvasSupported) {
+						//	ghostCtx.stroke();
+						//	ghostCtx.beginPath();
+						//	ghostCtx.moveTo(x, y);
+						//}
+
+						currentStrokeStyle = dataPoints[i].lineColor || color;
+						ctx.strokeStyle = currentStrokeStyle;
+						if (ctx.setLineDash)
+							if (dataPoints[i].lineDashType) {
+								currentLineDashType = dataPoints[i].lineDashType;
+								ctx.setLineDash(getLineDashArray(currentLineDashType, dataSeries.lineThickness));
+							}
+							else {
+								currentLineDashType = dataSeries.lineDashType;
+								ctx.setLineDash(lineDashType);
+							}
+					}
+
 
 					//Render Marker
 					if (dataPoints[i].markerSize > 0 || dataSeries.markerSize > 0) {
@@ -4548,9 +4703,13 @@
 			var dataSeries = this.data[dataSeriesIndex];
 			ctx.lineWidth = dataSeries.lineThickness;
 			var dataPoints = dataSeries.dataPoints;
+			var currentLineDashType = "solid";
 
 			if (ctx.setLineDash) {
-				ctx.setLineDash(getLineDashArray(dataSeries.lineDashType, dataSeries.lineThickness));
+				var nullDataLineDashType = getLineDashArray(dataSeries.nullDataLineDashType, dataSeries.lineThickness);
+				currentLineDashType = dataSeries.lineDashType;
+				var lineDashType = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+				ctx.setLineDash(lineDashType);
 			}
 
 			var seriesId = dataSeries.id;
@@ -4563,7 +4722,8 @@
 			ghostCtx.lineWidth = dataSeries.lineThickness > 0 ? Math.max(dataSeries.lineThickness, 4) : 0;
 
 			var colorSet = dataSeries._colorSet;
-			var color = colorSet[0];
+			var color = dataSeries._options.lineColor ? dataSeries._options.lineColor : colorSet[0];
+			var currentStrokeStyle = color;
 			ctx.strokeStyle = color;
 
 			var isFirstDataPointInPlotArea = true;
@@ -4582,14 +4742,14 @@
 
 					dataPointX = dataPoints[i].getTime ? dataPoints[i].x.getTime() : dataPoints[i].x;
 
-					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax)
+					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax && !(dataSeries.connectNullData && prevDataNull))
 						continue;
 
 					//if (!isFinite(dataPoints[i].y))
 					//    continue;
 
 					if (typeof (dataPoints[i].y) !== "number") {
-						if (i > 0) {// if first dataPoint is null then no need to call stroke method
+						if (i > 0 && !(dataSeries.connectNullData || prevDataNull || isFirstDataPointInPlotArea)) {// if first dataPoint is null then no need to call stroke method
 							ctx.stroke();
 
 							if (isCanvasSupported) {
@@ -4615,12 +4775,29 @@
 					//dataSeries.noDataPointsInPlotArea++;
 
 					if (isFirstDataPointInPlotArea || prevDataNull) {
-						ctx.beginPath();
-						ctx.moveTo(x, y);
 
-						if (isCanvasSupported) {
-							ghostCtx.beginPath();
-							ghostCtx.moveTo(x, y);
+						if (!isFirstDataPointInPlotArea && dataSeries.connectNullData) {
+
+							if (ctx.setLineDash && (dataSeries._options.nullDataLineDashType || (currentLineDashType === dataSeries.lineDashType && dataSeries.lineDashType !== dataSeries.nullDataLineDashType))) {
+								ctx.stroke();
+								//if(!dataPoints[prevNonNullDataPointIndex].lineDashType)
+								currentLineDashType = dataSeries.nullDataLineDashType;
+								ctx.setLineDash(nullDataLineDashType);
+							}
+							ctx.lineTo(x, prevY);
+							ctx.lineTo(x, y);
+							if (isCanvasSupported) {
+								ghostCtx.lineTo(x, prevY);
+								ghostCtx.lineTo(x, y);
+							}
+						}
+						else { //connectNullData = false
+							ctx.beginPath();
+							ctx.moveTo(x, y);
+							if (isCanvasSupported) {
+								ghostCtx.beginPath();
+								ghostCtx.moveTo(x, y);
+							}
 						}
 
 						isFirstDataPointInPlotArea = false;
@@ -4646,6 +4823,24 @@
 								ghostCtx.moveTo(x, y);
 							}
 						}
+
+					}
+
+					if (i < dataPoints.length - 1 && (currentStrokeStyle !== (dataPoints[i].lineColor || color) || currentLineDashType !== (dataPoints[i].lineDashType || dataSeries.lineDashType))) { //Applieng new ctx on DataPoint
+						ctx.stroke();
+						ctx.beginPath();
+						ctx.moveTo(x, y);
+						currentStrokeStyle = dataPoints[i].lineColor || color;
+						ctx.strokeStyle = currentStrokeStyle;
+						if (ctx.setLineDash)
+							if (dataPoints[i].lineDashType) {
+								currentLineDashType = dataPoints[i].lineDashType;
+								ctx.setLineDash(getLineDashArray(currentLineDashType, dataSeries.lineThickness));
+							}
+							else {
+								currentLineDashType = dataSeries.lineDashType;
+								ctx.setLineDash(lineDashType);
+							}
 					}
 
 					//Render Marker
@@ -4712,8 +4907,9 @@
 		return animationInfo;
 	}
 
-	function getBezierPoints(points, tension) {
-		var bezierPoints = [];
+	function getBezierPoints(points, defaultTension) {
+		var bezierPoints = [],
+			tension;
 
 		for (var i = 0; i < points.length; i++) {
 
@@ -4727,26 +4923,41 @@
 			pointIndex = i - 1;
 			i1 = pointIndex === 0 ? 0 : pointIndex - 1;
 			i2 = pointIndex === points.length - 1 ? pointIndex : pointIndex + 1;
+			tension = Math.abs((points[i2].x - points[i1].x) / ((points[i2].x - points[pointIndex].x) === 0 ? 0.01 : (points[i2].x - points[pointIndex].x))) * (defaultTension - 1) / 2 + 1;
 
 			var drv1 = {
 				x: (points[i2].x - points[i1].x) / tension, y: (points[i2].y - points[i1].y) / tension
 			}
-			var cp1 = {
-				x: points[pointIndex].x + drv1.x / 3, y: points[pointIndex].y + drv1.y / 3
-			}
+
+			if (points[pointIndex].x > points[i1].x && drv1.x > 0 || points[pointIndex].x < points[i1].x && drv1.x < 0)
+				var cp1 = {
+					x: points[pointIndex].x + drv1.x / 3, y: points[pointIndex].y + drv1.y / 3
+				}
+			else
+				var cp1 = {
+					x: points[pointIndex].x, y: points[pointIndex].y + drv1.y / 9
+				}
+
 			bezierPoints[bezierPoints.length] = cp1;
 
 
 			pointIndex = i;
 			i1 = pointIndex === 0 ? 0 : pointIndex - 1;
 			i2 = pointIndex === points.length - 1 ? pointIndex : pointIndex + 1;
-
+			tension = Math.abs((points[i2].x - points[i1].x) / ((points[pointIndex].x - points[i1].x) === 0 ? 0.01 : (points[pointIndex].x - points[i1].x))) * (defaultTension - 1) / 2 + 1;
 			var drv2 = {
 				x: (points[i2].x - points[i1].x) / tension, y: (points[i2].y - points[i1].y) / tension
 			}
-			var cp2 = {
-				x: points[pointIndex].x - drv2.x / 3, y: points[pointIndex].y - drv2.y / 3
-			}
+
+			if (points[pointIndex].x > points[i1].x && drv2.x > 0 || points[pointIndex].x < points[i1].x && drv2.x < 0)
+				var cp2 = {
+					x: points[pointIndex].x - drv2.x / 3, y: points[pointIndex].y - drv2.y / 3
+				}
+			else
+				var cp2 = {
+					x: points[pointIndex].x, y: points[pointIndex].y - drv2.y / 9
+				}
+
 			bezierPoints[bezierPoints.length] = cp2;
 
 			bezierPoints[bezierPoints.length] = points[i];
@@ -4781,9 +4992,13 @@
 			var dataSeries = this.data[dataSeriesIndex];
 			ctx.lineWidth = dataSeries.lineThickness;
 			var dataPoints = dataSeries.dataPoints;
+			var currentLineDashType = "solid";
 
 			if (ctx.setLineDash) {
-				ctx.setLineDash(getLineDashArray(dataSeries.lineDashType, dataSeries.lineThickness));
+				var nullDataLineDashType = getLineDashArray(dataSeries.nullDataLineDashType, dataSeries.lineThickness);
+				currentLineDashType = dataSeries.lineDashType;
+				var lineDashType = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+				ctx.setLineDash(lineDashType);
 			}
 
 			var seriesId = dataSeries.id;
@@ -4796,7 +5011,8 @@
 			ghostCtx.lineWidth = dataSeries.lineThickness > 0 ? Math.max(dataSeries.lineThickness, 4) : 0;
 
 			var colorSet = dataSeries._colorSet;
-			var color = colorSet[0];
+			var color = dataSeries._options.lineColor ? dataSeries._options.lineColor : colorSet[0];
+			var currentStrokeStyle = color;
 			ctx.strokeStyle = color;
 
 			var isFirstDataPointInPlotArea = true;
@@ -4811,22 +5027,33 @@
 			ctx.beginPath();
 			if (dataPoints.length > 0) {
 
+				var prevDataNull = false;
 				for (i = 0; i < dataPoints.length; i++) {
 
 					dataPointX = dataPoints[i].getTime ? dataPoints[i].x.getTime() : dataPoints[i].x;
 
-					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax)
+					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax && !(dataSeries.connectNullData && prevDataNull))
 						continue;
 
 					//if (!isFinite(dataPoints[i].y))
 					//    continue;
 
 					if (typeof (dataPoints[i].y) !== "number") {
-						if (i > 0) {// if first dataPoint is null then no need to call stroke method
-							renderBezier(pixels);
-							pixels = [];
+						if (i > 0 && !prevDataNull) {// if first dataPoint is null then no need to call stroke method
+							if (dataSeries.connectNullData) {
+								if (ctx.setLineDash && pixels.length > 0 && (dataSeries._options.nullDataLineDashType || !dataPoints[i - 1].lineDashType)) {
+									pixels[pixels.length - 1].newLineDashArray = nullDataLineDashType;
+									currentLineDashType = dataSeries.nullDataLineDashType;
+								}
+							}
+							else {
+								renderBezier(pixels);
+								pixels = [];
+							}
+
 						}
 
+						prevDataNull = true;
 						continue;
 					}
 
@@ -4838,10 +5065,30 @@
 						id: id, objectType: "dataPoint", dataSeriesIndex: dataSeriesIndex, dataPointIndex: i, x1: x, y1: y
 					};
 
-
 					pixels[pixels.length] = {
 						x: x, y: y
 					};
+
+					//Drawing cunnectNullData
+					/*if (prevDataNull && dataSeries.connectNullData && ctx.setLineDash && !isFirstDataPointInPlotArea && (currentLineDashType === dataSeries.nullDataLineDashType && dataSeries.nullDataLineDashType !== dataSeries.lineDashType )) {
+						newLineDashArray = lineDashType;
+							currentLineDashType = dataSeries.lineDashType;
+					}*/
+
+					if (i < dataPoints.length - 1 && (currentStrokeStyle !== (dataPoints[i].lineColor || color) || currentLineDashType !== (dataPoints[i].lineDashType || dataSeries.lineDashType))) { //Applieng new ctx on DataPoint
+
+						currentStrokeStyle = dataPoints[i].lineColor || color;
+						pixels[pixels.length - 1].newStrokeStyle = currentStrokeStyle;
+						if (ctx.setLineDash)
+							if (dataPoints[i].lineDashType) {
+								currentLineDashType = dataPoints[i].lineDashType;
+								pixels[pixels.length - 1].newLineDashArray = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+							}
+							else {
+								currentLineDashType = dataSeries.lineDashType;
+								pixels[pixels.length - 1].newLineDashArray = lineDashType;
+							}
+					}
 
 
 					//Add Markers
@@ -4885,6 +5132,9 @@
 
 					}
 
+					isFirstDataPointInPlotArea = false;
+					prevDataNull = false;
+
 				}
 			}
 
@@ -4909,6 +5159,11 @@
 					ghostCtx.beginPath();
 
 				ctx.moveTo(bp[0].x, bp[0].y);
+				if (bp[0].newStrokeStyle)
+					ctx.strokeStyle = bp[0].newStrokeStyle;
+				if (bp[0].newLineDashArray)
+					ctx.setLineDash(bp[0].newLineDashArray);
+
 				if (isCanvasSupported)
 					ghostCtx.moveTo(bp[0].x, bp[0].y);
 
@@ -4919,10 +5174,14 @@
 					if (isCanvasSupported)
 						ghostCtx.bezierCurveTo(bp[i + 1].x, bp[i + 1].y, bp[i + 2].x, bp[i + 2].y, bp[i + 3].x, bp[i + 3].y);
 
-					if (i > 0 && i % 3000 === 0) {
+					if (i > 0 && i % 3000 === 0 || bp[i + 3].newStrokeStyle || bp[i + 3].newLineDashArray) {
 						ctx.stroke();
 						ctx.beginPath();
 						ctx.moveTo(bp[i + 3].x, bp[i + 3].y);
+						if (bp[i + 3].newStrokeStyle)
+							ctx.strokeStyle = bp[i + 3].newStrokeStyle;
+						if (bp[i + 3].newLineDashArray)
+							ctx.setLineDash(bp[i + 3].newLineDashArray);
 
 						if (isCanvasSupported) {
 							ghostCtx.stroke();
@@ -5114,6 +5373,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    this._eventManager.ghostCtx.beginPath();
 			this._eventManager.ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			this._eventManager.ghostCtx.clip();
 		}
@@ -5284,6 +5544,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    this._eventManager.ghostCtx.beginPath();
 			this._eventManager.ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			this._eventManager.ghostCtx.clip();
 		}
@@ -5447,6 +5708,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    this._eventManager.ghostCtx.beginPath();
 			this._eventManager.ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			this._eventManager.ghostCtx.clip();
 		}
@@ -5613,6 +5875,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    this._eventManager.ghostCtx.beginPath();
 			this._eventManager.ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			this._eventManager.ghostCtx.clip();
 		}
@@ -5765,6 +6028,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    this._eventManager.ghostCtx.beginPath();
 			this._eventManager.ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			this._eventManager.ghostCtx.clip();
 		}
@@ -5922,6 +6186,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    this._eventManager.ghostCtx.beginPath();
 			this._eventManager.ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			this._eventManager.ghostCtx.clip();
 		}
@@ -6095,13 +6360,19 @@
 			if (dataPoints.length > 0) {
 				//ctx.strokeStyle = "#4572A7 ";                
 				var color = dataSeries._colorSet[i % dataSeries._colorSet.length];
+				var lineColor = dataSeries._options.lineColor || color;
+				var currentStrokeStyle = lineColor;
 				//ctx.strokeStyle = "red";
 				ctx.fillStyle = color;
-				ctx.strokeStyle = color;
+				ctx.strokeStyle = lineColor;
 				ctx.lineWidth = dataSeries.lineThickness;
+				var currentLineDashType = "solid";
 
 				if (ctx.setLineDash) {
-					ctx.setLineDash(getLineDashArray(dataSeries.lineDashType, dataSeries.lineThickness));
+					var nullDataLineDashType = getLineDashArray(dataSeries.nullDataLineDashType, dataSeries.lineThickness);
+					currentLineDashType = dataSeries.lineDashType;
+					var lineDashType = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+					ctx.setLineDash(lineDashType);
 				}
 
 				var prevDataNull = true;
@@ -6109,12 +6380,13 @@
 
 					dataPointX = dataPoints[i].x.getTime ? dataPoints[i].x.getTime() : dataPoints[i].x;
 
-					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax) {
+					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax && !(dataSeries.connectNullData && prevDataNull)) {
 						continue;
 					}
 
 					if (typeof (dataPoints[i].y) !== "number") {
-						closeArea();
+						if (!(dataSeries.connectNullData || prevDataNull || isFirstDataPointInPlotArea))
+							closeArea();
 
 						prevDataNull = true;
 						continue;
@@ -6124,15 +6396,29 @@
 					y = (plotUnit.axisY.conversionParameters.reference + plotUnit.axisY.conversionParameters.pixelPerUnit * (dataPoints[i].y - plotUnit.axisY.conversionParameters.minimum) + .5) << 0;
 
 					if (isFirstDataPointInPlotArea || prevDataNull) {
-						ctx.beginPath();
-						ctx.moveTo(x, y);
-						startPoint = {
-							x: x, y: y
-						};
 
-						if (isCanvasSupported) {
-							ghostCtx.beginPath();
-							ghostCtx.moveTo(x, y);
+						if (!isFirstDataPointInPlotArea && dataSeries.connectNullData) {
+							//Applying nullLineDshType If lineDashType at dataPoints not mentoioned in prevuous dataPoints
+							if (ctx.setLineDash && (dataSeries._options.nullDataLineDashType || (currentLineDashType === dataSeries.lineDashType && dataSeries.lineDashType !== dataSeries.nullDataLineDashType))) {
+								ctx.stroke();
+								currentLineDashType = dataSeries.nullDataLineDashType;
+								ctx.setLineDash(nullDataLineDashType);
+							}
+
+							ctx.lineTo(x, y);
+							if (isCanvasSupported)
+								ghostCtx.lineTo(x, y);
+
+						} else { //If connectNullData = false
+							ctx.beginPath();
+							ctx.moveTo(x, y);
+							if (isCanvasSupported) {
+								ghostCtx.beginPath();
+								ghostCtx.moveTo(x, y);
+							}
+							startPoint = {
+								x: x, y: y
+							};
 						}
 
 						isFirstDataPointInPlotArea = false;
@@ -6150,6 +6436,25 @@
 						}
 					}
 
+					if (i < dataPoints.length - 1 && (currentStrokeStyle !== (dataPoints[i].lineColor || lineColor) || currentLineDashType !== (dataPoints[i].lineDashType || dataSeries.lineDashType))) { //Applieng new ctx on DataPoint
+
+						closeArea();
+						//ctx.stroke();
+						//ctx.beginPath();
+						//ctx.moveTo(x, y);
+
+						currentStrokeStyle = dataPoints[i].lineColor || lineColor;
+						ctx.strokeStyle = currentStrokeStyle;
+						if (ctx.setLineDash)
+							if (dataPoints[i].lineDashType) {
+								currentLineDashType = dataPoints[i].lineDashType;
+								ctx.setLineDash(getLineDashArray(currentLineDashType, dataSeries.lineThickness));
+							}
+							else {
+								currentLineDashType = dataSeries.lineDashType;
+								ctx.setLineDash(lineDashType);
+							}
+					}
 
 					var id = dataSeries.dataPointIds[i];
 					this._eventManager.objectMap[id] = {
@@ -6319,28 +6624,45 @@
 
 			if (dataPoints.length > 0) {
 				//ctx.strokeStyle = "#4572A7 ";                
-				color = dataSeries._colorSet[i % dataSeries._colorSet.length];
+				var color = dataSeries._colorSet[i % dataSeries._colorSet.length];
+				var lineColor = dataSeries._options.lineColor || color;
+				var currentStrokeStyle = lineColor;
 				ctx.fillStyle = color;
-				ctx.strokeStyle = color;
+				ctx.strokeStyle = lineColor;
 				ctx.lineWidth = dataSeries.lineThickness;
+				var currentLineDashType = "solid";
 
 				if (ctx.setLineDash) {
-					ctx.setLineDash(getLineDashArray(dataSeries.lineDashType, dataSeries.lineThickness));
+					var nullDataLineDashType = getLineDashArray(dataSeries.nullDataLineDashType, dataSeries.lineThickness);
+					currentLineDashType = dataSeries.lineDashType;
+					var lineDashType = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+					ctx.setLineDash(lineDashType);
 				}
 
+				var prevDataNull = false;
 				for (; i < dataPoints.length; i++) {
 
 					dataPointX = dataPoints[i].x.getTime ? dataPoints[i].x.getTime() : dataPoints[i].x;
 
-					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax) {
+					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax && !(dataSeries.connectNullData && prevDataNull)) {
 						continue;
 					}
 
 					if (typeof (dataPoints[i].y) !== "number") {
-						if (i > 0) {
-							renderBezierArea();
-							pixels = [];
+						if (i > 0 && !prevDataNull) {
+							if (dataSeries.connectNullData) {
+								if (ctx.setLineDash && pixels.length > 0 && (dataSeries._options.nullDataLineDashType || !dataPoints[i - 1].lineDashType)) {
+									pixels[pixels.length - 1].newLineDashArray = nullDataLineDashType;
+									currentLineDashType = dataSeries.nullDataLineDashType;
+								}
+							}
+							else {
+								renderBezierArea();
+								pixels = [];
+							}
 						}
+
+						prevDataNull = true;
 						continue;
 					}
 
@@ -6356,6 +6678,21 @@
 					pixels[pixels.length] = {
 						x: x, y: y
 					};
+
+					if (i < dataPoints.length - 1 && (currentStrokeStyle !== (dataPoints[i].lineColor || lineColor) || currentLineDashType !== (dataPoints[i].lineDashType || dataSeries.lineDashType))) { //Applieng new ctx on DataPoint
+
+						currentStrokeStyle = dataPoints[i].lineColor || lineColor;
+						pixels[pixels.length - 1].newStrokeStyle = currentStrokeStyle;
+						if (ctx.setLineDash)
+							if (dataPoints[i].lineDashType) {
+								currentLineDashType = dataPoints[i].lineDashType;
+								pixels[pixels.length - 1].newLineDashArray = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+							}
+							else {
+								currentLineDashType = dataSeries.lineDashType;
+								pixels[pixels.length - 1].newLineDashArray = lineDashType;
+							}
+					}
 
 					//Render Marker
 					if (dataPoints[i].markerSize !== 0) {
@@ -6398,6 +6735,9 @@
 						});
 
 					}
+
+					isFirstDataPointInPlotArea = false;
+					prevDataNull = false;
 				}
 
 				renderBezierArea();
@@ -6415,14 +6755,43 @@
 			var bp = getBezierPoints(pixels, 2);
 
 			if (bp.length > 0) {
+
+				if (dataSeries.lineThickness > 0) {
+					ctx.beginPath();
+					ctx.moveTo(bp[0].x, bp[0].y);
+					if (bp[0].newStrokeStyle)
+						ctx.strokeStyle = bp[0].newStrokeStyle;
+					if (bp[0].newLineDashArray)
+						ctx.setLineDash(bp[0].newLineDashArray);
+
+					for (var i = 0; i < bp.length - 3; i += 3) {
+
+						ctx.bezierCurveTo(bp[i + 1].x, bp[i + 1].y, bp[i + 2].x, bp[i + 2].y, bp[i + 3].x, bp[i + 3].y);
+
+						if (isCanvasSupported)
+							ghostCtx.bezierCurveTo(bp[i + 1].x, bp[i + 1].y, bp[i + 2].x, bp[i + 2].y, bp[i + 3].x, bp[i + 3].y);
+
+						if (bp[i + 3].newStrokeStyle || bp[i + 3].newLineDashArray) {
+							ctx.stroke();
+							ctx.beginPath();
+							ctx.moveTo(bp[i + 3].x, bp[i + 3].y);
+							if (bp[i + 3].newStrokeStyle)
+								ctx.strokeStyle = bp[i + 3].newStrokeStyle;
+							if (bp[i + 3].newLineDashArray)
+								ctx.setLineDash(bp[i + 3].newLineDashArray);
+						}
+
+					}
+
+					ctx.stroke();
+				}
+
 				ctx.beginPath();
 				ctx.moveTo(bp[0].x, bp[0].y);
-
 				if (isCanvasSupported) {
 					ghostCtx.beginPath();
 					ghostCtx.moveTo(bp[0].x, bp[0].y);
 				}
-
 
 				for (var i = 0; i < bp.length - 3; i += 3) {
 
@@ -6432,9 +6801,6 @@
 						ghostCtx.bezierCurveTo(bp[i + 1].x, bp[i + 1].y, bp[i + 2].x, bp[i + 2].y, bp[i + 3].x, bp[i + 3].y);
 
 				}
-
-				if (dataSeries.lineThickness > 0)
-					ctx.stroke();
 
 				if (plotUnit.axisY.viewportMinimum <= 0 && plotUnit.axisY.viewportMaximum >= 0) {
 					baseY = yZeroToPixel;
@@ -6535,27 +6901,34 @@
 			if (dataPoints.length > 0) {
 				//ctx.strokeStyle = "#4572A7 ";                
 				var color = dataSeries._colorSet[i % dataSeries._colorSet.length];
+				var lineColor = dataSeries._options.lineColor || color;
+				var currentStrokeStyle = lineColor;
 				//ctx.strokeStyle = "red";
 				ctx.fillStyle = color;
-				ctx.strokeStyle = color;
+				ctx.strokeStyle = lineColor;
 				ctx.lineWidth = dataSeries.lineThickness;
+				var currentLineDashType = "solid";
 
 				if (ctx.setLineDash) {
-					ctx.setLineDash(getLineDashArray(dataSeries.lineDashType, dataSeries.lineThickness));
+					var nullDataLineDashType = getLineDashArray(dataSeries.nullDataLineDashType, dataSeries.lineThickness);
+					currentLineDashType = dataSeries.lineDashType;
+					var lineDashType = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+					ctx.setLineDash(lineDashType);
 				}
 
 				for (; i < dataPoints.length; i++) {
 
 					dataPointX = dataPoints[i].x.getTime ? dataPoints[i].x.getTime() : dataPoints[i].x;
 
-					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax) {
+					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax && !(dataSeries.connectNullData && prevDataNull)) {
 						continue;
 					}
 
 					var prevY = y;
 
 					if (typeof (dataPoints[i].y) !== "number") {
-						closeArea();
+						if (!(dataSeries.connectNullData || prevDataNull || isFirstDataPointInPlotArea))
+							closeArea();
 
 						prevDataNull = true;
 						continue;
@@ -6567,15 +6940,30 @@
 
 
 					if (isFirstDataPointInPlotArea || prevDataNull) {
-						ctx.beginPath();
-						ctx.moveTo(x, y);
-						startPoint = {
-							x: x, y: y
-						};
+						if (!isFirstDataPointInPlotArea && dataSeries.connectNullData) {
+							//Applying nullLineDshType If lineDashType at dataPoints not mentoioned in prevuous dataPoints
+							if (ctx.setLineDash && (dataSeries._options.nullDataLineDashType || (currentLineDashType === dataSeries.lineDashType && dataSeries.lineDashType !== dataSeries.nullDataLineDashType))) {
+								ctx.stroke();
+								currentLineDashType = dataSeries.nullDataLineDashType;
+								ctx.setLineDash(nullDataLineDashType);
+							}
+							ctx.lineTo(x, prevY);
+							ctx.lineTo(x, y);
+							if (isCanvasSupported) {
+								ghostCtx.lineTo(x, prevY);
+								ghostCtx.lineTo(x, y);
+							}
 
-						if (isCanvasSupported) {
-							ghostCtx.beginPath();
-							ghostCtx.moveTo(x, y);
+						} else { //If connectNullData = false
+							ctx.beginPath();
+							ctx.moveTo(x, y);
+							if (isCanvasSupported) {
+								ghostCtx.beginPath();
+								ghostCtx.moveTo(x, y);
+							}
+							startPoint = {
+								x: x, y: y
+							};
 						}
 
 						isFirstDataPointInPlotArea = false;
@@ -6597,6 +6985,22 @@
 						}
 					}
 
+					if (i < dataPoints.length - 1 && (currentStrokeStyle !== (dataPoints[i].lineColor || lineColor) || currentLineDashType !== (dataPoints[i].lineDashType || dataSeries.lineDashType))) { //Applieng new ctx on DataPoint
+
+						closeArea();
+
+						currentStrokeStyle = dataPoints[i].lineColor || lineColor;
+						ctx.strokeStyle = currentStrokeStyle;
+						if (ctx.setLineDash)
+							if (dataPoints[i].lineDashType) {
+								currentLineDashType = dataPoints[i].lineDashType;
+								ctx.setLineDash(getLineDashArray(currentLineDashType, dataSeries.lineThickness));
+							}
+							else {
+								currentLineDashType = dataSeries.lineDashType;
+								ctx.setLineDash(lineDashType);
+							}
+					}
 
 					var id = dataSeries.dataPointIds[i];
 					this._eventManager.objectMap[id] = {
@@ -6716,6 +7120,7 @@
 		var plotArea = this.plotArea;
 
 		var offsetY = [];
+		var currentBaseValues = [];
 
 		var allXValues = [];
 		//var offsetNegativeY = [];
@@ -6748,7 +7153,7 @@
 			ghostCtx.clip();
 		}
 
-		xValuePresent = [];
+		var xValuePresent = [];
 		for (var j = 0; j < plotUnit.dataSeriesIndexes.length; j++) {
 
 			var dataSeriesIndex = plotUnit.dataSeriesIndexes[j];
@@ -6779,7 +7184,7 @@
 			var dataPoints = dataSeries.dataPoints;
 			var isFirstDataPointInPlotArea = true;
 
-			var currentBaseValues = [];
+			currentBaseValues = [];
 
 
 			var seriesId = dataSeries.id;
@@ -6795,14 +7200,21 @@
 
 				color = dataSeries._colorSet[0];
 				//ctx.strokeStyle = "red";
+				var lineColor = dataSeries._options.lineColor || color;
+				var currentStrokeStyle = lineColor;
 				ctx.fillStyle = color;
-				ctx.strokeStyle = color;
+				ctx.strokeStyle = lineColor;
 				ctx.lineWidth = dataSeries.lineThickness;
+				var currentLineDashType = "solid";
 
 				if (ctx.setLineDash) {
-					ctx.setLineDash(getLineDashArray(dataSeries.lineDashType, dataSeries.lineThickness));
+					var nullDataLineDashType = getLineDashArray(dataSeries.nullDataLineDashType, dataSeries.lineThickness);
+					currentLineDashType = dataSeries.lineDashType;
+					var lineDashType = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+					ctx.setLineDash(lineDashType);
 				}
 
+				var prevDataNull = true;
 				for (i = 0; i < allXValues.length; i++) {
 
 					dataPointX = allXValues[i];
@@ -6812,15 +7224,20 @@
 						dataPoint = dataPoints[dataSeries.dataPointIndexes[dataPointX]];
 					else
 						dataPoint = {
-							x: dataPointX, y: 0
+							x: dataPointX, y: null
 						};
 
-					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax) {
+					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax && !(dataSeries.connectNullData && prevDataNull)) {
 						continue;
 					}
 
-					if (typeof (dataPoint.y) !== "number")
+					if (typeof (dataPoint.y) !== "number") {
+						if (!(dataSeries.connectNullData || prevDataNull || isFirstDataPointInPlotArea))
+							closeArea();
+
+						prevDataNull = true;
 						continue;
+					}
 
 					var x = (plotUnit.axisX.conversionParameters.reference + plotUnit.axisX.conversionParameters.pixelPerUnit * (dataPointX - plotUnit.axisX.conversionParameters.minimum) + .5) << 0;
 					//var y = (plotUnit.axisY.conversionParameters.reference + plotUnit.axisY.conversionParameters.pixelPerUnit * (dataPoint.y - plotUnit.axisY.conversionParameters.minimum) + .5) << 0;
@@ -6832,16 +7249,32 @@
 					currentBaseValues.push({ x: x, y: yZeroToPixel - offset });
 					offsetY[dataPointX] = yZeroToPixel - y;
 
-					if (isFirstDataPointInPlotArea) {
-						ctx.beginPath();
-						ctx.moveTo(x, y);
+					if (isFirstDataPointInPlotArea || prevDataNull) {
 
-						if (isCanvasSupported) {
-							ghostCtx.beginPath();
-							ghostCtx.moveTo(x, y);
+						if (!isFirstDataPointInPlotArea && dataSeries.connectNullData) {
+							//Applying nullLineDshType If lineDashType at dataPoints not mentoioned in prevuous dataPoints
+							if (ctx.setLineDash && (dataSeries._options.nullDataLineDashType || (currentLineDashType === dataSeries.lineDashType && dataSeries.lineDashType !== dataSeries.nullDataLineDashType))) {
+								ctx.stroke();
+								currentLineDashType = dataSeries.nullDataLineDashType;
+								ctx.setLineDash(nullDataLineDashType);
+							}
+
+							ctx.lineTo(x, y);
+							if (isCanvasSupported)
+								ghostCtx.lineTo(x, y);
+
+						} else {
+							ctx.beginPath();
+							ctx.moveTo(x, y);
+
+							if (isCanvasSupported) {
+								ghostCtx.beginPath();
+								ghostCtx.moveTo(x, y);
+							}
 						}
-
+						//currentBaseValues.push({ x: x, y: yZeroToPixel - offset });
 						isFirstDataPointInPlotArea = false;
+						prevDataNull = false;
 					}
 					else {
 
@@ -6852,38 +7285,37 @@
 
 						if (i % 250 == 0) {
 
-							if (dataSeries.lineThickness > 0)
-								ctx.stroke();
-
-							while (currentBaseValues.length > 0) {
-								var point = currentBaseValues.pop();
-								ctx.lineTo(point.x, point.y);
-
-								if (isCanvasSupported)
-									ghostCtx.lineTo(point.x, point.y);
-
-							}
-
-							ctx.closePath();
-
-							ctx.globalAlpha = dataSeries.fillOpacity;
-							ctx.fill();
-							ctx.globalAlpha = 1;
-
-							ctx.beginPath();
+							closeArea();
 							ctx.moveTo(x, y);
 
 							if (isCanvasSupported) {
-								ghostCtx.closePath();
-								ghostCtx.fill();
-
-								ghostCtx.beginPath();
 								ghostCtx.moveTo(x, y);
 							}
 
 							currentBaseValues.push({ x: x, y: yZeroToPixel - offset });
 						}
 
+					}
+
+					if (i < dataPoints.length - 1 && (currentStrokeStyle !== (dataPoints[i].lineColor || lineColor) || currentLineDashType !== (dataPoints[i].lineDashType || dataSeries.lineDashType))) { //Applieng new ctx on DataPoint
+
+						closeArea();
+						//ctx.stroke();
+						ctx.beginPath();
+						ctx.moveTo(x, y);
+						currentBaseValues.push({ x: x, y: yZeroToPixel - offset });
+
+						currentStrokeStyle = dataPoints[i].lineColor || lineColor;
+						ctx.strokeStyle = currentStrokeStyle;
+						if (ctx.setLineDash)
+							if (dataPoints[i].lineDashType) {
+								currentLineDashType = dataPoints[i].lineDashType;
+								ctx.setLineDash(getLineDashArray(currentLineDashType, dataSeries.lineThickness));
+							}
+							else {
+								currentLineDashType = dataSeries.lineDashType;
+								ctx.setLineDash(lineDashType);
+							}
 					}
 
 					if (dataSeries.dataPointIndexes[dataPointX] >= 0) {
@@ -6935,30 +7367,10 @@
 					}
 				}
 
-				if (dataSeries.lineThickness > 0)
-					ctx.stroke();
-
-				while (currentBaseValues.length > 0) {
-					var point = currentBaseValues.pop();
-					ctx.lineTo(point.x, point.y);
-
-					if (isCanvasSupported)
-						ghostCtx.lineTo(point.x, point.y);
-				}
-
-				ctx.closePath();
-
-				ctx.globalAlpha = dataSeries.fillOpacity;
-				ctx.fill();
-				ctx.globalAlpha = 1;
-
-				ctx.beginPath();
+				closeArea();
 				ctx.moveTo(x, y);
 
 				if (isCanvasSupported) {
-					ghostCtx.closePath();
-					ghostCtx.fill();
-					ghostCtx.beginPath();
 					ghostCtx.moveTo(x, y);
 				}
 			}
@@ -6979,6 +7391,40 @@
 			source: ctx, dest: this.plotArea.ctx, animationCallback: AnimationHelper.xClipAnimation, easingFunction: AnimationHelper.easing.linear, animationBase: 0
 		};
 		return animationInfo;
+
+		function closeArea() {
+
+			if (currentBaseValues.length < 1)
+				return;
+
+			if (dataSeries.lineThickness > 0)
+				ctx.stroke();
+
+			while (currentBaseValues.length > 0) {
+				var point = currentBaseValues.pop();
+				ctx.lineTo(point.x, point.y);
+
+				if (isCanvasSupported)
+					ghostCtx.lineTo(point.x, point.y);
+
+			}
+
+			ctx.closePath();
+
+			ctx.globalAlpha = dataSeries.fillOpacity;
+			ctx.fill();
+			ctx.globalAlpha = 1;
+
+			ctx.beginPath();
+
+			if (isCanvasSupported) {
+				ghostCtx.closePath();
+				ghostCtx.fill();
+
+				ghostCtx.beginPath();
+			}
+			currentBaseValues = [];
+		}
 	}
 
 	Chart.prototype.renderStackedArea100 = function (plotUnit) {
@@ -6995,7 +7441,7 @@
 		var markers = [];
 
 		var offsetY = [];
-
+		var currentBaseValues = [];
 		var allXValues = [];
 		//var offsetNegativeY = [];
 
@@ -7028,7 +7474,7 @@
 			ghostCtx.clip();
 		}
 
-		xValuePresent = [];
+		var xValuePresent = [];
 		for (var j = 0; j < plotUnit.dataSeriesIndexes.length; j++) {
 
 			var dataSeriesIndex = plotUnit.dataSeriesIndexes[j];
@@ -7075,24 +7521,30 @@
 			else if (barWidth > maxBarWidth)
 				barWidth = maxBarWidth;
 
-			var currentBaseValues = [];
+			currentBaseValues = [];
 
 			if (allXValues.length > 0) {
 
 				color = dataSeries._colorSet[i % dataSeries._colorSet.length];
 				//ctx.strokeStyle = "red";
+				var lineColor = dataSeries._options.lineColor || color;
+				var currentStrokeStyle = lineColor;
 				ctx.fillStyle = color;
-				ctx.strokeStyle = color;
+				ctx.strokeStyle = lineColor;
 				ctx.lineWidth = dataSeries.lineThickness;
+				var currentLineDashType = "solid";
 
 				if (ctx.setLineDash) {
-					ctx.setLineDash(getLineDashArray(dataSeries.lineDashType, dataSeries.lineThickness));
+					var nullDataLineDashType = getLineDashArray(dataSeries.nullDataLineDashType, dataSeries.lineThickness);
+					currentLineDashType = dataSeries.lineDashType;
+					var lineDashType = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+					ctx.setLineDash(lineDashType);
 				}
 
 				var bevelEnabled = (barWidth > 5) ? false : false;
 
 				//ctx.strokeStyle = "#4572A7 ";
-
+				var prevDataNull = true;
 				for (i = 0; i < allXValues.length; i++) {
 
 					dataPointX = allXValues[i];
@@ -7102,15 +7554,20 @@
 						dataPoint = dataPoints[dataSeries.dataPointIndexes[dataPointX]];
 					else
 						dataPoint = {
-							x: dataPointX, y: 0
+							x: dataPointX, y: null
 						};
 
-					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax) {
+					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax && !(dataSeries.connectNullData && prevDataNull)) {
 						continue;
 					}
 
-					if (typeof (dataPoint.y) !== "number")
+					if (typeof (dataPoint.y) !== "number") {
+						if (!(dataSeries.connectNullData || prevDataNull || isFirstDataPointInPlotArea))
+							closeArea();
+
+						prevDataNull = true;
 						continue;
+					}
 
 					var yPercent;
 					if (plotUnit.dataPointYSums[dataPointX] !== 0)
@@ -7127,16 +7584,31 @@
 					currentBaseValues.push({ x: x, y: yZeroToPixel - offset });
 					offsetY[dataPointX] = yZeroToPixel - y;
 
-					if (isFirstDataPointInPlotArea) {
-						ctx.beginPath();
-						ctx.moveTo(x, y);
+					if (isFirstDataPointInPlotArea || prevDataNull) {
 
-						if (isCanvasSupported) {
-							ghostCtx.beginPath();
-							ghostCtx.moveTo(x, y);
+						if (!isFirstDataPointInPlotArea && dataSeries.connectNullData) {
+							//Applying nullLineDshType If lineDashType at dataPoints not mentoioned in prevuous dataPoints
+							if (ctx.setLineDash && (dataSeries._options.nullDataLineDashType || (currentLineDashType === dataSeries.lineDashType && dataSeries.lineDashType !== dataSeries.nullDataLineDashType))) {
+								ctx.stroke();
+								currentLineDashType = dataSeries.nullDataLineDashType;
+								ctx.setLineDash(nullDataLineDashType);
+							}
+
+							ctx.lineTo(x, y);
+							if (isCanvasSupported)
+								ghostCtx.lineTo(x, y);
+
+						} else {
+							ctx.beginPath();
+							ctx.moveTo(x, y);
+
+							if (isCanvasSupported) {
+								ghostCtx.beginPath();
+								ghostCtx.moveTo(x, y);
+							}
 						}
-
 						isFirstDataPointInPlotArea = false;
+						prevDataNull = false;
 					}
 					else {
 
@@ -7147,35 +7619,36 @@
 
 						if (i % 250 == 0) {
 
-							if (dataSeries.lineThickness > 0)
-								ctx.stroke();
-
-							while (currentBaseValues.length > 0) {
-								var point = currentBaseValues.pop();
-								ctx.lineTo(point.x, point.y);
-
-								if (isCanvasSupported)
-									ghostCtx.lineTo(point.x, point.y);
-							}
-
-							ctx.closePath();
-
-							ctx.globalAlpha = dataSeries.fillOpacity;
-							ctx.fill();
-							ctx.globalAlpha = 1;
-
-							ctx.beginPath();
+							closeArea();
 							ctx.moveTo(x, y);
 
 							if (isCanvasSupported) {
-								ghostCtx.closePath();
-								ghostCtx.fill();
-								ghostCtx.beginPath();
 								ghostCtx.moveTo(x, y);
 							}
 
 							currentBaseValues.push({ x: x, y: yZeroToPixel - offset });
 						}
+					}
+
+					if (i < dataPoints.length - 1 && (currentStrokeStyle !== (dataPoints[i].lineColor || lineColor) || currentLineDashType !== (dataPoints[i].lineDashType || dataSeries.lineDashType))) { //Applieng new ctx on DataPoint
+
+						closeArea();
+						//ctx.stroke();
+						ctx.beginPath();
+						ctx.moveTo(x, y);
+						currentBaseValues.push({ x: x, y: yZeroToPixel - offset });
+
+						currentStrokeStyle = dataPoints[i].lineColor || lineColor;
+						ctx.strokeStyle = currentStrokeStyle;
+						if (ctx.setLineDash)
+							if (dataPoints[i].lineDashType) {
+								currentLineDashType = dataPoints[i].lineDashType;
+								ctx.setLineDash(getLineDashArray(currentLineDashType, dataSeries.lineThickness));
+							}
+							else {
+								currentLineDashType = dataSeries.lineDashType;
+								ctx.setLineDash(lineDashType);
+							}
 					}
 
 
@@ -7227,30 +7700,9 @@
 					}
 				}
 
-				if (dataSeries.lineThickness > 0)
-					ctx.stroke();
-
-				while (currentBaseValues.length > 0) {
-					var point = currentBaseValues.pop();
-					ctx.lineTo(point.x, point.y);
-
-					if (isCanvasSupported)
-						ghostCtx.lineTo(point.x, point.y);
-				}
-
-				ctx.closePath();
-
-				ctx.globalAlpha = dataSeries.fillOpacity;
-				ctx.fill();
-				ctx.globalAlpha = 1;
-
-				ctx.beginPath();
+				closeArea();
 				ctx.moveTo(x, y);
-
 				if (isCanvasSupported) {
-					ghostCtx.closePath();
-					ghostCtx.fill();
-					ghostCtx.beginPath();
 					ghostCtx.moveTo(x, y);
 				}
 			}
@@ -7270,6 +7722,35 @@
 			source: ctx, dest: this.plotArea.ctx, animationCallback: AnimationHelper.xClipAnimation, easingFunction: AnimationHelper.easing.linear, animationBase: 0
 		};
 		return animationInfo;
+
+		function closeArea() {
+			if (dataSeries.lineThickness > 0)
+				ctx.stroke();
+
+			while (currentBaseValues.length > 0) {
+				var point = currentBaseValues.pop();
+				ctx.lineTo(point.x, point.y);
+
+				if (isCanvasSupported)
+					ghostCtx.lineTo(point.x, point.y);
+			}
+
+			ctx.closePath();
+
+			ctx.globalAlpha = dataSeries.fillOpacity;
+			ctx.fill();
+			ctx.globalAlpha = 1;
+
+			ctx.beginPath();
+
+			if (isCanvasSupported) {
+				ghostCtx.closePath();
+				ghostCtx.fill();
+				ghostCtx.beginPath();
+			}
+
+			currentBaseValues = [];
+		}
 	}
 
 	Chart.prototype.renderBubble = function (plotUnit) {
@@ -7305,6 +7786,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    this._eventManager.ghostCtx.beginPath();
 			this._eventManager.ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			this._eventManager.ghostCtx.clip();
 		}
@@ -7467,6 +7949,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    this._eventManager.ghostCtx.beginPath();
 			this._eventManager.ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			this._eventManager.ghostCtx.clip();
 		}
@@ -7634,6 +8117,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    ghostCtx.beginPath();
 			ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			ghostCtx.clip();
 		}
@@ -7848,6 +8332,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    this._eventManager.ghostCtx.beginPath();
 			this._eventManager.ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			this._eventManager.ghostCtx.clip();
 		}
@@ -8020,6 +8505,7 @@
 		ctx.clip();
 
 		if (isCanvasSupported) {
+		    this._eventManager.ghostCtx.beginPath();
 			this._eventManager.ghostCtx.rect(plotArea.x1, plotArea.y1, plotArea.width, plotArea.height);
 			this._eventManager.ghostCtx.clip();
 		}
@@ -8201,12 +8687,18 @@
 				//ctx.strokeStyle = "#4572A7 ";                
 				var color = dataSeries._colorSet[i % dataSeries._colorSet.length];
 				//ctx.strokeStyle = "red";
+				var lineColor = dataSeries._options.lineColor || color;
+				var currentStrokeStyle = lineColor;
 				ctx.fillStyle = color;
-				ctx.strokeStyle = color;
+				ctx.strokeStyle = lineColor;
 				ctx.lineWidth = dataSeries.lineThickness;
+				var currentLineDashType = "solid";
 
 				if (ctx.setLineDash) {
-					ctx.setLineDash(getLineDashArray(dataSeries.lineDashType, dataSeries.lineThickness));
+					var nullDataLineDashType = getLineDashArray(dataSeries.nullDataLineDashType, dataSeries.lineThickness);
+					currentLineDashType = dataSeries.lineDashType;
+					var lineDashType = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+					ctx.setLineDash(lineDashType);
 				}
 
 				var prevDataNull = true;
@@ -8214,14 +8706,15 @@
 
 					dataPointX = dataPoints[i].x.getTime ? dataPoints[i].x.getTime() : dataPoints[i].x;
 
-					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax) {
+					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax && !(dataSeries.connectNullData && prevDataNull)) {
 						continue;
 					}
 
 					if (dataPoints[i].y === null || !dataPoints[i].y.length
 						|| typeof (dataPoints[i].y[0]) !== "number" || typeof (dataPoints[i].y[1]) !== "number") {
 
-						closeArea();
+						if (!(prevDataNull || isFirstDataPointInPlotArea))
+							closeArea();
 
 						prevDataNull = true;
 						continue;
@@ -8233,21 +8726,38 @@
 					y2 = (plotUnit.axisY.conversionParameters.reference + plotUnit.axisY.conversionParameters.pixelPerUnit * (dataPoints[i].y[1] - plotUnit.axisY.conversionParameters.minimum) + .5) << 0;
 
 					if (isFirstDataPointInPlotArea || prevDataNull) {
-						ctx.beginPath();
-						ctx.moveTo(x, y1);
-						startPoint = {
-							x: x, y: y1
-						};
-						closingPath = [];
-						closingPath.push({ x: x, y: y2 });
 
-						if (isCanvasSupported) {
-							ghostCtx.beginPath();
-							ghostCtx.moveTo(x, y1);
+						if (dataSeries.connectNullData && !isFirstDataPointInPlotArea) {
+							if (ctx.setLineDash && (dataSeries._options.nullDataLineDashType || (currentLineDashType === dataSeries.lineDashType && dataSeries.lineDashType !== dataSeries.nullDataLineDashType))) {
+								closingPath[closingPath.length - 1].newLineDashArray = lineDashType;
+								currentLineDashType = dataSeries.nullDataLineDashType;
+								ctx.setLineDash(nullDataLineDashType);
+							}
+
+							ctx.lineTo(x, y1);
+							if (isCanvasSupported)
+								ghostCtx.lineTo(x, y1);
+							closingPath.push({ x: x, y: y2 });
+
+						} else {
+
+							ctx.beginPath();
+							ctx.moveTo(x, y1);
+							startPoint = {
+								x: x, y: y1
+							};
+							closingPath = [];
+							closingPath.push({ x: x, y: y2 });
+
+							if (isCanvasSupported) {
+								ghostCtx.beginPath();
+								ghostCtx.moveTo(x, y1);
+							}
 						}
 
 						isFirstDataPointInPlotArea = false;
 						prevDataNull = false;
+
 					}
 					else {
 
@@ -8267,6 +8777,30 @@
 					this._eventManager.objectMap[id] = {
 						id: id, objectType: "dataPoint", dataSeriesIndex: dataSeriesIndex, dataPointIndex: i, x1: x, y1: y1, y2: y2
 					};
+
+					if (i < dataPoints.length - 1) {
+
+						if (currentStrokeStyle !== (dataPoints[i].lineColor || lineColor) || currentLineDashType !== (dataPoints[i].lineDashType || dataSeries.lineDashType)) { //Applieng new ctx on DataPoint
+
+							closeArea();
+
+							currentStrokeStyle = dataPoints[i].lineColor || lineColor;
+							closingPath[closingPath.length - 1].newStrokeStyle = currentStrokeStyle;
+							ctx.strokeStyle = currentStrokeStyle;
+
+							if (ctx.setLineDash)
+								if (dataPoints[i].lineDashType) {
+									currentLineDashType = dataPoints[i].lineDashType;
+									closingPath[closingPath.length - 1].newLineDashArray = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+									ctx.setLineDash(closingPath[closingPath.length - 1].newLineDashArray);
+								}
+								else {
+									currentLineDashType = dataSeries.lineDashType;
+									closingPath[closingPath.length - 1].newLineDashArray = lineDashType;
+									ctx.setLineDash(lineDashType);
+								}
+						}
+					}
 
 					//Render Marker
 					if (dataPoints[i].markerSize !== 0) {
@@ -8483,30 +9017,48 @@
 
 			if (dataPoints.length > 0) {
 				//ctx.strokeStyle = "#4572A7 ";                
-				color = dataSeries._colorSet[i % dataSeries._colorSet.length];
+				var color = dataSeries._colorSet[i % dataSeries._colorSet.length];
 				//ctx.strokeStyle = "red";
+				var lineColor = dataSeries._options.lineColor || color;
+				var currentStrokeStyle = lineColor;
 				ctx.fillStyle = color;
-				ctx.strokeStyle = color;
+				//ctx.strokeStyle = lineColor;
 				ctx.lineWidth = dataSeries.lineThickness;
+				var currentLineDashType = "solid";
+				var lineDashType;
 
 				if (ctx.setLineDash) {
-					ctx.setLineDash(getLineDashArray(dataSeries.lineDashType, dataSeries.lineThickness));
+					var nullDataLineDashType = getLineDashArray(dataSeries.nullDataLineDashType, dataSeries.lineThickness);
+					currentLineDashType = dataSeries.lineDashType;
+					lineDashType = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+					//ctx.setLineDash(lineDashType);
 				}
+
+				var prevDataNull = false;
 
 				for (; i < dataPoints.length; i++) {
 
 					dataPointX = dataPoints[i].x.getTime ? dataPoints[i].x.getTime() : dataPoints[i].x;
 
-					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax) {
+					if (dataPointX < plotUnit.axisX.dataInfo.viewPortMin || dataPointX > plotUnit.axisX.dataInfo.viewPortMax && !(dataSeries.connectNullData && prevDataNull)) {
 						continue;
 					}
 
 					if (dataPoints[i].y === null || !dataPoints[i].y.length || typeof (dataPoints[i].y[0]) !== "number" || typeof (dataPoints[i].y[1]) !== "number") {
-						if (i > 0) {
-							renderBezierArea();
-							pixelsY1 = [];
-							pixelsY2 = [];
+						if (i > 0 && !prevDataNull) {
+							if (dataSeries.connectNullData) {
+								if (ctx.setLineDash && pixelsY1.length > 0 && (dataSeries._options.nullDataLineDashType || !dataPoints[i - 1].lineDashType)) {
+									pixelsY1[pixelsY1.length - 1].newLineDashArray = nullDataLineDashType;
+									currentLineDashType = dataSeries.nullDataLineDashType;
+								}
+							}
+							else {
+								renderBezierArea(lineDashType, lineColor);
+								pixelsY1 = [];
+								pixelsY2 = [];
+							}
 						}
+						prevDataNull = true;
 						continue;
 					}
 
@@ -8526,6 +9078,21 @@
 					pixelsY2[pixelsY2.length] = {
 						x: x, y: y2
 					};
+
+					if (i < dataPoints.length - 1 && (currentStrokeStyle !== (dataPoints[i].lineColor || lineColor) || currentLineDashType !== (dataPoints[i].lineDashType || dataSeries.lineDashType))) { //Applieng new ctx on DataPoint
+
+						currentStrokeStyle = dataPoints[i].lineColor || lineColor;
+						pixelsY1[pixelsY1.length - 1].newStrokeStyle = currentStrokeStyle;
+						if (ctx.setLineDash)
+							if (dataPoints[i].lineDashType) {
+								currentLineDashType = dataPoints[i].lineDashType;
+								pixelsY1[pixelsY1.length - 1].newLineDashArray = getLineDashArray(currentLineDashType, dataSeries.lineThickness);
+							}
+							else {
+								currentLineDashType = dataSeries.lineDashType;
+								pixelsY1[pixelsY1.length - 1].newLineDashArray = lineDashType;
+							}
+					}
 
 					//Render Marker
 					if (dataPoints[i].markerSize !== 0) {
@@ -8601,9 +9168,12 @@
 						});
 
 					}
+
+					isFirstDataPointInPlotArea = false;
+					prevDataNull = false;
 				}
 
-				renderBezierArea();
+				renderBezierArea(lineDashType, lineColor);
 
 				RenderHelper.drawMarkers(markers);
 			}
@@ -8614,10 +9184,36 @@
 		if (isCanvasSupported)
 			this._eventManager.ghostCtx.restore();
 
-		function renderBezierArea() {
+		function renderBezierArea(lineDashType, lineColor) {
+
 			var bp = getBezierPoints(pixelsY1, 2);
 
 			if (bp.length > 0) {
+
+				if (dataSeries.lineThickness > 0) {
+					ctx.strokeStyle = lineColor;
+					if (ctx.setLineDash)
+						ctx.setLineDash(lineDashType);
+					ctx.beginPath();
+					ctx.moveTo(bp[0].x, bp[0].y);
+					for (var i = 0; i < bp.length - 3; i += 3) {
+
+						if (bp[i].newStrokeStyle || bp[i].newLineDashArray) {
+							ctx.stroke();
+							ctx.beginPath();
+							ctx.moveTo(bp[i].x, bp[i].y);
+							if (bp[i].newStrokeStyle)
+								ctx.strokeStyle = bp[i].newStrokeStyle;
+							if (bp[i].newLineDashArray)
+								ctx.setLineDash(bp[i].newLineDashArray);
+						}
+
+						ctx.bezierCurveTo(bp[i + 1].x, bp[i + 1].y, bp[i + 2].x, bp[i + 2].y, bp[i + 3].x, bp[i + 3].y);
+
+					}
+					ctx.stroke();
+				}
+
 				ctx.beginPath();
 				ctx.moveTo(bp[0].x, bp[0].y);
 
@@ -8625,7 +9221,6 @@
 					ghostCtx.beginPath();
 					ghostCtx.moveTo(bp[0].x, bp[0].y);
 				}
-
 
 				for (var i = 0; i < bp.length - 3; i += 3) {
 
@@ -8635,8 +9230,8 @@
 						ghostCtx.bezierCurveTo(bp[i + 1].x, bp[i + 1].y, bp[i + 2].x, bp[i + 2].y, bp[i + 3].x, bp[i + 3].y);
 				}
 
-				if (dataSeries.lineThickness > 0)
-					ctx.stroke();
+
+
 
 				bp = getBezierPoints(pixelsY2, 2);
 
@@ -8654,19 +9249,34 @@
 
 				ctx.globalAlpha = dataSeries.fillOpacity;
 				ctx.fill();
+				if (isCanvasSupported) {
+					ghostCtx.closePath();
+					ghostCtx.fill();
+				}
+
 				ctx.globalAlpha = 1;
 
 
 				if (dataSeries.lineThickness > 0) {
+					ctx.strokeStyle = lineColor;
+					if (ctx.setLineDash)
+						ctx.setLineDash(lineDashType);
 					ctx.beginPath();
-					ctx.moveTo(pixelsY2[pixelsY2.length - 1].x, pixelsY2[pixelsY2.length - 1].y);
+					ctx.moveTo(bp[0].x, bp[0].y);
+					for (var i = 0, j = 0; i < bp.length - 3; i += 3, j++) {
 
-					for (var i = bp.length - 1; i > 2; i -= 3) {
+						if (pixelsY1[j].newStrokeStyle || pixelsY1[j].newLineDashArray) {
+							ctx.stroke();
+							ctx.beginPath();
+							ctx.moveTo(bp[i].x, bp[i].y);
+							if (pixelsY1[j].newStrokeStyle)
+								ctx.strokeStyle = pixelsY1[j].newStrokeStyle;
+							if (pixelsY1[j].newLineDashArray)
+								ctx.setLineDash(pixelsY1[j].newLineDashArray);
+						}
 
-						ctx.bezierCurveTo(bp[i - 1].x, bp[i - 1].y, bp[i - 2].x, bp[i - 2].y, bp[i - 3].x, bp[i - 3].y);
+						ctx.bezierCurveTo(bp[i + 1].x, bp[i + 1].y, bp[i + 2].x, bp[i + 2].y, bp[i + 3].x, bp[i + 3].y);
 
-						if (isCanvasSupported)
-							ghostCtx.bezierCurveTo(bp[i - 1].x, bp[i - 1].y, bp[i - 2].x, bp[i - 2].y, bp[i - 3].x, bp[i - 3].y);
 					}
 					ctx.stroke();
 				}
@@ -8674,10 +9284,7 @@
 				ctx.beginPath();
 
 
-				if (isCanvasSupported) {
-					ghostCtx.closePath();
-					ghostCtx.fill();
-				}
+
 			}
 		}
 
@@ -8690,7 +9297,8 @@
 	//#region pieChart
 
 	var drawSegment = function (ctx, center, radius, color, type, theta1, theta2, fillOpacity, percentInnerRadius) {
-
+		if (radius < 0)
+			return;
 		if (typeof (fillOpacity) === "undefined")
 			fillOpacity = 1;
 
@@ -8723,7 +9331,8 @@
 		else if (type === "doughnut") {
 			ctx.beginPath();
 			ctx.arc(center.x, center.y, radius, theta1, theta2, false);
-			ctx.arc(center.x, center.y, percentInnerRadius * radius, theta2, theta1, true);
+			if (percentInnerRadius >= 0)
+				ctx.arc(center.x, center.y, percentInnerRadius * radius, theta2, theta1, true);
 			ctx.closePath();
 			ctx.fillStyle = color;
 			ctx.strokeStyle = "white";
@@ -8777,6 +9386,7 @@
 		var dataPointEOs = []; //dataPoint Extension Objects Behaves like a storage place for all additional data relating to dataPoints. Requred because actual dataPoints should not be modified.
 
 		var minDistanceBetweenLabels = 2;
+		var indexLabelRadius;
 		var indexLabelRadiusToRadiusRatio = 1.3;
 		var poleAnglularDistance = (20 / 180) * Math.PI; //Anglular Distance from 90 & 270 to be considered pole
 		var precision = 6;
@@ -8823,7 +9433,7 @@
 			var firstDPCloseToSouth = 0;
 			var firstDPCloseToNorth = 0;
 
-			for (j = 0; j < dataPoints.length; j++) {
+			for (var j = 0; j < dataPoints.length; j++) {
 
 				var dataPoint = dataPoints[j];
 				var id = dataSeries.dataPointIds[j];
@@ -8932,7 +9542,7 @@
 			var noOfDPToLeftOfNorthPole = 0;
 			var keepSameDirection = false; // once a dataPoint's hemisphere is changed, others should follow the same so that there are no labes near pole pointing in opposite direction.
 
-			for (j = 0; j < dataPoints.length; j++) {
+			for (var j = 0; j < dataPoints.length; j++) {
 
 				var dataPointEO = dataPointEOs[(firstDPCloseToSouth + j) % dataPoints.length];
 
@@ -8950,7 +9560,7 @@
 			}
 
 			keepSameDirection = false;
-			for (j = 0; j < dataPoints.length; j++) {
+			for (var j = 0; j < dataPoints.length; j++) {
 
 				var dataPointEO = dataPointEOs[(firstDPCloseToNorth + j) % dataPoints.length];
 
@@ -9701,7 +10311,7 @@
 						return entry1.y - entry2.y;
 					});
 
-					for (i = 0; i < dpEOs.length; i++) {
+					for (var i = 0; i < dpEOs.length; i++) {
 						var dpEO = dpEOs[i];
 
 						if (totalRemovedLabelHeight < totalOverlap * .7) {
@@ -9804,32 +10414,34 @@
 				return;
 			}
 
-			var i = e.dataPointIndex;
-			var dataPoint = e.dataPoint;
-			var dataSeries = this;
+			//if explodeOnClick === true
+			if ((isNullOrUndefined(e.dataSeries.explodeOnClick) || e.dataSeries.explodeOnClick)) {
+				var i = e.dataPointIndex;
+				var dataPoint = e.dataPoint;
+				var dataSeries = this;
 
 
-			var id = dataSeries.dataPointIds[i];
+				var id = dataSeries.dataPointIds[i];
 
-			//dataPointEO = _this._eventManager.objectMap[id];
+				//dataPointEO = _this._eventManager.objectMap[id];
 
-			if (dataPoint.exploded)
-				dataPoint.exploded = false;
-			else
-				dataPoint.exploded = true;
+				if (dataPoint.exploded)
+					dataPoint.exploded = false;
+				else
+					dataPoint.exploded = true;
 
 
-			// So that it doesn't try to explode when there is only one segment
-			if (dataSeries.dataPoints.length > 1) {
-				_this._animator.animate(0, explodeDuration, function (fractionComplete) {
+				// So that it doesn't try to explode when there is only one segment
+				if (dataSeries.dataPoints.length > 1) {
+					_this._animator.animate(0, explodeDuration, function (fractionComplete) {
 
-					explodeToggle(fractionComplete);
-					renderChartElementsInPlotArea();
-					//console.log("Explode Start");
+						explodeToggle(fractionComplete);
+						renderChartElementsInPlotArea();
+						//console.log("Explode Start");
 
-				});
+					});
+				}
 			}
-
 			return;
 		}
 
@@ -10181,6 +10793,16 @@
 		this.canvas = chart.canvas;
 		this.ctx = this.chart.ctx;
 
+		//For assigning zero margin if title and subtitle situated at the same place
+		if (isNullOrUndefined(this._options.margin) && chart._options.subtitles) {
+			var subtitles = chart._options.subtitles;
+			for (var i = 0; i < subtitles.length; i++) {
+				if ((isNullOrUndefined(subtitles[i].horizontalAlign) && this.horizontalAlign === "center" || subtitles[i].horizontalAlign === this.horizontalAlign) && (isNullOrUndefined(subtitles[i].verticalAlign) && this.verticalAlign === "top" || subtitles[i].verticalAlign === this.verticalAlign) && (!subtitles[i].dockInsidePlotArea === !this.dockInsidePlotArea)) {
+					this.margin = 0;
+					break;
+				}
+			}
+		}
 
 		if (typeof (this._options.fontSize) === "undefined") {
 
@@ -10405,7 +11027,8 @@
 		var left = 0;
 		var maxWidth = 0;
 		var maxHeight = 0;
-		var itemMargin = 5;
+		var markerMargin = this.chart._options.legend && !isNullOrUndefined(this.chart._options.legend.markerMargin) ? this.chart._options.legend.markerMargin : this.fontSize * 0.3;
+		this.height = 0;
 
 		var items = [];
 		var rows = [];
@@ -10417,7 +11040,7 @@
 			this.orientation = "horizontal";
 			position = this.verticalAlign;
 
-			maxWidth = this.maxWidth !== null ? this.maxWidth : freeSpace.width * .7;
+			maxWidth = this.maxWidth !== null ? this.maxWidth : freeSpace.width;
 			maxHeight = this.maxHeight !== null ? this.maxHeight : freeSpace.height * .5;
 		}
 		else if (this.verticalAlign === "center") {
@@ -10425,7 +11048,7 @@
 			position = this.horizontalAlign;
 
 			maxWidth = this.maxWidth !== null ? this.maxWidth : freeSpace.width * .5;
-			maxHeight = this.maxHeight !== null ? this.maxHeight : freeSpace.height * .7;
+			maxHeight = this.maxHeight !== null ? this.maxHeight : freeSpace.height;
 		}
 
 		for (var i = 0; i < this.dataSeries.length; i++) {
@@ -10438,7 +11061,7 @@
 				var legendText = dataSeries.legendText ? dataSeries.legendText : this.itemTextFormatter ? this.itemTextFormatter({ chart: this.chart._publicChartReference, legend: this._options, dataSeries: dataSeries, dataPoint: null })
 					: dataSeries.name;
 				var markerColor = dataSeries.legendMarkerColor ? dataSeries.legendMarkerColor : dataSeries.markerColor ? dataSeries.markerColor : dataSeries._colorSet[0];
-				var markerSize = (!dataSeries.markerSize && (dataSeries.type === "line" || dataSeries.type === "stepLine" || dataSeries.type === "spline")) ? 0 : this.lineHeight * .6;
+				var markerSize = (!dataSeries.markerSize && (dataSeries.type === "line" || dataSeries.type === "stepLine" || dataSeries.type === "spline")) ? 0 : this.lineHeight * .75;
 				var markerBorderColor = dataSeries.legendMarkerBorderColor ? dataSeries.legendMarkerBorderColor : dataSeries.markerBorderColor;
 				var markerBorderThickness = dataSeries.legendMarkerBorderThickness ? dataSeries.legendMarkerBorderThickness : dataSeries.markerBorderThickness ? Math.max(1, Math.round(markerSize * .2)) : 0;
 				var lineColor = dataSeries._colorSet[0];
@@ -10459,7 +11082,7 @@
 					var legendText = dataPoint.legendText ? dataPoint.legendText : dataSeries.legendText ? dataSeries.legendText : this.itemTextFormatter ? this.itemTextFormatter({ chart: this.chart._publicChartReference, legend: this._options, dataSeries: dataSeries, dataPoint: dataPoint })
 						: dataPoint.name ? dataPoint.name : "DataPoint: " + (dataPointIndex + 1);
 					var markerColor = dataPoint.legendMarkerColor ? dataPoint.legendMarkerColor : dataSeries.legendMarkerColor ? dataSeries.legendMarkerColor : dataPoint.color ? dataPoint.color : dataSeries.color ? dataSeries.color : dataSeries._colorSet[dataPointIndex % dataSeries._colorSet.length];
-					var markerSize = this.lineHeight * .6;
+					var markerSize = this.lineHeight * .75;
 					var markerBorderColor = dataPoint.legendMarkerBorderColor ? dataPoint.legendMarkerBorderColor : dataSeries.legendMarkerBorderColor ? dataSeries.legendMarkerBorderColor : dataPoint.markerBorderColor ? dataPoint.markerBorderColor : dataSeries.markerBorderColor;
 					var markerBorderThickness = dataPoint.legendMarkerBorderThickness ? dataPoint.legendMarkerBorderThickness : dataSeries.legendMarkerBorderThickness ? dataSeries.legendMarkerBorderThickness : dataPoint.markerBorderThickness || dataSeries.markerBorderThickness ? Math.max(1, Math.round(markerSize * .2)) : 0;
 
@@ -10502,8 +11125,8 @@
 				}
 			}
 
-			markerSize = (markerSize === 0 ? this.lineHeight * .6 : markerSize);
-			textMaxWidth = textMaxWidth - (markerSize + this.horizontalSpacing * .1);
+			markerSize = (markerSize === 0 ? this.lineHeight * .75 : markerSize);
+			textMaxWidth = textMaxWidth - (markerSize + markerMargin);
 
 			for (var i = 0; i < items.length; i++) {
 				var item = items[i];
@@ -10531,15 +11154,15 @@
 						fontWeight: this.fontWeight, //normal, bold, bolder, lighter,
 						fontColor: this.fontColor,
 						fontStyle: this.fontStyle, // normal, italic, oblique
-						textBaseline: "top"
+						textBaseline: "middle"
 					});
 					item.textBlock.measureText();
 
 					if (this.itemWidth !== null) {
-						item.textBlock.width = this.itemWidth - (markerSize + this.horizontalSpacing * .1 + ((item.chartType === "line" || item.chartType === "spline" || item.chartType === "stepLine") ? 2 * (this.lineHeight * .1) : 0));
+						item.textBlock.width = this.itemWidth - (markerSize + markerMargin + ((item.chartType === "line" || item.chartType === "spline" || item.chartType === "stepLine") ? 2 * (this.lineHeight * .1) : 0));
 					}
 
-					if (!row || row.width + Math.round(item.textBlock.width + this.horizontalSpacing * .1 + markerSize + (row.width === 0 ? 0 : (this.horizontalSpacing)) + ((item.chartType === "line" || item.chartType === "spline" || item.chartType === "stepLine") ? 2 * (this.lineHeight * .1) : 0)) > maxWidth) {
+					if (!row || row.width + Math.round(item.textBlock.width + markerSize + markerMargin + (row.width === 0 ? 0 : (this.horizontalSpacing)) + ((item.chartType === "line" || item.chartType === "spline" || item.chartType === "stepLine") ? 2 * (this.lineHeight * .1) : 0)) > maxWidth) {
 						row = {
 							items: [], width: 0
 						};
@@ -10553,7 +11176,7 @@
 					item.textBlock.x = row.width;
 					item.textBlock.y = 0;
 
-					row.width += Math.round(item.textBlock.width + this.horizontalSpacing * .1 + markerSize + (row.width === 0 ? 0 : this.horizontalSpacing) + ((item.chartType === "line" || item.chartType === "spline" || item.chartType === "stepLine") ? 2 * (this.lineHeight * .1) : 0));
+					row.width += Math.round(item.textBlock.width + markerSize + markerMargin + (row.width === 0 ? 0 : this.horizontalSpacing) + ((item.chartType === "line" || item.chartType === "spline" || item.chartType === "stepLine") ? 2 * (this.lineHeight * .1) : 0));
 					row.items.push(item);
 
 					this.width = Math.max(row.width, this.width);
@@ -10572,16 +11195,16 @@
 						fontWeight: this.fontWeight, //normal, bold, bolder, lighter,
 						fontColor: this.fontColor,
 						fontStyle: this.fontStyle, // normal, italic, oblique
-						textBaseline: "top"
+						textBaseline: "middle"
 					});
 
 					item.textBlock.measureText();
 
 					if (this.itemWidth !== null) {
-						item.textBlock.width = this.itemWidth - (markerSize + this.horizontalSpacing * .1 + ((item.chartType === "line" || item.chartType === "spline" || item.chartType === "stepLine") ? 2 * (this.lineHeight * .1) : 0));
+						item.textBlock.width = this.itemWidth - (markerSize + markerMargin + ((item.chartType === "line" || item.chartType === "spline" || item.chartType === "stepLine") ? 2 * (this.lineHeight * .1) : 0));
 					}
 
-					if (this.height <= maxHeight) {
+					if (this.height < maxHeight - this.lineHeight) {			
 						row = {
 							items: [], width: 0
 						};
@@ -10596,7 +11219,7 @@
 					item.textBlock.x = row.width; // relative to the row                    
 					item.textBlock.y = 0; // relative to the row                                   
 
-					row.width += Math.round(item.textBlock.width + this.horizontalSpacing * .1 + markerSize + (row.width === 0 ? 0 : this.horizontalSpacing) + ((item.chartType === "line" || item.chartType === "spline" || item.chartType === "stepLine") ? 2 * (this.lineHeight * .1) : 0));
+					row.width += Math.round(item.textBlock.width + markerSize + markerMargin + (row.width === 0 ? 0 : this.horizontalSpacing) + ((item.chartType === "line" || item.chartType === "spline" || item.chartType === "stepLine") ? 2 * (this.lineHeight * .1) : 0));
 					row.items.push(item);
 
 					this.width = Math.max(row.width, this.width);
@@ -10644,7 +11267,7 @@
 
 		this.items = items;
 
-		//Assign ids to all legendItems
+	    //Assign ids to all legendItems
 		for (var i = 0; i < this.items.length; i++) {
 
 			var item = items[i];
@@ -10672,7 +11295,8 @@
 					this.ctx.globalAlpha = .5;
 
 				this.ctx.save();
-				this.ctx.rect(left, top, maxWidth, maxHeight);
+				this.ctx.beginPath();
+				this.ctx.rect(left, top, maxWidth, Math.max(maxHeight - (maxHeight % this.lineHeight), 0));
 				this.ctx.clip();
 
 				if (item.chartType === "line" || item.chartType === "stepLine" || item.chartType === "spline") {
@@ -10680,7 +11304,7 @@
 					this.ctx.lineWidth = Math.ceil(this.lineHeight / 8);
 					this.ctx.beginPath();
 					this.ctx.moveTo(itemX - this.lineHeight * .1, itemY + this.lineHeight / 2);
-					this.ctx.lineTo(itemX + this.lineHeight * .7, itemY + this.lineHeight / 2);
+					this.ctx.lineTo(itemX + this.lineHeight * .85, itemY + this.lineHeight / 2);
 					this.ctx.stroke();
 
 					ghostX -= this.lineHeight * .1;
@@ -10688,13 +11312,13 @@
 
 				RenderHelper.drawMarker(itemX + markerSize / 2, itemY + (this.lineHeight / 2), this.ctx, item.markerType, item.markerSize, item.markerColor, item.markerBorderColor, item.markerBorderThickness);
 
-				item.textBlock.x = itemX + this.horizontalSpacing * .1 + markerSize;
+				item.textBlock.x = itemX + markerMargin + markerSize;
 
 				if (item.chartType === "line" || item.chartType === "stepLine" || item.chartType === "spline") {
 					item.textBlock.x = item.textBlock.x + this.lineHeight * .1;
 				}
 
-				item.textBlock.y = itemY;
+				item.textBlock.y = Math.round(itemY + this.lineHeight / 2);
 
 				item.textBlock.render(true);
 
@@ -10712,12 +11336,12 @@
 				var hexColor = intToHexColorString(item.id);
 				this.ghostCtx.fillStyle = hexColor;
 				this.ghostCtx.beginPath();
-				this.ghostCtx.fillRect(ghostX, item.textBlock.y, item.textBlock.x + item.textBlock.width - ghostX, item.textBlock.height);
+				this.ghostCtx.fillRect(ghostX, item.textBlock.y - this.lineHeight / 2, item.textBlock.x + item.textBlock.width - ghostX, item.textBlock.height);
 
 				item.x1 = this.chart._eventManager.objectMap[item.id].x1 = ghostX;
-				item.y1 = this.chart._eventManager.objectMap[item.id].y1 = item.textBlock.y;
+				item.y1 = this.chart._eventManager.objectMap[item.id].y1 = item.textBlock.y - this.lineHeight / 2;
 				item.x2 = this.chart._eventManager.objectMap[item.id].x2 = item.textBlock.x + item.textBlock.width;
-				item.y2 = this.chart._eventManager.objectMap[item.id].y2 = item.textBlock.y + item.textBlock.height;
+				item.y2 = this.chart._eventManager.objectMap[item.id].y2 = item.textBlock.y + item.textBlock.height - this.lineHeight / 2;
 			}
 			rowHeight = rowHeight + columnHeight;
 		}
@@ -10728,7 +11352,8 @@
 		//this.ctx.rect(left, top, this.width, this.height);
 		//this.ctx.stroke();
 
-		container.layoutManager.registerSpace(position, { width: this.width + 2 + 2, height: this.height + 5 + 5 });
+		if (items.length > 0)
+			container.layoutManager.registerSpace(position, { width: this.width + 2 + 2, height: this.height + 5 + 5 });
 
 		this.bounds = {
 			x1: left, y1: top, x2: left + this.width, y2: top + this.height
@@ -11244,6 +11869,7 @@
 		this.intervalStartPosition = 0;
 		this.labels = [];
 		this._labels = null;
+		this._stripLineLabels = null;
 
 		//Processed information about the data that gets plotted against this axis
 		this.dataInfo = {
@@ -11259,6 +11885,11 @@
 
 			if (!this._options.interval)
 				this.intervalType = null;
+
+			//Temporary Fix for axisX Line in theme2: In theme2 we need lineThickness of 0 only for Y axis.
+			if (this.chart.theme === "theme2" && isNullOrUndefined(this._options.lineThickness)) {
+				this.lineThickness = 2;
+			}
 		} else {
 			if (position === "left" || position === "top")
 				this.sessionVariables = this.chart.sessionVariables["axisY"];
@@ -11300,8 +11931,6 @@
 
 			if (this.labelAngle > 90 && this.labelAngle <= 270)
 				this.labelAngle -= 180;
-			else if (this.labelAngle > 180 && this.labelAngle <= 270)
-				this.labelAngle -= 180
 			else if (this.labelAngle > 270 && this.labelAngle <= 360)
 				this.labelAngle -= 360
 		}
@@ -11351,47 +11980,41 @@
 	extend(Axis, CanvasJSObject);
 
 	Axis.prototype.createLabels = function () {
-		var textBlock;
+		var textBlock, textBlockNext;
+		var sizeNext;
 		var i = 0;
+		var k = 0;
 		var endPoint;
 
 		var labelMaxWidth = 0;
+		var labelEffectiveMaxWidth = 0;
 		var labelMaxHeight = 0;
+		var labelEffectiveMaxHeight = 0;
 		var intervalInPixels = 0;
 
 		//var intervalInPixels = this.conversionParameters.pixelPerUnit * this.interval;
 
 
 		if (this._position === "bottom" || this._position === "top") {
-			intervalInPixels = this.lineCoordinates.width / Math.abs(this.viewportMaximum - this.viewportMinimum) * this.interval;
+			intervalInPixels = this.lineCoordinates.width / Math.abs(this.viewportMaximum - this.viewportMinimum) * convertToNumber(this.interval, this.intervalType);
 
-			if (this.labelAutoFit) {
-				labelMaxWidth = typeof (this._options.labelMaxWidth) === "undefined" ? intervalInPixels * .9 >> 0 : this.labelMaxWidth;
-			}
-			else {
-				labelMaxWidth = typeof (this._options.labelMaxWidth) === "undefined" ? this.chart.width * .7 >> 0 : this.labelMaxWidth;
-			}
+			labelMaxWidth = typeof (this._options.labelMaxWidth) === "undefined" ? this.chart.width * .5 >> 0 : this._options.labelMaxWidth;
 
-			labelMaxHeight = typeof (this._options.labelWrap) === "undefined" || this.labelWrap ? this.chart.height * .5 >> 0 : this.labelFontSize * 1.5;
+			if (!(this.chart.panEnabled))
+				labelMaxHeight = typeof (this._options.labelWrap) === "undefined" || this.labelWrap ? this.chart.height * .8 >> 0 : this.labelFontSize * 1.5;
 		}
 		else if (this._position === "left" || this._position === "right") {
 
-			intervalInPixels = this.lineCoordinates.height / Math.abs(this.viewportMaximum - this.viewportMinimum) * this.interval;
+			intervalInPixels = this.lineCoordinates.height / Math.abs(this.viewportMaximum - this.viewportMinimum) * convertToNumber(this.interval, this.intervalType);
 
+			if (!(this.chart.panEnabled))
+				labelMaxWidth = typeof (this._options.labelMaxWidth) === "undefined" ? this.chart.width * .3 >> 0 : this._options.labelMaxWidth;
 
-			if (this.labelAutoFit) {
-				labelMaxWidth = typeof (this._options.labelMaxWidth) === "undefined" ? this.chart.width * .3 >> 0 : this.labelMaxWidth;
-			}
-			else {
-				labelMaxWidth = typeof (this._options.labelMaxWidth) === "undefined" ? this.chart.width * .5 >> 0 : this.labelMaxWidth;
-			}
-
-			labelMaxHeight = typeof (this._options.labelWrap) === "undefined" || this.labelWrap ? intervalInPixels * 2 >> 0 : this.labelFontSize * 1.5;
+			labelMaxHeight = typeof (this._options.labelWrap) === "undefined" || this.labelWrap ? this.chart.height * .3 >> 0 : this.labelFontSize * 1.5;
 		}
-
 		if (this.type === "axisX" && this.chart.plotInfo.axisXValueType === "dateTime") {
+			this.intervalStartPosition = this.getLabelStartPoint(new Date(this.viewportMinimum), this.intervalType, this.interval);
 			endPoint = addToDateTime(new Date(this.viewportMaximum), this.interval, this.intervalType)
-			//endPoint = this.viewportMaximum;
 
 			for (i = this.intervalStartPosition; i < endPoint; addToDateTime(i, this.interval, this.intervalType)) {
 
@@ -11425,8 +12048,6 @@
 		else {
 			endPoint = this.viewportMaximum;
 
-			//if ((Math.floor(this.interval) < this.interval && !this._options.interval) || true) {
-
 			//Check if it should be rendered as a category axis. If yes, then ceil the interval
 			if (this.labels && this.labels.length) {
 				var tempInterval = Math.ceil(this.interval);
@@ -11449,7 +12070,6 @@
 
 			//parseFloat & toPrecision are being used to avoid issues related to precision.
 			for (i = this.intervalStartPosition; i <= endPoint; i = parseFloat((i + this.interval).toFixed(14))) {
-
 				var text = this.labelFormatter ? this.labelFormatter({ chart: this.chart._publicChartReference, axis: this._options, value: i, label: this.labels[i] ? this.labels[i] : null })
 					: this.type === "axisX" && this.labels[i] ? this.labels[i] : numberFormat(i, this.valueFormatString, this.chart._cultureInfo);
 
@@ -11475,32 +12095,433 @@
 				this._labels.push({ position: i, textBlock: textBlock, effectiveHeight: null });
 			}
 		}
+		var effectiveLabelHeights = [];
+		var effectiveLabelWidths = [];
+
+		if (this.labelAutoFit || this._options.labelAutoFit) {
+			if (this._position === "bottom" || this._position === "top") {
+				var j = 0;
+				labelMaxWidth = intervalInPixels * .9 >> 0;
+				if (!isNullOrUndefined(this.labelAngle)) {
+					this.labelAngle = ((this.labelAngle % 360) + 360) % 360;
+
+					if (this.labelAngle > 90 && this.labelAngle <= 270)
+						this.labelAngle -= 180;
+					else if (this.labelAngle > 270 && this.labelAngle <= 360)
+						this.labelAngle -= 360
+				}
+
+
+				if (!(this.chart.panEnabled) && this._labels.length >= 1) {
+					this.sessionVariables.labelFontSize = this.labelFontSize;
+					this.sessionVariables.labelMaxWidth = labelMaxWidth;
+					this.sessionVariables.labelMaxHeight = labelMaxHeight;
+					this.sessionVariables.labelAngle = this.labelAngle;
+					this.sessionVariables.labelWrap = true;
+
+					for (i = 0; i < this._labels.length; i++) {
+						textBlock = this._labels[i].textBlock;
+						var size = textBlock.measureText();
+
+						if (i < this._labels.length - 1) {
+							j = (i + 1);
+							textBlockNext = this._labels[j].textBlock;
+							sizeNext = textBlockNext.measureText();
+						}
+						effectiveLabelHeights.push(textBlock.height);
+						this.sessionVariables.labelMaxHeight = Math.max.apply(Math, effectiveLabelHeights);
+
+						labelEffectiveMaxWidth = (labelMaxWidth * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle))) + ((labelMaxHeight - textBlock.fontSize / 2) * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle)));
+						labelEffectiveMaxHeight = (labelMaxWidth * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle))) + ((labelMaxHeight - textBlock.fontSize / 2) * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle)));
+						if (!(isNullOrUndefined(this._options.labelAngle) && isNaN(this._options.labelAngle)) || this._options.labelAngle === 0) {//User has set angle -->Rotate
+							this.sessionVariables.labelAngle = this.labelAngle;
+							this.sessionVariables.labelMaxHeight = (this.labelAngle === 0) ? labelMaxHeight : Math.min((labelEffectiveMaxHeight - labelMaxWidth * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle))) / (Math.sin(Math.PI / 180 * Math.abs(this.labelAngle))), labelEffectiveMaxHeight);
+							if (!isNullOrUndefined(this._options.labelWrap)) {//User has set wrapping (true/false)
+								if (this._options.labelWrap) {//wrap is true -->Rotate+Wrap
+									this.sessionVariables.labelWrap = this.labelWrap;
+									this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.height * .8 >> 0 ? this.chart.height * .8 >> 0 : this._options.labelMaxWidth : labelMaxWidth;
+									this.sessionVariables.labelMaxHeight = labelMaxHeight;
+								}
+								else {//wrap is false
+									if (!isNullOrUndefined(this._options.labelMaxWidth)) {//User has set labelMaxWidth -->Rotate+Clip after user set labelMaxWidth
+										this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.height * .8 >> 0 ? this.chart.height * .8 >> 0 : this._options.labelMaxWidth : labelEffectiveMaxWidth;
+										this.sessionVariables.labelWrap = this.labelWrap;
+										this.sessionVariables.labelMaxHeight = labelMaxHeight;
+									}
+									else {//User has not set labelMaxWidth -->Rotate
+										this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.height * .8 >> 0 ? this.chart.height * .8 >> 0 : this._options.labelMaxWidth : labelEffectiveMaxWidth;
+										this.sessionVariables.labelWrap = this.labelWrap;
+										this.sessionVariables.labelMaxHeight = labelMaxHeight;
+									}
+								}
+							}
+							else if (isNullOrUndefined(this._options.labelWrap)) {//User has not set wrap
+								if (this.labelWrap && !isNullOrUndefined(this._options.labelMaxWidth)) {//labelwrap->true by default -->Rotate+Wrap
+									this.sessionVariables.labelWrap = this.labelWrap;
+									this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.height * .8 >> 0 ? this.chart.height * .8 >> 0 : this._options.labelMaxWidth : labelMaxWidth;
+									this.sessionVariables.labelMaxHeight = labelMaxHeight;
+								}
+								else {
+									this.sessionVariables.labelMaxWidth = labelEffectiveMaxWidth > this.chart.height * .5 ? this.chart.height * .5 : labelEffectiveMaxWidth;
+									this.sessionVariables.labelMaxHeight = labelEffectiveMaxHeight < intervalInPixels * .9 ? intervalInPixels * .9 : labelEffectiveMaxHeight < this.labelFontSize ? this.labelFontSize * 2.5 : labelEffectiveMaxHeight - this.labelFontSize;
+									this.sessionVariables.labelWrap = this.labelWrap;
+									if (isNullOrUndefined(this._options.labelMaxWidth)) {
+										this.sessionVariables.labelAngle = this.labelAngle;
+									}
+								}
+							}
+						}//if-angle is not set proceed to else part
+						else {
+							this.sessionVariables.labelMaxHeight = this.labelAngle === 0 ? labelMaxHeight : Math.min((labelEffectiveMaxHeight - labelMaxWidth * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle))) / (Math.sin(Math.PI / 180 * Math.abs(this.labelAngle))), labelEffectiveMaxHeight);
+							if (!isNullOrUndefined(this._options.labelWrap)) {//User has set Wrap (true/false)
+								if (this._options.labelWrap) {//wrap is true -->Wrap
+									this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth : labelMaxWidth;
+									this.sessionVariables.labelAngle = this._options.labelMaxWidth > labelMaxWidth ? -25 : this.sessionVariables.labelAngle;
+									this.sessionVariables.labelMaxHeight = labelEffectiveMaxHeight;
+								}
+								else {//wrap is false
+									if (!isNullOrUndefined(this._options.labelMaxWidth)) {//User has set labelMaxWidth -->Clip after user set labelMaxWidth
+										this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth : labelMaxWidth;
+										this.sessionVariables.labelAngle = this._options.labelMaxWidth > labelMaxWidth ? -25 : this.sessionVariables.labelAngle;
+										this.sessionVariables.labelMaxHeight = labelMaxHeight;
+										this.sessionVariables.labelWrap = this.labelWrap;
+									}
+									else {//User has not set labelMaxWidth --> Rotate+Clip
+										this.sessionVariables.labelMaxWidth = labelMaxWidth;
+										this.sessionVariables.labelWrap = this.labelWrap;
+										this.sessionVariables.labelMaxHeight = labelMaxHeight;
+									}
+								}
+							}
+							else if (isNullOrUndefined(this._options.labelWrap)) {//User has not set Wrap, labelWrap is true by default
+								if (!isNullOrUndefined(this._options.labelMaxWidth)) {//User has set labelMaxWidth -->Wrap if user set labelMaxWidth<labelMaxWidth else Rotate+Wrap
+									if (this._options.labelMaxWidth < labelMaxWidth) {
+										this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth;
+										this.sessionVariables.labelMaxHeight = labelEffectiveMaxHeight;
+									}
+									else {
+										this.sessionVariables.labelAngle = -25;
+										this.sessionVariables.labelMaxWidth = !isNullOrUndefined(this._options.labelMaxWidth) ? this._options.labelMaxWidth > this.chart.width * .3 >> 0 ? this.chart.width * .3 >> 0 : this._options.labelMaxWidth : labelMaxWidth;
+										this.sessionVariables.labelMaxHeight = this.labelFontSize * 2.5;
+									}
+								}
+
+								else {//User has not set anything, handle auto-labelling (Rotate or Wrap or Decrease font size for the bestfit)
+									//Decide Auto-Labelling based on overlapping
+									if (!isNullOrUndefined(sizeNext)) {
+										if (((size.width + sizeNext.width) >> 0) >= (2 * labelMaxWidth) && ((size.width + sizeNext.width) >> 0) < (2.4 * labelMaxWidth)) {//Reduce Font size
+											var labelFontSize = this.labelFontSize;
+											this.sessionVariables.labelMaxWidth = labelMaxWidth * 1.2;
+											if (isNullOrUndefined(this._options.labelFontSize)) {
+												if (labelFontSize > 12) {
+													labelFontSize = Math.floor(12 / 13 * labelFontSize);
+													size = textBlock.measureText();
+												}
+											}
+											this.sessionVariables.labelFontSize = isNullOrUndefined(this._options.labelFontSize) ? labelFontSize : this._options.labelFontSize;
+											this.sessionVariables.labelAngle = this.labelAngle;
+										}
+										else if (((size.width + sizeNext.width) >> 0) >= (2.4 * labelMaxWidth) && (size.width + sizeNext.width) < (2.8 * labelMaxWidth)) {//Slant
+											this.sessionVariables.labelAngle = -25;
+											this.sessionVariables.labelMaxWidth = labelMaxWidth * 2.5;
+											this.sessionVariables.labelFontSize = this.labelFontSize;
+										}
+										else if (((size.width + sizeNext.width) >> 0) >= (2.8 * labelMaxWidth) && (size.width + sizeNext.width) < (3.2 * labelMaxWidth)) {//Wrap+Reduce font size
+											this.sessionVariables.labelMaxWidth = labelMaxWidth * 1.2;
+											this.sessionVariables.labelWrap = true;
+											if (isNullOrUndefined(this._options.labelFontSize)) {
+												if (this.labelFontSize > 12) {
+													this.labelFontSize = Math.floor(12 / 13 * this.labelFontSize);//labelFontSize should not go beyond 12
+													size = textBlock.measureText();
+												}
+											}
+											this.sessionVariables.labelFontSize = isNullOrUndefined(this._options.labelFontSize) ? this.labelFontSize : this._options.labelFontSize;
+											this.sessionVariables.labelAngle = this.labelAngle;
+										}
+										else if (((size.width + sizeNext.width) >> 0) >= (3.2 * labelMaxWidth) && (size.width + sizeNext.width) < (3.6 * labelMaxWidth)) {//Rotate+Wrap
+											this.sessionVariables.labelAngle = -25;
+											this.sessionVariables.labelWrap = true;
+											this.sessionVariables.labelMaxWidth = labelMaxWidth * 2.5;
+											this.sessionVariables.labelFontSize = this.labelFontSize;
+										}
+										else if ((size.width + sizeNext.width) > (3.6 * labelMaxWidth) && (size.width + sizeNext.width) < (5 * labelMaxWidth)) {
+											if (isNullOrUndefined(this._options.labelFontSize)) {
+												if (this.labelFontSize > 12) {
+													this.labelFontSize = Math.floor(12 / 13 * this.labelFontSize);//labelFontSize should not go beyond 12
+													size = textBlock.measureText();
+												}
+											}
+											this.sessionVariables.labelFontSize = isNullOrUndefined(this._options.labelFontSize) ? this.labelFontSize : this._options.labelFontSize;
+											this.sessionVariables.labelWrap = true;
+											this.sessionVariables.labelMaxWidth = labelMaxWidth;
+											this.sessionVariables.labelAngle = this.labelAngle;
+											this.sessionVariables.labelWrap = true;
+										}
+										else if ((size.width + sizeNext.width) > (5 * labelMaxWidth)) {
+											this.sessionVariables.labelWrap = true;
+											this.sessionVariables.labelMaxWidth = labelMaxWidth;
+											this.sessionVariables.labelFontSize = this.labelFontSize;
+											this.sessionVariables.labelMaxHeight = labelMaxHeight;
+											this.sessionVariables.labelAngle = this.labelAngle;
+										}
+									}
+								}
+							}
+						}
+
+					}
+					for (k = 0; k < this._labels.length; k++) {
+						textBlock = this._labels[k].textBlock;
+						textBlock.maxWidth = this.labelMaxWidth = this.sessionVariables.labelMaxWidth;
+						textBlock.fontSize = this.labelFontSize = this.sessionVariables.labelFontSize;
+						textBlock.angle = this.labelAngle = this.sessionVariables.labelAngle;
+						textBlock.wrap = this.labelWrap = this.sessionVariables.labelWrap;
+						textBlock.maxHeight = this.sessionVariables.labelMaxHeight;
+						textBlock.measureText();
+					}
+				}
+					//Panning Mode
+				else {
+					for (i = 0; i < this._labels.length; i++) {
+						textBlock = this._labels[i].textBlock;
+						textBlock.maxWidth = this.labelMaxWidth = isNullOrUndefined(this._options.labelMaxWidth) ? this.sessionVariables.labelMaxWidth : this._options.labelMaxWidth;
+						textBlock.fontSize = this.labelFontSize = isNullOrUndefined(this._options.labelFontSize) ? this.sessionVariables.labelFontSize : this._options.labelFontSize;
+						textBlock.angle = this.labelAngle = isNullOrUndefined(this._options.labelAngle) ? this.sessionVariables.labelAngle : this.labelAngle;
+						textBlock.wrap = this.labelWrap = isNullOrUndefined(this._options.labelWrap) ? this.sessionVariables.labelWrap : this._options.labelWrap;
+						textBlock.maxHeight = this.sessionVariables.labelMaxHeight;
+						textBlock.measureText();
+					}
+				}
+			}
+			else if (this._position === "left" || this._position === "right") {
+				var j = 0;
+				labelMaxWidth = isNullOrUndefined(this._options.labelMaxWidth) ? this.chart.width * .3 >> 0 : this._options.labelMaxWidth;
+				if (!isNullOrUndefined(this.labelAngle)) {
+					this.labelAngle = ((this.labelAngle % 360) + 360) % 360;
+
+					if (this.labelAngle > 90 && this.labelAngle <= 270)
+						this.labelAngle -= 180;
+					else if (this.labelAngle > 270 && this.labelAngle <= 360)
+						this.labelAngle -= 360
+				}
+
+				if (!(this.chart.panEnabled) && this._labels.length >= 1) {
+					this.sessionVariables.labelFontSize = this.labelFontSize;
+					this.sessionVariables.labelMaxWidth = labelMaxWidth;
+					this.sessionVariables.labelMaxHeight = labelMaxHeight;
+					this.sessionVariables.labelAngle = isNullOrUndefined(this.sessionVariables.labelAngle) ? 0 : this.sessionVariables.labelAngle;
+					this.sessionVariables.labelWrap = true;
+
+					for (i = 0; i < this._labels.length; i++) {
+						textBlock = this._labels[i].textBlock;
+						var size = textBlock.measureText();
+
+						if (i < this._labels.length - 1) {
+							j = (i + 1);
+							textBlockNext = this._labels[j].textBlock;
+							sizeNext = textBlockNext.measureText();
+						}
+						effectiveLabelWidths.push(textBlock.height);
+						this.sessionVariables.labelMaxHeight = Math.max.apply(Math, effectiveLabelWidths);
+
+						labelEffectiveMaxHeight = (labelMaxWidth * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle))) + ((labelMaxHeight - textBlock.fontSize / 2) * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle)));
+						labelEffectiveMaxWidth = (labelMaxWidth * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle))) + ((labelMaxHeight - textBlock.fontSize / 2) * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle)));
+						if (!(isNullOrUndefined(this._options.labelAngle) && isNaN(this._options.labelAngle)) || this._options.labelAngle === 0) {//User has set angle -->Rotate
+							this.sessionVariables.labelAngle = this.labelAngle;
+							this.sessionVariables.labelMaxWidth = this.labelAngle === 0 ? labelMaxWidth : Math.min((labelEffectiveMaxHeight - labelMaxHeight * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle))) / (Math.cos(Math.PI / 180 * Math.abs(this.labelAngle))), labelMaxHeight);
+							if (!isNullOrUndefined(this._options.labelWrap)) {//User has set wrapping (true/false)
+								if (this._options.labelWrap) {//wrap is true -->Rotate+Wrap
+									this.sessionVariables.labelMaxHeight = this.labelAngle === 0 ? labelMaxHeight : labelEffectiveMaxHeight;
+									this.sessionVariables.labelWrap = this.labelWrap;
+									this.sessionVariables.labelMaxWidth = labelMaxWidth;
+								}
+								else {//wrap is false
+									if (!isNullOrUndefined(this._options.labelMaxWidth)) {//User has set labelMaxWidth -->Rotate+Clip after user set labelMaxWidth
+										this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.height * .8 >> 0 ? this.chart.height * .8 >> 0 : this._options.labelMaxWidth : this.sessionVariables.labelMaxWidth;
+										this.sessionVariables.labelWrap = this.labelWrap;
+									}
+									else {//User has not set labelMaxWidth -->Rotate
+										this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.height * .8 >> 0 ? this.chart.height * .8 >> 0 : this._options.labelMaxWidth : this.sessionVariables.labelMaxWidth;
+										this.sessionVariables.labelWrap = this.labelWrap;
+									}
+								}
+							}
+							else if (isNullOrUndefined(this._options.labelWrap)) {//User has not set wrap
+								if (this.labelWrap && !isNullOrUndefined(this._options.labelMaxWidth)) {//labelwrap->true by default -->Rotate+Wrap
+									this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.height * .8 >> 0 ? this.chart.height * .8 >> 0 : this._options.labelMaxWidth : this.sessionVariables.labelMaxWidth;
+									this.sessionVariables.labelWrap = this.labelWrap;
+									this.sessionVariables.labelMaxHeight = labelEffectiveMaxHeight;
+								}
+								else {
+									this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.height * .8 >> 0 ? this.chart.height * .8 >> 0 : this._options.labelMaxWidth : labelMaxWidth;
+									this.sessionVariables.labelMaxHeight = this.labelAngle === 0 ? labelMaxHeight : labelEffectiveMaxHeight;
+									if (isNullOrUndefined(this._options.labelMaxWidth)) {
+										this.sessionVariables.labelAngle = this.labelAngle;
+									}
+								}
+							}
+						}//if-angle is not set proceed to else part
+						else {
+							if (!isNullOrUndefined(this._options.labelWrap)) {//User has set Wrap (true/false)
+								if (this._options.labelWrap) {//wrap is true -->Wrap
+									this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.width * .3 >> 0 ? this.chart.width * .3 >> 0 : this._options.labelMaxWidth : this.sessionVariables.labelMaxWidth;
+								}
+								else {//wrap is false
+									if (this._options.labelMaxWidth) {//User has set labelMaxWidth -->Clip after user set labelMaxWidth
+										this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.width * .3 >> 0 ? this.chart.width * .3 >> 0 : this._options.labelMaxWidth : this.sessionVariables.labelMaxWidth;
+									}
+									else {//User has not set labelMaxWidth --> Rotate+Clip
+										this.sessionVariables.labelMaxWidth = labelMaxWidth;
+										this.sessionVariables.labelAngle = -25;
+									}
+								}
+							}
+							else if (isNullOrUndefined(this._options.labelWrap)) {//User has not set Wrap, labelWrap is true by default
+								if (!isNullOrUndefined(this._options.labelMaxWidth)) {//User has set labelMaxWidth -->Wrap if user set labelMaxWidth<labelMaxWidth else Rotate+Wrap
+									if (this._options.labelMaxWidth < labelMaxWidth) {
+										this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth;
+									}
+									else {
+										this.sessionVariables.labelMaxWidth = this._options.labelMaxWidth ? this._options.labelMaxWidth > this.chart.width * .3 >> 0 ? this.chart.width * .3 >> 0 : this._options.labelMaxWidth : this.sessionVariables.labelMaxWidth;
+									}
+								}
+
+								else {//User has not set anything, handle auto-labelling (Rotate or Wrap or Decrease font size for the bestfit)
+									//Decide Auto-Labelling based on overlapping
+									if (!isNullOrUndefined(sizeNext)) {
+										if (((size.height + sizeNext.height) >> 0) >= (2 * this.labelMaxHeight) && ((size.height + sizeNext.height) >> 0) < (2.4 * this.labelMaxHeight)) {//Reduce Font size
+											if (isNullOrUndefined(this._options.labelFontSize)) {
+												if (this.labelFontSize > 12) {
+													this.labelFontSize = Math.floor(12 / 13 * this.labelFontSize);
+													size = textBlock.measureText();
+												}
+											}
+											this.sessionVariables.labelMaxHeight = this.labelMaxHeight;
+											this.sessionVariables.labelFontSize = (isNullOrUndefined(this._options.labelFontSize)) ? this.labelFontSize : this._options.labelFontSize;
+										}
+										else if (((size.height + sizeNext.height) >> 0) >= (2.4 * this.labelMaxHeight) && (size.height + sizeNext.height) < (2.8 * this.labelMaxHeight)) {//Slant
+											this.sessionVariables.labelAngle = -25;
+											this.sessionVariables.labelMaxHeight = labelEffectiveMaxHeight;
+											this.sessionVariables.labelFontSize = this.labelFontSize;
+											this.sessionVariables.labelWrap = true;
+										}
+										else if (((size.height + sizeNext.height) >> 0) >= (2.8 * this.labelMaxHeight) && (size.height + sizeNext.height) < (3.2 * this.labelMaxHeight)) {//Wrap+Reduce font size
+											this.sessionVariables.labelMaxHeight = this.labelMaxHeight;
+											this.sessionVariables.labelWrap = true;
+											if (isNullOrUndefined(this._options.labelFontSize)) {
+												if (this.labelFontSize > 12) {
+													this.labelFontSize = Math.floor(12 / 13 * this.labelFontSize);
+													size = textBlock.measureText();
+												}
+											}
+											this.sessionVariables.labelFontSize = isNullOrUndefined(this._options.labelFontSize) ? this.labelFontSize : this._options.labelFontSize;
+											this.sessionVariables.labelAngle = isNullOrUndefined(this.sessionVariables.labelAngle) ? 0 : this.sessionVariables.labelAngle;
+										}
+										else if (((size.height + sizeNext.height) >> 0) >= (3.2 * this.labelMaxHeight) && (size.height + sizeNext.height) < (3.6 * this.labelMaxHeight)) {//Rotate+Wrap
+											this.sessionVariables.labelAngle = -25;
+											this.sessionVariables.labelMaxHeight = labelEffectiveMaxHeight;
+											this.sessionVariables.labelWrap = true;
+											this.sessionVariables.labelFontSize = this.labelFontSize;
+										}
+										else if ((size.height + sizeNext.height) > (3.6 * this.labelMaxHeight) && (size.height + sizeNext.height) < (10 * this.labelMaxHeight)) {
+											if (isNullOrUndefined(this._options.labelFontSize)) {
+												if (this.labelFontSize > 12) {
+													this.labelFontSize = Math.floor(12 / 13 * this.labelFontSize);
+													size = textBlock.measureText();
+												}
+											}
+											this.sessionVariables.labelFontSize = isNullOrUndefined(this._options.labelFontSize) ? this.labelFontSize : this._options.labelFontSize;
+											this.sessionVariables.labelMaxWidth = labelMaxWidth;
+											this.sessionVariables.labelMaxHeight = this.labelMaxHeight;
+											this.sessionVariables.labelAngle = isNullOrUndefined(this.sessionVariables.labelAngle) ? 0 : this.sessionVariables.labelAngle;
+										}
+										else if ((size.height + sizeNext.height) > (10 * this.labelMaxHeight) && (size.height + sizeNext.height) < (50 * this.labelMaxHeight)) {
+											if (isNullOrUndefined(this._options.labelFontSize)) {
+												if (this.labelFontSize > 12) {
+													this.labelFontSize = Math.floor(12 / 13 * this.labelFontSize);
+													size = textBlock.measureText();
+												}
+											}
+											this.sessionVariables.labelFontSize = isNullOrUndefined(this._options.labelFontSize) ? this.labelFontSize : this._options.labelFontSize;
+											this.sessionVariables.labelMaxHeight = this.labelMaxHeight;
+											this.sessionVariables.labelMaxWidth = labelMaxWidth;
+											this.sessionVariables.labelAngle = isNullOrUndefined(this.sessionVariables.labelAngle) ? 0 : this.sessionVariables.labelAngle;
+										}
+									}
+								}
+							}
+
+						}
+
+					}
+					for (k = 0; k < this._labels.length; k++) {
+						textBlock = this._labels[k].textBlock;
+						textBlock.maxWidth = this.labelMaxWidth = this.sessionVariables.labelMaxWidth;
+						textBlock.fontSize = this.labelFontSize = this.sessionVariables.labelFontSize;
+						textBlock.angle = this.labelAngle = this.sessionVariables.labelAngle;
+						textBlock.wrap = this.labelWrap = this.sessionVariables.labelWrap;
+						textBlock.maxHeight = this.sessionVariables.labelMaxHeight;
+						textBlock.measureText();
+					}
+				}
+					//Panning Mode
+				else {
+					for (i = 0; i < this._labels.length; i++) {
+						textBlock = this._labels[i].textBlock;
+						textBlock.maxWidth = this.labelMaxWidth = isNullOrUndefined(this._options.labelMaxWidth) ? this.sessionVariables.labelMaxWidth : this._options.labelMaxWidth;
+						textBlock.fontSize = this.labelFontSize = isNullOrUndefined(this._options.labelFontSize) ? this.sessionVariables.labelFontSize : this._options.labelFontSize;
+						textBlock.angle = this.labelAngle = isNullOrUndefined(this._options.labelAngle) ? this.sessionVariables.labelAngle : this.labelAngle;
+						textBlock.wrap = this.labelWrap = isNullOrUndefined(this._options.labelWrap) ? this.sessionVariables.labelWrap : this._options.labelWrap;
+						textBlock.maxHeight = this.sessionVariables.labelMaxHeight;
+						textBlock.measureText();
+					}
+				}
+			}
+		}//------------------LabelAutoFit-------------------//
+
 
 		for (var i = 0; i < this.stripLines.length; i++) {
-
 			var stripLine = this.stripLines[i];
+			var stripLineMaxWidth = (this._position === "bottom" || this._position === "top") ? this.chart.width * .9 >> 0 : this.chart.height * .9 >> 0;
+			var backgroundColor;
+			
+			if (stripLine.labelPlacement === "outside") {
+				if (!isNullOrUndefined(stripLine._options.labelBackgroundColor))
+					backgroundColor = stripLine._options.labelBackgroundColor;
+				else
+					backgroundColor = "#EEEEEE";
+			}
+			else {
+				if (!isNullOrUndefined(stripLine._options.labelBackgroundColor))
+					backgroundColor = stripLine._options.labelBackgroundColor;
+				else {
+					if (stripLine.startValue)
+						backgroundColor = "#EEEEEE";
+					else
+						backgroundColor = "transparent";
+				}
+			}
 
 			textBlock = new TextBlock(this.ctx, {
 				x: 0,
 				y: 0,
 				//maxWidth: this.maxHeight,
 				//maxHeight: this.labelFontSize,
-				backgroundColor: stripLine.labelBackgroundColor,
-				maxWidth: labelMaxWidth,
-				maxHeight: labelMaxHeight,
+				backgroundColor: backgroundColor,
+				maxWidth: stripLine._options.labelMaxWidth ? stripLine._options.labelMaxWidth : stripLineMaxWidth,
+				maxHeight: typeof (stripLine._options.labelWrap) === "undefined" || stripLine.labelWrap ? stripLineMaxWidth : this.labelFontSize * 1.5,
 				angle: this.labelAngle,
 				text: stripLine.labelFormatter ? stripLine.labelFormatter({ chart: this.chart._publicChartReference, axis: this, stripLine: stripLine }) : stripLine.label,
 				horizontalAlign: "left",//left, center, right
-				fontSize: stripLine.labelFontSize,//in pixels
-				fontFamily: stripLine.labelFontFamily,
-				fontWeight: stripLine.labelFontWeight, //normal, bold, bolder, lighter,
+				fontSize: stripLine.labelPlacement === "outside" ? stripLine._options.labelFontSize ? stripLine._options.labelFontSize : this.labelFontSize : stripLine.labelFontSize,//in pixels
+				fontFamily: stripLine.labelPlacement === "outside" ? stripLine._options.labelFontFamily ? stripLine._options.labelFontFamily : this.labelFontFamily : stripLine.labelFontFamily,
+				fontWeight: stripLine.labelPlacement === "outside" ? stripLine._options.fontWeight ? stripLine._options.fontWeight : this.fontWeight : stripLine.fontWeight, //normal, bold, bolder, lighter,
 				fontColor: stripLine._options.labelFontColor || stripLine.color,
-				fontStyle: stripLine.labelFontStyle, // normal, italic, oblique
+				fontStyle: stripLine.labelPlacement === "outside" ? stripLine._options.fontStyle ? stripLine._options.fontStyle : this.fontWeight : stripLine.fontStyle, // normal, italic, oblique
 				textBaseline: "middle",
 				borderThickness: 0
 			});
-
-			this._labels.push({ position: stripLine.value, textBlock: textBlock, effectiveHeight: null, stripLine: stripLine });
+			this._stripLineLabels.push({ position: stripLine.value, textBlock: textBlock, effectiveHeight: null, stripLine: stripLine });
 		}
 
 	}
@@ -11508,7 +12529,9 @@
 	Axis.prototype.createLabelsAndCalculateWidth = function () {
 
 		var maxLabelEffectiveWidth = 0;
+		var i = 0;
 		this._labels = [];
+		this._stripLineLabels = [];
 
 		if (this._position === "left" || this._position === "right") {
 
@@ -11528,7 +12551,7 @@
 				if (this.labelAngle === 0)
 					labelEffectiveWidth = size.width;
 				else
-					labelEffectiveWidth = (size.width * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle))) + (size.height / 2 * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle)));
+					labelEffectiveWidth = (size.width * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle))) + ((size.height - textBlock.fontSize / 2) * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle)));
 
 
 				if (maxLabelEffectiveWidth < labelEffectiveWidth)
@@ -11536,11 +12559,33 @@
 
 				this._labels[i].effectiveWidth = labelEffectiveWidth;
 			}
+			for (i = 0; i < this._stripLineLabels.length; i++) {
+				if (this._stripLineLabels[i].stripLine.labelPlacement === "outside") {
+					var textBlock = this._stripLineLabels[i].textBlock;
+
+					var size = textBlock.measureText();
+
+					//var hypotenuse = Math.sqrt(Math.pow(size.height / 2, 2) + Math.pow(size.width, 2));
+					//labelEffectiveWidth = hypotenuse * Math.cos(Math.abs(Math.PI / 180 * this.labelAngle) - Math.abs(Math.acos(size.width / hypotenuse)));
+
+					var labelEffectiveWidth = 0;
+
+					if (this.labelAngle === 0)
+						labelEffectiveWidth = size.width;
+					else
+						labelEffectiveWidth = (size.width * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle))) + ((size.height - textBlock.fontSize / 2) * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle)));
+
+
+					if (maxLabelEffectiveWidth < labelEffectiveWidth)
+						maxLabelEffectiveWidth = labelEffectiveWidth;
+
+					this._stripLineLabels[i].effectiveWidth = labelEffectiveWidth;
+				}
+			}
 		}
 
 
-
-		var titleHeight = this.title ? getFontHeightInPixels(this.titleFontFamily, this.titleFontSize, this.titleFontWeight) + 2 : 0;
+		var titleHeight = this.title ? this._titleTextBlock.measureText().height + 2 : 0;
 
 		var axisWidth = titleHeight + maxLabelEffectiveWidth + this.tickLength + 5;
 
@@ -11554,6 +12599,7 @@
 	Axis.prototype.createLabelsAndCalculateHeight = function () {
 		var maxLabelEffectiveHeight = 0;
 		this._labels = [];
+		this._stripLineLabels = [];
 		var textBlock;
 		var i = 0;
 
@@ -11564,7 +12610,6 @@
 			for (i = 0; i < this._labels.length; i++) {
 
 				textBlock = this._labels[i].textBlock;
-
 				var size = textBlock.measureText();
 				//var diagonal = Math.sqrt(Math.pow(size.height, 2) + Math.pow(size.width, 2));
 
@@ -11576,17 +12621,35 @@
 				if (this.labelAngle === 0)
 					labelEffectiveHeight = size.height;
 				else
-					labelEffectiveHeight = (size.width * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle))) + (size.height / 2 * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle)));
+					labelEffectiveHeight = (size.width * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle))) + ((size.height - textBlock.fontSize / 2) * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle)));
 
 				if (maxLabelEffectiveHeight < labelEffectiveHeight)
 					maxLabelEffectiveHeight = labelEffectiveHeight;
 
 				this._labels[i].effectiveHeight = labelEffectiveHeight;
 			}
+			for (i = 0; i < this._stripLineLabels.length; i++) {
+				if (this._stripLineLabels[i].stripLine.labelPlacement === "outside") {
+					textBlock = this._stripLineLabels[i].textBlock;
+					var size = textBlock.measureText();
+					var labelEffectiveHeight = 0;
+
+					if (this.labelAngle === 0)
+						labelEffectiveHeight = size.height;
+					else
+						labelEffectiveHeight = (size.width * Math.sin(Math.PI / 180 * Math.abs(this.labelAngle))) + ((size.height - textBlock.fontSize / 2) * Math.cos(Math.PI / 180 * Math.abs(this.labelAngle)));
+
+					if (maxLabelEffectiveHeight < labelEffectiveHeight)
+						maxLabelEffectiveHeight = labelEffectiveHeight;
+
+					this._labels[i].effectiveHeight = labelEffectiveHeight;
+				}
+			}
 		}
 
+
 		//var titleHeight = this.title ? this.titleFontSize + 5 : 0;
-		var titleHeight = this.title ? getFontHeightInPixels(this.titleFontFamily, this.titleFontSize, this.titleFontWeight) + 2 : 0;
+		var titleHeight = this.title ? this._titleTextBlock.measureText().height + 2 : 0;
 
 		return titleHeight + maxLabelEffectiveHeight + this.tickLength + 5;
 	}
@@ -11627,92 +12690,253 @@
 
 		var axisYMargin = axisY ? axisY.margin : 0;
 		var axisY2Margin = axisY2 ? axisY2.margin : 0;
+		var i = 0;
+		var firstLabelWidthX = 0, lastLabelWidthX = 0, firstLabelWidthY, lastLabelWidthY, firstLabelWidthY2, lastLabelWidthY2, firstLabelPosition, lastLabelPosition, lastLabelWidthOutside = 0, firstLabelOutside = 0;
+		var xFlag, yFlag, y2Flag;
+		xFlag = yFlag = y2Flag = false;
+
+		if (axisX && axisX.title) {
+			axisX._titleTextBlock = new TextBlock(axisX.ctx, {
+				text: axisX.title,
+				horizontalAlign: "center",//left, center, right
+				fontSize: axisX.titleFontSize,//in pixels
+				fontFamily: axisX.titleFontFamily,
+				fontWeight: axisX.titleFontWeight, //normal, bold, bolder, lighter,
+				fontColor: axisX.titleFontColor,
+				fontStyle: axisX.titleFontStyle, // normal, italic, oblique
+				textBaseline: "top"
+			});
+		}
+
+		if (axisY && axisY.title) {
+			axisY._titleTextBlock = new TextBlock(axisY.ctx, {
+				text: axisY.title,
+				horizontalAlign: "center",//left, center, right
+				fontSize: axisY.titleFontSize,//in pixels
+				fontFamily: axisY.titleFontFamily,
+				fontWeight: axisY.titleFontWeight, //normal, bold, bolder, lighter,
+				fontColor: axisY.titleFontColor,
+				fontStyle: axisY.titleFontStyle, // normal, italic, oblique
+				textBaseline: "top"
+			});
+		}
+
+		if (axisY2 && axisY2.title) {
+			axisY2._titleTextBlock = new TextBlock(axisY2.ctx, {
+				text: axisY2.title,
+				horizontalAlign: "center",//left, center, right
+				fontSize: axisY2.titleFontSize,//in pixels
+				fontFamily: axisY2.titleFontFamily,
+				fontWeight: axisY2.titleFontWeight, //normal, bold, bolder, lighter,
+				fontColor: axisY2.titleFontColor,
+				fontStyle: axisY2.titleFontStyle, // normal, italic, oblique
+				textBaseline: "top"
+			});
+		}
 
 		if (axisPlacement === "normal") {
-
-			axisX.lineCoordinates = {
-			};
-
-			var axisYWidth = Math.ceil(axisY ? axisY.createLabelsAndCalculateWidth() : 0);
-			x1 = Math.round(freeSpace.x1 + axisYWidth + axisYMargin);
-			axisX.lineCoordinates.x1 = x1;
-
-			var axisY2Width = Math.ceil(axisY2 ? axisY2.createLabelsAndCalculateWidth() : 0);
-			x2 = Math.round(freeSpace.x2 - axisY2Width - axisY2Margin > axisX.chart.width - 10 ? axisX.chart.width - 10 : freeSpace.x2 - axisY2Width - axisY2Margin);
-			axisX.lineCoordinates.x2 = x2;
-
-			axisX.lineCoordinates.width = Math.abs(x2 - x1); // required early on inside createLabels of axisX
-
-			var axisXHeight = Math.ceil(axisX.createLabelsAndCalculateHeight());
-
-			// Position axisX based on the available free space, Margin and its height
-			//x1 = freeSpace.x1 + axisYWidth + axisYMargin + axisYlineThickness / 2;
-			y1 = Math.round(freeSpace.y2 - axisXHeight - axisX.margin);
-			y2 = Math.round(freeSpace.y2 - axisX.margin);
-
-			//axisX.lineCoordinates = { x1: x1, y1: y1, x2: x2, y2: y1, width: Math.abs(x2 - x1) }
-			axisX.lineCoordinates.y1 = y1;
-			axisX.lineCoordinates.y2 = y1;
-
-			axisX.boundingRect = {
-				x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: y2 - y1
-			};
-
-			//if (isDebugMode) {
-			//	axisX.ctx.rect(axisX.boundingRect.x1, axisX.boundingRect.y1, axisX.boundingRect.width, axisX.boundingRect.height);
-			//	axisX.ctx.stroke();
-			//}
-
-			// Position axisY based on the available free space, Margin and its height
-			if (axisY) {
-				x1 = Math.round(freeSpace.x1 + axisY.margin);
-				y1 = Math.round(freeSpace.y1 < 10 ? 10 : freeSpace.y1);
-				x2 = Math.round(freeSpace.x1 + axisYWidth + axisY.margin);
-				//y2 = freeSpace.y2 - axisXHeight - axisX.margin - axisX.lineThickness / 2;
-				y2 = Math.round(freeSpace.y2 - axisXHeight - axisX.margin);
-
-				axisY.lineCoordinates = {
-					x1: x2, y1: y1, x2: x2, y2: y2, height: Math.abs(y2 - y1)
-				}
-
-				axisY.boundingRect = {
-					x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: y2 - y1
-				};
+			var axisXHeights = []; var axisYWidths = []; var axisY2Widths = [];
+			if (axisX && axisX.title) {
+				axisX._titleTextBlock.maxWidth = axisX.titleMaxWidth || freeSpace.width;
+				axisX._titleTextBlock.maxHeight = axisX.titleWrap ? freeSpace.height * 0.8 : axisX.titleFontSize * 1.5;
+				axisX._titleTextBlock.angle = 0;
 			}
 
-			//if (isDebugMode && axisY) {
-			//	axisY.ctx.rect(axisY.boundingRect.x1, axisY.boundingRect.y1, axisY.boundingRect.width, axisY.boundingRect.height);
-			//	axisY.ctx.stroke();
-			//}
-
-			// Position axisY2 based on the available free space, Margin and its height
-			if (axisY2) {
-				x1 = Math.round(axisX.lineCoordinates.x2);
-				y1 = Math.round(freeSpace.y1 < 10 ? 10 : freeSpace.y1);
-				x2 = Math.round(x1 + axisY2Width);
-				//y2 = freeSpace.y2 - axisXHeight - axisX.margin - axisX.lineThickness / 2;
-				y2 = Math.round(freeSpace.y2 - axisXHeight - axisX.margin);
-
-				axisY2.lineCoordinates = {
-					x1: x1, y1: y1, x2: x1, y2: y2, height: Math.abs(y2 - y1)
-				}
-
-				axisY2.boundingRect = {
-					x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: y2 - y1
-				};
+			if (axisY && axisY.title) {
+				axisY._titleTextBlock.maxWidth = axisY.titleMaxWidth || freeSpace.height;//this.lineCoordinates.height,
+				axisY._titleTextBlock.maxHeight = axisY.titleWrap ? freeSpace.width * 0.8 : axisY.titleFontSize * 1.5;
+				axisY._titleTextBlock.angle = -90;
 			}
 
+			if (axisY2 && axisY2.title) {
+				axisY2._titleTextBlock.maxWidth = axisY2.titleMaxWidth || freeSpace.height;
+				axisY2._titleTextBlock.maxHeight = axisY2.titleWrap ? freeSpace.width * 0.8 : axisY2.titleFontSize * 1.5;
+				axisY2._titleTextBlock.angle = 90;
+			}
 
-			axisX.calculateValueToPixelConversionParameters();
+			while (i++ < 4) {
 
-			if (axisY)
-				axisY.calculateValueToPixelConversionParameters();
+				axisX.lineCoordinates = {
+				};
 
-			if (axisY2)
-				axisY2.calculateValueToPixelConversionParameters();
+				var axisYWidth = Math.ceil(axisY ? axisY.createLabelsAndCalculateWidth() : 0);
+				axisYWidths.push(axisYWidth);
+				x1 = Math.round(freeSpace.x1 + axisYWidth + axisYMargin);
+				var axisY2Width = Math.ceil(axisY2 ? axisY2.createLabelsAndCalculateWidth() : 0);
+				axisY2Widths.push(axisY2Width);
+				x2 = Math.round(freeSpace.x2 - axisY2Width - axisY2Margin > axisX.chart.width - 10 ? axisX.chart.width - 10 : freeSpace.x2 - axisY2Width - axisY2Margin);
 
+				if (axisX.labelAutoFit && !isNullOrUndefined(firstLabelPosition) && !isNullOrUndefined(lastLabelPosition)) {
+					if (axisX.labelAngle > 0) {
+						if (lastLabelPosition + lastLabelWidthX > x2)
+							lastLabelWidthOutside += ((axisX.labelAngle > 0) ? (lastLabelPosition + lastLabelWidthX) - x2 - axisY2Width : 0);
+					}
+					else if (axisX.labelAngle < 0) {
+						if (firstLabelPosition - firstLabelWidthX < x1 && firstLabelPosition - firstLabelWidthX < axisX.viewportMinimum) {
+							firstLabelOutside = x1 - (axisYMargin + axisX.tickLength + axisYWidth + firstLabelPosition - firstLabelWidthX + axisX.labelFontSize / 2);
+						}
+					}
+					else if (axisX.labelAngle === 0) {
+						if (lastLabelPosition + lastLabelWidthX > x2)
+							lastLabelWidthOutside = (lastLabelPosition + lastLabelWidthX / 2) - x2 - axisY2Width;
+						if (firstLabelPosition - firstLabelWidthX < x1 && firstLabelPosition - firstLabelWidthX < axisX.viewportMinimum) {
+							firstLabelOutside = x1 - axisYMargin - axisX.tickLength - axisYWidth - firstLabelPosition + (firstLabelWidthX / 2);
+						}
+
+					}
+					if ((axisX.viewportMaximum === axisX.maximum && axisX.viewportMinimum === axisX.minimum) && axisX.labelAngle > 0 && lastLabelWidthOutside > 0)
+						x2 -= lastLabelWidthOutside;
+					else if ((axisX.viewportMaximum === axisX.maximum && axisX.viewportMinimum === axisX.minimum) && axisX.labelAngle < 0 && firstLabelOutside > 0)
+						x1 += firstLabelOutside;
+					else if ((axisX.viewportMaximum === axisX.maximum && axisX.viewportMinimum === axisX.minimum) && axisX.labelAngle === 0) {
+						if (firstLabelOutside > 0)
+							x1 += firstLabelOutside;
+						if (lastLabelWidthOutside > 0)
+							x2 -= lastLabelWidthOutside;
+					}
+				}
+				axisX.lineCoordinates.x1 = x1;
+				axisX.lineCoordinates.x2 = x2;
+
+				axisX.lineCoordinates.width = Math.abs(x2 - x1); // required early on inside createLabels of axisX
+
+				if (axisX.title)
+					axisX._titleTextBlock.maxWidth = axisX.titleMaxWidth > 0 && axisX.titleMaxWidth < axisX.lineCoordinates.width ? axisX.titleMaxWidth : axisX.lineCoordinates.width;
+
+				var axisXHeight = Math.ceil(axisX.createLabelsAndCalculateHeight());
+				axisXHeights.push(axisXHeight);
+
+				if (axisX._labels && axisX._labels.length > 1) {
+					var firstLabel = 0, lastLabel = 0;
+					firstLabel = axisX._labels[1];
+					if (axisX.chart.plotInfo.axisXValueType === "dateTime") {
+						lastLabel = axisX._labels[axisX._labels.length - 2];
+					}
+					else
+						lastLabel = axisX._labels[axisX._labels.length - 1];
+					firstLabelWidthX = (firstLabel.textBlock.width * Math.cos(Math.PI / 180 * Math.abs(firstLabel.textBlock.angle))) + ((firstLabel.textBlock.height - lastLabel.textBlock.fontSize / 2) * Math.sin(Math.PI / 180 * Math.abs(firstLabel.textBlock.angle)));
+					lastLabelWidthX = (lastLabel.textBlock.width * Math.cos(Math.PI / 180 * Math.abs(lastLabel.textBlock.angle))) + ((lastLabel.textBlock.height - lastLabel.textBlock.fontSize / 2) * Math.sin(Math.PI / 180 * Math.abs(lastLabel.textBlock.angle)));
+				}
+
+
+				if (!chart.panEnabled)
+					chart.sessionVariables.axisX.height = axisXHeight;
+				else
+					axisXHeight = chart.sessionVariables.axisX.height;
+				// Position axisX based on the available free space, Margin and its height
+				//x1 = freeSpace.x1 + axisYWidth + axisYMargin + axisYlineThickness / 2;
+				y1 = Math.round(freeSpace.y2 - axisXHeight - axisX.margin);
+				y2 = Math.round(freeSpace.y2 - axisX.margin);
+
+				//axisX.lineCoordinates = { x1: x1, y1: y1, x2: x2, y2: y1, width: Math.abs(x2 - x1) }
+				axisX.lineCoordinates.y1 = y1;
+				axisX.lineCoordinates.y2 = y1;
+
+				axisX.boundingRect = {
+					x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: y2 - y1
+				};
+
+				//if (isDebugMode) {
+				//	axisX.ctx.rect(axisX.boundingRect.x1, axisX.boundingRect.y1, axisX.boundingRect.width, axisX.boundingRect.height);
+				//	axisX.ctx.stroke();
+				//}
+
+				// Position axisY based on the available free space, Margin and its height
+				if (axisY) {
+					x1 = Math.round(freeSpace.x1 + axisY.margin);
+					//x1 = Math.round(axisX.lineCoordinates.x1 - axisYWidth);
+					y1 = Math.round(freeSpace.y1 < 10 ? 10 : freeSpace.y1);
+					x2 = Math.round(freeSpace.x1 + axisYWidth + axisY.margin);
+					//x2 = Math.round(axisX.lineCoordinates.x1);
+					//y2 = freeSpace.y2 - axisXHeight - axisX.margin - axisX.lineThickness / 2;
+					y2 = Math.round(freeSpace.y2 - axisXHeight - axisX.margin);
+
+					axisY.lineCoordinates = {
+						x1: x2, y1: y1, x2: x2, y2: y2, height: Math.abs(y2 - y1)
+					}
+
+					axisY.boundingRect = {
+						x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: y2 - y1
+					};
+
+					if (axisY.title)
+						axisY._titleTextBlock.maxWidth = axisY.titleMaxWidth > 0 && axisY.titleMaxWidth < axisY.lineCoordinates.height ? axisY.titleMaxWidth : axisY.lineCoordinates.height;
+				}
+
+				//if (isDebugMode && axisY) {
+				//	axisY.ctx.rect(axisY.boundingRect.x1, axisY.boundingRect.y1, axisY.boundingRect.width, axisY.boundingRect.height);
+				//	axisY.ctx.stroke();
+				//}
+
+				// Position axisY2 based on the available free space, Margin and its height
+				if (axisY2) {
+					x1 = Math.round(axisX.lineCoordinates.x2);
+					y1 = Math.round(freeSpace.y1 < 10 ? 10 : freeSpace.y1);
+					x2 = Math.round(x1 + axisY2Width);
+					//y2 = freeSpace.y2 - axisXHeight - axisX.margin - axisX.lineThickness / 2;
+					y2 = Math.round(freeSpace.y2 - axisXHeight - axisX.margin);
+
+					axisY2.lineCoordinates = {
+						x1: x1, y1: y1, x2: x1, y2: y2, height: Math.abs(y2 - y1)
+					}
+
+					axisY2.boundingRect = {
+						x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: y2 - y1
+					};
+
+					if (axisY2.title)
+						axisY2._titleTextBlock.maxWidth = axisY2.titleMaxWidth > 0 && axisY2.titleMaxWidth < axisY2.lineCoordinates.height ? axisY2.titleMaxWidth : axisY2.lineCoordinates.height;
+				}
+
+
+				axisX.calculateValueToPixelConversionParameters();
+				if (axisX._labels && axisX._labels.length > 1) {
+					firstLabelPosition = (axisX._labels[1].position - axisX.viewportMinimum) * axisX.conversionParameters.pixelPerUnit + axisX.lineCoordinates.x1;
+					if (axisX.chart.plotInfo.axisXValueType === "dateTime")
+						lastLabelPosition = (axisX._labels[axisX._labels.length - 2].position - axisX.viewportMinimum) * axisX.conversionParameters.pixelPerUnit + axisX.lineCoordinates.x1;
+					else
+						lastLabelPosition = (axisX._labels[axisX._labels.length - 1].position - axisX.viewportMinimum) * axisX.conversionParameters.pixelPerUnit + axisX.lineCoordinates.x1;
+				}
+
+				if (axisY)
+					axisY.calculateValueToPixelConversionParameters();
+
+				if (axisY2)
+					axisY2.calculateValueToPixelConversionParameters();
+
+				if (axisX || axisY || axisY2) {
+					if (!isNullOrUndefined(axisXHeights)) {
+						for (i = 0; i < axisXHeights.length; i++) {
+							for (j = i + 1; j < axisXHeights.length; j++) {
+								if (axisXHeights[i] == axisXHeights[j])
+									xFlag = true;
+							}
+						}
+					}
+					if (!isNullOrUndefined(axisYWidths)) {
+						for (i = 0; i < axisYWidths.length; i++) {
+							for (j = i + 1; j < axisYWidths.length; j++) {
+								if (axisYWidths[i] == axisYWidths[j])
+									yFlag = true;
+							}
+						}
+					}
+					if (!isNullOrUndefined(axisY2Widths)) {
+						for (i = 0; i < axisY2Widths.length; i++) {
+							for (j = i + 1; j < axisY2Widths.length; j++) {
+								if (axisY2Widths[i] == axisY2Widths[j])
+									y2Flag = true;
+							}
+						}
+					}
+				}
+				if (xFlag && yFlag && y2Flag) {
+					break;
+				}
+			}
 
 			ctx.save();
+			ctx.beginPath();
 			ctx.rect(5, axisX.boundingRect.y1, axisX.chart.width - 10, axisX.boundingRect.height);
 			ctx.clip();
 
@@ -11730,7 +12954,7 @@
 			var plotArea = axisX.chart.plotArea;
 
 			ctx.save();
-
+			ctx.beginPath();
 			ctx.rect(plotArea.x1, plotArea.y1, Math.abs(plotArea.x2 - plotArea.x1), Math.abs(plotArea.y2 - plotArea.y1));
 
 			ctx.clip();
@@ -11783,100 +13007,216 @@
 				axisY2.renderStripLinesOfThicknessType("pixel");
 		}
 		else {
-			var axisXWidth = Math.ceil(axisX.createLabelsAndCalculateWidth());
-
-			if (axisY) {
-				axisY.lineCoordinates = {
-				};
-
-				x1 = Math.round(freeSpace.x1 + axisXWidth + axisX.margin);
-				x2 = Math.round(freeSpace.x2 > axisY.chart.width - 10 ? axisY.chart.width - 10 : freeSpace.x2);
-
-				axisY.lineCoordinates.x1 = x1;
-				axisY.lineCoordinates.x2 = x2;
-				axisY.lineCoordinates.width = Math.abs(x2 - x1);
+			var axisXWidths = []; var axisYHeights = []; var axisY2Heights = [];
+			if (axisX && axisX.title) {
+				axisX._titleTextBlock.maxWidth = axisX.titleMaxWidth || freeSpace.height;//this.lineCoordinates.height,
+				axisX._titleTextBlock.maxHeight = axisX.titleWrap ? freeSpace.width * 0.8 : axisX.titleFontSize * 1.5;
+				axisX._titleTextBlock.angle = -90;
 			}
 
-			if (axisY2) {
-				axisY2.lineCoordinates = {
-				};
-				x1 = Math.round(freeSpace.x1 + axisXWidth + axisX.margin);
-				x2 = Math.round(freeSpace.x2 > axisY2.chart.width - 10 ? axisY2.chart.width - 10 : freeSpace.x2);
-
-				axisY2.lineCoordinates.x1 = x1;
-				axisY2.lineCoordinates.x2 = x2;
-				axisY2.lineCoordinates.width = Math.abs(x2 - x1);
+			if (axisY && axisY.title) {
+				axisY._titleTextBlock.maxWidth = axisY.titleMaxWidth || freeSpace.width;//axisX.lineCoordinates.width,
+				axisY._titleTextBlock.maxHeight = axisY.titleWrap ? freeSpace.height * 0.8 : axisY.titleFontSize * 1.5;
+				axisY._titleTextBlock.angle = 0;
 			}
 
-
-
-			var axisYHeight = Math.ceil(axisY ? axisY.createLabelsAndCalculateHeight() : 0);
-			var axisY2Height = Math.ceil(axisY2 ? axisY2.createLabelsAndCalculateHeight() : 0);
-
-
-			// Position axisY based on the available free space, Margin and its height
-			if (axisY) {
-				//x1 = freeSpace.x1 + axisXWidth + axisX.margin + axisX.lineThickness / 2;
-				//x2 = freeSpace.x2 > axisY.chart.width - 10 ? axisY.chart.width - 10 : freeSpace.x2;
-
-				y1 = Math.round(freeSpace.y2 - axisYHeight - axisY.margin);
-				y2 = Math.round(freeSpace.y2 - axisYMargin > axisY.chart.height - 10 ? axisY.chart.height - 10 : freeSpace.y2 - axisYMargin);
-
-				//axisY.lineCoordinates = { x1: x1, y1: y1, x2: x2, y2: y1, width: Math.abs(x2 - x1) }
-				axisY.lineCoordinates.y1 = y1;
-				axisY.lineCoordinates.y2 = y1;
-
-				axisY.boundingRect = {
-					x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: axisYHeight
-				};
+			if (axisY2 && axisY2.title) {
+				axisY2._titleTextBlock.maxWidth = axisY.titleMaxWidth || freeSpace.width;//this.lineCoordinates.width,
+				axisY2._titleTextBlock.maxHeight = axisY2.titleWrap ? freeSpace.height * 0.8 : axisY2.titleFontSize * 1.5;
+				axisY2._titleTextBlock.angle = 0;
 			}
 
-			// Position axisY based on the available free space, Margin and its height
-			if (axisY2) {
-				//x1 = freeSpace.x1 + axisXWidth + axisX.margin + axisX.lineThickness / 2;
-				//x2 = freeSpace.x2 > axisY2.chart.width - 10 ? axisY2.chart.width - 10 : freeSpace.x2;
+			while (i++ < 4) {
+				var axisXWidth = Math.ceil(axisX.createLabelsAndCalculateWidth());
+				axisXWidths.push(axisXWidth);
 
-				y1 = Math.round(freeSpace.y1 + axisY2.margin);
-				y2 = (freeSpace.y1 + axisY2.margin + axisY2Height);
+				if (axisY) {
+					axisY.lineCoordinates = {
+					};
+					x1 = Math.round(freeSpace.x1 + axisXWidth + axisX.margin);
+					x2 = Math.round(freeSpace.x2 > axisY.chart.width - 10 ? axisY.chart.width - 10 : freeSpace.x2);
+					if (axisY.labelAutoFit) {
+						if (!isNullOrUndefined(firstLabelWidthY)) {
+							x1 = axisY.labelAngle < 0 ? Math.max(x1, firstLabelWidthY) : axisY.labelAngle === 0 ? Math.max(x1, firstLabelWidthY / 2) : x1;
+							x2 = axisY.labelAngle > 0 ? x2 - lastLabelWidthY : axisY.labelAngle === 0 ? x2 - lastLabelWidthY / 2 : x2;
+						}
+					}
+					axisY.lineCoordinates.x1 = x1;
+					axisY.lineCoordinates.x2 = x2;
+					axisY.lineCoordinates.width = Math.abs(x2 - x1);
+					if (axisY.title)
+						axisY._titleTextBlock.maxWidth = axisY.titleMaxWidth > 0 && axisY.titleMaxWidth < axisY.lineCoordinates.width ? axisY.titleMaxWidth : axisY.lineCoordinates.width;
+				}
 
-				//axisY2.lineCoordinates = { x1: x1, y1: y2, x2: x2, y2: y2, width: Math.abs(x2 - x1) }
-				axisY2.lineCoordinates.y1 = y2;
-				axisY2.lineCoordinates.y2 = y2;
+				if (axisY2) {
+					axisY2.lineCoordinates = {
+					};
+					x1 = Math.round(freeSpace.x1 + axisXWidth + axisX.margin);
+					x2 = Math.round(freeSpace.x2 > axisY2.chart.width - 10 ? axisY2.chart.width - 10 : freeSpace.x2);
+					if (axisY && axisY.labelAutoFit) {
+						if (!isNullOrUndefined(firstLabelWidthY2)) {
+							x1 = axisY2.labelAngle > 0 ? Math.max(x1, firstLabelWidthY2) : axisY2.labelAngle === 0 ? Math.max(x1, firstLabelWidthY2 / 2) : x1;
+							x2 = axisY2.labelAngle < 0 ? x2 - lastLabelWidthY2 / 2 : axisY2.labelAngle === 0 ? x2 - lastLabelWidthY2 / 2 : x2 - (lastLabelWidthY2 / 2);
+						}
+					}
+					axisY2.lineCoordinates.x1 = x1;
+					axisY2.lineCoordinates.x2 = x2;
+					axisY2.lineCoordinates.width = Math.abs(x2 - x1);
+					if (axisY2.title)
+						axisY2._titleTextBlock.maxWidth = axisY2.titleMaxWidth > 0 && axisY2.titleMaxWidth < axisY2.lineCoordinates.width ? axisY2.titleMaxWidth : axisY2.lineCoordinates.width;
+				}
 
-				axisY2.boundingRect = {
-					x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: axisY2Height
+
+
+				var axisYHeight = Math.ceil(axisY ? axisY.createLabelsAndCalculateHeight() : 0);
+				var axisY2Height = Math.ceil(axisY2 ? axisY2.createLabelsAndCalculateHeight() : 0);
+				axisYHeights.push(axisYHeight); axisY2Heights.push(axisY2Height);
+
+				if (axisY && axisY._labels.length > 0) {
+					var firstLabel = axisY._labels[0];
+					var lastLabel = axisY._labels[axisY._labels.length - 1];
+					firstLabelWidthY = (firstLabel.textBlock.width * Math.cos(Math.PI / 180 * Math.abs(firstLabel.textBlock.angle))) + ((firstLabel.textBlock.height - lastLabel.textBlock.fontSize / 2) * Math.sin(Math.PI / 180 * Math.abs(firstLabel.textBlock.angle)));//(axisY2._labels[0].textBlock.width);
+					lastLabelWidthY = (lastLabel.textBlock.width * Math.cos(Math.PI / 180 * Math.abs(lastLabel.textBlock.angle))) + ((lastLabel.textBlock.height - lastLabel.textBlock.fontSize / 2) * Math.sin(Math.PI / 180 * Math.abs(lastLabel.textBlock.angle)));//axisY2._labels[axisY2._labels.length - 1].textBlock.width;
+				}
+
+				if (axisY2 && axisY2._labels.length > 0) {
+					var firstLabel = axisY2._labels[0];
+					var lastLabel = axisY2._labels[axisY2._labels.length - 1];
+					firstLabelWidthY2 = (firstLabel.textBlock.width * Math.cos(Math.PI / 180 * Math.abs(firstLabel.textBlock.angle))) + ((firstLabel.textBlock.height - lastLabel.textBlock.fontSize / 2) * Math.sin(Math.PI / 180 * Math.abs(firstLabel.textBlock.angle)));//(axisY2._labels[0].textBlock.width);
+					lastLabelWidthY2 = (lastLabel.textBlock.width * Math.cos(Math.PI / 180 * Math.abs(lastLabel.textBlock.angle))) + ((lastLabel.textBlock.height - lastLabel.textBlock.fontSize / 2) * Math.sin(Math.PI / 180 * Math.abs(lastLabel.textBlock.angle)));//axisY2._labels[axisY2._labels.length - 1].textBlock.width;
+				}
+
+				if (!chart.panEnabled)
+					chart.sessionVariables.axisY.height = axisYHeight;
+				else
+					axisYHeight = chart.sessionVariables.axisY.height;
+
+				// Position axisY based on the available free space, Margin and its height
+				if (axisY) {
+					//x1 = freeSpace.x1 + axisXWidth + axisX.margin + axisX.lineThickness / 2;
+					//x2 = freeSpace.x2 > axisY.chart.width - 10 ? axisY.chart.width - 10 : freeSpace.x2;
+
+					y1 = Math.round(freeSpace.y2 - axisYHeight - axisY.margin);
+					y2 = Math.round(freeSpace.y2 - axisYMargin > axisY.chart.height - 10 ? axisY.chart.height - 10 : freeSpace.y2 - axisYMargin);
+
+					//axisY.lineCoordinates = { x1: x1, y1: y1, x2: x2, y2: y1, width: Math.abs(x2 - x1) }
+					axisY.lineCoordinates.y1 = y1;
+					axisY.lineCoordinates.y2 = y1;
+
+					axisY.boundingRect = {
+						x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: axisYHeight
+					};
+					if (axisY.title)
+						axisY._titleTextBlock.maxWidth = axisY.titleMaxWidth > 0 && axisY.titleMaxWidth < axisY.lineCoordinates.width ? axisY.titleMaxWidth : axisY.lineCoordinates.width;
+				}
+
+				// Position axisY based on the available free space, Margin and its height
+				if (axisY2) {
+					//x1 = freeSpace.x1 + axisXWidth + axisX.margin + axisX.lineThickness / 2;
+					//x2 = freeSpace.x2 > axisY2.chart.width - 10 ? axisY2.chart.width - 10 : freeSpace.x2;
+
+					y1 = Math.round(freeSpace.y1 + axisY2.margin);
+					y2 = (freeSpace.y1 + axisY2.margin + axisY2Height);
+
+					//axisY2.lineCoordinates = { x1: x1, y1: y2, x2: x2, y2: y2, width: Math.abs(x2 - x1) }
+					axisY2.lineCoordinates.y1 = y2;
+					axisY2.lineCoordinates.y2 = y2;
+
+					axisY2.boundingRect = {
+						x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: axisY2Height
+					};
+					if (axisY2.title)
+						axisY2._titleTextBlock.maxWidth = axisY2.titleMaxWidth > 0 && axisY2.titleMaxWidth < axisY2.lineCoordinates.width ? axisY2.titleMaxWidth : axisY2.lineCoordinates.width;
+				}
+
+				//axisY.ctx.rect(axisY.boundingRect.x1, axisY.boundingRect.y1, axisY.boundingRect.width, axisY.boundingRect.height);
+				//axisY.ctx.stroke();
+
+				// Position axisX based on the available free space, Margin and its height
+				x1 = Math.round(freeSpace.x1 + axisX.margin);
+				y1 = Math.round(axisY2 ? axisY2.lineCoordinates.y2 : (freeSpace.y1 < 10 ? 10 : freeSpace.y1));
+				x2 = Math.round(freeSpace.x1 + axisXWidth + axisX.margin);
+				y2 = Math.round(axisY ? axisY.lineCoordinates.y1 : (freeSpace.y2 - axisYMargin > axisX.chart.height - 10 ? axisX.chart.height - 10 : freeSpace.y2 - axisYMargin));
+
+				if (axisY && axisY.labelAutoFit) {
+					x2 = axisY.labelAngle < 0 ? Math.max(x2, firstLabelWidthY) : axisY.labelAngle === 0 ? Math.max(x2, firstLabelWidthY / 2) : x2;
+					x1 = axisY.labelAngle < 0 || axisY.labelAngle === 0 ? x2 - axisXWidth : x1;
+				}
+
+				if (axisY2 && axisY2.labelAutoFit) {
+					x2 = axisY2.lineCoordinates.x1;//Math.max(x2, firstLabelWidthY2 / 2);
+					x1 = x2 - axisXWidth;
+
+				}
+
+
+				axisX.lineCoordinates = {
+					x1: x2, y1: y1, x2: x2, y2: y2, height: Math.abs(y2 - y1)
 				};
+
+				axisX.boundingRect = {
+					x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: y2 - y1
+				};
+
+				if (axisX.title)
+					axisX._titleTextBlock.maxWidth = axisX.titleMaxWidth > 0 && axisX.titleMaxWidth < axisX.lineCoordinates.height ? axisX.titleMaxWidth : axisX.lineCoordinates.height;
+
+				//axisX.ctx.rect(axisX.boundingRect.x1, axisX.boundingRect.y1, axisX.boundingRect.width, axisX.boundingRect.height);
+				//axisX.ctx.stroke();
+				axisX.calculateValueToPixelConversionParameters();
+
+				if (axisY) {
+					axisY.calculateValueToPixelConversionParameters();
+					//intervalInPixelsY = axisY.conversionParameters.pixelPerUnit * convertToNumber(axisY.interval, axisY.intervalType);
+				}
+				if (axisY2) {
+					axisY2.calculateValueToPixelConversionParameters();
+					//intervalInPixelsY2 = axisY2.conversionParameters.pixelPerUnit * convertToNumber(axisY2.interval, axisY2.intervalType);
+				}
+
+				if (axisX || axisY || axisY2) {
+					if (!isNullOrUndefined(axisXHeights)) {
+						for (i = 0; i < axisXHeights.length; i++) {
+							for (j = i + 1; j < axisXHeights.length; j++) {
+								if (axisXHeights[i] == axisXHeights[j])
+									xFlag = true;
+							}
+						}
+					}
+					if (!isNullOrUndefined(axisYWidths)) {
+						for (i = 0; i < axisYWidths.length; i++) {
+							for (j = i + 1; j < axisYWidths.length; j++) {
+								if (axisYWidths[i] == axisYWidths[j])
+									yFlag = true;
+							}
+						}
+					}
+					if (!isNullOrUndefined(axisY2Widths)) {
+						for (i = 0; i < axisY2Widths.length; i++) {
+							for (j = i + 1; j < axisY2Widths.length; j++) {
+								if (axisY2Widths[i] == axisY2Widths[j])
+									y2Flag = true;
+							}
+						}
+					}
+				}
+				if (xFlag && yFlag && y2Flag) {
+					break;
+				}
+
+				//x2 = Math.round(freeSpace.x2 > axisY.chart.width - 10 ? axisY.chart.width - 10 - intervalInPixels : freeSpace.x2 - intervalInPixels);
+				//axisY.lineCoordinates.x1 -= chart.axisY.conversionParameters.pixelPerUnit * convertToNumber(chart.axisY.interval, chart.axisY.intervalType);
+				//axisY.lineCoordinates.x2 -= chart.axisY.conversionParameters.pixelPerUnit * convertToNumber(chart.axisY.interval, chart.axisY.intervalType);
 			}
 
-			//axisY.ctx.rect(axisY.boundingRect.x1, axisY.boundingRect.y1, axisY.boundingRect.width, axisY.boundingRect.height);
-			//axisY.ctx.stroke();
+			//axisX.calculateValueToPixelConversionParameters();
 
-			// Position axisX based on the available free space, Margin and its height
-			x1 = Math.round(freeSpace.x1 + axisX.margin);
-			y1 = Math.round(axisY2 ? axisY2.lineCoordinates.y2 : (freeSpace.y1 < 10 ? 10 : freeSpace.y1));
-			x2 = Math.round(freeSpace.x1 + axisXWidth + axisX.margin);
-			y2 = Math.round(axisY ? axisY.lineCoordinates.y1 : (freeSpace.y2 - axisYMargin > axisX.chart.height - 10 ? axisX.chart.height - 10 : freeSpace.y2 - axisYMargin));
+			//if (axisY)
+			//	axisY.calculateValueToPixelConversionParameters();
+			//if (axisY2)
+			//	axisY2.calculateValueToPixelConversionParameters();
 
-
-			axisX.lineCoordinates = {
-				x1: x2, y1: y1, x2: x2, y2: y2, height: Math.abs(y2 - y1)
-			};
-
-			axisX.boundingRect = {
-				x1: x1, y1: y1, x2: x2, y2: y2, width: x2 - x1, height: y2 - y1
-			};
-
-			//axisX.ctx.rect(axisX.boundingRect.x1, axisX.boundingRect.y1, axisX.boundingRect.width, axisX.boundingRect.height);
-			//axisX.ctx.stroke();
-
-			axisX.calculateValueToPixelConversionParameters();
-
-			if (axisY)
-				axisY.calculateValueToPixelConversionParameters();
-			if (axisY2)
-				axisY2.calculateValueToPixelConversionParameters();
-
-
+			//console.log(chart.axisY.conversionParameters.pixelPerUnit * convertToNumber(chart.axisY.interval, chart.axisY.intervalType));
 			//ctx.save();
 			//ctx.rect(axisY.boundingRect.x1 - 30, axisY.boundingRect.y1, axisY.boundingRect.width + 60, axisY.boundingRect.height);
 			//ctx.clip();
@@ -11895,6 +13235,7 @@
 			var plotArea = axisX.chart.plotArea;
 
 			ctx.save();
+			ctx.beginPath();
 			ctx.rect(plotArea.x1, plotArea.y1, Math.abs(plotArea.x2 - plotArea.x1), Math.abs(plotArea.y2 - plotArea.y1));
 
 			ctx.clip();
@@ -11943,8 +13284,9 @@
 				axisY.renderStripLinesOfThicknessType("pixel");
 			if (axisY2)
 				axisY2.renderStripLinesOfThicknessType("pixel");
-		}
 
+
+		}
 	}
 
 	Axis.prototype.renderLabelsTicksAndTitle = function () {
@@ -11953,8 +13295,8 @@
 		var totalLabelWidth = 0;
 		var thresholdRatio = 1;
 		var labelCount = 0;
-
-		var intervalInPixels = this.conversionParameters.pixelPerUnit * this.interval;
+		var skipStep = 2;
+		var intervalInPixels = this.conversionParameters.pixelPerUnit * convertToNumber(this.interval, this.intervalType);
 
 		if (this.labelAngle !== 0 && this.labelAngle !== 360)
 			thresholdRatio = 1.2;
@@ -11965,23 +13307,22 @@
 
 				//thresholdRatio = .9;// More space is preferred between labels when axis is horizontally aligned
 
-				for (i = 0; i < this._labels.length; i++) {
+				for (var i = 0; i < this._labels.length; i++) {
 					label = this._labels[i];
-					if (label.position < this.viewportMinimum || label.stripLine)// don't consider stripLine's lable
+					if (label.position < this.viewportMinimum)// don't consider stripLine's label
 						continue;
-
 					var width = label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle) + label.textBlock.height * Math.sin(Math.PI / 180 * this.labelAngle);
 
 					totalLabelWidth += width;
 				}
 
-				if (totalLabelWidth > this.lineCoordinates.width * thresholdRatio) {
+				if (totalLabelWidth > this.lineCoordinates.width * thresholdRatio && this.labelAutoFit) {
 					skipLabels = true;
 				}
 			} if (this._position === "left" || this._position === "right") {
-				for (i = 0; i < this._labels.length; i++) {
+				for (var i = 0; i < this._labels.length; i++) {
 					label = this._labels[i];
-					if (label.position < this.viewportMinimum || label.stripLine)// don't consider stripLine's lable
+					if (label.position < this.viewportMinimum)// don't consider stripLine's lable
 						continue;
 
 					var width = label.textBlock.height * Math.cos(Math.PI / 180 * this.labelAngle) + label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle);
@@ -11989,11 +13330,17 @@
 					totalLabelWidth += width;
 				}
 
-				if (totalLabelWidth > this.lineCoordinates.height * thresholdRatio) {
+				if (totalLabelWidth > this.lineCoordinates.height * thresholdRatio && this.labelAutoFit) {
 					skipLabels = true;
 				}
 			}
 		}
+		//		var width = label.textBlock.height * Math.cos(Math.PI / 180 * this.labelAngle) + label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle);
+		//		if (label.position * this.conversionParameters.pixelPerUnit + width > labelNext.position * this.conversionParameters.pixelPerUnit)
+		//			skipLabels = true;
+		//	}
+		//}
+
 
 		if (this._position === "bottom") {
 			var i = 0;
@@ -12009,19 +13356,9 @@
 
 				xy = this.getPixelCoordinatesOnAxis(label.position);
 
-				if ((this.tickThickness && !this._labels[i].stripLine) || (this._labels[i].stripLine && this._labels[i].stripLine._thicknessType === "pixel")) {
-
-					if (this._labels[i].stripLine) {
-						stripLine = this._labels[i].stripLine;
-						this.ctx.lineWidth = stripLine.thickness;
-						this.ctx.strokeStyle = stripLine.color;
-
-					} else {
-						this.ctx.lineWidth = this.tickThickness;
-						this.ctx.strokeStyle = this.tickColor;
-					}
-
-
+				if (this.tickThickness) {
+					this.ctx.lineWidth = this.tickThickness;
+					this.ctx.strokeStyle = this.tickColor;
 					var tickX = (this.ctx.lineWidth % 2 === 1) ? (xy.x << 0) + .5 : (xy.x << 0);
 					this.ctx.beginPath();
 					this.ctx.moveTo(tickX, xy.y << 0);
@@ -12029,13 +13366,11 @@
 					this.ctx.stroke();
 				}
 
-				//Don't skip stripLine's labels
-				if (skipLabels && labelCount++ % 2 !== 0 && !this._labels[i].stripLine)
+				if (skipLabels && labelCount++ % skipStep !== 0 && this.labelAutoFit)
 					continue;
 
 				if (label.textBlock.angle === 0) {
 					xy.x -= label.textBlock.width / 2;
-					//xy.y += this.tickLength + label.textBlock.height / 2;
 					xy.y += this.tickLength + label.textBlock.fontSize / 2;
 
 				} else {
@@ -12050,22 +13385,6 @@
 
 			if (this.title) {
 
-				this._titleTextBlock = new TextBlock(this.ctx, {
-					x: this.lineCoordinates.x1,// This is recalculated again
-					y: this.boundingRect.y2 - this.titleFontSize - 5,// This is recalculated again
-					maxWidth: this.lineCoordinates.width,
-					maxHeight: this.titleFontSize * 1.5,
-					angle: 0,
-					text: this.title,
-					horizontalAlign: "center",//left, center, right
-					fontSize: this.titleFontSize,//in pixels
-					fontFamily: this.titleFontFamily,
-					fontWeight: this.titleFontWeight, //normal, bold, bolder, lighter,
-					fontColor: this.titleFontColor,
-					fontStyle: this.titleFontStyle, // normal, italic, oblique
-					textBaseline: "top"
-				});
-
 				this._titleTextBlock.measureText();
 				this._titleTextBlock.x = this.lineCoordinates.x1 + this.lineCoordinates.width / 2 - this._titleTextBlock.width / 2;
 				this._titleTextBlock.y = this.boundingRect.y2 - this._titleTextBlock.height - 3;
@@ -12077,7 +13396,6 @@
 
 			var label;
 			var xy;
-			var stripLine;
 
 			for (i = 0; i < this._labels.length; i++) {
 				label = this._labels[i];
@@ -12086,19 +13404,11 @@
 
 				xy = this.getPixelCoordinatesOnAxis(label.position);
 
-				if ((this.tickThickness && !this._labels[i].stripLine) || (this._labels[i].stripLine && this._labels[i].stripLine._thicknessType === "pixel")) {
+				if (this.tickThickness) {
 
+					this.ctx.lineWidth = this.tickThickness;
+					this.ctx.strokeStyle = this.tickColor;
 
-					if (this._labels[i].stripLine) {
-						stripLine = this._labels[i].stripLine;
-
-						this.ctx.lineWidth = stripLine.thickness;
-						this.ctx.strokeStyle = stripLine.color;
-
-					} else {
-						this.ctx.lineWidth = this.tickThickness;
-						this.ctx.strokeStyle = this.tickColor;
-					}
 
 					var tickX = (this.ctx.lineWidth % 2 === 1) ? (xy.x << 0) + .5 : (xy.x << 0);
 					this.ctx.beginPath();
@@ -12108,16 +13418,17 @@
 
 				}
 
-				//Don't skip stripLine's labels
-				if (skipLabels && labelCount++ % 2 !== 0 && !this._labels[i].stripLine)
+				if (skipLabels && labelCount++ % skipStep !== 0 && this.labelAutoFit)
 					continue;
 
 				if (label.textBlock.angle === 0) {
 					xy.x -= label.textBlock.width / 2;
-					xy.y -= this.tickLength + label.textBlock.height / 2;
+					xy.y -= this.tickLength + label.textBlock.height;
 				} else {
-					xy.x -= (this.labelAngle > 0 ? (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) : 0);
-					xy.y -= this.tickLength + Math.abs((this.labelAngle > 0 ? label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle) + 5 : 5));
+					//xy.x -= label.textBlock.angle < 0 ? ((label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) - (label.textBlock.height - this.labelFontSize / 2) * Math.sin(Math.PI / 180 * this.labelAngle)) : (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) + (label.textBlock.height - this.labelFontSize / 2) * Math.sin(Math.PI / 180 * this.labelAngle);
+					//xy.y -= this.tickLength + Math.abs((label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle) + (label.textBlock.height - this.labelFontSize / 2 - 5) * Math.cos(Math.PI / 180 * this.labelAngle)));
+					xy.x += ((label.textBlock.height - this.tickLength - this.labelFontSize / 2) * Math.sin(Math.PI / 180 * this.labelAngle)) - (this.labelAngle > 0 ? label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle) : 0);
+					xy.y -= this.tickLength + (label.textBlock.height * Math.cos(Math.PI / 180 * this.labelAngle) + (this.labelAngle > 0 ? label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle) : 0));
 				}
 				label.textBlock.x = xy.x;
 				label.textBlock.y = xy.y;
@@ -12127,24 +13438,9 @@
 
 			if (this.title) {
 
-				this._titleTextBlock = new TextBlock(this.ctx, {
-					x: this.lineCoordinates.x1,// This is recalculated again
-					y: this.boundingRect.y1 + 1,
-					maxWidth: this.lineCoordinates.width,
-					maxHeight: this.titleFontSize * 1.5,
-					angle: 0,
-					text: this.title,
-					horizontalAlign: "center",//left, center, right
-					fontSize: this.titleFontSize,//in pixels
-					fontFamily: this.titleFontFamily,
-					fontWeight: this.titleFontWeight, //normal, bold, bolder, lighter,
-					fontColor: this.titleFontColor,
-					fontStyle: this.titleFontStyle, // normal, italic, oblique
-					textBaseline: "top"
-				});
-
 				this._titleTextBlock.measureText();
 				this._titleTextBlock.x = this.lineCoordinates.x1 + this.lineCoordinates.width / 2 - this._titleTextBlock.width / 2;
+				this._titleTextBlock.y = this.boundingRect.y1 + 1;
 				this._titleTextBlock.render(true);
 			}
 		}
@@ -12160,18 +13456,9 @@
 
 				xy = this.getPixelCoordinatesOnAxis(label.position);
 
-				if ((this.tickThickness && !this._labels[i].stripLine) || (this._labels[i].stripLine && this._labels[i].stripLine._thicknessType === "pixel")) {
-
-					if (this._labels[i].stripLine) {
-						stripLine = this._labels[i].stripLine;
-
-						this.ctx.lineWidth = stripLine.thickness;
-						this.ctx.strokeStyle = stripLine.color;
-					} else {
-						this.ctx.lineWidth = this.tickThickness;
-						this.ctx.strokeStyle = this.tickColor;
-					}
-
+				if (this.tickThickness) {
+					this.ctx.lineWidth = this.tickThickness;
+					this.ctx.strokeStyle = this.tickColor;
 					var tickY = (this.ctx.lineWidth % 2 === 1) ? (xy.y << 0) + .5 : (xy.y << 0);
 					this.ctx.beginPath();
 					this.ctx.moveTo(xy.x << 0, tickY);
@@ -12179,42 +13466,27 @@
 					this.ctx.stroke();
 				}
 
-				//Don't skip stripLine's labels
-				if (skipLabels && labelCount++ % 2 !== 0 && !this._labels[i].stripLine)
+				if (skipLabels && labelCount++ % skipStep !== 0 && this.labelAutoFit)
 					continue;
 
-				label.textBlock.x = xy.x - (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) - this.tickLength - 5;
+				//label.textBlock.x = xy.x - (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) - this.tickLength - 5;
 
 				if (this.labelAngle === 0) {
 					label.textBlock.y = xy.y;
-				} else
-					label.textBlock.y = xy.y - (label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle));
-
+					label.textBlock.x = xy.x - (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) - this.tickLength - 5;
+				} else {
+					label.textBlock.y = (xy.y - (label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle)));
+					label.textBlock.x = this.labelAngle > 0 ? (xy.x - (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) - this.tickLength - 5) : (xy.x - (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) + (label.textBlock.height - label.textBlock.fontSize / 2 - 5) * Math.sin(Math.PI / 180 * this.labelAngle) - this.tickLength);
+				}
 				label.textBlock.render(true);
 			}
 
 			if (this.title) {
 
-				this._titleTextBlock = new TextBlock(this.ctx, {
-					x: this.boundingRect.x1 + 1,
-					y: this.lineCoordinates.y2,
-					maxWidth: this.lineCoordinates.height,
-					maxHeight: this.titleFontSize * 1.5,
-					angle: -90,
-					text: this.title,
-					horizontalAlign: "center",//left, center, right
-					fontSize: this.titleFontSize,//in pixels
-					fontFamily: this.titleFontFamily,
-					fontWeight: this.titleFontWeight, //normal, bold, bolder, lighter,
-					fontColor: this.titleFontColor,
-					fontStyle: this.titleFontStyle, // normal, italic, oblique
-					textBaseline: "top"
-				});
-
 				var size = this._titleTextBlock.measureText();
 
 				//this._titleTextBlock.x -= 4;
-
+				this._titleTextBlock.x = this.boundingRect.x1 + 1;
 				this._titleTextBlock.y = (this.lineCoordinates.height / 2 + this._titleTextBlock.width / 2 + this.lineCoordinates.y1);
 				this._titleTextBlock.render(true);
 
@@ -12242,18 +13514,9 @@
 
 				xy = this.getPixelCoordinatesOnAxis(label.position);
 
-				if ((this.tickThickness && !this._labels[i].stripLine) || (this._labels[i].stripLine && this._labels[i].stripLine._thicknessType === "pixel")) {
-
-					if (this._labels[i].stripLine) {
-						stripLine = this._labels[i].stripLine;
-
-						this.ctx.lineWidth = stripLine.thickness;
-						this.ctx.strokeStyle = stripLine.color;
-					} else {
-						this.ctx.lineWidth = this.tickThickness;
-						this.ctx.strokeStyle = this.tickColor;
-					}
-
+				if (this.tickThickness) {
+					this.ctx.lineWidth = this.tickThickness;
+					this.ctx.strokeStyle = this.tickColor;
 					var tickY = (this.ctx.lineWidth % 2 === 1) ? (xy.y << 0) + .5 : (xy.y << 0);
 					this.ctx.beginPath();
 					this.ctx.moveTo(xy.x << 0, tickY);
@@ -12262,40 +13525,26 @@
 
 				}
 
-				//Don't skip stripLine's labels
-				if (skipLabels && labelCount++ % 2 !== 0 && !this._labels[i].stripLine)
+				if (skipLabels && labelCount++ % skipStep !== 0 && this.labelAutoFit)
 					continue;
 
-				label.textBlock.x = xy.x + this.tickLength + 5;
 				//label.textBlock.y = xy.y - (label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle));
+
 				if (this.labelAngle === 0) {
 					label.textBlock.y = xy.y;
+					label.textBlock.x = xy.x + this.tickLength + 5;
+				} else {
+					label.textBlock.y = this.labelAngle < 0 ? xy.y : xy.y - (label.textBlock.height - label.textBlock.fontSize / 2 - 5) * Math.cos(Math.PI / 180 * this.labelAngle);
+					label.textBlock.x = this.labelAngle > 0 ? (xy.x + ((label.textBlock.height - label.textBlock.fontSize / 2 - 5) * Math.sin(Math.PI / 180 * this.labelAngle)) + this.tickLength) : xy.x + this.tickLength + 5;//(xy.x + (label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle)) + (label.textBlock.height - label.textBlock.fontSize / 2) * Math.cos(Math.PI / 180 * this.labelAngle) - this.tickLength - 5);
 				}
-				else
-					label.textBlock.y = xy.y;
 
 				label.textBlock.render(true);
 			}
 
 			if (this.title) {
 
-				this._titleTextBlock = new TextBlock(this.ctx, {
-					x: this.boundingRect.x2 - 1,
-					y: this.lineCoordinates.y2,
-					maxWidth: this.lineCoordinates.height,
-					maxHeight: this.titleFontSize * 1.5,
-					angle: 90,
-					text: this.title,
-					horizontalAlign: "center",//left, center, right
-					fontSize: this.titleFontSize,//in pixels
-					fontFamily: this.titleFontFamily,
-					fontWeight: this.titleFontWeight, //normal, bold, bolder, lighter,
-					fontColor: this.titleFontColor,
-					fontStyle: this.titleFontStyle, // normal, italic, oblique
-					textBaseline: "top"
-				});
-
 				this._titleTextBlock.measureText();
+				this._titleTextBlock.x = this.boundingRect.x2 - 1;
 				this._titleTextBlock.y = (this.lineCoordinates.height / 2 - this._titleTextBlock.width / 2 + this.lineCoordinates.y1);
 				this._titleTextBlock.render(true);
 
@@ -12371,25 +13620,237 @@
 			return;
 
 		var _this = this;
-
+		var label;
+		var xy;
 		var i = 0;
 		for (i = 0; i < this.stripLines.length; i++) {
 
 			var stripLine = this.stripLines[i];
-
 			if (stripLine._thicknessType !== thicknessType)
 				continue;
-
 
 			//Should be skipped only if thicknessType is "pixel". If it is "value" then clipping is automatically applied before calling.
 			if (thicknessType === "pixel" && (stripLine.value < this.viewportMinimum || stripLine.value > this.viewportMaximum))
 				continue;
 
 			if (stripLine.showOnTop) {
-				this.chart.addEventListener("dataAnimationIterationEnd", stripLine.render, stripLine);
+				this.chart.addEventListener("dataAnimationIterationEnd", function () {
+				    this.ctx.save();
+				    this.ctx.beginPath();
+					this.ctx.rect(this.chart.plotArea.x1, this.chart.plotArea.y1, this.chart.plotArea.width, this.chart.plotArea.height);
+					this.ctx.clip();
+					stripLine.render();
+					this.ctx.restore();
+				}, stripLine);
 			}
 			else
 				stripLine.render();
+		}
+
+
+		//Stripline Label placement and render
+		for (i = 0; i < this._stripLineLabels.length; i++) {
+			var stripLine = this.stripLines[i];
+			label = this._stripLineLabels[i];
+			if (label.position < this.viewportMinimum || label.position > this.viewportMaximum)
+				continue;
+
+			xy = this.getPixelCoordinatesOnAxis(label.position);
+
+			if (label.stripLine.labelPlacement === "outside") {
+				if (stripLine && stripLine._thicknessType === "pixel") {
+					this.ctx.lineWidth = stripLine.thickness;
+					this.ctx.strokeStyle = stripLine.color;
+				}
+				if (this._position === "bottom") {
+					var tickX = (this.ctx.lineWidth % 2 === 1) ? (xy.x << 0) + .5 : (xy.x << 0);
+					this.ctx.beginPath();
+					this.ctx.moveTo(tickX, xy.y << 0);
+					this.ctx.lineTo(tickX, (xy.y + this.tickLength) << 0);
+					this.ctx.stroke();
+
+					if (this.labelAngle === 0) {
+						xy.x -= label.textBlock.width / 2;
+						xy.y += this.tickLength + label.textBlock.fontSize / 2;
+
+					} else {
+						xy.x -= (this.labelAngle < 0 ? (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) : 0);
+						xy.y += this.tickLength + Math.abs((this.labelAngle < 0 ? label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle) + 5 : 5));
+					}
+				}
+				else if (this._position === "top") {
+					var tickX = (this.ctx.lineWidth % 2 === 1) ? (xy.x << 0) + .5 : (xy.x << 0);
+					this.ctx.beginPath();
+					this.ctx.moveTo(tickX, xy.y << 0);
+					this.ctx.lineTo(tickX, (xy.y - this.tickLength) << 0);
+					this.ctx.stroke();
+					if (this.labelAngle === 0) {
+						xy.x -= label.textBlock.width / 2;
+						xy.y -= this.tickLength + label.textBlock.height;
+					} else {
+						xy.x += ((label.textBlock.height - this.tickLength - this.labelFontSize / 2) * Math.sin(Math.PI / 180 * this.labelAngle)) - (this.labelAngle > 0 ? label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle) : 0);
+						xy.y -= this.tickLength + (label.textBlock.height * Math.cos(Math.PI / 180 * this.labelAngle) + (this.labelAngle > 0 ? label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle) : 0));
+					}
+				}
+				else if (this._position === "left") {
+					var tickY = (this.ctx.lineWidth % 2 === 1) ? (xy.y << 0) + .5 : (xy.y << 0);
+					this.ctx.beginPath();
+					this.ctx.moveTo(xy.x << 0, tickY);
+					this.ctx.lineTo((xy.x - this.tickLength) << 0, tickY);
+					this.ctx.stroke();
+
+					if (this.labelAngle === 0) {
+						xy.x = xy.x - (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) - this.tickLength - 5;
+					} else {
+						xy.y = (xy.y - (label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle)));
+						xy.x = this.labelAngle > 0 ? (xy.x - (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) - this.tickLength - 5) : (xy.x - (label.textBlock.width * Math.cos(Math.PI / 180 * this.labelAngle)) + (label.textBlock.height - label.textBlock.fontSize / 2 - 5) * Math.sin(Math.PI / 180 * this.labelAngle) - this.tickLength);
+					}
+				}
+				else if (this._position === "right") {
+					var tickY = (this.ctx.lineWidth % 2 === 1) ? (xy.y << 0) + .5 : (xy.y << 0);
+					this.ctx.beginPath();
+					this.ctx.moveTo(xy.x << 0, tickY);
+					this.ctx.lineTo((xy.x + this.tickLength) << 0, tickY);
+					this.ctx.stroke();
+
+					if (this.labelAngle === 0) {
+						xy.x = xy.x + this.tickLength + 5;
+					} else {
+						xy.y = this.labelAngle < 0 ? xy.y : xy.y - (label.textBlock.height - label.textBlock.fontSize / 2 - 5) * Math.cos(Math.PI / 180 * this.labelAngle);
+						xy.x = this.labelAngle > 0 ? (xy.x + ((label.textBlock.height - label.textBlock.fontSize / 2 - 5) * Math.sin(Math.PI / 180 * this.labelAngle)) + this.tickLength) : xy.x + this.tickLength + 5;//(xy.x + (label.textBlock.width * Math.sin(Math.PI / 180 * this.labelAngle)) + (label.textBlock.height - label.textBlock.fontSize / 2) * Math.cos(Math.PI / 180 * this.labelAngle) - this.tickLength - 5);
+					}
+				}
+
+
+				label.textBlock.x = xy.x;
+				label.textBlock.y = xy.y;
+
+				if (stripLine.showOnTop) {
+
+					this.chart.addEventListener("dataAnimationIterationEnd", label.textBlock.render, label.textBlock);
+				}
+				else {
+					label.textBlock.render(true);
+				}
+			}
+
+			else {		//labelPlacement === "inside"
+				label.textBlock.angle = -90;
+				if (this._position === "bottom") {
+					label.textBlock.maxWidth = this._options.stripLines[i].labelMaxWidth ? this._options.stripLines[i].labelMaxWidth : this.chart.plotArea.height - 3;
+					label.textBlock.measureText();
+					if (xy.x - label.textBlock.height > this.chart.plotArea.x1) {
+						if (isNullOrUndefined(stripLine.startValue))
+							xy.x -= label.textBlock.height - label.textBlock.fontSize / 2;
+						else
+							xy.x -= label.textBlock.height / 2 - label.textBlock.fontSize / 2 + 3;
+					}
+					else {
+						label.textBlock.angle = 90;
+						if (isNullOrUndefined(stripLine.startValue))
+							xy.x += label.textBlock.height - label.textBlock.fontSize / 2;
+						else
+							xy.x += label.textBlock.height / 2 - label.textBlock.fontSize / 2 + 3;
+					}
+
+					if (label.textBlock.angle === -90)
+						xy.y = label.stripLine.labelAlign === "near" ? (this.chart.plotArea.y2) - 3 : label.stripLine.labelAlign === "center" ? (this.chart.plotArea.y2 + this.chart.plotArea.y1 + label.textBlock.width) / 2 : (this.chart.plotArea.y1) + label.textBlock.width + 3;
+					else
+						xy.y = label.stripLine.labelAlign === "near" ? (this.chart.plotArea.y2) - label.textBlock.width - 3 : label.stripLine.labelAlign === "center" ? (this.chart.plotArea.y2 + this.chart.plotArea.y1 - label.textBlock.width) / 2 : (this.chart.plotArea.y1) + 3;
+
+				}
+				else if (this._position === "top") {
+					label.textBlock.maxWidth = this._options.stripLines[i].labelMaxWidth ? this._options.stripLines[i].labelMaxWidth : this.chart.plotArea.height - 3;
+					label.textBlock.measureText();
+					if (xy.x - label.textBlock.height > this.chart.plotArea.x1) {
+						if (isNullOrUndefined(stripLine.startValue))
+							xy.x -= label.textBlock.height - label.textBlock.fontSize / 2;
+						else
+							xy.x -= label.textBlock.height / 2 - label.textBlock.fontSize / 2 + 3;
+					}
+					else {
+						label.textBlock.angle = 90;
+						if (isNullOrUndefined(stripLine.startValue))
+							xy.x += label.textBlock.height - label.textBlock.fontSize / 2;
+						else
+							xy.x += label.textBlock.height / 2 - label.textBlock.fontSize / 2 + 3;
+					}
+
+					if (label.textBlock.angle === -90)
+						xy.y = label.stripLine.labelAlign === "near" ? (this.chart.plotArea.y1) + label.textBlock.width + 3 : label.stripLine.labelAlign === "center" ? (this.chart.plotArea.y2 + this.chart.plotArea.y1 + label.textBlock.width) / 2 : (this.chart.plotArea.y2) - 3;
+					else
+						xy.y = label.stripLine.labelAlign === "near" ? (this.chart.plotArea.y1) + 3 : label.stripLine.labelAlign === "center" ? (this.chart.plotArea.y2 + this.chart.plotArea.y1 - label.textBlock.width) / 2 : (this.chart.plotArea.y2) - label.textBlock.width - 3;
+
+				}
+				else if (this._position === "left") {
+					label.textBlock.maxWidth = this._options.stripLines[i].labelMaxWidth ? this._options.stripLines[i].labelMaxWidth : this.chart.plotArea.width - 3;
+					label.textBlock.angle = 0;
+					label.textBlock.measureText();
+					if (xy.y - label.textBlock.height > this.chart.plotArea.y1) {
+						if (isNullOrUndefined(stripLine.startValue))
+							xy.y -= label.textBlock.height - label.textBlock.fontSize / 2;
+						else
+							xy.y -= label.textBlock.height / 2 - label.textBlock.fontSize + 3;
+					}
+					else if (xy.y - label.textBlock.height < this.chart.plotArea.y2) {
+						xy.y += label.textBlock.fontSize / 2 + 3;
+					}
+					else {
+						if (isNullOrUndefined(stripLine.startValue))
+							xy.y -= label.textBlock.height - label.textBlock.fontSize / 2;
+						else
+							xy.y -= label.textBlock.height / 2 - label.textBlock.fontSize + 3;
+					}
+
+					xy.x = label.stripLine.labelAlign === "near" ? (this.chart.plotArea.x1) + 3 : label.stripLine.labelAlign === "center" ? (this.chart.plotArea.x2 + this.chart.plotArea.x1) / 2 - label.textBlock.width / 2 : (this.chart.plotArea.x2) - label.textBlock.width - 3;
+
+				}
+				else if (this._position === "right") {
+					label.textBlock.maxWidth = this._options.stripLines[i].labelMaxWidth ? this._options.stripLines[i].labelMaxWidth : this.chart.plotArea.width - 3;
+					label.textBlock.angle = 0;
+					label.textBlock.measureText();
+					if (xy.y - +label.textBlock.height > this.chart.plotArea.y1) {
+						if (isNullOrUndefined(stripLine.startValue))
+							xy.y -= label.textBlock.height - label.textBlock.fontSize / 2;
+						else
+							xy.y -= label.textBlock.height / 2 - label.textBlock.fontSize / 2 - 3;
+					}
+					else if (xy.y - label.textBlock.height < this.chart.plotArea.y2) {
+						xy.y += label.textBlock.fontSize / 2 + 3;
+					}
+					else {
+						if (isNullOrUndefined(stripLine.startValue))
+							xy.y -= label.textBlock.height - label.textBlock.fontSize / 2;
+						else
+							xy.y -= label.textBlock.height / 2 - label.textBlock.fontSize / 2 + 3;
+					}
+
+					xy.x = label.stripLine.labelAlign === "near" ? (this.chart.plotArea.x2) - label.textBlock.width - 3 : label.stripLine.labelAlign === "center" ? (this.chart.plotArea.x2 + this.chart.plotArea.x1) / 2 - label.textBlock.width / 2 : (this.chart.plotArea.x1) + 3;
+
+				}
+
+
+				label.textBlock.x = xy.x;
+				label.textBlock.y = xy.y;
+				if (stripLine.showOnTop) {
+				    this.ctx.save();
+				    this.ctx.beginPath();
+					this.ctx.rect(this.chart.plotArea.x1, this.chart.plotArea.y1, this.chart.plotArea.width, this.chart.plotArea.height);
+					this.ctx.clip();
+					this.chart.addEventListener("dataAnimationIterationEnd", function () {
+						label.textBlock.render(true);
+						_this.ctx.restore();
+					}, label.textBlock);
+				}
+				else {
+				    this.ctx.save();
+				    this.ctx.beginPath();
+					this.ctx.rect(this.chart.plotArea.x1, this.chart.plotArea.y1, this.chart.plotArea.width, this.chart.plotArea.height);
+					this.ctx.clip();
+					label.textBlock.render(true);
+					this.ctx.restore();
+				}
+			}
 		}
 	};
 
@@ -12439,8 +13900,8 @@
 
 			for (var i = 0; i < this._labels.length && !this._labels[i].stripLine; i++) {
 
-				if (i === 0 && this.type === "axisY" && this.chart.axisX && this.chart.axisX.lineThickness)
-					continue;
+				//if (i === 0 && this.type === "axisY" && this.chart.axisX && this.chart.axisX.lineThickness && this._labels[i].position === this.viewportMinimum)
+				//	continue;
 
 				if (this._labels[i].position < this.viewportMinimum || this._labels[i].position > this.viewportMaximum)
 					continue;
@@ -12893,6 +14354,10 @@
 			else {
 				this.interval = Axis.getNiceNumber(range / (noTicks - 1), true);
 			}
+			//if (this.labelAutoFit) {
+			//	this.interval = Axis.getNiceNumber(range / (noTicks - 1), true);
+			//	this.interval = this._options.interval ? this._options.interval < this.interval ? this.interval : this._options.interval : this.interval ;
+			//}
 
 			if (this.viewportMinimum === null || isNaN(this.viewportMinimum)) {
 				if (this.type === "axisX")
@@ -13216,6 +14681,9 @@
 	StripLine.prototype.render = function () {
 
 		this.ctx.save();
+		//this.ctx.rect(this.chart.plotArea.x1, this.chart.plotArea.y1, this.chart.plotArea.width, this.chart.plotArea.height);
+		//this.ctx.clip();
+
 		var xy = this.parent.getPixelCoordinatesOnAxis(this.value);
 
 		var lineWidth = Math.abs(this._thicknessType === "pixel" ? this.thickness : this.parent.conversionParameters.pixelPerUnit * this.thickness);
@@ -13262,7 +14730,6 @@
 
 			this.ctx.globalAlpha = oldGlobalAlpha;
 		}
-
 		this.ctx.restore();
 	};
 
@@ -13415,6 +14882,7 @@
 				return entry1.distance - entry2.distance;
 			});
 
+
 			var closest = nearbyEntries[0];
 
 			for (i = 0; i < nearbyEntries.length; i++) {
@@ -13437,7 +14905,7 @@
 
 				var id = getObjectId(mouseX, mouseY, this.chart._eventManager.ghostCtx);
 				if (id > 0 && typeof this.chart._eventManager.objectMap[id] !== "undefined") {//DataPoint/DataSeries event
-					eventObject = this.chart._eventManager.objectMap[id];
+					var eventObject = this.chart._eventManager.objectMap[id];
 
 					if (eventObject.objectType === "legendItem")
 						return;
@@ -13565,7 +15033,7 @@
 
 					} catch (e) {
 					}
-
+					var toolTipLeft;
 					if (entries[0].dataSeries.type === "pie" || entries[0].dataSeries.type === "doughnut" || entries[0].dataSeries.type === "funnel" || entries[0].dataSeries.type === "bar" || entries[0].dataSeries.type === "rangeBar" || entries[0].dataSeries.type === "stackedBar" || entries[0].dataSeries.type === "stackedBar100") {
 						toolTipLeft = mouseX - 10 - this.container.clientWidth;
 					} else {
@@ -13638,7 +15106,7 @@
 
 		var plotArea = this.chart.plotArea;
 		var offset = 0;
-
+		overlaidCanvasCtx.beginPath();
 		overlaidCanvasCtx.rect(plotArea.x1, plotArea.y1, plotArea.x2 - plotArea.x1, plotArea.y2 - plotArea.y1);
 		overlaidCanvasCtx.clip();
 
@@ -14596,7 +16064,7 @@
 
 	}
 
-	CanvasJS.Chart.version = "v1.8.0 GA";
+	CanvasJS.Chart.version = "v1.8.1 GA";
 	window.CanvasJS = CanvasJS;
 	//#endregion Public API
 

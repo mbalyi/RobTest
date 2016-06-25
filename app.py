@@ -269,6 +269,12 @@ def requestChart(type):
 @app.route('/chartFilter', methods=['GET'])
 def chartFilter():
 	return render_template('chartFilter.html')
+
+#-----Dashboard-----
+@app.route('/dashboardLoad', methods=['GET'])
+def dashboardLoad():
+	return render_template('slide.html')
+
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

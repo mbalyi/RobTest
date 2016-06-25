@@ -42,9 +42,10 @@ $(function(){
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "dashboard"){
 			$(".text_area").hide();
 			$(".insert_jira_button").empty();
-			addChart("pie","chartID");
+			//addChart("pie","chartID");
 			$(".setup_buttons").empty();
-			chartFilterBar();
+			//chartFilterBar();
+			dashboardLoad();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "reportBlog"){
 			requestDashboard(

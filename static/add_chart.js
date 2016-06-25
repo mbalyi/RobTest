@@ -1,10 +1,10 @@
 var FilterNavbar="";
 
-function chartFilterBar(){
+function chartFilterBar(direction){
 	$.get("/chartFilter",
 		function(data,status){
 			if(status){
-				$(".col-md-12-object").empty().append(data);
+				$(direction).empty().append(data);
 				$(".setup").show();
 			};
 		}
@@ -16,7 +16,6 @@ function addChart(type,direction){
 	$.get("/requestChart/"+type,
 		function(data,status){
 			if(status){
-				$(".col-md-9").append("<div id='chartID' style='width:90%'></div>")
 				if(type == "line")
 					createLineChart(data,direction)
 				if(type == "pie")
@@ -77,6 +76,6 @@ function createPieChart(template,direction){
 }
 
 $(function(){
-	chartFilterBar();
-	addChart("pie","chartID");
+	//chartFilterBar();
+	//addChart("pie","chartID");
 });

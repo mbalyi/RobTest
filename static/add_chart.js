@@ -4,8 +4,7 @@ function chartFilterBar(direction){
 	$.get("/chartFilter",
 		function(data,status){
 			if(status){
-				$(direction).empty().append(data);
-				$(".setup").show();
+				$(direction).prepend(data);
 			};
 		}
 	);
@@ -25,6 +24,17 @@ function addChart(type,direction){
 		"json"
 	);
 }
+
+function jenkinsRadiator(direction){
+	$.get("/jenkinsRadiator",
+		function(data,status){
+			if(status){
+				$(direction).prepend(data);
+			};
+		}
+	);
+}
+
 function createLineChart(template,direction){
 	var chart = new CanvasJS.Chart(direction,
 		{

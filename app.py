@@ -270,6 +270,10 @@ def requestChart(type):
 def chartFilter():
 	return render_template('chartFilter.html')
 
+@app.route('/jenkinsRadiator', methods=['GET'])
+def jenkinsRadiator():
+	return render_template('jenkinsRadiator.html', jenkins="true")	
+
 #-----Dashboard-----
 @app.route('/dashboardLoad', methods=['GET'])
 def dashboardLoad():

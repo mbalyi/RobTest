@@ -143,7 +143,7 @@ function loadSearchForm(){
 }
 
 $(function(){
-	addButtons();
+	//addButtons();
 	getUser();
 	currentDate();
 	iterator=0;

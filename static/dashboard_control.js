@@ -11,7 +11,9 @@ function dashboardLoad(){
 
 $(function(){
 	dashboardLoad();
-	chartFilterBar(".filterBar");
+	chartFilterBar(".chartFilter#pie");
 	addChart("pie","pieChart");
+	chartFilterBar(".chartFilter#line");
 	addChart("line","lineChart");
+	jenkinsRadiator(".jenkinsRadiator#jenkins");
 });

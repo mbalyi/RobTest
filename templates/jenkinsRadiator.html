@@ -1,41 +1,184 @@
 {% if jenkins %}
 <div class='container' style='width:100%;padding-bottom:0px;'>
-	<div class="alert alert-success" style='width:100%;margin-bottom:0px;'>
-		<table style='width:100%;'>
-			<tr style='width:100%;'>
-				<td style='width:20%;'>version </td>
-				<td style='width:40%;'>set </td>
-				<td style='width:40%;'>area </td>
-			</tr>
-		</table>
+	<div id='success'>
+		<a href="#" onclick="onClick1()">
+			<div class="alert alert-success" style='width:100%;margin-bottom:0px;'>
+				<table style='width:100%;'>
+					<tr style='width:100%;'>
+						<td style='width:20%;'>version </td>
+						<td style='width:40%;'>set </td>
+						<td style='width:40%;'>area </td>
+					</tr>
+				</table>
+			</div>
+		</a>
+		<div class="description" id="success">
+			<p>Reported by: tester</p>
+			<table class="table table-condensed">
+				<tr>
+					<th>#</th>
+					<th>Case Title</th>
+					<th>Description</th>
+					<th>Comment</th>
+					<th>Attached Files</th>
+				</tr>
+				<tr class="success" style="color:black;">
+					<td>1</td>
+					<td>First Case for reprezentation</td>
+					<td>Case description</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+			</table>
+		</div>
+		<script>
+			function onClick1(){
+				if($(".description#success").is(":visible")){
+					$(".description#success").hide();
+				}
+				else{
+					$(".description#success").show();
+				}
+			}
+			$(function(){
+				$(".description#success").hide();
+			})
+		</script>
 	</div>
-	
-	<div class="alert alert-info" style='width:100%;margin-bottom:0px;'>
-		<table style='width:100%;'>
-			<tr style='width:100%;'>
-				<td style='width:20%;'>version </td>
-				<td style='width:40%;'>set </td>
-				<td style='width:40%;'>area </td>
-			</tr>
-		</table>
+	<div class="info">
+		<a href="#" onclick="onClick2()">
+			<div class="alert alert-info" style='width:100%;margin-bottom:0px;'>
+				<table style='width:100%;'>
+					<tr style='width:100%;'>
+						<td style='width:20%;'>version </td>
+						<td style='width:40%;'>set </td>
+						<td style='width:40%;'>area </td>
+					</tr>
+				</table>
+			</div>
+		</a>
+		<div class="description" id="info">
+			<p>Reported by: tester</p>
+			<table class="table table-condensed">
+				<tr>
+					<th>#</th>
+					<th>Case Title</th>
+					<th>Description</th>
+					<th>Comment</th>
+					<th>Attached Files</th>
+				</tr>
+				<tr class="info" style="color:black;">
+					<td>1</td>
+					<td>First Case for reprezentation</td>
+					<td>Case description</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+			</table>
+		</div>
+		<script>
+			function onClick2(){
+				if($(".description#info").is(":visible")){
+					$(".description#info").hide();
+				}
+				else{
+					$(".description#info").show();
+				}
+			}
+			$(function(){
+				$(".description#info").hide();
+			})
+		</script>
 	</div>
-	<div class="alert alert-warning" style='width:100%;margin-bottom:0px;'>
-		<table style='width:100%;'>
-			<tr style='width:100%;'>
-				<td style='width:20%;'>version </td>
-				<td style='width:40%;'>set </td>
-				<td style='width:40%;'>area </td>
-			</tr>
-		</table>
+	<div class="warning">
+		<a href="#" onclick="onClick3()">
+			<div class="alert alert-warning" style='width:100%;margin-bottom:0px;'>
+				<table style='width:100%;'>
+					<tr style='width:100%;'>
+						<td style='width:20%;'>version </td>
+						<td style='width:40%;'>set </td>
+						<td style='width:40%;'>area </td>
+					</tr>
+				</table>
+			</div>
+		</a>
+		<div class="description" id="warning">
+			<p>Reported by: tester</p>
+			<table class="table table-condensed">
+				<tr>
+					<th>#</th>
+					<th>Case Title</th>
+					<th>Description</th>
+					<th>Comment</th>
+					<th>Attached Files</th>
+				</tr>
+				<tr class="warning" style="color:black;">
+					<td>1</td>
+					<td>First Case for reprezentation</td>
+					<td>Case description</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+			</table>
+		</div>
+		<script>
+			function onClick3(){
+				if($(".description#warning").is(":visible")){
+					$(".description#warning").hide();
+				}
+				else{
+					$(".description#warning").show();
+				}
+			}
+			$(function(){
+				$(".description#warning").hide();
+			})
+		</script>
 	</div>
-	<div class="alert alert-danger" style='width:100%;margin-bottom:0px;'>
-		<table style='width:100%;'>
-			<tr style='width:100%;'>
-				<td style='width:20%;'>version </td>
-				<td style='width:40%;'>set </td>
-				<td style='width:40%;'>area </td>
-			</tr>
-		</table>
+	<div class="danger">
+		<a href="#" onclick="onClick4()">
+			<div class="alert alert-danger" style='width:100%;margin-bottom:0px;'>
+				<table style='width:100%;'>
+					<tr style='width:100%;'>
+						<td style='width:20%;'>version </td>
+						<td style='width:40%;'>set </td>
+						<td style='width:40%;'>area </td>
+					</tr>
+				</table>
+			</div>
+		</a>
+		<div class="description" id="danger">
+			<p>Reported by: tester</p>
+			<table class="table table-condensed">
+				<tr>
+					<th>#</th>
+					<th>Case Title</th>
+					<th>Description</th>
+					<th>Comment</th>
+					<th>Attached Files</th>
+				</tr>
+				<tr class="danger" style="color:black;">
+					<td>1</td>
+					<td>First Case for reprezentation</td>
+					<td>Case description</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+			</table>
+		</div>
+		<script>
+			function onClick4(){
+				if($(".description#danger").is(":visible")){
+					$(".description#danger").hide();
+				}
+				else{
+					$(".description#danger").show();
+				}
+			}
+			$(function(){
+				$(".description#danger").hide();
+			})
+		</script>
 	</div>
 </div>
 {% endif %}

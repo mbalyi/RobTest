@@ -46,6 +46,7 @@ $(function(){
 			$(".setup_buttons").empty();
 			//chartFilterBar();
 			dashboardLoad();
+			dashboardButtonPanel();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "reportBlog"){
 			requestDashboard(

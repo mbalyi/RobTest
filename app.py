@@ -17,7 +17,8 @@ def login_form():
 	log = Report.login_querry(title=request.form["user"],pw=request.form["password"])
 	if log == 1 and 'username' in session:
 		query = Report.getRecords()
-		return render_template('home.html',user = request.form['user'])
+		projects = DB.getProjects()
+		return render_template('home.html',user = request.form['user'], Projects = projects)
 	else:
 		return redirect(url_for('login'))
 

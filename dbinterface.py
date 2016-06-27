@@ -273,13 +273,20 @@ class Database:
 		c.execute("SELECT Id FROM Case_Execution WHERE ExecutionId=? AND CaseId=?",[kwargs['exeId'],kwargs['caseId']])
 		caseExeId=c.fetchall()
 		conn.commit()
-		print(caseExeId)
 		c.execute("SELECT Result,Comment FROM Step_Execution WHERE Case_ExecutionId=?",[caseExeId[0][0]])
 		result=c.fetchall()
 		conn.commit()
-		print(result)
 		return result
 	
+    #-----Projects-----
+	def getProjects(self):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT ProjectId,Name FROM Projects")
+		result=c.fetchall()
+		conn.commit()
+		return result
+    
 	#-----test-----
 	def saveSetStatus(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")

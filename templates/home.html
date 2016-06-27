@@ -119,10 +119,28 @@
 						  ...
 						</ul>
 					</li>
-					{% endif %}		
-					<li>
-						<a href="#"><span>logged as {% if user %}{{user}}{% endif %}</span></a>
+					{% endif %}
+                    <li role="presentation" class="dropdown">
+						<a class="dropdown-toggle" id="design" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							<span>logged as {% if user %}{{user}}{% endif %}</span><span class="caret"></span>
+						</a>
+						<ul class="dropdown-menu">
+							{% if user %}
+							<li><a class='header' id="profile" href="#">Profile</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Projects</li>
+                            <li role="separator" class="divider"></li>
+							<li><a class='header' id="tasks" href="#">Tasks</a></li>
+							{% endif %}
+						</ul>
 					</li>
+                    <li style='padding-top:10px;padding-bottom:10px;'>
+                        <select class="form-control" style='width:100%;'>
+                        {% for k in Projects %}
+                            <option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+                        {% endfor %}
+                        </select>
+                    </li>
                     <li>
 						<a href="#" id="logout">Logout</a>
                     </li>					

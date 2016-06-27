@@ -172,6 +172,8 @@ class Database:
 		c = conn.cursor()
 		c.execute("DELETE FROM Sets WHERE SetId=?",[kwargs['id']])
 		conn.commit()
+		c.execute("DELETE FROM Set_Case WHERE SetId=?",[kwargs['id']])
+		conn.commit()
 	
 	#-----execution-----
 	def getExecution(self, **kwargs):

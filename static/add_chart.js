@@ -35,8 +35,10 @@ function jenkinsRadiator(direction){
 	);
 }
 
+var lineChart;
+
 function createLineChart(template,direction){
-	var chart = new CanvasJS.Chart(direction,
+	var lineChart = new CanvasJS.Chart(direction,
 		{
 			theme: "theme3",
                         animationEnabled: true,
@@ -60,12 +62,12 @@ function createLineChart(template,direction){
               else {
                 e.dataSeries.visible = true;
               }
-            	chart.render();
+            	lineChart.render();
             }
           },
         });
-		chart.options.data=template;
-		chart.render();
+		lineChart.options.data=template;
+		lineChart.render();
 }
 
 function createPieChart(template,direction){

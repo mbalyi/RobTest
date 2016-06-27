@@ -50,4 +50,7 @@ $(function(){
 			$('#carousel-example-generic').carousel('next');
 		}
 	});
+    $('body').one('slid.bs.carousel','#carousel-example-generic', function (){
+        lineChart.render();
+    });
 });

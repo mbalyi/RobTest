@@ -40,10 +40,10 @@ function loadSet(setId,mode){
 }
 
 function deleteSet(setId){
-	$.get("/deleteStep/"+setId,
+	$.get("/deleteSet/"+setId,
 		function(data,status){
 			if(status){
-				setSetup()
+				SetSetup()
 				$(".setup_buttons").empty().append(setBtn);
 				$(".col-md-9").empty().append(SetForm);
 			};
@@ -73,7 +73,7 @@ $(function(){
 			$(".col-md-9").empty().append(SetForm);
 			$(".setup_buttons").empty().append(setBtn);
 		}
-		if( $(event.target).attr('name')=="deleteSet" ){
+		if( $(event.target).attr('name')=="deleteset" ){
 			deleteSet(event.target.id);
 		}
 		if( $(event.target).attr('name')=="editSet" ){

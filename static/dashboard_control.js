@@ -34,6 +34,7 @@ function dashboardMode(){
 }
 
 $(function(){
+    document.getElementById("col-md-9").style.width = '100%'
 	dashboardLoad();
 	chartFilterBar(".chartFilter#pie");
 	addChart("pie","pieChart");

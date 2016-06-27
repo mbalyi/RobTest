@@ -135,9 +135,13 @@
 						</ul>
 					</li>
                     <li style='padding-top:10px;padding-bottom:10px;'>
-                        <select class="form-control" style='width:100%;'>
+                        <select class="projectSelector form-control" style='width:100%;'>
                         {% for k in Projects %}
-                            <option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+                            {% if k[0] == selectedProject %}
+                            <option data-dbid='{{k[0]}}' selected="selected">{{k[1]}}</option>
+                            {% else %}
+                                <option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+                            {% endif %}
                         {% endfor %}
                         </select>
                     </li>
@@ -171,7 +175,7 @@
 					
 				</div>
             </div>
-            <div class="col-md-9" id="testt" style='width:100%;height:500px;color: #eee;' ><!---overflow-y:scroll;-->
+            <div class="col-md-9" id="col-md-9" style='color: #eee;' ><!---overflow-y:scroll;-->
 				<div class='new_form'>
 				</div>
             </div>

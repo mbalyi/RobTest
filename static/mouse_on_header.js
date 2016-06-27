@@ -37,19 +37,39 @@ window.addEventListener("resize",function(ev){
 	debugger;
 })
 
+function projectChanging(){
+    $.get("/projectChanging/"+$(".projectSelector").find(":selected").attr('data-dbid'),
+		function(data,status){
+			if(status){
+			};
+		}
+	);
+}
+
 $(function(){
+    $( ".projectSelector" ).change(function() {
+        alert( "Handler for .change() called." );
+        projectChanging();
+        
+    });
+    
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "dashboard"){
-			$(".text_area").hide();
+            $(".text_area").hide();
 			$(".insert_jira_button").empty();
-			//addChart("pie","chartID");
 			$(".setup_buttons").empty();
-			//chartFilterBar();
-			dashboardLoad();
-			dashboardButtonPanel();
+			document.getElementById("col-md-9").style.width = '100%'
+            dashboardLoad();
+            chartFilterBar(".chartFilter#pie");
+            addChart("pie","pieChart");
+            chartFilterBar(".chartFilter#line");
+            addChart("line","lineChart");
+            jenkinsRadiator(".jenkinsRadiator#jenkins");
+            dashboardButtonPanel();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "reportBlog"){
-			requestDashboard(
+			document.getElementById("col-md-9").style.width = '70%';
+            requestDashboard(
 					{ active:true, filter:"" },
 					function(res){
 						//window.location.reload();
@@ -63,7 +83,8 @@ $(function(){
 				$(".setup").hide();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "design"){
-			$(".col-md-9").empty();
+			document.getElementById("col-md-9").style.width = '70%';
+            $(".col-md-9").empty();
 			$(".setup_buttons").empty();
 			$(".setup").show();
 			requestCase();
@@ -71,28 +92,33 @@ $(function(){
 			requestObject();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "sets"){
-			SetSetup();
+			document.getElementById("col-md-9").style.width = '70%';
+            SetSetup();
 			requestCase();
 			$(".setup").show();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "executions"){
-			exeSetup();
+			document.getElementById("col-md-9").style.width = '70%';
+            exeSetup();
 			requestSet();
 			requestCase();
 			$(".setup").show();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "cases"){
-			caseSetUp();
+			document.getElementById("col-md-9").style.width = '70%';
+            caseSetUp();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "objects"){
-			objectSetup();
+			document.getElementById("col-md-9").style.width = '70%';
+            objectSetup();
 			$(".col-md-12-set").empty();
 			$(".col-md-12-case").empty();
 			$(".col-md-12-execution").empty();
 			$(".setup").show();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "test"){
-			testSetup();
+			document.getElementById("col-md-9").style.width = '70%';
+            testSetup();
 		}
 	});
 	$("#submenu").empty().append("<li><a href='#' id='report'>Report</a></li>")

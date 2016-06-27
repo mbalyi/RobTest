@@ -18,7 +18,8 @@ def login_form():
 	if log == 1 and 'username' in session:
 		query = Report.getRecords()
 		projects = DB.getProjects()
-		return render_template('home.html',user = request.form['user'], Projects = projects)
+		projectId = DB.getSelectedProject(user=request.form['user'])
+		return render_template('home.html',user = request.form['user'], Projects = projects, selectedProject = projectId)
 	else:
 		return redirect(url_for('login'))
 
@@ -41,19 +42,19 @@ def design():
 #-----case page-----
 @app.route('/case_page', methods=['GET'])
 def case_page():
-	query = DB.get_case()
+	query = DB.get_case(projectId = projectSession())
 	return render_template('case.html', cases=query)
 	#return json.dumps(query)
 		
 @app.route('/save_case', methods=['POST'])
 def save_case():
-	ID=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"])
-	DB.save_steps(id=ID,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'))
+	ID=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],projectId=projectSession())
+	DB.save_steps(id=ID,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'),projectId=projectSession())
 	return json.dumps(ID)
 
 @app.route('/load_case/<int:ID>/<mode>', methods=['GET'])
 def load_case(ID,mode):
-	query = DB.get_case_parameters(id=ID)
+	query = DB.get_case_parameters(id=ID, projectId=projectSession())
 	if mode == "loadCase":
 		return render_template('case.html', loadcase=query)
 	elif mode == "editCase":
@@ -61,9 +62,7 @@ def load_case(ID,mode):
 
 @app.route('/get_step/<int:ID>/<mode>', methods=['GET'])
 def get_step(ID,mode):
-	print(mode)
-	query=DB.get_step_parameters(id=ID)
-	print(query)
+	query=DB.get_step_parameters(id=ID,projectId=projectSession())
 	if mode == "getStep":
 		return render_template('step.html', step=query)
 	elif mode == "editStep":
@@ -71,7 +70,7 @@ def get_step(ID,mode):
 
 @app.route('/deleteCase/<int:ID>', methods=['GET'])
 def deleteCase(ID):
-	DB.deleteCase(id=ID)
+	DB.deleteCase(id=ID, projectId=projectSession())
 	return "ok"
 
 @app.route('/updateCase/<int:ID>', methods=['POST'])
@@ -84,12 +83,12 @@ def updateCase(ID):
 #-----object page-----	
 @app.route('/object_page', methods=['GET'])
 def object_page():
-	query = DB.get_object(active=request.args.get('active'), search=request.args.get('filter'))
+	query = DB.get_object(projectId=projectSession())
 	return render_template("object.html", object=query)
 
 @app.route('/load_object/<int:ID>/<mode>', methods=['GET'])
 def load_object(ID,mode):
-	query = DB.get_object_parameters(id=ID)
+	query = DB.get_object_parameters(id=ID, projectId=projectSession())
 	if mode == "loadObject":
 		return render_template("object.html", loadObject=query)
 	elif mode == "editObject":
@@ -97,23 +96,23 @@ def load_object(ID,mode):
 
 @app.route('/save_object', methods=['POST'])	
 def save_object():
-	ID=DB.save_object(name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"])
+	ID=DB.save_object(name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],projectId=projectSession())
 	return json.dumps(ID)
 	
 @app.route('/deleteObject/<int:ID>', methods=['GET'])
 def deleteObject(ID):
-	DB.deleteObject(id=ID)
+	DB.deleteObject(id=ID,projectId=projectSession())
 	return "ok"
 
 #-----set page-----	
 @app.route('/set_page', methods=['GET'])
 def set_page():
-	query = DB.get_set(active=request.args.get('active'), search=request.args.get('filter'))
+	query = DB.get_set(projectId=projectSession())
 	return render_template('set.html', set=query)
 
 @app.route('/save_set', methods=['POST'])	
 def save_set():
-	setId=DB.save_set(name=request.form["name"],date=request.form["date"],priority=request.form["priority"])
+	setId=DB.save_set(name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession())
 	DB.saveSetCase(ID=request.form.getlist('ID'),setID=setId)
 	return "OK"
 
@@ -136,17 +135,17 @@ def deleteSet(ID):
 #-----set execution-----	
 @app.route('/execution_page', methods=['GET'])
 def execution_page():
-	query=DB.getExecution()
+	query=DB.getExecution(projectId=projectSession())
 	return render_template('execution.html', execution=query)
 
 @app.route('/newExe', methods=['GET'])
 def newExecution():
-	query=DB.get_object(active=request.args.get('active'), search=request.args.get('filter'))
+	query=DB.get_object(projectId=projectSession())
 	return render_template('execution.html', newExe=query)	
 
 @app.route('/saveExe', methods=['GET', 'POST'])
 def SaveExecution():
-	exeId=DB.saveExe(name=request.form["title"],testObject=request.form["TO"])
+	exeId=DB.saveExe(name=request.form["title"],testObject=request.form["TO"],projectId=projectSession())
 	DB.saveCaseExe(ID=request.form.getlist('ID'),exeID=exeId)
 	return json.dumps(exeId)		
 
@@ -235,7 +234,7 @@ def loadSearchForm():
 
 @app.route('/testSetup', methods=['GET'])
 def testSetup():
-	query = DB.getExecution(active=request.args.get('active'), search=request.args.get('filter'))
+	query = DB.getExecution(projectId=projectSession())
 	return render_template('test.html', Exe=query)
 	
 @app.route('/loadTest/<int:id>', methods=['GET'])
@@ -245,7 +244,7 @@ def loadTest(id):
 
 @app.route('/testPage/<int:id>/<int:exeId>', methods=['GET'])
 def testPage(id,exeId):
-	query = DB.get_step_parameters(id=id)
+	query = DB.get_step_parameters(id=id,projectId=projectSession())
 	res = DB.getStatusFromStepExe(exeId=exeId, caseId=id)
 	query=zip(query,res)
 	return render_template('test.html', step=query, status=res)
@@ -261,6 +260,15 @@ def saveCaseStatus(exeId,caseId):
 	return json.dumps(status)
 
 
+#-----Project-----
+@app.route('/projectChanging/<int:id>', methods=['GET'])
+def projectChanging(id):
+	DB.setProjectToUser(id=id, user=session['username'])
+	return "OK"	
+
+def projectSession():
+	return DB.getSelectedProject(user=session['username'])
+	
 #-----Chart-----
 @app.route('/requestChart/<type>', methods=['GET'])
 def requestChart(type):

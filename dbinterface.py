@@ -15,19 +15,19 @@ class Database:
 		c.execute("SELECT Name FROM Execution")
 		result=c.fetchone()
 	#-----case page-----	
-	def get_case(self):
+	def get_case(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT CaseId,Title FROM Cases")
+		c.execute("SELECT CaseId,Title FROM Cases WHERE ProjectId=?",[kwargs['projectId']])
 		result=c.fetchall()
 		return result
 	
 	def save_case(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Cases (Title,Priority,Data) VALUES (?,?,?)",[kwargs['title'],kwargs['priority'],kwargs['data']])
+		c.execute("INSERT INTO Cases (Title,Priority,Data,ProjectId) VALUES (?,?,?,?)",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId']])
 		conn.commit()
-		c.execute("SELECT CaseId FROM Cases WHERE Title=? AND Priority=? AND Data=?",[kwargs['title'],kwargs['priority'],kwargs['data']])
+		c.execute("SELECT CaseId FROM Cases WHERE Title=? AND Priority=? AND Data=? AND ProjectId=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId']])
 		CaseID=c.fetchone()
 		return CaseID[0]
 		
@@ -38,11 +38,10 @@ class Database:
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		for k,l in zip(actions,results):
-			c.execute("INSERT INTO Steps (Action,Result) VALUES (?,?)",[k,l])
+			c.execute("INSERT INTO Steps (Action,Result,ProjectId) VALUES (?,?,?)",[k,l,kwargs['projectId']])
 			conn.commit()
-			c.execute("SELECT StepId FROM Steps WHERE Action=? AND Result=?",[k,l])
+			c.execute("SELECT StepId FROM Steps WHERE Action=? AND Result=? AND ProjectId=?",[k,l,kwargs['projectId']])
 			stepID=c.fetchone()
-			#print(stepID)
 			step.append(stepID[0])
 		for k in step:
 			c.execute("INSERT INTO Case_Step (CaseId,StepId) VALUES (?,?)",[kwargs['id'],k])
@@ -51,7 +50,7 @@ class Database:
 	def get_case_parameters(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT * FROM Cases WHERE CaseId=?",[kwargs['id']])
+		c.execute("SELECT * FROM Cases WHERE CaseId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
 		result=c.fetchall()
 		return result
 	
@@ -62,15 +61,14 @@ class Database:
 		result=c.fetchall()
 		case_parameter = []
 		for k in result:
-			c.execute("SELECT * FROM Steps WHERE StepId=?",[k[0]])
+			c.execute("SELECT * FROM Steps WHERE StepId=? AND ProjectId=?",[k[0],kwargs['projectId']])
 			case_parameter.append(c.fetchone())
-		print(result)
 		return case_parameter
 	
 	def deleteCase(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("DELETE FROM Cases WHERE CaseId=?",[kwargs['id']])
+		c.execute("DELETE FROM Cases WHERE CaseId=? AND ProjectId",[kwargs['id'],kwargs['projectId']])
 		conn.commit()
 		c.execute("SELECT StepId FROM Case_Step WHERE CaseId=?",[kwargs['id']])
 		result=c.fetchall()
@@ -78,7 +76,7 @@ class Database:
 		c.execute("DELETE FROM Case_Step WHERE CaseId=?",[kwargs['id']])
 		conn.commit()
 		for k in result:
-			c.execute("DELETE FROM Steps WHERE StepId=?",[k[0]])
+			c.execute("DELETE FROM Steps WHERE StepId=? AND ProjectId",[k[0],kwargs['projectId']])
 			conn.commit()
 	
 	def updateCase(self, **kwargs):
@@ -97,51 +95,49 @@ class Database:
 		stepID=c.fetchall()
 	
 	#-----object-----
-	def get_object(self, active=None, owner=None, search=None, **kwargs):
-		args = []
+	def get_object(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT ObjectId,ObjectName FROM Objects",args)
+		c.execute("SELECT ObjectId,ObjectName FROM Objects WHERE ProjectId=?",[kwargs['projectId']])
 		result=c.fetchall()
 		return result
 	
 	def save_object(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Objects (ObjectName,ObjectHardware,ObjectDesc) VALUES (?,?,?)",[kwargs['name'],kwargs['hardware'],kwargs['desc']])
+		c.execute("INSERT INTO Objects (ObjectName,ObjectHardware,ObjectDesc,ProjectId) VALUES (?,?,?,?)",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId']])
 		conn.commit()
-		c.execute("SELECT ObjectId FROM Objects WHERE ObjectName=? AND ObjectHardware=? AND ObjectDesc=?",[kwargs['name'],kwargs['hardware'],kwargs['desc']])
+		c.execute("SELECT ObjectId FROM Objects WHERE ObjectName=? AND ObjectHardware=? AND ObjectDesc=? AND ProjectId=?",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId']])
 		CaseID=c.fetchone()
 		return CaseID[0]
 	
 	def get_object_parameters(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT * FROM Objects WHERE ObjectId=?",[kwargs['id']])
+		c.execute("SELECT * FROM Objects WHERE ObjectId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
 		result=c.fetchall()
 		return result
 	
 	def deleteObject(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("DELETE FROM Objects WHERE ObjectId=?",[kwargs['id']])
+		c.execute("DELETE FROM Objects WHERE ObjectId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
 		conn.commit()
 	
 	#-----set-----
-	def get_set(self, active=None, owner=None, search=None):
-		args = []
+	def get_set(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT SetId,SetName FROM Sets",args)
+		c.execute("SELECT SetId,SetName FROM Sets WHERE ProjectId=?",[kwargs['projectId']])
 		result=c.fetchall()
 		return result
 	
 	def save_set(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Sets (SetName,SetDate,SetPriority) VALUES (?,?,?)",[kwargs['name'],kwargs['date'],kwargs['priority']])
+		c.execute("INSERT INTO Sets (SetName,SetDate,SetPriority,ProjectId) VALUES (?,?,?,?)",[kwargs['name'],kwargs['date'],kwargs['priority'],kwargs['projectId']])
 		conn.commit()
-		c.execute("SELECT SetId FROM Sets WHERE SetName=?",[kwargs['name']])
+		c.execute("SELECT SetId FROM Sets WHERE SetName=? AND ProjectId=?",[kwargs['name'],kwargs['projectId']])
 		CaseID=c.fetchone()
 		return CaseID[0]
 	
@@ -178,11 +174,10 @@ class Database:
 		conn.commit()
 	
 	#-----execution-----
-	def getExecution(self, active=None, owner=None, search=None):
-		args=[]
+	def getExecution(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT ExecutionId,ExeName FROM Execution",args)
+		c.execute("SELECT ExecutionId,ExeName FROM Execution WHERE ProjectId=?",[kwargs['projectId']])
 		result=c.fetchall()
 		return result
 		
@@ -190,9 +185,9 @@ class Database:
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		#c.execute("INSERT INTO Execution (ExeName,ExeDate) VALUES (?,?)",[kwargs['name'],kwargs['date']])
-		c.execute("INSERT INTO Execution (ExeName) VALUES (?)",[kwargs['name']])
+		c.execute("INSERT INTO Execution (ExeName,ProjectId) VALUES (?,?)",[kwargs['name'],kwargs['projectId']])
 		conn.commit()
-		c.execute("SELECT ExecutionId FROM Execution WHERE ExeName=?",[kwargs['name']])
+		c.execute("SELECT ExecutionId FROM Execution WHERE ExeName=? AND ProjectId=?",[kwargs['name'],kwargs['projectId']])
 		ExeID=c.fetchone()
 		conn.commit()
 		c.execute("INSERT INTO Exe_Object (ExecutionId,ObjectId) VALUES (?,?)",[ExeID[0],kwargs['testObject']])
@@ -286,6 +281,21 @@ class Database:
 		result=c.fetchall()
 		conn.commit()
 		return result
+		
+	def getSelectedProject(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT ProjectId FROM Users WHERE UserName=?",[kwargs['user']])
+		result=c.fetchone()
+		conn.commit()
+		return result[0]
+		
+	def setProjectToUser(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Users SET ProjectId=? WHERE UserName=?",[kwargs['id'],kwargs['user']])
+		conn.commit()
+		return
     
 	#-----test-----
 	def saveSetStatus(self, **kwargs):
@@ -303,8 +313,6 @@ class Database:
 		c.execute("SELECT Result FROM Step_Execution WHERE ExecutionId=? AND Case_ExecutionId=?",[kwargs['exeId'],caseExeId[0][0]])
 		Results=c.fetchall()
 		conn.commit()
-		print('result:')
-		print(Results)
 		for k in Results:
 			if k[0] == "FAILED":
 				c.execute("UPDATE Case_Execution SET Result=? WHERE ExecutionId=? AND CaseId=?",["FAILED",kwargs['exeId'],kwargs['caseId']])

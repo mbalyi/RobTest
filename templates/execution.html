@@ -19,7 +19,7 @@
 		<tr>
 			<th>Test Object:</th>
 			<th class='objectDD'>
-				<select class='form-control'>
+				<select class='objectSeletor form-control'>
 					{% for l in newExe %}
 						<option data-dbid='{{l[0]}}' value='{{l[1]}}'>{{l[1]}}</option>
 					{% endfor %}
@@ -73,7 +73,7 @@
 			</tr>
 			{% for l in loadCase %}
 			<tr>
-				<th>{{l[1]}}</th><th>{{l[4]}}</th>
+				<th>{{l[1]}}</th><th>{{l[5]}}</th>
 			</tr>
 			{% endfor %}
 		</table>
@@ -95,7 +95,7 @@
 		<tr>
 			<th>Test Object:</th>
 			<th class='objectDD'>
-				<select class='form-control'>
+				<select class='objectSeletor form-control'>
 						<option data-dbid='{{loadEditableObject[0]}}'>{{loadEditableObject[1]}}</option>
 					{% for l in loadObjects %}
 						<option data-dbid='{{l[0]}}' value='{{l[1]}}'>{{l[1]}}</option>
@@ -116,7 +116,7 @@
 			<div data-dbid='case{{l[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
 				<table>
 					<tr>
-						<td><a href="#" data-dbid='{{l[0]}}' class="case">{{l[1]}}</a></td><td>{{l[4]}}</td>
+						<td><a href="#" data-dbid='{{l[0]}}' class="case">{{l[1]}}</a></td><td>{{l[5]}}</td>
 					</tr>
 				</table>
 			</div>

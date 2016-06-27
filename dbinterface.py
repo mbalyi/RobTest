@@ -105,9 +105,9 @@ class Database:
 	def save_object(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Objects (ObjectName,ObjectHardware,ObjectDesc,ProjectId) VALUES (?,?,?,?)",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId']])
+		c.execute("INSERT INTO Objects (ObjectName,ObjectHardware,ObjectDesc,ProjectId,ObjectVersion) VALUES (?,?,?,?,?)",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version']])
 		conn.commit()
-		c.execute("SELECT ObjectId FROM Objects WHERE ObjectName=? AND ObjectHardware=? AND ObjectDesc=? AND ProjectId=?",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId']])
+		c.execute("SELECT ObjectId FROM Objects WHERE ObjectName=? AND ObjectHardware=? AND ObjectDesc=? AND ProjectId=? AND ObjectVersion=?",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version']])
 		CaseID=c.fetchone()
 		return CaseID[0]
 	

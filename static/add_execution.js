@@ -17,7 +17,7 @@ function exeSetup(){
 }
 
 function saveExe(){
-	$.post("/saveExe", $("input").serialize()+"&ID="+$(".incExeCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID=")+"&TO="+$("option:selected").attr("data-dbid"),
+	$.post("/saveExe", $("input").serialize()+"&ID="+$(".incExeCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID=")+"&TO="+$(".objectSeletor").find(":selected").attr('data-dbid'),
 		function(data,status){
 			if(status){
 				requestExe();

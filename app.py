@@ -32,7 +32,7 @@ def logout():
 @app.route('/setup', methods=['GET'])
 def setup():
 	query = DB.get_case(active=request.args.get('active'), search=request.args.get('filter'))
-	query+=DB.get_object(active=request.args.get('active'), search=request.args.get('filter'))
+	query+=DB.get_object(projectId=projectSession())
 	return json.dumps(query)
 
 @app.route('/design', methods=['POST'])
@@ -96,7 +96,7 @@ def load_object(ID,mode):
 
 @app.route('/save_object', methods=['POST'])	
 def save_object():
-	ID=DB.save_object(name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],projectId=projectSession())
+	ID=DB.save_object(name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],version=request.form["version"],projectId=projectSession())
 	return json.dumps(ID)
 	
 @app.route('/deleteObject/<int:ID>', methods=['GET'])
@@ -147,14 +147,14 @@ def newExecution():
 def SaveExecution():
 	exeId=DB.saveExe(name=request.form["title"],testObject=request.form["TO"],projectId=projectSession())
 	DB.saveCaseExe(ID=request.form.getlist('ID'),exeID=exeId)
-	return json.dumps(exeId)		
+	return json.dumps(exeId)
 
 @app.route('/loadExecution/<int:ID>/<mode>', methods=['GET'])
 def loadExecution(ID,mode):
 	query=DB.getExeParameters(id=ID)
 	object=DB.getExeObject(id=ID)
 	cases=DB.getExeCases(id=ID)
-	objects=DB.get_object(active=request.args.get('active'), search=request.args.get('filter'), notRes=object[0])
+	objects=DB.get_object(projectId=projectSession(), notRes=object[0])
 	if mode == "loadExe":
 		return render_template('execution.html', loadExe=query, loadCase=cases, loadObject=object)
 	if mode == "editExe":

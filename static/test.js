@@ -23,7 +23,7 @@ function requestTest(){
 }
 
 function testPage(pageID){
-	$.get("/testPage/"+pageID+"/"+$("option:selected").attr("data-dbid"),
+	$.get("/testPage/"+pageID+"/"+$(".executionSelector").find(":selected").attr('data-dbid'),
 		function(data,status){
 			if(status){
 				$(".col-md-9").empty().append(data);
@@ -56,7 +56,7 @@ function loadTest(exeId){
 }
 
 function saveStatus(status,stepId){
-	$.get("/saveStatus/"+stepId+"/"+$("option:selected").attr("data-dbid")+"/"+status,
+	$.get("/saveStatus/"+stepId+"/"+$(".executionSelector").find(":selected").attr('data-dbid')+"/"+status,
 		function(data,status){
 			
 		}
@@ -64,7 +64,7 @@ function saveStatus(status,stepId){
 }
 
 function saveCaseStatus(){
-	$.get("/saveCaseStatus/"+$("option:selected").attr("data-dbid")+"/"+caseIdInExe,
+	$.get("/saveCaseStatus/"+$(".executionSelector").find(":selected").attr('data-dbid')+"/"+caseIdInExe,
 		function(data,status){
 			$("#"+caseIdInExe+".Res").empty().append(data);
 		},
@@ -84,7 +84,7 @@ function checkDivId(direction){
 $(function(){
 	$("body").on("click","a",function(event) {
 		if( event.target.id == "selectExe"){
-			loadTest($("option:selected").attr("data-dbid"));
+			loadTest($(".executionSelector").find(":selected").attr('data-dbid'));
 		}
 		if( event.target.id == "RUN"){
 			saveStatus("RUN",divId);

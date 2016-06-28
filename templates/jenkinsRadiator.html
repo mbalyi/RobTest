@@ -197,7 +197,7 @@
 				</table>
 			</div>
 		</a>
-		<div class="description" id="{{data[0]}}">
+		<div class="description" id="{{iterator}}">
 			<p>Reported by: tester</p>
 			<table class="table table-condensed">
 				<tr>
@@ -249,15 +249,113 @@
 		</div>
 		<script>
 			function onClick{{iterator}}(){
-				if($(".description#{{data[0]}}").is(":visible")){
-					$(".description#{{data[0]}}").hide();
+				if($(".description#{{iterator}}").is(":visible")){
+					$(".description#{{iterator}}").hide();
 				}
 				else{
-					$(".description#{{data[0]}}").show();
+					$(".description#{{iterator}}").show();
 				}
 			}
 			$(function(){
-				$(".description#{{data[0]}}").hide();
+				$(".description#{{iterator}}").hide();
+			})
+		</script>
+	</div>
+{% endif %}
+
+{% if objectExe %}
+    {% if rate[0]/rate[3] >= 0.8 %}
+    <div class='success'>
+		<a href="#" onclick='onClick{{iterator}}()'>
+			<div class="alert alert-success" style='width:100%;margin-bottom:0px;'>
+    {% else %}
+        {% if  rate[2]/rate[3] > 0%}
+    <div class='danger'>
+		<a href="#" onclick='onClick{{iterator}}()'>
+			<div class="alert alert-danger" style='width:100%;margin-bottom:0px;'>
+        {% else %}
+    <div class='warning'>
+		<a href="#" onclick='onClick{{iterator}}()'>
+			<div class="alert alert-warning" style='width:100%;margin-bottom:0px;'>
+        {% endif %}
+    {% endif %}
+				<table style='width:100%;'>
+					<tr style='width:100%;'>
+						<td style='width:20%;'>{{objectExe[0][2][2]}}</td>
+						<td style='width:40%;'>{{objectExe[0][2][1]}}</td>
+                        {% for k in objectExe %}
+                        <td>
+                        <button type="button" class="btn" data-toggle="popover" title='{{k[2][4]}}' data-placement="bottom" data-content='Passed:{{k[4][0]}}/{{k[4][3]}} ({{(k[4][0]/k[4][3]*100)|int}}%)'>{{k[2][4]}}</button>
+                        </td>
+                        <td style='width:40%;'><i>Passed in {{k[2][4]}}:{{k[4][0]}}/{{k[4][3]}}</i></td>
+                        {% endfor %}
+					</tr>
+				</table>
+			</div>
+		</a>
+		<div class="description" id="{{iterator}}">
+			<p>Reported by: tester</p>
+			<table class="table table-condensed">
+				<tr>
+					<th>#</th>
+					<th>Case Title</th>
+                    <th>Result</thth>
+					<th>Comment</th>
+					<th>Attached Files</th>
+				</tr>
+                {% for j in objectExe %}
+                    {% for k in j[1] %}
+                    {% if k[1] == "FAILED" %}
+				<tr class="danger" style="color:black;">
+					<td>{{loop.index}}</td>
+					<td>{{k[3]}}</td>
+                    <td>{{k[1]}}</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+                    {% endif %}
+                    {% if k[1] == "NOTRUN" %}
+				<tr class="warning" style="color:black;">
+					<td>{{loop.index}}</td>
+					<td>{{k[3]}}</td>
+                    <td>{{k[1]}}</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+                    {% endif %}
+                    {% if k[1] == "SKIPPED" %}
+				<tr class="warning" style="color:black;">
+					<td>{{loop.index}}</td>
+					<td>{{k[3]}}</td>
+                    <td>{{k[1]}}</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+                    {% endif %}
+                    {% if k[1] == "NOTIMP" %}
+				<tr class="info" style="color:black;">
+					<td>{{loop.index}}</td>
+					<td>{{k[3]}}</td>
+                    <td>{{k[1]}}</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+                    {% endif %}
+                    {% endfor %}
+                {% endfor %}
+			</table>
+		</div>
+		<script>
+			function onClick{{iterator}}(){
+				if($(".description#{{iterator}}").is(":visible")){
+					$(".description#{{iterator}}").hide();
+				}
+				else{
+					$(".description#{{iterator}}").show();
+				}
+			}
+			$(function(){
+				$(".description#{{iterator}}").hide();
 			})
 		</script>
 	</div>

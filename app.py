@@ -288,6 +288,7 @@ def jenkinsRadiator():
 	print(cases)
 	default = [cases[0]]
 	temp = []
+	sorting = []
 	for k in cases:
 		if k[0] == default[0][0]:
 			if k != default[0]:
@@ -322,16 +323,48 @@ def jenkinsRadiator():
 		rate.append(all)
 		if passed/all >= 0.8:
 			rendered += render_template('jenkinsRadiator.html', mode='success', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+			sorting.append(('success',temp[iterator],query[iterator],iterator,rate))
 		else:
 			if failed/all > 0:
 				rendered += render_template('jenkinsRadiator.html', mode='danger', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+				sorting.append(('danger',temp[iterator],query[iterator],iterator,rate))
 			else:
 				rendered += render_template('jenkinsRadiator.html', mode='warning', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+				sorting.append(('warning',temp[iterator],query[iterator],iterator,rate))
 		all=0
 		passed=0
 		iterator+=1
 		skipped=0
 		failed=0
+	temp = []
+	iterator=0
+	for j in sorting:
+		for k in sorting:
+			temp.append(k)
+			default=k[2][0]
+			for l in sorting:
+				if l[2][0] == default:
+					if l[2] != sorting[0][2]:
+						temp.append(l)
+						sorting.pop(sorting.index(l))
+			passed=0
+			skipped=0
+			failed=0
+			all=0
+			for k in temp:
+				passed+=k[4][0]
+				skipped+=k[4][1]
+				failed+=k[4][2]
+				all+=k[4][3]
+			rate=[]
+			rate.append(passed)
+			rate.append(skipped)
+			rate.append(failed)
+			rate.append(all)
+			print(temp)
+			#rendered+=render_template('jenkinsRadiator.html', objectExe=temp, iterator=iterator, rate=rate)
+			temp = []
+			iterator+=1
 	return rendered #render_template('jenkinsRadiator.html', jenkins=rendered)	
 
 #-----Dashboard-----

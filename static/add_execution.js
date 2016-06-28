@@ -53,7 +53,7 @@ function loadExecution(exeID,mode){
 }
 
 function deleteExe(exeId){
-	$.get("/deleteExe/"+exeId,
+	$.get("/deleteExe/"+exeId+"/"+$("input.object").attr('data-dbid'),
 		function(data,status){
 			if(status){
 				exeSetup()

@@ -1,5 +1,6 @@
 {% if jenkins %}
 <div class='container' style='width:100%;padding-bottom:0px;'>
+    <!--- A dolgok helye... -->
 	<div id='success'>
 		<a href="#" onclick="onClick1()">
 			<div class="alert alert-success" style='width:100%;margin-bottom:0px;'>
@@ -181,4 +182,83 @@
 		</script>
 	</div>
 </div>
+{% endif %}
+
+{% if mode %}
+    <div class='{{mode}}'>
+		<a href="#" onclick='onClick{{iterator}}()'>
+			<div class="alert alert-{{mode}}" style='width:100%;margin-bottom:0px;'>
+				<table style='width:100%;'>
+					<tr style='width:100%;'>
+						<td style='width:20%;'>{{data[2]}}</td>
+						<td style='width:40%;'>{{data[1]}}</td>
+                        <td style='width:40%;'><i>Passed:{{rate[0]}}/{{rate[3]}} ({{(rate[0]/rate[3]*100)|int}}%)</i></td>
+					</tr>
+				</table>
+			</div>
+		</a>
+		<div class="description" id="{{data[0]}}">
+			<p>Reported by: tester</p>
+			<table class="table table-condensed">
+				<tr>
+					<th>#</th>
+					<th>Case Title</th>
+                    <th>Result</thth>
+					<th>Comment</th>
+					<th>Attached Files</th>
+				</tr>
+                {% for k in param %}
+                    {% if k[1] == "FAILED" %}
+				<tr class="danger" style="color:black;">
+					<td>{{loop.index}}</td>
+					<td>{{k[3]}}</td>
+                    <td>{{k[1]}}</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+                    {% endif %}
+                    {% if k[1] == "NOTRUN" %}
+				<tr class="warning" style="color:black;">
+					<td>{{loop.index}}</td>
+					<td>{{k[3]}}</td>
+                    <td>{{k[1]}}</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+                    {% endif %}
+                    {% if k[1] == "SKIPPED" %}
+				<tr class="warning" style="color:black;">
+					<td>{{loop.index}}</td>
+					<td>{{k[3]}}</td>
+                    <td>{{k[1]}}</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+                    {% endif %}
+                    {% if k[1] == "NOTIMP" %}
+				<tr class="info" style="color:black;">
+					<td>{{loop.index}}</td>
+					<td>{{k[3]}}</td>
+                    <td>{{k[1]}}</td>
+					<td>User added comment</td>
+					<td>Attached log/image</td>
+				</tr>
+                    {% endif %}
+                {% endfor %}
+			</table>
+		</div>
+		<script>
+			function onClick{{iterator}}(){
+				if($(".description#{{data[0]}}").is(":visible")){
+					$(".description#{{data[0]}}").hide();
+				}
+				else{
+					$(".description#{{data[0]}}").show();
+				}
+			}
+			$(function(){
+				$(".description#{{data[0]}}").hide();
+			})
+		</script>
+	</div>
 {% endif %}

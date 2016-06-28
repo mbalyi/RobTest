@@ -33,9 +33,6 @@ function GenerateHeader(data){
     return html;
 }
 
-window.addEventListener("resize",function(ev){
-	debugger;
-})
 
 function projectChanging(){
     $.get("/projectChanging/"+$(".projectSelector").find(":selected").attr('data-dbid'),
@@ -66,7 +63,10 @@ $(function(){
             addChart("line","lineChart");
             jenkinsRadiator(".jenkinsRadiator#jenkins");
             dashboardButtonPanel();
-		}
+            $('body').on('slid.bs.carousel','#carousel-example-generic', function (){
+                lineChart.render();
+            });
+        }
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "reportBlog"){
 			document.getElementById("col-md-9").style.width = '70%';
             requestDashboard(

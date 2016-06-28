@@ -153,6 +153,7 @@ def SaveExecution():
 def loadExecution(ID,mode):
 	query=DB.getExeParameters(id=ID)
 	object=DB.getExeObject(id=ID)
+	print(object)
 	cases=DB.getExeCases(id=ID)
 	objects=DB.get_object(projectId=projectSession(), notRes=object[0])
 	if mode == "loadExe":
@@ -162,9 +163,9 @@ def loadExecution(ID,mode):
 	#else:
 	#	return render_template('execution.html', loadEditableSet=query, editCase=cases)
 
-@app.route('/deleteExe/<int:ID>', methods=['GET'])
-def deleteExe(ID):
-	DB.deleteExe(id=ID)
+@app.route('/deleteExe/<int:ID>/<int:obID>', methods=['GET'])
+def deleteExe(ID,obID):
+	DB.deleteExe(id=ID,obid=obID)
 	return "ok"
 
 @app.route('/getFirstCaseID/<int:id>', methods=['GET'])
@@ -281,7 +282,57 @@ def chartFilter():
 
 @app.route('/jenkinsRadiator', methods=['GET'])
 def jenkinsRadiator():
-	return render_template('jenkinsRadiator.html', jenkins="true")	
+	query = DB.getJenkinsData(projectId=projectSession())
+	cases = DB.getJenkinsCaseResult(data=query,projectId=projectSession())
+	print(query)
+	print(cases)
+	default = [cases[0]]
+	temp = []
+	for k in cases:
+		if k[0] == default[0][0]:
+			if k != default[0]:
+				default.append(k)
+		else:
+			temp.append(default)
+			default = [k]
+	temp.append(default)
+	default = [k]
+	print(temp)
+	all=0
+	passed=0
+	skipped=0
+	failed=0
+	iterator=0
+	rendered = render_template('jenkinsRadiator.html')
+	for k in temp:
+		for j in k:
+			if j[1] == 'RUN':
+				passed+=1
+			if j[1] == 'SKIPPED':
+				skipped+=1
+			if j[1] == 'NOTRUN':
+				skipped+=1
+			if j[1] == 'FAILED':
+				failed+=1
+			all+=1
+		rate = []
+		rate.append(passed)
+		rate.append(skipped)
+		rate.append(failed)
+		rate.append(all)
+		if passed/all >= 0.8:
+			rendered += render_template('jenkinsRadiator.html', mode='success', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+		else:
+			if failed/all > 0:
+				rendered += render_template('jenkinsRadiator.html', mode='danger', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+			else:
+				rendered += render_template('jenkinsRadiator.html', mode='warning', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+		all=0
+		passed=0
+		iterator+=1
+		skipped=0
+		failed=0
+	return rendered #render_template('jenkinsRadiator.html', jenkins=rendered)	
 
 #-----Dashboard-----
 @app.route('/dashboardLoad', methods=['GET'])

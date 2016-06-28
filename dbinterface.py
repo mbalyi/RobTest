@@ -7,6 +7,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT COUNT(*) FROM Users WHERE UserName = ? AND UserPassword= ?",[kwargs['title'],kwargs['pw']])
 		result=c.fetchone()
+		conn.commit()
 		return result[0]
 		
 	def get_execution(self,**kwargs):
@@ -14,12 +15,15 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT Name FROM Execution")
 		result=c.fetchone()
+		conn.commit()
+		
 	#-----case page-----	
 	def get_case(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		c.execute("SELECT CaseId,Title FROM Cases WHERE ProjectId=?",[kwargs['projectId']])
 		result=c.fetchall()
+		conn.commit()
 		return result
 	
 	def save_case(self, **kwargs):
@@ -29,6 +33,7 @@ class Database:
 		conn.commit()
 		c.execute("SELECT CaseId FROM Cases WHERE Title=? AND Priority=? AND Data=? AND ProjectId=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId']])
 		CaseID=c.fetchone()
+		conn.commit()
 		return CaseID[0]
 		
 	def save_steps(self, **kwargs):
@@ -52,6 +57,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT * FROM Cases WHERE CaseId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
 		result=c.fetchall()
+		conn.commit()
 		return result
 	
 	def get_step_parameters(self, **kwargs):
@@ -59,10 +65,12 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT StepId FROM Case_Step WHERE CaseId=?",[kwargs['id']])
 		result=c.fetchall()
+		conn.commit()
 		case_parameter = []
 		for k in result:
 			c.execute("SELECT * FROM Steps WHERE StepId=? AND ProjectId=?",[k[0],kwargs['projectId']])
 			case_parameter.append(c.fetchone())
+			conn.commit()
 		return case_parameter
 	
 	def deleteCase(self, **kwargs):
@@ -93,6 +101,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT * FROM Case_Step WHERE CaseId=?",[kwargs['caseId']])
 		stepID=c.fetchall()
+		conn.commit()
 	
 	#-----object-----
 	def get_object(self, **kwargs):
@@ -100,6 +109,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT ObjectId,ObjectName FROM Objects WHERE ProjectId=?",[kwargs['projectId']])
 		result=c.fetchall()
+		conn.commit()
 		return result
 	
 	def save_object(self, **kwargs):
@@ -109,6 +119,7 @@ class Database:
 		conn.commit()
 		c.execute("SELECT ObjectId FROM Objects WHERE ObjectName=? AND ObjectHardware=? AND ObjectDesc=? AND ProjectId=? AND ObjectVersion=?",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version']])
 		CaseID=c.fetchone()
+		conn.commit()
 		return CaseID[0]
 	
 	def get_object_parameters(self, **kwargs):
@@ -116,6 +127,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT * FROM Objects WHERE ObjectId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
 		result=c.fetchall()
+		conn.commit()
 		return result
 	
 	def deleteObject(self, **kwargs):
@@ -130,6 +142,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT SetId,SetName FROM Sets WHERE ProjectId=?",[kwargs['projectId']])
 		result=c.fetchall()
+		conn.commit()
 		return result
 	
 	def save_set(self, **kwargs):
@@ -139,6 +152,7 @@ class Database:
 		conn.commit()
 		c.execute("SELECT SetId FROM Sets WHERE SetName=? AND ProjectId=?",[kwargs['name'],kwargs['projectId']])
 		CaseID=c.fetchone()
+		conn.commit()
 		return CaseID[0]
 	
 	def saveSetCase(self, **kwargs):
@@ -153,6 +167,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT * FROM Sets WHERE SetId=?",[kwargs['id']])
 		result=c.fetchall()
+		conn.commit()
 		return result
 	
 	def getSetCases(self, **kwargs):
@@ -165,6 +180,7 @@ class Database:
 		for k in result:
 			c.execute("SELECT * FROM Cases WHERE CaseId=?",[k[0]])
 			cases.append(c.fetchone())
+			conn.commit()
 		return cases
 	
 	def deleteSet(self, **kwargs):
@@ -181,6 +197,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT ExecutionId,ExeName FROM Execution WHERE ProjectId=?",[kwargs['projectId']])
 		result=c.fetchall()
+		conn.commit()
 		return result
 		
 	def saveExe(self, **kwargs):
@@ -199,19 +216,17 @@ class Database:
 	def saveCaseExe(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		print(kwargs['ID'])
 		for k in kwargs['ID']:
-			print(k)
 			c.execute("SELECT Title FROM Cases WHERE CaseId=?",[k])
 			CaseTitle=c.fetchone()
+			conn.commit()
 			c.execute("INSERT INTO Case_Execution (ExecutionId,CaseId,Result,title) VALUES (?,?,?,?)",[kwargs['exeID'],k,"NOTRUN",CaseTitle[0]])
 			conn.commit()
 			c.execute("SELECT Id FROM Case_Execution WHERE ExecutionId=? AND CaseId=? AND title=?",[kwargs['exeID'],k,CaseTitle[0]])
 			ID=c.fetchone()
 			c.execute("SELECT StepId FROM Case_Step WHERE CaseId=?",[k])
 			StepId=c.fetchall()
-			print(ID)
-			print(StepId)
+			conn.commit()
 			for l in StepId:
 				c.execute("INSERT INTO Step_Execution (StepId,ExecutionId,Case_ExecutionId,Result) VALUES (?,?,?,?)",[l[0],kwargs['exeID'],ID[0],"NOTRUN"])
 				conn.commit()
@@ -222,6 +237,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT * FROM Execution WHERE ExecutionId=?",[kwargs['id']])
 		result=c.fetchall()
+		conn.commit()
 		return result
 	
 	def getExeObject(self, **kwargs):
@@ -232,6 +248,7 @@ class Database:
 		conn.commit()
 		c.execute("SELECT * FROM Objects WHERE ObjectId=?",[ObjectId[0]])
 		Object=c.fetchone()
+		conn.commit()
 		return Object
 	
 	def getExeCases(self, **kwargs):
@@ -244,6 +261,7 @@ class Database:
 		for k in result:
 			c.execute("SELECT * FROM Cases WHERE CaseId=?",[k[2]])
 			cases.append(c.fetchone()+(k[3],))
+			conn.commit()
 		return cases
 	
 	def getExeFromCases(self, **kwargs):
@@ -261,7 +279,9 @@ class Database:
 		conn.commit()
 		c.execute("DELETE FROM Case_Execution WHERE ExecutionId=?",[kwargs['id']])
 		conn.commit()
-		c.execute("DELETE FROM Exe_Object WHERE ExecutionId=?",[kwargs['id']])
+		c.execute("DELETE FROM Step_Execution WHERE ExecutionId=?",[kwargs['id']])
+		conn.commit()
+		c.execute("DELETE FROM Exe_Object WHERE ExecutionId=? AND ObjectId=?",[kwargs['id'],kwargs['obid']])
 		conn.commit()
 	
 	def getStatusFromStepExe(self, **kwargs):
@@ -303,6 +323,8 @@ class Database:
 	def saveSetStatus(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
+		print(kwargs['caseExeId'])
+		print(kwargs['stepId'])
 		c.execute("UPDATE Step_Execution SET Result=? WHERE StepId=? AND ExecutionId=?",[kwargs['status'],kwargs['stepId'],kwargs['caseExeId']])
 		conn.commit()
 	
@@ -331,5 +353,24 @@ class Database:
 		c.execute("UPDATE Case_Execution SET Result=? WHERE ExecutionId=? AND CaseId=?",["RUN",kwargs['exeId'],kwargs['caseId']])
 		conn.commit()
 		return "RUN"
+	
+	def getJenkinsData(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT OB.ObjectId,OB.ObjectName,OB.ObjectVersion,Exe.ExecutionId,Exe.ExeName FROM Exe_Object AS EO LEFT JOIN Execution AS Exe ON EO.ExecutionId=Exe.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND Exe.ProjectId=? ORDER BY OB.ObjectId DESC",[kwargs['projectId'],kwargs['projectId']])
+		ExeObjectIds = c.fetchall()
+		conn.commit()
+		return ExeObjectIds
 		
+	def getJenkinsCaseResult(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		request=[]
+		for k in kwargs['data']:
+			#c.execute("SELECT CE.ExecutionId,CE.Result,CE.CaseId,CA.Title,SE.StepId,SE.Result FROM Case_Execution AS CE LEFT JOIN Cases AS CA ON CE.CaseId=CA.CaseId LEFT JOIN Step_Execution AS SE ON CE.Id=SE.Case_executionId WHERE CA.ProjectId=? AND CE.ExecutionId=?",[kwargs['projectId'],k[3]])
+			c.execute("SELECT CE.ExecutionId,CE.Result,CE.CaseId,CA.Title FROM Case_Execution AS CE LEFT JOIN Cases AS CA ON CE.CaseId=CA.CaseId WHERE CA.ProjectId=? AND CE.ExecutionId=? ORDER BY CE.Id DESC",[kwargs['projectId'],k[3]])
+			request+=c.fetchall()
+			conn.commit()
+		return request
+	
 DB = Database()

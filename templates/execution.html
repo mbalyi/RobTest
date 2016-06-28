@@ -52,7 +52,7 @@
 				<td>Test Object:</td>
 				<td class='objectDD'>
 					{% if loadObject %}
-						<input type='text' name='object' value='{{loadObject[1]}}' class='object form-control' readonly>
+						<input type='text' name='object' value='{{loadObject[1]}}' class='object form-control' data-dbid='{{loadObject[0]}}' readonly>
 					{% endif %}
 				</td>
 		</tr>

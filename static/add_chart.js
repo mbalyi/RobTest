@@ -38,7 +38,7 @@ function jenkinsRadiator(direction){
 var lineChart;
 
 function createLineChart(template,direction){
-	var lineChart = new CanvasJS.Chart(direction,
+	lineChart = new CanvasJS.Chart(direction,
 		{
 			theme: "theme3",
                         animationEnabled: true,

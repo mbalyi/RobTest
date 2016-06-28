@@ -40,7 +40,7 @@ $(function(){
 	addChart("pie","pieChart");
 	chartFilterBar(".chartFilter#line");
 	addChart("line","lineChart");
-	jenkinsRadiator(".jenkinsRadiator#jenkins");
+	jenkinsRadiator(".jenkinsRad");
 	dashboardButtonPanel();
 	$("body").on("click","a",function(event) {
 		if($(event.target).attr('class') == "dashboardPrev"){
@@ -52,5 +52,6 @@ $(function(){
 	});
     $('body').one('slid.bs.carousel','#carousel-example-generic', function (){
         lineChart.render();
+        //addChart("line","lineChart");
     });
 });

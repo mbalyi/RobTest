@@ -1,0 +1,21 @@
+.slideIcon {
+  -webkit-border-radius: 35;
+  -moz-border-radius: 35;
+  border-radius: 35px;
+  -webkit-box-shadow: 0px 1px 3px #666666;
+  -moz-box-shadow: 0px 1px 3px #666666;
+  box-shadow: 0px 1px 3px #666666;
+  padding: 0px 8px 0px 8px;
+  text-decoration: none;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slideIcon:hover {
+  text-decoration: none;
+}
+
+.wrapperJenk{
+   white-space: normal;
+}

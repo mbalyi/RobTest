@@ -284,8 +284,6 @@ def chartFilter():
 def jenkinsRadiator():
 	query = DB.getJenkinsData(projectId=projectSession())
 	cases = DB.getJenkinsCaseResult(data=query,projectId=projectSession())
-	print(query)
-	print(cases)
 	default = [cases[0]]
 	temp = []
 	sorting = []
@@ -298,7 +296,6 @@ def jenkinsRadiator():
 			default = [k]
 	temp.append(default)
 	default = [k]
-	print(temp)
 	all=0
 	passed=0
 	skipped=0
@@ -322,14 +319,14 @@ def jenkinsRadiator():
 		rate.append(failed)
 		rate.append(all)
 		if passed/all >= 0.8:
-			rendered += render_template('jenkinsRadiator.html', mode='success', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+			#rendered += render_template('jenkinsRadiator.html', mode='success', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
 			sorting.append(('success',temp[iterator],query[iterator],iterator,rate))
 		else:
 			if failed/all > 0:
-				rendered += render_template('jenkinsRadiator.html', mode='danger', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+				#rendered += render_template('jenkinsRadiator.html', mode='danger', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
 				sorting.append(('danger',temp[iterator],query[iterator],iterator,rate))
 			else:
-				rendered += render_template('jenkinsRadiator.html', mode='warning', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+				#rendered += render_template('jenkinsRadiator.html', mode='warning', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
 				sorting.append(('warning',temp[iterator],query[iterator],iterator,rate))
 		all=0
 		passed=0
@@ -338,33 +335,60 @@ def jenkinsRadiator():
 		failed=0
 	temp = []
 	iterator=0
+	b=0
+	default1=[]
+	boolen = "false"
 	for j in sorting:
 		for k in sorting:
 			temp.append(k)
 			default=k[2][0]
 			for l in sorting:
 				if l[2][0] == default:
-					if l[2] != sorting[0][2]:
+					if l[2] != k[2]:
 						temp.append(l)
+						index=sorting.index(l)
 						sorting.pop(sorting.index(l))
+						sorting.insert(index,('default','default',('default','default')))
+						#default1=l
+						boolen="true"
 			passed=0
 			skipped=0
 			failed=0
 			all=0
-			for k in temp:
-				passed+=k[4][0]
-				skipped+=k[4][1]
-				failed+=k[4][2]
-				all+=k[4][3]
+			for o in temp:
+				if o[0] != "default":
+					passed+=o[4][0]
+					skipped+=o[4][1]
+					failed+=o[4][2]
+					all+=o[4][3]
 			rate=[]
 			rate.append(passed)
 			rate.append(skipped)
 			rate.append(failed)
 			rate.append(all)
-			print(temp)
-			#rendered+=render_template('jenkinsRadiator.html', objectExe=temp, iterator=iterator, rate=rate)
+			if boolen == "false":
+				index=sorting.index(k)
+				sorting.pop(sorting.index(k))
+				sorting.insert(index,('default','default',('default','default')))
+			else:
+				boolen = "false"
+			if temp[0][0] != "default":
+				rendered+=render_template('jenkinsRadiator.html', objectExe=temp, iterator=iterator, rate=rate)
+			sorting.pop(0)
+			sorting.insert(0,('default','default',('default','default')))
 			temp = []
 			iterator+=1
+	if len(sorting) == 1:
+		passed=sorting[0][4][0]
+		skipped=sorting[0][4][1]
+		failed=sorting[0][4][2]
+		all=sorting[0][4][3]
+		rate=[]
+		rate.append(passed)
+		rate.append(skipped)
+		rate.append(failed)
+		rate.append(all)
+		rendered+=render_template('jenkinsRadiator.html', objectExe=sorting, iterator=iterator, rate=rate)
 	return rendered #render_template('jenkinsRadiator.html', jenkins=rendered)	
 
 #-----Dashboard-----

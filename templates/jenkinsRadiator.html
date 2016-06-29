@@ -282,18 +282,28 @@
 				<table style='width:100%;'>
 					<tr style='width:100%;'>
 						<td style='width:20%;'>{{objectExe[0][2][2]}}</td>
-						<td style='width:40%;'>{{objectExe[0][2][1]}}</td>
-                        {% for k in objectExe %}
-                        <td>
-                        <button type="button" class="btn" data-toggle="popover" title='{{k[2][4]}}' data-placement="bottom" data-content='Passed:{{k[4][0]}}/{{k[4][3]}} ({{(k[4][0]/k[4][3]*100)|int}}%)'>{{k[2][4]}}</button>
-                        </td>
-                        <td style='width:40%;'><i>Passed in {{k[2][4]}}:{{k[4][0]}}/{{k[4][3]}}</i></td>
+						<td style='width:20%;'>{{objectExe[0][2][1]}}</td>
+                        </a>
+                        <td style='width:10%;'>
+                            {% for k in objectExe %}
+                        <a href='#' class='exe{{iterator}} wrapperJenk' id='exe{{k[2][3]}}' data-toggle="popover" data-trigger="focus" data-placement="bottom" onmouseover="onMouseOver{{k[2][3]}}{{iterator}}()" onmouseout="onMouseOut{{k[2][3]}}{{iterator}}()">
+                            <span class='slideIcon'></span>
+                        </a>
                         {% endfor %}
+                        </td>
+                        <a href="#" onclick='onClick{{iterator}}()'>
+                        <td style='10%'></td>
+                        <td style='width:10%;'>
+                            <i>Passed in </i>
+                        </td>
+                        <td style='width:30%;'>
+                            <i>Passed: {{rate[0]}}/{{rate[3]}} ({{(rate[0]/rate[3]*100)|int}}%)</i>
+                        </td>
 					</tr>
 				</table>
 			</div>
 		</a>
-		<div class="description" id="{{iterator}}">
+		<div class="description" id="desc{{iterator}}">
 			<p>Reported by: tester</p>
 			<table class="table table-condensed">
 				<tr>
@@ -347,15 +357,24 @@
 		</div>
 		<script>
 			function onClick{{iterator}}(){
-				if($(".description#{{iterator}}").is(":visible")){
-					$(".description#{{iterator}}").hide();
+				if($(".description#desc{{iterator}}").is(":visible")){
+					$(".description#desc{{iterator}}").hide();
 				}
 				else{
-					$(".description#{{iterator}}").show();
-				}
+					$(".description#desc{{iterator}}").show();
+				}   
 			}
+            {% for k in objectExe %}
+            function onMouseOver{{k[2][3]}}{{iterator}}() {
+                $(".exe{{iterator}}#exe{{k[2][3]}}").popover({title: "{{k[2][4]}}", content: "Passed: {{k[4][0]}}/{{k[4][3]}} {{(k[4][0]/k[4][3]*100)|int}}% <br>Failed: {{k[4][2]}}/{{k[4][3]}} {{(k[4][2]/k[4][3]*100)|int}}% <br>Skipped: {{k[4][1]}}/{{k[4][3]}} {{(k[4][1]/k[4][3]*100)|int}}% <br>",html:true});
+                $(".exe{{iterator}}#exe{{k[2][3]}}").popover('show');
+            }
+             function onMouseOut{{k[2][3]}}{{iterator}}(){
+                 $(".exe{{iterator}}#exe{{k[2][3]}}").popover('hide');
+             }
+             {% endfor %}
 			$(function(){
-				$(".description#{{iterator}}").hide();
+				$(".description#desc{{iterator}}").hide();
 			})
 		</script>
 	</div>

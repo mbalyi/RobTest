@@ -372,5 +372,22 @@ class Database:
 			request+=c.fetchall()
 			conn.commit()
 		return request
+		
+	#----Charts----
+	def getDataForCharts(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT CE.ExecutionId,CE.CaseId,CE.Result,CE.title,EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE EX.ProjectId=?",[kwargs['projectId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
 	
+	def getChartFilterData(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Objects WHERE ProjectId=?",[kwargs['projectId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+			
 DB = Database()

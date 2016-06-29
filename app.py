@@ -271,14 +271,32 @@ def projectSession():
 	return DB.getSelectedProject(user=session['username'])
 	
 #-----Chart-----
-@app.route('/requestChart/<type>', methods=['GET'])
-def requestChart(type):
-	render = render_template('test2.html',type=type)
+@app.route('/requestChart/<type>/<int:projectId>', methods=['GET'])
+def requestChart(type,projectId):
+	query = DB.getDataForCharts(projectId=projectId)
+	passed=0
+	failed=0
+	skipped=0
+	notimp=0
+	all=0
+	for k in query:
+		if k[2] == "RUN":
+			passed+=1
+		if k[2] == "FAILED":
+			failed+=1
+		if (k[2] == "NOTRUN") or (k[2] == "SKIPPED"):
+			skipped+=1
+		if k[2] == "NOTIMP":
+			notimp+=1
+		all+=1
+	rate=[passed,failed,skipped,notimp,all]
+	render = render_template('test2.html',type=type,rate=rate)
 	return render.replace('\n','')
 	
-@app.route('/chartFilter', methods=['GET'])
-def chartFilter():
-	return render_template('chartFilter.html')
+@app.route('/chartFilter/<type>/<int:projectId>', methods=['GET'])
+def chartFilter(type,projectId):
+	query = DB.getChartFilterData(projectId=projectId)
+	return render_template('chartFilter.html',type=type,data=query)
 
 @app.route('/jenkinsRadiator', methods=['GET'])
 def jenkinsRadiator():

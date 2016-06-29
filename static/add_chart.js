@@ -1,7 +1,7 @@
 var FilterNavbar="";
 
-function chartFilterBar(direction){
-	$.get("/chartFilter",
+function chartFilterBar(type,direction){
+	$.get("/chartFilter/"+type+"/"+$(".projectSelector").find(":selected").attr('data-dbid'),
 		function(data,status){
 			if(status){
 				$(direction).prepend(data);
@@ -10,9 +10,19 @@ function chartFilterBar(direction){
 	);
 }
 
+function getTooltipInfo(){
+    $.get("/requestChart/tooltipinfo/"+$(".projectSelector").find(":selected").attr('data-dbid'),
+		function(data,status){
+			if(status){
+				return data;
+			};
+		},
+		"json"
+	);
+}
 
 function addChart(type,direction){
-	$.get("/requestChart/"+type,
+	$.get("/requestChart/"+type+"/"+$(".projectSelector").find(":selected").attr('data-dbid'),
 		function(data,status){
 			if(status){
 				if(type == "line")
@@ -36,7 +46,7 @@ function jenkinsRadiator(direction){
 }
 
 var lineChart;
-
+var pieChart;
 function createLineChart(template,direction){
 	lineChart = new CanvasJS.Chart(direction,
 		{
@@ -47,7 +57,8 @@ function createLineChart(template,direction){
 				fontSize: 30
 			},
 			toolTip: {
-				shared: true
+				shared: true,
+                content: "{name} <br> {y}"
 			},			
 			axisY: {
 				title: "Count"
@@ -71,11 +82,11 @@ function createLineChart(template,direction){
 }
 
 function createPieChart(template,direction){
-	var chart = new CanvasJS.Chart(direction,
+	pieChart = new CanvasJS.Chart(direction,
 		{
 			title:{
 				text: "Template Pie Chart"
-			},
+			},	
             animationEnabled: true,
 			legend:{
 				verticalAlign: "bottom",
@@ -83,8 +94,8 @@ function createPieChart(template,direction){
 			},
 			data: [ ], 
         });
-		chart.options.data=template;
-		chart.render();
+		pieChart.options.data=template;
+		pieChart.render();
 }
 
 $(function(){

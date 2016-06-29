@@ -57,9 +57,9 @@ $(function(){
 			$(".setup_buttons").empty();
 			document.getElementById("col-md-9").style.width = '100%'
             dashboardLoad();
-            chartFilterBar(".chartFilter#pie");
+            chartFilterBar("pie",".chartFilter#pie");
             addChart("pie","pieChart");
-            chartFilterBar(".chartFilter#line");
+            chartFilterBar("line",".chartFilter#line");
             addChart("line","lineChart");
             jenkinsRadiator(".jenkinsRadiator#jenkins");
             dashboardButtonPanel();

@@ -58,13 +58,30 @@
 		"indexLabelPlacement": "outside",
 		"type": "pie",       
 		"showInLegend": true,
-		"toolTipContent": "{y}%",
+		"toolTipContent": "{legendText}: {y}%",
 		"dataPoints": 
 		[
-			{  "y": 67, "legendText":"PASSED", "indexLabel": "Passed" },
-			{  "y": 21, "legendText":"FAILED","exploded": true, "indexLabel": "Failed" },
-			{  "y": 10, "legendText":"NOTRUN", "indexLabel": "Not Run" },
-			{  "y": 2, "legendText":"NOTIMP" , "indexLabel": "Not Implemented"}
+            {% if rate[0] > 0 %}
+			{  "y": {{(rate[0]/rate[4]*100)|int}}, "legendText":"PASSED", "indexLabel": "Passed" }
+            {% endif %}
+            {% if (rate[1] >0) or (rate[2]>0) or (rate[3]>0) %}
+            ,
+            {% endif %}
+            {% if rate[1] > 0 %}
+			{  "y": {{(rate[1]/rate[4]*100)|int}}, "legendText":"FAILED","exploded": true, "indexLabel": "Failed" }
+            {% endif %}
+            {% if ((rate[2]>0) or (rate[3]>0)) and (rate[1]!=0) %}
+            ,
+            {% endif %}
+            {% if rate[2] > 0 %}
+			{  "y": {{(rate[2]/rate[4]*100)|int}}, "legendText":"NOTRUN", "indexLabel": "Not Run" }
+            {% endif %}
+            {% if (rate[3]>0) and (rate[2]!=0) %}
+            ,
+            {% endif %}
+            {% if rate[3] > 0 %}
+			{  "y": {{(rate[3]/rate[4]*100)|int}}, "legendText":"NOTIMP" , "indexLabel": "Not Implemented"}
+            {% endif %}
 		]
 	}
 ]

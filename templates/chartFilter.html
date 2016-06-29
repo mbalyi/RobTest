@@ -6,11 +6,12 @@
   </div>
 
   <!-- Table -->
-  <table class='table'>
+    {% if type %}
+  <table class='{{type}} table'>
     <tr>
 		<td style="color:black;">Interval: <td>
 		<td>
-			<select class='form-control' style='width:100%;'>
+			<select class='{{type}} form-control' data-selectorid='{{type}}Interval' style='width:100%;'>
 				<option>All</option>
 				<option>Last Two Weeks</option>
 				<option>Last Sprint</option>
@@ -20,18 +21,30 @@
 	<tr>
 		<td style="color:black;">Version: <td>
 		<td>
-			<select class='form-control' style='width:100%;'>
+			<select class='form-control' data-selectorid='{{type}}Version' style='width:100%;'>
 				<option>All</option>
-				<option>v666</option>
-				<option>v671</option>
-				<option>v698</option>
+                {% for k in data %}
+				<option>{{k[6]}} {{k[1]}}</option>
+                {% endfor %}
+			</select>
+		<td>
+	</tr>
+    <tr>
+		<td style="color:black;">Area: <td>
+		<td>
+			<select class='form-control' data-selectorid='{{type}}Area' style='width:100%;'>
+				<option>All</option>
+				<option>Show Stopper</option>
+				<option>Global Area</option>
+				<option>Deployment Issues</option>
+				<option>DB Query</option>
 			</select>
 		<td>
 	</tr>
 	<tr>
 		<td style="color:black;">Status: <td>
 		<td>
-			<select class='form-control' style='width:100%;'>
+			<select class='form-control' data-selectorid='{{type}}Status' style='width:100%;'>
 				<option>All</option>
 				<option>Passed</option>
 				<option>Failed</option>
@@ -41,4 +54,5 @@
 		<td>
 	</tr>
   </table>
+    {% endif %}
 </div>

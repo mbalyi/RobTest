@@ -298,6 +298,30 @@ def chartFilter(type,projectId):
 	query = DB.getChartFilterData(projectId=projectId)
 	return render_template('chartFilter.html',type=type,data=query)
 
+@app.route('/chartReload/<type>/<interval>/<int:obId>/<int:areaId>/<status>', methods=['GET'])
+def chartReload(type,interval,obId,areaId,status):
+	result = DB.getFilteredPar(interval=interval,objectId=obId,areaId=areaId,status=status)
+	passed=0
+	failed=0
+	skipped=0
+	notimp=0
+	all=0
+	print(result)
+	for k in result:
+		if k[0] == "RUN":
+			passed+=1
+		if k[0] == "FAILED":
+			failed+=1
+		if (k[0] == "NOTRUN") or (k[0] == "SKIPPED"):
+			skipped+=1
+		if k[0] == "NOTIMP":
+			notimp+=1
+		all+=1
+	rate=[passed,failed,skipped,notimp,all]
+	print(rate)
+	render = render_template('test2.html',type=type,rate=rate)
+	return render.replace('\n','')
+	
 @app.route('/jenkinsRadiator', methods=['GET'])
 def jenkinsRadiator():
 	query = DB.getJenkinsData(projectId=projectSession())

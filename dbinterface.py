@@ -389,5 +389,32 @@ class Database:
 		result=c.fetchall()
 		conn.commit()
 		return result
-			
+		
+	def getFilteredPar(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		query = "SELECT CE.Result FROM Case_Execution AS CE LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId"
+		if (kwargs['objectId'] != 0) or (kwargs['status'] != "All"):
+			query+=" WHERE"
+		if kwargs['objectId'] != 0:
+			query+=" EO.ObjectId="
+			query+=str(kwargs['objectId'])
+			if kwargs['status'] != "All":
+				query+=" AND"
+		if kwargs['status'] != "All":
+			query+=" CE.Result=?"
+			#query+=kwargs['status']
+		#if (kwargs['objectId'] != -1) and (kwargs['status'] != "All"):
+		#	c.execute(query,[kwargs['objectId'],kwargs['status']])
+		#if (kwargs['objectId'] != -1) and (kwargs['status'] == "All"):
+		#	c.execute(query,[kwargs['objectId']])
+		print(query)
+		if (kwargs['status'] != "All"):
+			c.execute(query,[kwargs['status']])
+		else:
+			c.execute(query)
+		result=c.fetchall()
+		conn.commit()
+		return result
+		
 DB = Database()

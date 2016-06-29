@@ -53,7 +53,7 @@ function createLineChart(template,direction){
 			theme: "theme3",
                         animationEnabled: true,
 			title:{
-				text: "Template Line Chart",
+				text: "All Results",
 				fontSize: 30
 			},
 			toolTip: {
@@ -85,7 +85,7 @@ function createPieChart(template,direction){
 	pieChart = new CanvasJS.Chart(direction,
 		{
 			title:{
-				text: "Template Pie Chart"
+				text: "All Results"
 			},	
             animationEnabled: true,
 			legend:{
@@ -96,6 +96,20 @@ function createPieChart(template,direction){
         });
 		pieChart.options.data=template;
 		pieChart.render();
+}
+
+function pieReload(type){
+ $.get("/chartReload/"+type+"/"+$('[data-selectorid="pieInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="pieVersion"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieArea"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieStatus"]').find(":selected").attr('data-status'),
+		function(data,status){
+			if(status){
+				pieChart.options.data=data;
+                pieChart.options.animationEnabled=true;
+                //pieChart.options.title=$('[data-selectorid="pieVersion"]').find(":selected").html();
+                pieChart.render();
+			};
+		},
+		"json"
+	);
 }
 
 $(function(){

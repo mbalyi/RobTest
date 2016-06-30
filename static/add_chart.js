@@ -102,10 +102,27 @@ function pieReload(type){
  $.get("/chartReload/"+type+"/"+$('[data-selectorid="pieInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="pieVersion"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieArea"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieStatus"]').find(":selected").attr('data-status'),
 		function(data,status){
 			if(status){
-				pieChart.options.data=data;
-                pieChart.options.animationEnabled=true;
-                //pieChart.options.title=$('[data-selectorid="pieVersion"]').find(":selected").html();
-                pieChart.render();
+                if(type=="pie"){
+                    pieChart.options.data=data;
+                    pieChart.options.animationEnabled=true;
+                    //pieChart.options.title=$('[data-selectorid="pieVersion"]').find(":selected").html();
+                    pieChart.render();
+                }
+			};
+		},
+		"json"
+	);
+}
+function lineReload(type){
+ $.get("/chartReload/"+type+"/"+$('[data-selectorid="lineInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="lineVersion"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="lineArea"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="lineStatus"]').find(":selected").attr('data-status'),
+		function(data,status){
+			if(status){
+                if(type=="line"){
+                    lineChart.options.data=data;
+                    lineChart.options.animationEnabled=true;
+                    //pieChart.options.title=$('[data-selectorid="pieVersion"]').find(":selected").html();
+                    lineChart.render();
+                }
 			};
 		},
 		"json"

@@ -9,7 +9,7 @@ function requestHeader(options, callback){
 
 function caseSetUp(){
 	$(".setup_buttons").empty().append(caseBtn);
-	$(".col-md-9").empty().append(caseForm);
+	caseForm();
 	$(".col-md-12-set").empty();
 	$(".col-md-12-object").empty();
 	$(".col-md-12-execution").empty();

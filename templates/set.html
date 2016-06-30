@@ -7,6 +7,50 @@
     {% endfor %}
 {% endif %}
 
+{% if setForm %}
+<h1>Sets</h1>
+<div style='width:100%'>
+    <table style='width:100%' class='set_no'>
+        <tr>
+            <td class='set_staic_name'>Name:</td>
+            <td class='set_staic_input'>
+                <input type='text' name='name' value='Name' class='set_input form-control' readonly>
+            </td>
+        </tr>
+        <tr>
+            <td>Date:</td>
+            <td>
+                <input type='date' name='date' class='set_input form-control' readonly>
+            </td>
+        </tr>
+        <tr>
+            <td>Priority:</td>
+            <td>
+                <input type='text' name='priority' value='high' class='set_input form-control' readonly>
+            </td>
+        </tr>
+    </table>
+    <div class='AreaField' style='100%'>
+        <table>
+            {% for k in areas %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td><input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>{{k[1]}}</td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    <p>Included Cases</p>
+    <div class='incCases' style='height: 300px; background-color: #777;'></div>
+</div>
+{% endif %}
 {% if loadSet %}
 	<h1>Set</h1>
 	<a name='editSet' id='{{loadSet[0][0]}}' class='btn btn-default btn-sm'>Edit</a>

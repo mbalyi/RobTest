@@ -93,7 +93,7 @@ $(function(){
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "sets"){
 			document.getElementById("col-md-9").style.width = '70%';
-            SetSetup();
+            SetSetup("true");
 			requestCase();
 			$(".setup").show();
 		}

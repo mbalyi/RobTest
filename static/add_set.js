@@ -5,15 +5,23 @@ function requestSet(){
 				$(".col-md-12-set").empty().append(data);
 			};
 		}
-	)
+	);
 }
 
-function SetSetup(){
-	$(".col-md-9").empty().append(SetForm);
-	$(".col-md-12-object").empty();
-	$(".setup_buttons").empty().append(setBtn);
-	$(".col-md-12-execution").empty();
-	requestSet();
+function SetSetup(mode){
+	$.get("/setForm",
+		function(data,status){
+			if(status){
+				$(".col-md-9").empty().append(data);
+			};
+		}
+	);
+    if(mode != "false"){
+        $(".col-md-12-object").empty();
+        $(".setup_buttons").empty().append(setBtn);
+        $(".col-md-12-execution").empty();
+        requestSet();
+    }
 }
 
 function saveSet(){
@@ -43,7 +51,7 @@ function deleteSet(setId){
 	$.get("/deleteSet/"+setId,
 		function(data,status){
 			if(status){
-				SetSetup()
+				SetSetup("false");
 				$(".setup_buttons").empty().append(setBtn);
 				$(".col-md-9").empty().append(SetForm);
 			};
@@ -52,7 +60,11 @@ function deleteSet(setId){
 }
 
 function newSet(){
-	$(".col-md-9").empty().append(editableSetForm);
+    $(".incCases").attr('ondrop','drop(event)');
+    $(".incCases").attr('ondragover','allowDrop(event)');
+	$("input[type=checkBox]").removeAttr("disabled");
+    $("input[type=text][name=name]").removeAttr('readonly');
+    $("input[type=text][name=priority]").removeAttr('readonly');
 	$(".newSet").empty().append(newSetDis);
 	$(".saveSet").empty().append(saveSetEn);
 }
@@ -70,7 +82,7 @@ $(function(){
 			newSet();
 		}
 		if( event.target.id == "cancelSet"){
-			$(".col-md-9").empty().append(SetForm);
+			SetSetup("false");
 			$(".setup_buttons").empty().append(setBtn);
 		}
 		if( $(event.target).attr('name')=="deleteset" ){

@@ -99,7 +99,8 @@ $(function(){
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "executions"){
 			document.getElementById("col-md-9").style.width = '70%';
-            exeSetup();
+            var boo="true";
+            exeSetup(boo);
 			requestSet();
 			requestCase();
 			$(".setup").show();

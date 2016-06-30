@@ -10,16 +10,16 @@
 	<table style='width:100%'>
 		<tr>
 			<th>Name:</th>
-			<th><input type='text' name='title' class='form-control' value='Name'></th>
+			<th><input type='text' name='title' class='form-control' value='Name' readonly></th>
 		</tr>
 		<tr>
 			<th>Date:</th>
-			<th><input type='date' name='priority' class='form-control' readonly></th>
+			<th><input type='date' name='date' class='form-control' readonly></th>
 		</tr>
 		<tr>
 			<th>Test Object:</th>
 			<th class='objectDD'>
-				<select class='objectSeletor form-control'>
+				<select class='objectSeletor form-control' disabled="true">
 					{% for l in newExe %}
 						<option data-dbid='{{l[0]}}' value='{{l[1]}}'>{{l[1]}}</option>
 					{% endfor %}
@@ -27,8 +27,27 @@
 			</th>
 		</tr>
 	</table>
+    <div class='AreaField' style='100%'>
+        <table>
+            {% for k in areas %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td>
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>{{k[1]}}
+                        </td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
 	<p>Included Cases</p>
-	<div class='incExeCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
+	<div class='incExeCases' style='height: 300px; background-color: #777;'>
 	</div>
 </div>
 {% endif %}
@@ -58,12 +77,29 @@
 		</tr>
 		</table>
 	</div>
-	<div class='textAreas'>
-		<p>Text Areas:</p>
-		<span><input type='checkbox' readonly>Admin</span>
-		<span><input type='checkbox' readonly>Security Policy</span>
-		<span><input type='checkbox' readonly>Set Form Test</span>
-	</div>
+	<div class='AreaField' style='100%'>
+        <table>
+            {% for k in areas %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td>
+                            {% if k[1] == "checked" %}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            {% else %}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            {% endif %}
+                        </td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
 	<p>Included Cases</p>
 	<div class='incCases' style='height: 300px; background-color: #777;'>
 	{% if loadCase %}
@@ -104,6 +140,29 @@
 			</th>
 		</tr>
 	</table>
+    <div class='AreaField' style='100%'>
+        <table>
+            {% for k in areas %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td>
+                            {% if k[1] == "checked" %}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            {% else %}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            {% endif %}
+                        </td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
 	<p>Included Cases</p>
 	<div class='incExeCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
 	{% if loadEditableCase %}

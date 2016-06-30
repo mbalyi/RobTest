@@ -8,16 +8,29 @@ function requestExe(){
 	)
 }
 
-function exeSetup(){
-	$(".setup_buttons").empty().append(exeBtn);
-	$(".col-md-9").empty().append(exeForm);
-	$(".col-md-12-object").empty();
-	requestExe();
-	$(".setup").show();
+function exeSetup(request){
+    $(".setup_buttons").empty().append(exeBtn);
+    if(request=="true"){
+        $(".col-md-12-object").empty();
+        requestExe();
+        $(".setup").show();
+    }
+    $.get("/newExe",
+		function(data,status){
+			if(status){
+				$(".col-md-9").empty().append(data);
+			}
+			else{
+				alert("DB query was unsuccessfull")
+			}
+		}
+	)
 }
 
 function saveExe(){
-	$.post("/saveExe", $("input").serialize()+"&ID="+$(".incExeCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID=")+"&TO="+$(".objectSeletor").find(":selected").attr('data-dbid'),
+    var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=date]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
+    sendData = sendData+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&")+"&ID="+$(".incExeCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID=")+"&TO="+$(".objectSeletor").find(":selected").attr('data-dbid');
+	$.post("/saveExe", sendData,
 		function(data,status){
 			if(status){
 				requestExe();
@@ -28,18 +41,15 @@ function saveExe(){
 }
 
 function newExe(){
-	$.get("/newExe",
-		function(data,status){
-			if(status){
-				$(".col-md-9").empty().append(data);
-				$(".newExe").empty().append(newExeDis);
-				$(".saveExe").empty().append(saveExeEn);
-			}
-			else{
-				alert("DB query was unsuccessfull")
-			}
-		}
-	)
+	$(".incExeCases").attr('ondrop','drop(event)');
+    $(".incExeCases").attr('ondragover','allowDrop(event)');
+     //ondrop='drop(event)' ondragover='allowDrop(event)'
+    $("input[type=text][name=title]").removeAttr('readonly');
+    $("input[type=text][name=title]").removeAttr('readonly');
+    $(".objectSeletor").removeAttr('disabled');
+    $("input[type=checkBox]").removeAttr("disabled");
+    $(".newExe").empty().append(newExeDis);
+    $(".saveExe").empty().append(saveExeEn);
 }
 
 function loadExecution(exeID,mode){
@@ -56,9 +66,8 @@ function deleteExe(exeId){
 	$.get("/deleteExe/"+exeId+"/"+$("input.object").attr('data-dbid'),
 		function(data,status){
 			if(status){
-				exeSetup()
+				exeSetup('true');
 				$(".setup_buttons").empty().append(exeBtn);
-				$(".col-md-9").empty().append(exeForm);
 			};
 		}
 	);
@@ -77,7 +86,7 @@ $(function(){
 			newExe();
 		}
 		if( event.target.id == "cancelExe"){
-			$(".col-md-9").empty().append(exeForm);
+			exeSetup('false');
 			$(".setup_buttons").empty().append(exeBtn);
 		}
 		if( $(event.target).attr('name')=="deleteExe" ){

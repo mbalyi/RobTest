@@ -1,4 +1,4 @@
-{% if type == "line" %}
+{% if type=="template" %}
 [
 	{
 		"type": "column",	
@@ -7,10 +7,7 @@
 		"color": "#2ECC71",
 		"showInLegend": true, 
 		"dataPoints":[
-        {% for k in data %}
-        {% endfor %}
-		{"label": "Demo Test", "y": 10},
-		{"label": "Chart Test", "y": 11}
+        {"label": "Reloading", "y": 20}
 		]
 	},
 	{
@@ -20,8 +17,7 @@
 		"legendText": "Failed",
 		"showInLegend": true,
 		"dataPoints":[
-		{"label": "Demo Test", "y": 2},
-		{"label": "Chart Test", "y": 1}
+		{"label": "Reloading", "y": 3}
 		]
 	},
 	{
@@ -31,8 +27,7 @@
 		"color": "#7F8C8D",
 		"showInLegend": true,
 		"dataPoints":[
-		{"label": "Demo Test", "y": 3},
-		{"label": "Chart Test", "y": 3}
+		{"label": "Reloading", "y": 5}
 		]
 	},
 	{
@@ -42,8 +37,65 @@
 		"color": "#3498DB",
 		"showInLegend": true,
 		"dataPoints":[
-		{"label": "Demo Test", "y": 13},
-		{"label": "Chart Test", "y": 13}
+		{"label": "Reloading", "y": 1}
+		]
+	}
+			
+]
+{% endif %}
+
+{% if type == "line" %}
+[
+	{
+		"type": "column",	
+		"name": "Run",
+		"legendText": "Run",
+		"color": "#2ECC71",
+		"showInLegend": true, 
+		"dataPoints":[
+        {% for k in data[:-1] %}
+        {"label": "{{k[0][0][1]}}", "y": {{k[1][0]}}},
+        {% endfor %}
+        {"label": "{{data[-1][0][0][1]}}", "y": {{data[-1][1][0]}}}
+		]
+	},
+	{
+		"type": "column",	
+		"name": "Failed",
+		"color": "#C0392B",
+		"legendText": "Failed",
+		"showInLegend": true,
+		"dataPoints":[
+		{% for k in data[:-1] %}
+        {"label": "{{k[0][0][1]}}", "y": {{k[1][1]}}},
+        {% endfor %}
+        {"label": "{{data[-1][0][0][1]}}", "y": {{data[-1][1][1]}}}
+		]
+	},
+	{
+		"type": "column",	
+		"name": "Not Run",
+		"legendText": "Not Run",
+		"color": "#7F8C8D",
+		"showInLegend": true,
+		"dataPoints":[
+		{% for k in data[:-1] %}
+        {"label": "{{k[0][0][1]}}", "y": {{k[1][2]}}},
+        {% endfor %}
+        {"label": "{{data[-1][0][0][1]}}", "y": {{data[-1][1][2]}}}
+		]
+	},
+	{
+		"type": "column",	
+		"name": "Not Implemented",
+		"legendText": "Not Implemented",
+		"color": "#3498DB",
+		"showInLegend": true,
+		"dataPoints":[
+		{% for k in data[:-1] %}
+        {"label": "{{k[0][0][1]}}", "y": {{k[1][3]}}},
+        {% endfor %}
+        {"label": "{{data[-1][0][0][1]}}", "y": {{data[-1][1][3]}}}
 		]
 	}
 			

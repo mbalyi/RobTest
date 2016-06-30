@@ -58,7 +58,7 @@ function createLineChart(template,direction){
 			},
 			toolTip: {
 				shared: true,
-                content: "{name} <br> {y}"
+                content: "{name}:{y}"
 			},			
 			axisY: {
 				title: "Count"

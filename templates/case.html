@@ -7,6 +7,80 @@
 	{% endfor %}
 {% endif %}
 
+{% if caseForm %}
+<div class='case_header'>
+    <table class='editablecase' data-dbid='newCase' style='width:100%'>
+        <tr>
+            <th>Name:</th>
+            <th>
+                <input type='text' name='title' class='form-control' value='Name'  readonly='true'>
+            </th>
+        </tr>
+        <tr>
+            <th>Priority:</th>
+            <th>
+                <input type='number' name='priority' class='form-control' value='1' readonly='true'>
+            </th>
+        </tr>
+        <tr>
+            <th>Data:</th>
+            <th>
+                <input type='text' name='data' class='form-control' value='Description' readonly='true'>
+            </th>
+        </tr>
+    </table>
+    <div class='AreaField' style='100%'>
+        <table>
+            {% for k in caseForm %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td><input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>{{k[1]}}</td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    <div style='width:100%'>
+        <table>
+            <tr>
+                <td>
+                    <button name='add_step' id='add_step' class='btn btn-default btn-sm' disabled="true">Add Step</button>
+                </td>
+                <td>
+                    <button name='delete_step' id='delete_step' class='btn btn-default btn-sm' disabled="true">Delete Step</button>
+                </td>
+                <td>
+                    <button name='up_step' id='up_step' class='btn btn-default btn-sm' disabled="true">Up</button>
+                </td>
+                <td>
+                    <button name='down_step' id='down_step' class='btn btn-default btn-sm' disabled="true">Down</button>
+                </td>
+            </tr>
+        </table>
+        <table style='width:100%' class='case_table_no'>
+            <tr>
+                <th>Action</th>
+                <th>Result</th>
+            </tr>
+            <tr>
+                <th>
+                    <input class='action form-control' type='text' name='action[]' value='Action description' readonly='true'>
+                </th>
+                <th>
+                    <input class='result form-control' type='text' name='result[]' value='Result description' readonly='true'>
+                </th>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endif %}
+
 {% if loadcase %}
 	<p><b>Case</b></p>
 	<button name='edit_case' id='{{loadcase[0][0]}}' class='btn btn-default btn-sm'>Edit</button>
@@ -40,6 +114,29 @@
 			</tr>
 		</table>
 	</div>
+    <div class='AreaField' style='100%'>
+        <table>
+            {% for k in areas %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td>
+                            {% if k[1] == "checked" %}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            {% else %}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            {% endif %}
+                        </td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
 	<div class='stepBtn'></div>
 	<div style='width:100%'>
 		<table style='width:100%' class='case_table_no'>
@@ -48,6 +145,7 @@
 {% endif %}
 
 {% if editablecase %}
+<div class='case_header'>
 	<table class='editablecase' data-dbid='{{editablecase[0][0]}}' style='width:100%'>
 		<tr>
 			<th>Title:</th>
@@ -62,9 +160,48 @@
 			<th><input type='text' name='data' value='{{editablecase[0][3]}}' class='form-control'></th>
 		</tr>
 	</table>
-	<div class='stepBtn'></div>
+    <div class='AreaField' style='100%'>
+        <table>
+            {% for k in areas %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td>
+                            {% if k[1] == "checked" %}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            {% else %}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            {% endif %}
+                        </td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
 	<div style='width:100%'>
+        <table>
+            <tr>
+                <td>
+                    <button name='add_step' id='add_step' class='btn btn-default btn-sm'>Add Step</button>
+                </td>
+                <td>
+                    <button name='delete_step' id='delete_step' class='btn btn-default btn-sm'>Delete Step</button>
+                </td>
+                <td>
+                    <button name='up_step' id='up_step' class='btn btn-default btn-sm'>Up</button>
+                </td>
+                <td>
+                    <button name='down_step' id='down_step' class='btn btn-default btn-sm'>Down</button>
+                </td>
+            </tr>
+        </table>
 		<table style='width:100%' class='case_table_no'>
 		</table>
 	</div>
+</div>
 {% endif %}

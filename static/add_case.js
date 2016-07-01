@@ -7,7 +7,20 @@ function requestCase(){
 				$(".col-md-12-case").empty().append(data);
 			};
 		}
-	)
+	);
+}
+
+function caseForm(checker){
+    $.get("/caseForm/"+$(".projectSelector").find(":selected").attr('data-dbid'),
+		function(data,status){
+			if(status){
+				$(".col-md-9").empty().append(data);
+                if(checker){
+                    enableForm();
+                }
+			};
+		}
+	);
 }
 
 function add_step(){
@@ -18,7 +31,9 @@ function add_step(){
 }
 
 function saveCase(){
-	$.post("/save_case", $("input").map(function(i,o){return o.name+"="+o.value}).toArray().join("&"),
+    var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=number]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
+    sendData = sendData+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&");
+	$.post("/save_case", sendData,
 	//$.post("/save_case", $("input").serialize()+"&"+$("textarea").serialize(),
 		function(data,status){
 			if(status){
@@ -31,10 +46,12 @@ function saveCase(){
 }
 
 function updateCase(caseId){
-	$.post("/updateCase/"+caseId, $("input").map(function(i,o){return o.name+"="+o.value}).toArray().join("&"),
+     var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=number]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
+    sendData = sendData+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&");
+	$.post("/updateCase/"+caseId, sendData,
 		function(data,status){
 			if(status){
-				loadCase(data,"loadCase");
+				loadCase(caseId,"loadCase");
 			};
 		}
 	);
@@ -58,11 +75,8 @@ function getStep(caseId,mode){
 		function(data,status){
 			if(status){
 				$(".case_table_no").empty().append(data);
-				if( mode == "editStep" ){
-					$(".stepBtn").empty().append(stepBtn);
 				}
-			};
-		}
+        }	
 	);
 }
 
@@ -80,11 +94,25 @@ function deleteCase(caseId){
 			if(status){
 				caseSetUp()
 				$(".setup_buttons").empty().append(caseBtn);
-				$(".col-md-9").empty().append(caseForm);
-				$(".stepBtn").empty().append(stepBtn);
+				caseForm();
 			};
 		}
 	);
+}
+
+function enableForm(){  
+    $("input[type=checkBox]").removeAttr("disabled");
+    $("input[type=text][name=title]").removeAttr('readonly');
+    $("input[type=number][name=priority]").removeAttr('readonly');
+    $("input[type=text][name=data]").removeAttr('readonly');
+    $("input[type=text][name='action[]']").removeAttr('readonly');
+    $("input[type=text][name='result[]']").removeAttr('readonly');
+    document.getElementById('add_step').disabled=false;
+    document.getElementById('delete_step').disabled=false;
+    document.getElementById('up_step').disabled=false;
+    document.getElementById('down_step').disabled=false;
+    $("#newCase").attr('disabled', true);
+    $(".saveCase").empty().append(saveCaseEn1+"newCase"+saveCaseEn2);
 }
 
 $(function(){
@@ -94,19 +122,18 @@ $(function(){
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "case"){
 			loadCase($(event.target).attr('data-dbid'),"loadCase");
-			//alert(event.target.id + $(event.target).attr('class'));
 		}
 		if( event.target.id == "newCase"){
-			$(".col-md-9").empty().append(EditableStepHeader);
-			$(".case_header").empty().append(editableCaseForm);
-			$(".stepBtn").empty().append(stepBtn);
-			$(".newCase").empty().append(newCaseDis);
-			$(".saveCase").empty().append(saveCaseEn1+"newCase"+saveCaseEn2);
+            if($("button[name=edit_case]") !=[]){
+                caseForm("true");
+            }
+            else{
+                enableForm();
+            }
 		}
 		if( event.target.id == "cancelCase"){
 			$(".setup_buttons").empty().append(caseBtn);
-			$(".col-md-9").empty().append(caseForm);
-			$(".stepBtn").empty().append(stepBtn);
+			caseForm();
 		}
 		if( event.target.id == "saveCase"){
 			if($(".editablecase").attr('data-dbid')=="newCase"){
@@ -123,7 +150,6 @@ $(function(){
 	});
 	$("body").on("click",".btn",function(){
 		if($(event.target).attr('name')=="edit_case"){
-			$(".col-md-9").empty().append(EditableStepHeader);
 			loadCase($(event.target).attr('id'),"editCase");
 			getStep($(event.target).attr('id'),"editStep");
 			$(".newCase").empty().append(newCaseDis);

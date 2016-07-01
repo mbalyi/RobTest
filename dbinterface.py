@@ -34,6 +34,9 @@ class Database:
 		c.execute("SELECT CaseId FROM Cases WHERE Title=? AND Priority=? AND Data=? AND ProjectId=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId']])
 		CaseID=c.fetchone()
 		conn.commit()
+		for k in kwargs['area']:
+			c.execute("INSERT INTO Area_Case (AreaId,CaseId) VALUES (?,?)",[k,CaseID[0]])
+			conn.commit()
 		return CaseID[0]
 		
 	def save_steps(self, **kwargs):
@@ -76,7 +79,9 @@ class Database:
 	def deleteCase(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("DELETE FROM Cases WHERE CaseId=? AND ProjectId",[kwargs['id'],kwargs['projectId']])
+		c.execute("DELETE FROM Cases WHERE CaseId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
+		conn.commit()
+		c.execute("DELETE FROM Area_Case WHERE CaseId=?",[kwargs['id']])
 		conn.commit()
 		c.execute("SELECT StepId FROM Case_Step WHERE CaseId=?",[kwargs['id']])
 		result=c.fetchall()
@@ -84,7 +89,7 @@ class Database:
 		c.execute("DELETE FROM Case_Step WHERE CaseId=?",[kwargs['id']])
 		conn.commit()
 		for k in result:
-			c.execute("DELETE FROM Steps WHERE StepId=? AND ProjectId",[k[0],kwargs['projectId']])
+			c.execute("DELETE FROM Steps WHERE StepId=? AND ProjectId=?",[k[0],kwargs['projectId']])
 			conn.commit()
 	
 	def updateCase(self, **kwargs):
@@ -92,6 +97,12 @@ class Database:
 		c = conn.cursor()
 		c.execute("UPDATE Cases SET Title=?,Priority=?,Data=? WHERE CaseId=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['caseId']])
 		conn.commit()
+		c.execute("DELETE FROM Area_Case WHERE CaseId=?",[kwargs['caseId']])
+		conn.commit()
+		for k in kwargs['area']:
+			c.execute("INSERT INTO Area_Case (AreaId,CaseId) VALUES (?,?)",[k,kwargs['caseId']])
+			conn.commit()
+		
 	
 	def updateStep(self, **kwargs):
 		step=[]
@@ -118,9 +129,12 @@ class Database:
 		c.execute("INSERT INTO Objects (ObjectName,ObjectHardware,ObjectDesc,ProjectId,ObjectVersion) VALUES (?,?,?,?,?)",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version']])
 		conn.commit()
 		c.execute("SELECT ObjectId FROM Objects WHERE ObjectName=? AND ObjectHardware=? AND ObjectDesc=? AND ProjectId=? AND ObjectVersion=?",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version']])
-		CaseID=c.fetchone()
+		ObjectID=c.fetchone()
 		conn.commit()
-		return CaseID[0]
+		for k in kwargs['areas']:
+			c.execute("INSERT INTO Area_Object (AreaId,ObjecId) VALUES (?,?)",[k,ObjectID[0]])
+			conn.commit()
+		return ObjectID[0]
 	
 	def get_object_parameters(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
@@ -134,6 +148,8 @@ class Database:
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		c.execute("DELETE FROM Objects WHERE ObjectId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
+		conn.commit()
+		c.execute("DELETE FROM Area_Object WHERE ObjectId=?",[kwargs['id']])
 		conn.commit()
 	
 	#-----set-----
@@ -151,9 +167,11 @@ class Database:
 		c.execute("INSERT INTO Sets (SetName,SetDate,SetPriority,ProjectId) VALUES (?,?,?,?)",[kwargs['name'],kwargs['date'],kwargs['priority'],kwargs['projectId']])
 		conn.commit()
 		c.execute("SELECT SetId FROM Sets WHERE SetName=? AND ProjectId=?",[kwargs['name'],kwargs['projectId']])
-		CaseID=c.fetchone()
+		setID=c.fetchone()
 		conn.commit()
-		return CaseID[0]
+		for k in kwargs['areas']:
+			c.execute("INSERT INTO Area_Set (AreaId,SetId) VALUES (?,?)",[k,setID[0]])
+		return setID[0]
 	
 	def saveSetCase(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -190,6 +208,8 @@ class Database:
 		conn.commit()
 		c.execute("DELETE FROM Set_Case WHERE SetId=?",[kwargs['id']])
 		conn.commit()
+		c.execute("DELETE FROM Area_Set WHERE SetId=?",[kwargs['id']])
+		conn.commit()
 	
 	#-----execution-----
 	def getExecution(self, **kwargs):
@@ -211,6 +231,9 @@ class Database:
 		conn.commit()
 		c.execute("INSERT INTO Exe_Object (ExecutionId,ObjectId) VALUES (?,?)",[ExeID[0],kwargs['testObject']])
 		conn.commit()
+		for k in kwargs['areas']:
+			c.execute("INSERT INTO Area_Execution (AreaId,ExecutionId) VALUES(?,?)",[k,ExeID[0]])
+			conn.commit()
 		return ExeID[0]
 	
 	def saveCaseExe(self, **kwargs):
@@ -282,6 +305,8 @@ class Database:
 		c.execute("DELETE FROM Step_Execution WHERE ExecutionId=?",[kwargs['id']])
 		conn.commit()
 		c.execute("DELETE FROM Exe_Object WHERE ExecutionId=? AND ObjectId=?",[kwargs['id'],kwargs['obid']])
+		conn.commit()
+		c.execute("DELETE FROM Area_Execution WHERE ExecutionId=",[kwargs['id']])
 		conn.commit()
 	
 	def getStatusFromStepExe(self, **kwargs):
@@ -389,32 +414,87 @@ class Database:
 		result=c.fetchall()
 		conn.commit()
 		return result
-		
+	
 	def getFilteredPar(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		query = "SELECT CE.Result FROM Case_Execution AS CE LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId"
-		if (kwargs['objectId'] != 0) or (kwargs['status'] != "All"):
-			query+=" WHERE"
-		if kwargs['objectId'] != 0:
-			query+=" EO.ObjectId="
-			query+=str(kwargs['objectId'])
-			if kwargs['status'] != "All":
+		if kwargs['areaId'] == 0:
+			query = "SELECT CE.Result,OB.ObjectName,OB.ObjectVersion,OB.ObjectId,CE.Id FROM Case_Execution AS CE LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE"
+			if kwargs['objectId'] != 0:
+				query+=" EO.ObjectId="
+				query+=str(kwargs['objectId'])
 				query+=" AND"
-		if kwargs['status'] != "All":
-			query+=" CE.Result=?"
-			#query+=kwargs['status']
-		#if (kwargs['objectId'] != -1) and (kwargs['status'] != "All"):
-		#	c.execute(query,[kwargs['objectId'],kwargs['status']])
-		#if (kwargs['objectId'] != -1) and (kwargs['status'] == "All"):
-		#	c.execute(query,[kwargs['objectId']])
-		print(query)
-		if (kwargs['status'] != "All"):
-			c.execute(query,[kwargs['status']])
+			else:
+				query+=" EO.ObjectId IS NOT NULL AND"
+			if kwargs['status'] != "All":
+				query+=" CE.Result='"
+				query+=str(kwargs['status'])
+				query+="'"
+			else:
+				query+=" CE.Result IS NOT NULL"
+				kwargs['status']="NOT NULL"
 		else:
-			c.execute(query)
+			query = "SELECT CE.Result,OB.ObjectName,OB.ObjectVersion,OB.ObjectId,CE.Id FROM Case_Execution AS CE LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId"
+			query+= " LEFT JOIN Area_Object AS AO ON OB.ObjectId=AO.ObjectId WHERE"
+			if kwargs['objectId'] != 0:
+				query+=" EO.ObjectId="
+				query+=str(kwargs['objectId'])
+				query+=" AND"
+			else:
+				query+=" EO.ObjectId IS NOT NULL AND"
+			if kwargs['status'] != "All":
+				query+=" CE.Result='"
+				query+=str(kwargs['status'])
+				query+="' AND"
+			else:
+				query+=" CE.Result IS NOT NULL AND"
+				kwargs['status']="NOT NULL"
+				query+=" AO.AreaId="
+				query+=str(kwargs['areaId'])
+		c.execute(query)
 		result=c.fetchall()
 		conn.commit()
 		return result
 		
+	#----Areas----
+	def getAreas(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT AreaId,AreaTitle FROM Areas WHERE ProjectId=?",[kwargs['projectId']])
+		result = c.fetchall()
+		conn.commit()
+		return result
+	
+	def getCaseArea(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT AR.AreaId,AR.AreaTitle FROM Area_Case AS AC LEFT JOIN Areas AS AR ON AC.AreaId=AR.AreaId WHERE AC.CaseId=?",[kwargs['caseId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def getExeArea(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT AR.AreaId,AR.AreaTitle FROM Area_Execution AS AE LEFT JOIN Areas AS AR ON AE.AreaId=AR.AreaId WHERE AE.ExecutionId=?",[kwargs['exeId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+		
+	def getSetArea(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT AR.AreaId,AR.AreaTitle FROM Area_Set AS ASE LEFT JOIN Areas AS AR ON ASE.AreaId=AR.AreaId WHERE ASE.SetId=?",[kwargs['setId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def getObjectArea(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT AR.AreaId,AR.AreaTitle FROM Area_Object AS AO LEFT JOIN Areas AS AR ON AO.AreaId=AR.AreaId WHERE AO.ObjectId=?",[kwargs['objectId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
 DB = Database()

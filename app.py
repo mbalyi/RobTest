@@ -45,20 +45,39 @@ def case_page():
 	query = DB.get_case(projectId = projectSession())
 	return render_template('case.html', cases=query)
 	#return json.dumps(query)
-		
+
+@app.route('/caseForm/<int:projectId>', methods=['GET'])
+def caseForm(projectId):
+	query = DB.getAreas(projectId=projectId)
+	print(query)
+	return render_template('case.html', caseForm=query,count=len(query))
+	
 @app.route('/save_case', methods=['POST'])
 def save_case():
-	ID=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],projectId=projectSession())
+	ID=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],area=request.form.getlist('areaBox'),projectId=projectSession())
 	DB.save_steps(id=ID,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'),projectId=projectSession())
 	return json.dumps(ID)
 
 @app.route('/load_case/<int:ID>/<mode>', methods=['GET'])
 def load_case(ID,mode):
 	query = DB.get_case_parameters(id=ID, projectId=projectSession())
+	areaInCase = DB.getCaseArea(caseId=query[0][0])
+	areas = DB.getAreas(projectId=projectSession())
+	temp=[]
+	boolen='false'
+	for k in areas:
+		for j in areaInCase:
+			if j[0] == k[0]:
+				boolen='true'
+		if boolen=='false':
+			temp.append([k,'notchecked'])
+		else:
+			temp.append([k,'checked'])
+			boolen='false'
 	if mode == "loadCase":
-		return render_template('case.html', loadcase=query)
+		return render_template('case.html', loadcase=query, areaInCase=areaInCase,areas=temp,count=len(areas))
 	elif mode == "editCase":
-		return render_template('case.html', editablecase=query)	
+		return render_template('case.html', editablecase=query, areaInCase=areaInCase,areas=temp,count=len(areas))	
 
 @app.route('/get_step/<int:ID>/<mode>', methods=['GET'])
 def get_step(ID,mode):
@@ -75,10 +94,9 @@ def deleteCase(ID):
 
 @app.route('/updateCase/<int:ID>', methods=['POST'])
 def updateCase(ID):
-	DB.updateCase(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],caseId=ID)
+	DB.updateCase(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],caseId=ID,area=request.form.getlist('areaBox'))
 	DB.updateStep(caseId=ID,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'))
-	query = DB.updateCase(id=ID)
-	return "OK"
+	return str(ID)
 	
 #-----object page-----	
 @app.route('/object_page', methods=['GET'])
@@ -86,17 +104,35 @@ def object_page():
 	query = DB.get_object(projectId=projectSession())
 	return render_template("object.html", object=query)
 
+@app.route('/objectForm/<int:projectId>', methods=['GET'])
+def objectForm(projectId):
+	query = DB.getAreas(projectId=projectId)
+	return render_template('object.html', objectForm=query,count=len(query))
+	
 @app.route('/load_object/<int:ID>/<mode>', methods=['GET'])
 def load_object(ID,mode):
 	query = DB.get_object_parameters(id=ID, projectId=projectSession())
+	areaInObject = DB.getObjectArea(objectId=ID)
+	areas = DB.getAreas(projectId=projectSession())
+	temp=[]
+	boolen='false'
+	for k in areas:
+		for j in areaInObject:
+			if j[0] == k[0]:
+				boolen='true'
+		if boolen=='false':
+			temp.append([k,'notchecked'])
+		else:
+			temp.append([k,'checked'])
+			boolen='false'
 	if mode == "loadObject":
-		return render_template("object.html", loadObject=query)
+		return render_template("object.html", loadObject=query,areas=temp,count=len(areas))
 	elif mode == "editObject":
-		return render_template("object.html", editObject=query)
+		return render_template("object.html", editObject=query,areas=temp,count=len(areas))
 
 @app.route('/save_object', methods=['POST'])	
 def save_object():
-	ID=DB.save_object(name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],version=request.form["version"],projectId=projectSession())
+	ID=DB.save_object(name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],version=request.form["version"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
 	return json.dumps(ID)
 	
 @app.route('/deleteObject/<int:ID>', methods=['GET'])
@@ -110,9 +146,14 @@ def set_page():
 	query = DB.get_set(projectId=projectSession())
 	return render_template('set.html', set=query)
 
+@app.route('/setForm', methods=['GET'])
+def setForm():
+	areas=DB.getAreas(projectId=projectSession())
+	return render_template('set.html', setForm='true',areas=areas,count=len(areas))
+
 @app.route('/save_set', methods=['POST'])	
 def save_set():
-	setId=DB.save_set(name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession())
+	setId=DB.save_set(name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
 	DB.saveSetCase(ID=request.form.getlist('ID'),setID=setId)
 	return "OK"
 
@@ -120,19 +161,32 @@ def save_set():
 def load_set(ID,mode):
 	query=DB.get_set_parameters(id=ID)
 	cases=DB.getSetCases(id=ID)
+	areaInSet = DB.getSetArea(setId=ID)
+	areas = DB.getAreas(projectId=projectSession())
+	temp=[]
+	boolen='false'
+	for k in areas:
+		for j in areaInSet:
+			if j[0] == k[0]:
+				boolen='true'
+		if boolen=='false':
+			temp.append([k,'notchecked'])
+		else:
+			temp.append([k,'checked'])
+			boolen='false'
 	if mode == "loadSet":
-		return render_template('set.html', loadSet=query, loadCase=cases)
+		return render_template('set.html', loadSet=query, loadCase=cases,areas=temp,count=len(areas))
 	if mode == "exeCasesBySet":
 		return render_template('set.html', exeCasesBySet=cases)
 	else:
-		return render_template('set.html', loadEditableSet=query, editCase=cases)
+		return render_template('set.html', loadEditableSet=query, editCase=cases,areas=temp,count=len(areas))
 
 @app.route('/deleteSet/<int:ID>', methods=['GET'])
 def deleteSet(ID):
 	DB.deleteSet(id=ID)
 	return "ok"
 	
-#-----set execution-----	
+#-----execution-----	
 @app.route('/execution_page', methods=['GET'])
 def execution_page():
 	query=DB.getExecution(projectId=projectSession())
@@ -141,11 +195,12 @@ def execution_page():
 @app.route('/newExe', methods=['GET'])
 def newExecution():
 	query=DB.get_object(projectId=projectSession())
-	return render_template('execution.html', newExe=query)	
+	areas=DB.getAreas(projectId=projectSession())
+	return render_template('execution.html', newExe=query,areas=areas,count=len(areas))	
 
 @app.route('/saveExe', methods=['GET', 'POST'])
 def SaveExecution():
-	exeId=DB.saveExe(name=request.form["title"],testObject=request.form["TO"],projectId=projectSession())
+	exeId=DB.saveExe(name=request.form["title"],testObject=request.form["TO"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
 	DB.saveCaseExe(ID=request.form.getlist('ID'),exeID=exeId)
 	return json.dumps(exeId)
 
@@ -156,10 +211,23 @@ def loadExecution(ID,mode):
 	print(object)
 	cases=DB.getExeCases(id=ID)
 	objects=DB.get_object(projectId=projectSession(), notRes=object[0])
+	areaInExe = DB.getExeArea(exeId=ID)
+	areas = DB.getAreas(projectId=projectSession())
+	temp=[]
+	boolen='false'
+	for k in areas:
+		for j in areaInExe:
+			if j[0] == k[0]:
+				boolen='true'
+		if boolen=='false':
+			temp.append([k,'notchecked'])
+		else:
+			temp.append([k,'checked'])
+			boolen='false'
 	if mode == "loadExe":
-		return render_template('execution.html', loadExe=query, loadCase=cases, loadObject=object)
+		return render_template('execution.html', loadExe=query, loadCase=cases, loadObject=object,areas=temp,count=len(areas))
 	if mode == "editExe":
-		return render_template('execution.html', loadEditableExe=query, loadEditableCase=cases, loadEditableObject=object, loadObjects=objects)
+		return render_template('execution.html', loadEditableExe=query, loadEditableCase=cases, loadEditableObject=object, loadObjects=objects,areas=temp,count=len(areas))
 	#else:
 	#	return render_template('execution.html', loadEditableSet=query, editCase=cases)
 
@@ -273,54 +341,108 @@ def projectSession():
 #-----Chart-----
 @app.route('/requestChart/<type>/<int:projectId>', methods=['GET'])
 def requestChart(type,projectId):
-	query = DB.getDataForCharts(projectId=projectId)
-	passed=0
-	failed=0
-	skipped=0
-	notimp=0
-	all=0
-	for k in query:
-		if k[2] == "RUN":
-			passed+=1
-		if k[2] == "FAILED":
-			failed+=1
-		if (k[2] == "NOTRUN") or (k[2] == "SKIPPED"):
-			skipped+=1
-		if k[2] == "NOTIMP":
-			notimp+=1
-		all+=1
-	rate=[passed,failed,skipped,notimp,all]
-	render = render_template('test2.html',type=type,rate=rate)
-	return render.replace('\n','')
+	if type=="line":
+		return chartReload(type,"All",0,0,"All")
+	else:
+		query = DB.getDataForCharts(projectId=projectId)
+		passed=0
+		failed=0
+		skipped=0
+		notimp=0
+		all=0
+		for k in query:
+			if k[2] == "RUN":
+				passed+=1
+			if k[2] == "FAILED":
+				failed+=1
+			if (k[2] == "NOTRUN") or (k[2] == "SKIPPED"):
+				skipped+=1
+			if k[2] == "NOTIMP":
+				notimp+=1
+			all+=1
+		rate=[passed,failed,skipped,notimp,all]
+		return render_template('test2.html',type=type,rate=rate).replace('\n','')
 	
 @app.route('/chartFilter/<type>/<int:projectId>', methods=['GET'])
 def chartFilter(type,projectId):
 	query = DB.getChartFilterData(projectId=projectId)
-	return render_template('chartFilter.html',type=type,data=query)
+	areas = DB.getAreas(projectId=projectId)
+	return render_template('chartFilter.html',type=type,data=query,areas=areas)
 
 @app.route('/chartReload/<type>/<interval>/<int:obId>/<int:areaId>/<status>', methods=['GET'])
 def chartReload(type,interval,obId,areaId,status):
-	result = DB.getFilteredPar(interval=interval,objectId=obId,areaId=areaId,status=status)
 	passed=0
 	failed=0
 	skipped=0
 	notimp=0
 	all=0
-	print(result)
-	for k in result:
-		if k[0] == "RUN":
-			passed+=1
-		if k[0] == "FAILED":
-			failed+=1
-		if (k[0] == "NOTRUN") or (k[0] == "SKIPPED"):
-			skipped+=1
-		if k[0] == "NOTIMP":
-			notimp+=1
-		all+=1
-	rate=[passed,failed,skipped,notimp,all]
-	print(rate)
-	render = render_template('test2.html',type=type,rate=rate)
-	return render.replace('\n','')
+	result = DB.getFilteredPar(interval=interval,objectId=obId,areaId=areaId,status=status)
+	render=""
+	if result:
+		if type == "pie":
+			for k in result:
+				if k[0] == "RUN":
+					passed+=1
+				if k[0] == "FAILED":
+					failed+=1
+				if (k[0] == "NOTRUN") or (k[0] == "SKIPPED"):
+					skipped+=1
+				if k[0] == "NOTIMP":
+					notimp+=1
+				all+=1
+				rate=[passed,failed,skipped,notimp,all]
+				render = render_template('test2.html',type=type,rate=rate)
+		if type == "line":
+			temp=[]
+			container=[]
+			boolen = "false"
+			for k in result:
+				if k[0] != 'default':
+					temp.append(k)
+				default = k
+				for j in result:
+					if (default[3] == j[3]) and (default[4] != j[4]):
+						temp.append(j)
+						index=result.index(j)
+						result.pop(index)
+						result.insert(index,('default','default','default','default','default'))
+						boolen="true"
+				if temp:
+					passed=0
+					skipped=0
+					failed=0
+					all=0
+					for o in temp:
+						if o[0] != "default":
+							if o[0] == "RUN":
+								passed+=1
+							if o[0] == "FAILED":
+								failed+=1
+							if (o[0] == "NOTRUN") or (o[0] == "SKIPPED"):
+								skipped+=1
+							if o[0] == "NOTIMP":
+								notimp+=1
+							all+=1
+				rate=[passed,failed,skipped,notimp,all]
+				if boolen == "false":
+					index=result.index(k)
+					result.pop(index)
+					result.insert(index,('default','default','default','default','default'))
+				else:
+					boolen = "false"
+				if temp:
+					if (temp[0][0] != "default"):
+						container.append([temp,rate])
+				result.pop(0)
+				result.insert(0,('default','default','default','default','default'))
+				temp = []
+			render = render_template('test2.html',type=type,data=container)
+		return render.replace('\n','')
+	else:
+		if type=="pie":
+			return render_template('test2.html',result="pie")
+		else:
+			return render_template('test2.html',result="line")
 	
 @app.route('/jenkinsRadiator', methods=['GET'])
 def jenkinsRadiator():

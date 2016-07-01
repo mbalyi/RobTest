@@ -105,7 +105,7 @@ function pieReload(type){
                 if(type=="pie"){
                     pieChart.options.data=data;
                     pieChart.options.animationEnabled=true;
-                    //pieChart.options.title=$('[data-selectorid="pieVersion"]').find(":selected").html();
+                    pieChart.options.title.text = $("select[data-selectorid=pieVersion]").find(":selected").val().toString();
                     pieChart.render();
                 }
 			};
@@ -120,7 +120,7 @@ function lineReload(type){
                 if(type=="line"){
                     lineChart.options.data=data;
                     lineChart.options.animationEnabled=true;
-                    //pieChart.options.title=$('[data-selectorid="pieVersion"]').find(":selected").html();
+                    lineChart.options.title.text = $("select[data-selectorid=lineVersion]").find(":selected").val().toString();
                     lineChart.render();
                 }
 			};

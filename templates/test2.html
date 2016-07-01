@@ -140,3 +140,36 @@
 	}
 ]
 {% endif %}
+
+{% if result == "pie" %}
+[
+	{        
+		"indexLabelFontSize": 20,
+		"indexLabelFontFamily": "Monospace",       
+		"indexLabelFontColor": "darkgrey", 
+		"indexLabelLineColor": "darkgrey",        
+		"indexLabelPlacement": "outside",
+		"type": "pie",       
+		"showInLegend": true,
+		"toolTipContent": "{legendText}",
+		"dataPoints": 
+		[
+			{  "y":  "1", "legendText":"No Result", "indexLabel": "No Result" }
+		]
+	}
+]
+{% endif %}
+{% if result == "line" %}
+[
+	{
+		"type": "column",	
+		"name": "No Result",
+		"legendText": "No Result",
+		"color": "#2ECC71",
+		"showInLegend": true, 
+		"dataPoints":[
+        {"label": "No Result", "y": 1}
+		]
+	}
+]
+{% endif %}

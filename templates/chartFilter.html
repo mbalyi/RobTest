@@ -34,10 +34,9 @@
 		<td>
 			<select class='form-control' data-selectorid='{{type}}Area' onchange="{{type}}Reload('{{type}}')" style='width:100%;'>
 				<option data-dbid='0'>All</option>
-				<option data-dbid='0'>Show Stopper</option>
-				<option data-dbid='0'>Global Area</option>
-				<option data-dbid='0'>Deployment Issues</option>
-				<option data-dbid='0'>DB Query</option>
+                {% for k in areas %}
+				<option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+                {% endfor %}
 			</select>
 		<td>
 	</tr>

@@ -111,6 +111,7 @@ $(function(){
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "objects"){
 			document.getElementById("col-md-9").style.width = '70%';
+            requestObject();
             objectSetup();
 			$(".col-md-12-set").empty();
 			$(".col-md-12-case").empty();

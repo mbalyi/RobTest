@@ -5,6 +5,61 @@
 	{% endfor %}
 {% endif %}
 
+{% if objectForm %}
+<h1>Object</h1>
+<div style='width:100%'>
+    <table style='width:100%'>
+        <tr>
+            <td class='object_static_name'>Name:</td>
+            <td class='object_static_input'>
+                <input type='text' name='name' value='Name' class='object_input form-control' readonly>
+            </td>
+        </tr>
+        <tr>
+            <td class='object_static_date'>Date</td>
+            <td class='object_static_input'>
+                <input type='date' name='date' class='object_input form-control' readonly>
+            </td>
+        </tr>
+        <tr>
+            <td class='object_static_hardware'>Hardware:</td>
+            <td class='object_static_input'>
+                <input type='text' name='hardware' value='Hardware Description' class='object_input form-control' readonly>
+            </td>
+        </tr>
+        <tr>
+            <td class='object_static_desc'>Description:</td>
+            <td class='object_static_input'>
+                <input type='text' name='desc' value='Long Description' class='object_input form-control' readonly>
+            </td>
+        </tr>
+        <tr>
+            <td class='object_static_desc'>Version:</td>
+            <td class='object_static_input'>
+                <input type='text' name='version' value='Version Number' class='object_input form-control' readonly>
+            </td>
+        </tr>
+    </table>
+    <div class='AreaField' style='100%'>
+        <table>
+            {% for k in objectForm %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td><input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>{{k[1]}}</td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endif %}
+
 {% if loadObject %}
 	<h1>Object</h1>
 	<a href='#' name='editObject' id='{{loadObject[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
@@ -34,6 +89,29 @@
 				</tr>
 			{% endfor %}
 		</table>
+        <div class='AreaField' style='100%'>
+        <table>
+            {% for k in areas %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td>
+                            {% if k[1] == "checked" %}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            {% else %}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            {% endif %}
+                        </td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
 	</div>
 {%endif%}
 
@@ -64,5 +142,28 @@
 				</tr>
 			{% endfor %}
 		</table>
+        <div class='AreaField' style='100%'>
+            <table>
+                {% for k in areas %}
+                    {% if loop.index == 1 %}
+                        <tr>
+                    {% endif %}
+                            <td>
+                                {% if k[1] == "checked" %}
+                                <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                                {% else %}
+                                <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                                {% endif %}
+                            </td>
+                    {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                        </tr>
+                        <tr>
+                    {% endif %}
+                    {% if (loop.index%3 == 0) and (loop.index==count) %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </div>
 	</div>
 {%endif%}

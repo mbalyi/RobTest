@@ -9,7 +9,9 @@ function requestObject(){
 }
 
 function save_object(){
-	$.post("/save_object", $("input").serialize(),
+    var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&")+"&";
+    sendData += $("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&");
+	$.post("/save_object", sendData,
 		function(data,status){
 			if(status){
 				loadObject(data,"loadObject");
@@ -29,10 +31,18 @@ function loadObject(ObjectId,mode){
 	);
 }
 
-function objectSetup(){
-	$(".col-md-9").empty().append(objectForm);
+function objectSetup(checker){
+    $.get("/objectForm/"+$(".projectSelector").find(":selected").attr('data-dbid'),
+		function(data,status){
+			if(status){
+				$(".col-md-9").empty().append(data);
+                if(checker){
+                    enableObjectForm();
+                }
+			};
+		}
+	)
 	$(".setup_buttons").empty().append(objectBtn);
-	requestObject();
 }
 
 function deleteObject(objectId){
@@ -45,6 +55,16 @@ function deleteObject(objectId){
 	);
 }
 
+function enableObjectForm(){  
+    $("input[type=checkBox]").removeAttr("disabled");
+    $("input[type=text][name=name]").removeAttr('readonly');
+    $("input[type=text][name=hardware]").removeAttr('readonly');
+    $("input[type=text][name=desc").removeAttr('readonly');
+    $("input[type=text][name=version]").removeAttr('readonly');
+    $("#newObject").attr('disabled', true);
+    $("#saveObject").attr('disabled', false);
+}
+
 $(function(){
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "object"){
@@ -52,9 +72,12 @@ $(function(){
 			requestObject();
 		}
 		if( event.target.id == "newObject"){
-			$(".col-md-9").empty().append(objectEditableForm);
-			$(".newObject").empty().append(newObjectDis);
-			$(".saveObject").empty().append(saveObjectEn);
+            if($("a[name=editObject]")==[]){
+                enableObjectForm();
+            }
+            else{
+                objectSetup("true");
+            }
 		}
 		if( event.target.id == "cancelObject"){
 			objectSetup();
@@ -65,8 +88,8 @@ $(function(){
 		}
 		if( $(event.target).attr('name') == "editObject"){
 			loadObject(event.target.id,"editObject");
-			$(".newObject").empty().append(newObjectDis);
-			$(".saveObject").empty().append(saveObjectEn);
+			$("#newObject").attr('disabled', true);
+            $("#saveObject").attr('disabled', false);
 		}
 		if( $(event.target).attr('name') == "deleteObject"){
 			deleteObject(event.target.id);

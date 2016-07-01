@@ -69,12 +69,29 @@
 			</tr>
 			{% endfor %}
 		</table>
-		<div class='textAreas'>
-			<p>Text Areas:</p>
-			<span><input type='checkbox' readonly>Admin</span>
-			<span><input type='checkbox' readonly>Security Policy</span>
-			<span><input type='checkbox' readonly>Set Form Test</span>
-		</div>
+		<div class='AreaField' style='100%'>
+        <table>
+            {% for k in areas %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td>
+                            {% if k[1] == "checked" %}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            {% else %}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            {% endif %}
+                        </td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
 		<p>Included Cases</p>
 		<div class='incCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
 		{% if loadCase %}
@@ -108,12 +125,29 @@
 			</tr>
 			{% endfor %}
 		</table>
-		<div class='textAreas'>
-			<p>Text Areas:</p>
-			<span><input type='checkbox'>Admin</span>
-			<span><input type='checkbox'>Security Policy</span>
-			<span><input type='checkbox'>Set Form Test</span>
-		</div>
+		<div class='AreaField' style='100%'>
+        <table>
+            {% for k in areas %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td>
+                            {% if k[1] == "checked" %}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            {% else %}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            {% endif %}
+                        </td>
+                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
 		<p>Included Cases</p>
 		<div class='incCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
 		{% if editCase %}

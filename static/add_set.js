@@ -25,7 +25,8 @@ function SetSetup(mode){
 }
 
 function saveSet(){
-	$.post("/save_set", $("input").serialize()+"&ID="+$(".incCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID="),
+    var sendData=$("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=date]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&")+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&")+"&ID="+$(".incCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID=");
+	$.post("/save_set", sendData,
 		function(data,status){
 			if(status){
 				requestSet()
@@ -60,11 +61,16 @@ function deleteSet(setId){
 }
 
 function newSet(){
-    $(".incCases").attr('ondrop','drop(event)');
-    $(".incCases").attr('ondragover','allowDrop(event)');
-	$("input[type=checkBox]").removeAttr("disabled");
-    $("input[type=text][name=name]").removeAttr('readonly');
-    $("input[type=text][name=priority]").removeAttr('readonly');
+    if($("a[name=editSet]")==[]){
+        $(".incCases").attr('ondrop','drop(event)');
+        $(".incCases").attr('ondragover','allowDrop(event)');
+        $("input[type=checkBox]").removeAttr("disabled");
+        $("input[type=text][name=name]").removeAttr('readonly');
+        $("input[type=text][name=priority]").removeAttr('readonly');
+    }
+    else{
+        SetSetup("false");
+    }
 	$(".newSet").empty().append(newSetDis);
 	$(".saveSet").empty().append(saveSetEn);
 }

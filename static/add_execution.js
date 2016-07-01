@@ -8,7 +8,7 @@ function requestExe(){
 	)
 }
 
-function exeSetup(request){
+function exeSetup(request,checker){
     $(".setup_buttons").empty().append(exeBtn);
     if(request=="true"){
         $(".col-md-12-object").empty();
@@ -19,6 +19,9 @@ function exeSetup(request){
 		function(data,status){
 			if(status){
 				$(".col-md-9").empty().append(data);
+                if(checker){
+                    newExe();
+                }
 			}
 			else{
 				alert("DB query was unsuccessfull")
@@ -83,7 +86,12 @@ $(function(){
 			$(".setup_buttons").empty().append(exeBtn);
 		}
 		if( event.target.id == "newExe"){
-			newExe();
+			if($("a[name=editExe]")==[]){
+                newExe();    
+            }
+            else{
+                exeSetup("false","true");
+            }
 		}
 		if( event.target.id == "cancelExe"){
 			exeSetup('false');

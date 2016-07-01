@@ -97,11 +97,23 @@ class Database:
 		c = conn.cursor()
 		c.execute("UPDATE Cases SET Title=?,Priority=?,Data=? WHERE CaseId=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['caseId']])
 		conn.commit()
-		c.execute("DELETE FROM Area_Case WHERE CaseId=?",[kwargs['caseId']])
+		c.execute("SELECT AreaId FROM Area_Case WHERE CaseId=?",[kwargs['caseId']])
+		areas=c.fetchall()
 		conn.commit()
+		temp=[]
+		for k in areas:
+			temp.append(k[0])
+		allArea=[]
 		for k in kwargs['area']:
-			c.execute("INSERT INTO Area_Case (AreaId,CaseId) VALUES (?,?)",[k,kwargs['caseId']])
-			conn.commit()
+			allArea.append(int(k))
+		for k in allArea:
+			if temp.count(k) == 0:
+				c.execute("INSERT INTO Area_Case (AreaId,CaseId) VALUES (?,?)",[k,kwargs['caseId']])
+				conn.commit()
+		for j in temp:
+			if allArea.count(j) == 0:
+				c.execute("DELETE FROM Area_Case WHERE AreaId=? AND CaseId=?",[j,kwargs['caseId']])
+				conn.commit()
 		
 	
 	def updateStep(self, **kwargs):
@@ -145,11 +157,9 @@ class Database:
 		areas=c.fetchall()
 		conn.commit()
 		temp=[]
-		boolen = "false"
 		for k in areas:
 			temp.append(k[0])
 		allArea=[]
-		boolen="false"
 		for k in kwargs['areas']:
 			allArea.append(int(k))
 		for k in allArea:

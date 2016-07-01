@@ -136,11 +136,37 @@ class Database:
 			conn.commit()
 		return ObjectID[0]
 	
+	def updateObject(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Objects SET ObjectName=?,ObjectHardware=?,ObjectDesc=?,ObjectVersion=? WHERE ObjectId=?",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['version'],kwargs['objectId']])
+		conn.commit()
+		c.execute("SELECT AreaId FROM Area_Object WHERE ObjectId=?",[kwargs['objectId']])
+		areas=c.fetchall()
+		conn.commit()
+		temp=[]
+		boolen = "false"
+		for k in areas:
+			temp.append(k[0])
+		allArea=[]
+		boolen="false"
+		for k in kwargs['areas']:
+			allArea.append(int(k))
+		for k in allArea:
+			if temp.count(k) == 0:
+				c.execute("INSERT INTO Area_Object (AreaId,ObjectId) VALUES (?,?)",[k,kwargs['objectId']])
+				conn.commit()
+		for j in temp:
+			if allArea.count(j) == 0:
+				c.execute("DELETE FROM Area_Object WHERE AreaId=? AND ObjectId=?",[j,kwargs['objectId']])
+				conn.commit()
+		return
+	
 	def get_object_parameters(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		c.execute("SELECT * FROM Objects WHERE ObjectId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
-		result=c.fetchall()
+		result=c.fetchone()
 		conn.commit()
 		return result
 	

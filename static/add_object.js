@@ -21,6 +21,22 @@ function save_object(){
 	);
 }
 
+function updateObject(objectId){
+    var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&")+"&";
+    sendData += $("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&")+"&objectId=";
+    sendData+=objectId;
+    sendData+="&projectId=";
+    sendData+=$(".projectSelector").find(":selected").attr('data-dbid');
+	$.post("/updateObject", sendData,
+		function(data,status){
+			if(status){
+				loadObject(data,"loadObject");
+			}
+		},
+		"json"
+	);
+}
+
 function loadObject(ObjectId,mode){
 	$.get("/load_object/"+ObjectId+"/"+mode,
 		function(data,status){
@@ -83,8 +99,15 @@ $(function(){
 			objectSetup();
 		}
 		if( event.target.id == "saveObject"){
-			save_object();
-			$(".setup_buttons").empty().append(objectBtn);
+            if($(".editableObject").attr('data-dbid')=="newObject"){
+                save_object();
+                $(".setup_buttons").empty().append(objectBtn);
+            }
+            else{
+                updateObject($(".editableObject").attr('data-dbid'));
+                 $(".setup_buttons").empty().append(objectBtn);
+            }
+			
 		}
 		if( $(event.target).attr('name') == "editObject"){
 			loadObject(event.target.id,"editObject");

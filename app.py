@@ -134,6 +134,11 @@ def load_object(ID,mode):
 def save_object():
 	ID=DB.save_object(name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],version=request.form["version"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
 	return json.dumps(ID)
+
+@app.route('/updateObject', methods=['POST'])	
+def updateObject():
+	DB.updateObject(objectId=request.form["objectId"],name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],version=request.form["version"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'))
+	return json.dumps(request.form["objectId"])
 	
 @app.route('/deleteObject/<int:ID>', methods=['GET'])
 def deleteObject(ID):

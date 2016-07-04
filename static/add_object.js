@@ -81,6 +81,39 @@ function enableObjectForm(){
     $("#saveObject").attr('disabled', false);
 }
 
+function objectHideShow(){
+    if($(".objectHideShow").attr("data-mode")=="show"){
+        $(".objectList").hide();
+        $(".objectHideShow").attr("data-mode",'hide');
+        $(".objectHideShow").empty().append("<span class='glyphicon glyphicon-collapse-down'></span>");
+    }
+    else{
+        $(".objectList").show();
+        $(".objectHideShow").attr("data-mode",'show');
+        $(".objectHideShow").empty().append("<span class='glyphicon glyphicon-collapse-up'></span>");
+    }
+}
+
+function objectSearch(){
+    for (i=0; i < $(".object").length;i++){
+        var search=$("input[name=objectSearch]").val();
+        if($(".object")[i].innerHTML.toLowerCase().indexOf(search.toLowerCase()) >= 0){
+            var classFilt= $(".object")[i].id;
+            $("[data-dbid=object"+classFilt.toString()+"]").show();
+        }
+        else{
+           var classFilt= $(".object")[i].id;
+            $("[data-dbid=object"+classFilt.toString()+"]").hide();
+        }
+        if (search == ""){
+            for (i=0; i < $(".object").length;i++){
+                var classFilt= $(".object")[i].id;
+                $("[data-dbid=object"+classFilt.toString()+"]").show();
+            }
+        }
+    }
+}
+
 $(function(){
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "object"){

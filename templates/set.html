@@ -1,10 +1,26 @@
 {% if set %}
-	<p><b>Sets</b></p>
+<div class='setPageHeader' style="width:100%;">    
+    <table style="width:100%;">
+        <tr style="width:100%;">
+            <td style="width:15%;"><b>Sets</b></td>
+            <td style="width:60%;">
+                <input type="text" name="setSearch" class="form-control" onchange="setSearch()" style="height:25px;">
+            </td>
+            <td style="width:2%;">
+            </td>
+            <td style="width:20%;">
+                <a href="#" class="setHideShow" onclick='setHideShow()' data-mode="show"><span class='glyphicon glyphicon-collapse-up'></span></a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class='setList' style="width:100%;">
 	{% for k in set %}
 		<div data-dbid='set{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
-			<a href='#' data-dbid='{{k[0]}}' class='set'>{{k[1]}}</a>
+			<a href='#' data-dbid='{{k[0]}}' class='set' id='{{k[0]}}'>{{k[1]}}</a>
 		</div>
     {% endfor %}
+</div>
 {% endif %}
 
 {% if setForm %}

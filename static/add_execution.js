@@ -94,6 +94,39 @@ function deleteExe(exeId){
 	);
 }
 
+function exeHideShow(){
+    if($(".exeHideShow").attr("data-mode")=="show"){
+        $(".exeList").hide();
+        $(".exeHideShow").attr("data-mode",'hide');
+        $(".exeHideShow").empty().append("<span class='glyphicon glyphicon-collapse-down'></span>");
+    }
+    else{
+        $(".exeList").show();
+        $(".exeHideShow").attr("data-mode",'show');
+        $(".exeHideShow").empty().append("<span class='glyphicon glyphicon-collapse-up'></span>");
+    }
+}
+
+function exeSearch(){
+    for (i=0; i < $(".execution").length;i++){
+        var search=$("input[name=exeSearch]").val();
+        if($(".execution")[i].innerHTML.toLowerCase().indexOf(search.toLowerCase()) >= 0){
+            var classFilt= $(".execution")[i].id;
+            $("[data-dbid=exe"+classFilt.toString()+"]").show();
+        }
+        else{
+           var classFilt= $(".execution")[i].id;
+            $("[data-dbid=exe"+classFilt.toString()+"]").hide();
+        }
+        if (search == ""){
+            for (i=0; i < $(".execution").length;i++){
+                var classFilt= $(".execution")[i].id;
+                $("[data-dbid=exe"+classFilt.toString()+"]").show();
+            }
+        }
+    }
+}
+
 $(function(){
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "execution"){

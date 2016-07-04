@@ -87,6 +87,39 @@ function newSet(){
 	$(".saveSet").empty().append(saveSetEn);
 }
 
+function setHideShow(){
+    if($(".setHideShow").attr("data-mode")=="show"){
+        $(".setList").hide();
+        $(".setHideShow").attr("data-mode",'hide');
+        $(".setHideShow").empty().append("<span class='glyphicon glyphicon-collapse-down'></span>");
+    }
+    else{
+        $(".setList").show();
+        $(".setHideShow").attr("data-mode",'show');
+        $(".setHideShow").empty().append("<span class='glyphicon glyphicon-collapse-up'></span>");
+    }
+}
+
+function setSearch(){
+    for (i=0; i < $(".set").length;i++){
+        var search=$("input[name=setSearch]").val();
+        if($(".set")[i].innerHTML.toLowerCase().indexOf(search.toLowerCase()) >= 0){
+            var classFilt= $(".case")[i].id;
+            $("[data-dbid=set"+classFilt.toString()+"]").show();
+        }
+        else{
+           var classFilt= $(".set")[i].id;
+            $("[data-dbid=set"+classFilt.toString()+"]").hide();
+        }
+        if (search == ""){
+            for (i=0; i < $(".set").length;i++){
+                var classFilt= $(".set")[i].id;
+                $("[data-dbid=set"+classFilt.toString()+"]").show();
+            }
+        }
+    }
+}
+
 $(function(){
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "set"){

@@ -1,8 +1,26 @@
 {% if execution %}
-	<p><b>Executions</b></p>
+<div class='exePageHeader' style="width:100%;">    
+    <table style="width:100%;">
+        <tr style="width:100%;">
+            <td style="width:15%;"><b>Executions</b></td>
+            <td style="width:60%;">
+                <input type="text" name="exeSearch" class="form-control" onchange="exeSearch()" style="height:25px;">
+            </td>
+            <td style="width:2%;">
+            </td>
+            <td style="width:20%;">
+                <a href="#" class="exeHideShow" onclick='exeHideShow()' data-mode="show"><span class='glyphicon glyphicon-collapse-up'></span></a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class='exeList' style="width:100%;">
 	{% for k in execution %}
-		<a href='#' class='execution' data-dbid='{{k[0]}}'>{{k[1]}}</a><br>
+    <div class='elementOfExeList' data-dbid='exe{{k[0]}}'>
+		<a href='#' class='execution' data-dbid='{{k[0]}}' id='{{k[0]}}'>{{k[1]}}</a>
+    </div>
     {% endfor %}
+</div>
 {% endif %}
 
 {% if newExe %}

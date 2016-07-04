@@ -73,6 +73,9 @@ function newExe(){
     $("input[type=checkBox]").removeAttr("disabled");
     $(".newExe").empty().append(newExeDis);
     $(".saveExe").empty().append(saveExeEn);
+    $(".elementOfCaseList").removeAttr("ondragover");
+    $(".elementOfCaseList").removeAttr("ondragstart");
+    $(".elementOfCaseList").removeAttr("draggable");
 }
 
 function loadExecution(exeID,mode){
@@ -145,7 +148,7 @@ $(function(){
             }
 		}
 		if( event.target.id == "newExe"){
-			if($("a[name=editExe]")==[]){
+			if($(".exeHeader").attr("data-dbid")=="newExecution"){
                 newExe();    
             }
             else{

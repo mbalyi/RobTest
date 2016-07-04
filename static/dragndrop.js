@@ -27,8 +27,9 @@ function drop(ev) {
 				function(data,status){
 					if(status){
 						draggedElement=draggedElement.cloneNode(true);
-						draggedElement.innerHTML=data;
-						ev.target.appendChild(draggedElement)
+						//draggedElement.innerHTML=data;
+						//ev.target.appendChild(draggedElement)
+                        ev.target.innerHTML+=data;
 					};
 				}
 			);
@@ -44,10 +45,29 @@ function drop(ev) {
 		ev.currentTarget.insertBefore(draggedElement, afterInsertNode.nextSibling);
 	}
 	$(".incCases a").map(function(index,node){
-		array=[]
+		var array=[]
 		array=array+node.className
 		array=array+node.dataset.dbid
 		return array;
 		}
 		).toArray()
+}
+
+function dropRemove(ev){
+    if ($(ev.target).parents('.incCases').andSelf('.incCases').length == 0){
+        var child;
+        var iterator;
+        for (i =0; i< 
+ $(".incCases").children().length;i++){
+            if("case"+draggedElement.childNodes[1].dataset.dbid.toString() == $(".incCases").children()[i].dataset.dbid.toString()){
+                child=$(".incCases").children()[i].children[0];
+                iterator=i;
+            }
+        }
+        $(".incCases").children()[iterator].removeChild(child);
+        console.log('Remove IT');
+        return;
+    } /*else {
+        //console.log('Skip it');
+    }*/
 }

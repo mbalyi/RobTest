@@ -87,6 +87,9 @@ function newSet(){
     }
 	$(".newSet").empty().append(newSetDis);
 	$(".saveSet").empty().append(saveSetEn);
+    $("body").on('drop',dropRemove);
+    //$("body").on('dragstart',drag);
+    $("body").on('dragover',allowDrop);
 }
 
 function setHideShow(){
@@ -145,6 +148,7 @@ $(function(){
 		}
 		if( $(event.target).attr('name')=="deleteset" ){
 			deleteSet(event.target.id);
+            requestSet();
 		}
 		if( $(event.target).attr('name')=="editSet" ){
 			loadSet($(event.target).attr('id'),"editSet");

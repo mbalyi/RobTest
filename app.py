@@ -157,12 +157,19 @@ def save_object():
 def updateObject():
 	DB.updateObject(objectId=request.form["objectId"],name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],version=request.form["version"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'))
 	return json.dumps(request.form["objectId"])
-	
-@app.route('/deleteObject/<int:ID>', methods=['GET'])
-def deleteObject(ID):
+
+#--- Fizikai törlés	
+@app.route('/deleteObjectPhysical/<int:ID>', methods=['GET'])
+def deleteObjectPhysical(ID):
 	DB.deleteObject(id=ID,projectId=projectSession())
 	return "ok"
 
+#--- Logikai törlés
+@app.route('/deleteObject/<int:ID>', methods=['GET'])
+def deleteObject(ID):
+	DB.deleteObjectLogical(id=ID,projectId=projectSession())
+	return "ok"
+	
 #-----set page-----	
 @app.route('/set_page', methods=['GET'])
 def set_page():
@@ -180,9 +187,19 @@ def save_set():
 	DB.saveSetCase(ID=request.form.getlist('ID'),setID=setId)
 	return "OK"
 
+#--- Fizikai update
+@app.route('/updateSetPhysical', methods=['POST'])	
+def updateSetPhysical():
+	DB.updateSet(setId=request.form['setId'],ID=request.form.getlist('ID'),name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
+	return "OK"
+	
+#--- Logikai update
 @app.route('/updateSet', methods=['POST'])	
 def updateSet():
-	DB.updateSet(setId=request.form['setId'],ID=request.form.getlist('ID'),name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
+	DB.updateSetLogical(setId=request.form['setId'])
+	setId=DB.save_set(name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
+	DB.setUpdateFlag(oldSetId=request.form['setId'],newSetId=setId)
+	DB.saveSetCase(ID=request.form.getlist('ID'),setID=setId)
 	return "OK"
 	
 @app.route('/load_set/<int:ID>/<mode>', methods=['GET'])
@@ -209,9 +226,16 @@ def load_set(ID,mode):
 	else:
 		return render_template('set.html', loadEditableSet=query, editCase=cases,areas=temp,count=len(areas))
 
+#--- Fizikai törlés
+@app.route('/deleteSetPhysical/<int:ID>', methods=['GET'])
+def deleteSetPhysical(ID):
+	DB.deleteSet(id=ID)
+	return "ok"
+
+#--- Logikai törlés	
 @app.route('/deleteSet/<int:ID>', methods=['GET'])
 def deleteSet(ID):
-	DB.deleteSet(id=ID)
+	DB.deleteSetLogical(id=ID)
 	return "ok"
 	
 #-----execution-----	

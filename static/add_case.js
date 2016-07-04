@@ -14,7 +14,7 @@ function caseForm(checker){
     $.get("/caseForm/"+$(".projectSelector").find(":selected").attr('data-dbid'),
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data);
+				$(".divContainer").empty().append(data);
                 if(checker){
                     enableForm();
                 }
@@ -62,7 +62,7 @@ function loadCase(caseId,mode){
 	$.get("/load_case/"+caseId+"/"+mode,
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data);
+				$(".divContainer").empty().append(data);
 			};
 		}
 	);
@@ -94,7 +94,7 @@ function deleteCase(caseId){
 		function(data,status){
 			if(status){
 				caseSetUp()
-				$(".setup_buttons").empty().append(caseBtn);
+				$(".buttonSetup").empty().append(caseBtn);
 				caseForm();
 			};
 		}
@@ -166,7 +166,7 @@ $(function(){
             }
 		}
 		if( event.target.id == "cancelCase"){
-			$(".setup_buttons").empty().append(caseBtn);
+			$(".buttonSetup").empty().append(caseBtn);
 			caseForm();
 		}
 		if( event.target.id == "saveCase"){
@@ -176,7 +176,7 @@ $(function(){
 			else{
 				updateCase($(".editablecase").attr('data-dbid'));
 			}
-			$(".setup_buttons").empty().append(caseBtn);
+			$(".buttonSetup").empty().append(caseBtn);
 		}
 		if( $(event.target).attr('name') == "deleteCase"){
 			deleteCase(event.target.id);

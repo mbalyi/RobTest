@@ -9,7 +9,9 @@ function requestExe(){
 }
 
 function exeSetup(request,checker){
-    $(".setup_buttons").empty().append(exeBtn);
+    $("#mainHeader").css('margin-bottom','5px');
+    $(".setup_buttons").hide();
+    $(".buttonSetup").empty().append(exeBtn);
     if(request=="true"){
         $(".col-md-12-object").empty();
         requestExe();
@@ -18,7 +20,7 @@ function exeSetup(request,checker){
     $.get("/newExe",
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data);
+				$(".divContainer").empty().append(data);
                 if(checker){
                     newExe();
                 }
@@ -77,7 +79,7 @@ function loadExecution(exeID,mode){
 	$.get("/loadExecution/"+exeID+"/"+mode,
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data);
+				$(".divContainer").empty().append(data);
 			};
 		}
 	)
@@ -88,7 +90,7 @@ function deleteExe(exeId){
 		function(data,status){
 			if(status){
 				exeSetup('true');
-				$(".setup_buttons").empty().append(exeBtn);
+				$(".buttonSetup").empty().append(exeBtn);
 			};
 		}
 	);
@@ -135,11 +137,11 @@ $(function(){
 		if( event.target.id == "saveExe"){
             if($(".exeHeader").attr('data-dbid')=="newExecution"){
                 saveExe();
-                $(".setup_buttons").empty().append(exeBtn);
+                $(".buttonSetup").empty().append(exeBtn);
             }
             else{
                 updateExecution($(".exeHeader").attr('data-dbid'));
-                 $(".setup_buttons").empty().append(exeBtn);
+                 $(".buttonSetup").empty().append(exeBtn);
             }
 		}
 		if( event.target.id == "newExe"){
@@ -152,7 +154,7 @@ $(function(){
 		}
 		if( event.target.id == "cancelExe"){
 			exeSetup('false');
-			$(".setup_buttons").empty().append(exeBtn);
+			$(".buttonSetup").empty().append(exeBtn);
 		}
 		if( $(event.target).attr('name')=="deleteExe" ){
 			deleteExe($(event.target).attr('data-dbid'));

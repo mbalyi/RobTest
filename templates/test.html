@@ -18,113 +18,119 @@
 {% endif %}
 
 {% if loadTest %}
-<table>
-	<tr style='width:100%;'>
-		<th style='width:2%;'></th>
-		<th style='width:2%;'>ID</th>
-		<th style='width:50%;'>Title</th>
-		<th style='width:20%;'>Result</th>
-		<th style='width:18%;'>History</th>
-		<th style='width:8%;'>Duration</th>
-	</tr>
-	{% for k in loadTest %}
-	<tr class='caseMain'  id='{{k[2]}}' data-index='{{loop.index}}' style='width:100%;'>
-		<td class='caseMarker' id='{{k[2]}}' style='width:2%;color:red;'></td>
-		<td style='width:2%;'>
-			<a href='#' class='caseInExe'  id='{{k[2]}}' data-dbid='{{k[2]}}' data-index='{{loop.index}}'>
-				{{loop.index}}
-			</a>
-		</td>
-		<td style='width:50%;'>
-			<a href='#' class='caseInExe' data-dbid='{{k[2]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
-				{{k[4]}}
-			</a>
-		</td>
-		<td style='width:20%;'>
-			<a href='#' class='caseInExe' data-dbid='{{k[2]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
-				<p class='Res' id='{{k[2]}}'>{{k[3]}}</p>
-			</a>
-		</td>
-		<td style='width:18%;'>
-			<a href='#' class='caseInExe' data-dbid='{{k[2]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
-				
-			</a>
-		</td>
-		<td style='width:8%;'>
-			<a href='#' class='caseInExe' data-dbid='{{k[0]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
-				{{k[5]}}
-			</a>
-		</td>
-	</tr>
-	{% endfor %}	
-</table>
+<div style="width:100%;overflow-y: auto;">
+    <table>
+        <tr style='width:100%;'>
+            <th style='width:2%;'></th>
+            <th style='width:2%;'>ID</th>
+            <th style='width:50%;'>Title</th>
+            <th style='width:20%;'>Result</th>
+            <th style='width:18%;'>History</th>
+            <th style='width:8%;'>Duration</th>
+        </tr>
+        {% for k in loadTest %}
+        <tr class='caseMain'  id='{{k[2]}}' data-index='{{loop.index}}' style='width:100%;'>
+            <td class='caseMarker' id='{{k[2]}}' style='width:2%;color:red;'></td>
+            <td style='width:2%;'>
+                <a href='#' class='caseInExe'  id='{{k[2]}}' data-dbid='{{k[2]}}' data-index='{{loop.index}}'>
+                    {{loop.index}}
+                </a>
+            </td>
+            <td style='width:50%;'>
+                <a href='#' class='caseInExe' data-dbid='{{k[2]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
+                    {{k[4]}}
+                </a>
+            </td>
+            <td style='width:20%;'>
+                <a href='#' class='caseInExe' data-dbid='{{k[2]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
+                    <p class='Res' id='{{k[2]}}'>{{k[3]}}</p>
+                </a>
+            </td>
+            <td style='width:18%;'>
+                <a href='#' class='caseInExe' data-dbid='{{k[2]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
+
+                </a>
+            </td>
+            <td style='width:8%;'>
+                <a href='#' class='caseInExe' data-dbid='{{k[0]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
+                    {{k[5]}}
+                </a>
+            </td>
+        </tr>
+        {% endfor %}	
+    </table>
+</div>
 {% endif %}
 
 {% if step %}
-<table style='width:100%;'>
-	<tr style='width:100%;'>
-		<th style='width:2%;'></th>
-		<th style='width:2%;'>ID</th>
-		<th style='width:40%;'>Description</th>
-		<th style='width:31%;'>Result</th>
-		<th style='width:10%;'>Result</th>
-		<th style='width:15%;'>Comment</th>
-	</tr>
-</table>
-{% for k in step %}
-<table class='{{k[0][0]}}' style='width:100%;'>
-	<tr style='width:100%;'>
-		<td id='{{k[0][0]}}' class='stepMarker' data-dbid='{{k[0][0]}}' style='color:red;width:2%;'></td>
-		<td class='Step' data-dbid='{{k[0][0]}}' style='width:2%;'>
-			<a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{loop.index}}</a>
-		</td>
-		<td class='Step' data-dbid='{{k[0][0]}}' style='width:40%;'>
-			<a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][1]}}</a>
-		</td>
-		<td class='Step' data-dbid='{{k[0][0]}}' style='width:31%;'>
-			<a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][2]}}</a>
-		</td>
-		<td data-dbid='{{k[0][0]}}' id='{{k[0][0]}}' style='width:10%;'>
-			<a href='#' class='Result' data-dbid='{{k[0][0]}}' id='{{k[0][0]}}'>{{k[1][0]}}</a>
-		</td>
-		<td class='Step' data-dbid='{{k[0][0]}}' style='width:15%;'>
-			<a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[1][1]}}</a>
-		</td>
-	</tr>
-</table>
-{% endfor %}
-<table class='testButtons'>
-	<tr>
-		<td>
-			Case: &nbsp
-		</td>
-		<td>
-			<a class='btn btn-default btn-xs' href='#' role='button' id='BACKCASE'>Back</a> &nbsp
-		</td>
-		<td>
-			<a class='btn btn-default btn-xs' href='#' role='button' id='NEXTCASE'>Next</a> &nbsp
-		</td>
-		<td>
-			Step: &nbsp
-		</td>
-		<td>
-			<a class='btn btn-default btn-xs' href='#' role='button' id='BACK'>Back</a> &nbsp
-		</td>
-		<td>
-			<a class='btn btn-default btn-xs' href='#' role='button' id='NEXT'>Next</a> &nbsp
-		</td>
-		<td>
-			<a class='btn btn-default btn-xs' href='#' role='button' id='RUN'>RUN</a> &nbsp
-		</td>
-		<td>
-			<a class='btn btn-default btn-xs' href='#' role='button' id='NOTRUN'>NOTRUN</a> &nbsp 
-		</td>
-		<td>
-			<a class='btn btn-default btn-xs' href='#' role='button' id='FAILED'>FAILED</a> &nbsp
-		</td>
-		<td>
-			<a class='btn btn-default btn-xs' href='#' role='button' id='NOTIMP'>NOTIMP</a> &nbsp
-		</td>
-	</tr>
-</table>
+<div style="width:100%;height:100%;">
+    <table style='width:100%;'>
+        <tr style='width:100%;'>
+            <th style='width:2%;'></th>
+            <th style='width:2%;'>ID</th>
+            <th style='width:40%;'>Description</th>
+            <th style='width:31%;'>Result</th>
+            <th style='width:10%;'>Result</th>
+            <th style='width:15%;'>Comment</th>
+        </tr>
+    </table>
+    <div style="width:100%;height:80%;overflow-y: auto;">
+    {% for k in step %}
+        <table class='{{k[0][0]}}' style='width:100%;'>
+            <tr style='width:100%;'>
+                <td id='{{k[0][0]}}' class='stepMarker' data-dbid='{{k[0][0]}}' style='color:red;width:2%;'></td>
+                <td class='Step' data-dbid='{{k[0][0]}}' style='width:2%;'>
+                    <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{loop.index}}</a>
+                </td>
+                <td class='Step' data-dbid='{{k[0][0]}}' style='width:40%;'>
+                    <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][1]}}</a>
+                </td>
+                <td class='Step' data-dbid='{{k[0][0]}}' style='width:31%;'>
+                    <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][2]}}</a>
+                </td>
+                <td data-dbid='{{k[0][0]}}' id='{{k[0][0]}}' style='width:10%;'>
+                    <a href='#' class='Result' data-dbid='{{k[0][0]}}' id='{{k[0][0]}}'>{{k[1][0]}}</a>
+                </td>
+                <td class='Step' data-dbid='{{k[0][0]}}' style='width:15%;'>
+                    <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[1][1]}}</a>
+                </td>
+            </tr>
+        </table>
+    {% endfor %}
+    </div>
+    <table class='testButtons'>
+        <tr>
+            <td>
+                Case: &nbsp
+            </td>
+            <td>
+                <a class='btn btn-default btn-xs' href='#' role='button' id='BACKCASE'>Back</a> &nbsp
+            </td>
+            <td>
+                <a class='btn btn-default btn-xs' href='#' role='button' id='NEXTCASE'>Next</a> &nbsp
+            </td>
+            <td>
+                Step: &nbsp
+            </td>
+            <td>
+                <a class='btn btn-default btn-xs' href='#' role='button' id='BACK'>Back</a> &nbsp
+            </td>
+            <td>
+                <a class='btn btn-default btn-xs' href='#' role='button' id='NEXT'>Next</a> &nbsp
+            </td>
+            <td>
+                <a class='btn btn-default btn-xs' href='#' role='button' id='RUN'>RUN</a> &nbsp
+            </td>
+            <td>
+                <a class='btn btn-default btn-xs' href='#' role='button' id='NOTRUN'>NOTRUN</a> &nbsp 
+            </td>
+            <td>
+                <a class='btn btn-default btn-xs' href='#' role='button' id='FAILED'>FAILED</a> &nbsp
+            </td>
+            <td>
+                <a class='btn btn-default btn-xs' href='#' role='button' id='NOTIMP'>NOTIMP</a> &nbsp
+            </td>
+        </tr>
+    </table>
+</div>
 {% endif %}

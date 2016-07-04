@@ -14,7 +14,7 @@
         </tr>
     </table>
 </div>
-<div class='caseList' style="width:100%;">
+<div class='caseList' style="width:100%;overflow-y: auto;">
 	{% for k in cases%}
 		<div class='elementOfCaseList' data-dbid='case{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
 			<a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='case'>{{k[1]}}</a>
@@ -46,6 +46,7 @@
         </tr>
     </table>
     <div class='AreaField' style='100%'>
+        <h2>Areas: </h2>
         <table>
             {% for k in caseForm %}
                 {% if loop.index == 1 %}
@@ -98,7 +99,6 @@
 {% endif %}
 
 {% if loadcase %}
-	<p><b>Case</b></p>
 	<button name='edit_case' id='{{loadcase[0][0]}}' class='btn btn-default btn-sm'>Edit</button>
 	<a name='deleteCase' id='{{loadcase[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
 	<br>
@@ -131,6 +131,7 @@
 		</table>
 	</div>
     <div class='AreaField' style='100%'>
+        <h2>Areas: </h2>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
@@ -177,6 +178,7 @@
 		</tr>
 	</table>
     <div class='AreaField' style='100%'>
+        <h2>Areas: </h2>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}

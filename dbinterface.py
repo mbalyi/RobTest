@@ -31,7 +31,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("INSERT INTO Cases (Title,Priority,Data,ProjectId,CaseUpdated,Active) VALUES (?,?,?,?,?,?)",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId'],0,1])
 		conn.commit()
-		c.execute("SELECT CaseId FROM Cases WHERE Title=? AND Priority=? AND Data=? AND ProjectId=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId']])
+		c.execute("SELECT CaseId FROM Cases WHERE Title=? AND Priority=? AND Data=? AND ProjectId=? AND Active=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId'],1])
 		CaseID=c.fetchone()
 		conn.commit()
 		for k in kwargs['area']:
@@ -150,7 +150,7 @@ class Database:
 	def get_object(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT ObjectId,ObjectName FROM Objects WHERE ProjectId=?",[kwargs['projectId']])
+		c.execute("SELECT ObjectId,ObjectName FROM Objects WHERE ProjectId=? AND Active=?",[kwargs['projectId'],1])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -158,9 +158,9 @@ class Database:
 	def save_object(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Objects (ObjectName,ObjectHardware,ObjectDesc,ProjectId,ObjectVersion) VALUES (?,?,?,?,?)",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version']])
+		c.execute("INSERT INTO Objects (ObjectName,ObjectHardware,ObjectDesc,ProjectId,ObjectVersion,Active) VALUES (?,?,?,?,?,?)",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version'],1])
 		conn.commit()
-		c.execute("SELECT ObjectId FROM Objects WHERE ObjectName=? AND ObjectHardware=? AND ObjectDesc=? AND ProjectId=? AND ObjectVersion=?",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version']])
+		c.execute("SELECT ObjectId FROM Objects WHERE ObjectName=? AND ObjectHardware=? AND ObjectDesc=? AND ProjectId=? AND ObjectVersion=? AND Active=?",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version'],1])
 		ObjectID=c.fetchone()
 		conn.commit()
 		for k in kwargs['areas']:
@@ -208,11 +208,17 @@ class Database:
 		c.execute("DELETE FROM Area_Object WHERE ObjectId=?",[kwargs['id']])
 		conn.commit()
 	
+	def deleteObjectLogical(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Objects SET Active=0 WHERE ObjectId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
+		conn.commit()
+	
 	#-----set-----
 	def get_set(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT SetId,SetName FROM Sets WHERE ProjectId=?",[kwargs['projectId']])
+		c.execute("SELECT SetId,SetName FROM Sets WHERE ProjectId=? AND Active=? AND SetUpdated=?",[kwargs['projectId'],1,0])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -220,9 +226,9 @@ class Database:
 	def save_set(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Sets (SetName,SetDate,SetPriority,ProjectId) VALUES (?,?,?,?)",[kwargs['name'],kwargs['date'],kwargs['priority'],kwargs['projectId']])
+		c.execute("INSERT INTO Sets (SetName,SetDate,SetPriority,ProjectId,Active,SetUpdated) VALUES (?,?,?,?,?,?)",[kwargs['name'],kwargs['date'],kwargs['priority'],kwargs['projectId'],1,0])
 		conn.commit()
-		c.execute("SELECT SetId FROM Sets WHERE SetName=? AND ProjectId=?",[kwargs['name'],kwargs['projectId']])
+		c.execute("SELECT SetId FROM Sets WHERE SetName=? AND ProjectId=? AND Active=? AND SetUpdated=?",[kwargs['name'],kwargs['projectId'],1,0])
 		setID=c.fetchone()
 		conn.commit()
 		for k in kwargs['areas']:
@@ -270,6 +276,18 @@ class Database:
 				conn.commit()
 		return
 	
+	def updateSetLogical(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Sets SET SetUpdated=? WHERE SetId=?",[1,kwargs['setId']])
+		conn.commit()
+		
+	def setUpdateFlag(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Sets SET UpdateFromId=? WHERE SetId=?",[kwargs['oldSetId'],kwargs['newSetId']])
+		conn.commit()
+	
 	def saveSetCase(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -306,6 +324,12 @@ class Database:
 		c.execute("DELETE FROM Set_Case WHERE SetId=?",[kwargs['id']])
 		conn.commit()
 		c.execute("DELETE FROM Area_Set WHERE SetId=?",[kwargs['id']])
+		conn.commit()
+	
+	def deleteSetLogical(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Sets SET Active=? WHERE SetId=?",[0,kwargs['id']])
 		conn.commit()
 	
 	#-----execution-----

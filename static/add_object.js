@@ -41,24 +41,26 @@ function loadObject(ObjectId,mode){
 	$.get("/load_object/"+ObjectId+"/"+mode,
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data);
+				$(".divContainer").empty().append(data);
 			};
 		}
 	);
 }
 
 function objectSetup(checker){
+    $("#mainHeader").css('margin-bottom','5px');
+    $(".setup_buttons").hide();
     $.get("/objectForm/"+$(".projectSelector").find(":selected").attr('data-dbid'),
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data);
+				$(".divContainer").empty().append(data);
                 if(checker){
                     enableObjectForm();
                 }
 			};
 		}
 	)
-	$(".setup_buttons").empty().append(objectBtn);
+	$(".buttonSetup").empty().append(objectBtn);
 }
 
 function deleteObject(objectId){
@@ -134,11 +136,11 @@ $(function(){
 		if( event.target.id == "saveObject"){
             if($(".editableObject").attr('data-dbid')=="newObject"){
                 save_object();
-                $(".setup_buttons").empty().append(objectBtn);
+                $(".buttonSetup").empty().append(objectBtn);
             }
             else{
                 updateObject($(".editableObject").attr('data-dbid'));
-                 $(".setup_buttons").empty().append(objectBtn);
+                 $(".buttonSetup").empty().append(objectBtn);
             }
 			
 		}
@@ -149,6 +151,7 @@ $(function(){
 		}
 		if( $(event.target).attr('name') == "deleteObject"){
 			deleteObject(event.target.id);
+            requestObject();
 		}
 	});
 });

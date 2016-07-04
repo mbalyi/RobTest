@@ -14,7 +14,7 @@
         </tr>
     </table>
 </div>
-<div class='setList' style="width:100%;">
+<div class='setList' style="width:100%; overflow-y: auto;">
 	{% for k in set %}
 		<div data-dbid='set{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
 			<a href='#' data-dbid='{{k[0]}}' class='set' id='{{k[0]}}'>{{k[1]}}</a>
@@ -24,7 +24,6 @@
 {% endif %}
 
 {% if setForm %}
-<h1>Sets</h1>
 <div style='width:100%' class='setForm' data-dbid='newSet'>
     <table style='width:100%' class='set_no'>
         <tr>
@@ -47,12 +46,17 @@
         </tr>
     </table>
     <div class='AreaField' style='100%'>
+        <h2>Areas: </h2>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
                     <tr>
                 {% endif %}
-                        <td><input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>{{k[1]}}</td>
+                        <td>
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>
+                        </td>
+                        <td>{{k[1]}}</td>
+                        <td style="width:5px"></td>
                 {% if (loop.index%3 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
@@ -64,18 +68,17 @@
         </table>
     </div>
     <p>Included Cases</p>
-    <div class='incCases' style='height: 300px; background-color: #777;'></div>
+    <div class='incCases' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'></div>
 </div>
 {% endif %}
 {% if loadSet %}
-	<h1>Set</h1>
 	<a name='editSet' id='{{loadSet[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
 	<a name='deleteset' id='{{loadSet[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
 	<div style='width:100%' class='setForm'>
 		<table style='width:100%' class='set_no'>
 			{% for k in loadSet%}
 			<tr>
-				<td class='set_staic_name'>Name:</td><td class='set_staic_input'><input type='text' name='name' value={{k[1]}} class='set_input form-control' readonly></td>
+				<td class='set_staic_name'>Name:</td><td class='set_staic_input'><input type='text' name='name' value='{{k[1]}}' class='set_input form-control' readonly></td>
 			</tr>
 			<tr>
 				<td>Date:</td><td><input type='date' name='date' class='set_input form-control' readonly></td>
@@ -86,6 +89,7 @@
 			{% endfor %}
 		</table>
 		<div class='AreaField' style='100%'>
+            <h2>Areas: </h2>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
@@ -93,9 +97,15 @@
                 {% endif %}
                         <td>
                             {% if k[1] == "checked" %}
-                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>
+                        </td>
+                        <td>{{k[0][1]}}</td>
+                        <td style="width:5px"></td>
                             {% else %}
-                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>
+                        </td>
+                        <td>{{k[0][1]}}</td>
+                        <td style="width:5px"></td>
                             {% endif %}
                         </td>
                 {% if (loop.index%3 == 0) and (loop.index!=count) %}
@@ -109,7 +119,7 @@
         </table>
     </div>
 		<p>Included Cases</p>
-		<div class='incCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
+		<div class='incCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
 		{% if loadCase %}
 			<table>
 				{% for l in loadCase %}
@@ -124,14 +134,13 @@
 {% endif %}
 
 {% if loadEditableSet %}
-	<h1>Set</h1>
 	<a name='editSet' id='{{loadEditableSet[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
 	<a name='deleteset' id='{{loadEditableSet[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
 	<div style='width:100%' class='setForm' data-dbid='{{loadEditableSet[0][0]}}'>
 		<table style='width:100%' class='set_no'>
 			{% for k in loadEditableSet%}
 			<tr>
-				<td class='set_staic_name'>Name:</td><td class='set_staic_input'><input type='text' name='name' value={{k[1]}} class='set_input form-control'></td>
+				<td class='set_staic_name'>Name:</td><td class='set_staic_input'><input type='text' name='name' value='{{k[1]}}' class='set_input form-control'></td>
 			</tr>
 			<tr>
 				<td>Date:</td><td><input type='date' name='date' class='set_input form-control'></td>
@@ -142,6 +151,7 @@
 			{% endfor %}
 		</table>
 		<div class='AreaField' style='100%'>
+            <h2>Areas: </h2>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
@@ -149,9 +159,15 @@
                 {% endif %}
                         <td>
                             {% if k[1] == "checked" %}
-                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>
+                        </td>
+                        <td>{{k[0][1]}}</td>
+                        <td style="width:5px"></td>
                             {% else %}
-                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>
+                        </td>
+                        <td>{{k[0][1]}}</td>
+                        <td style="width:5px"></td>
                             {% endif %}
                         </td>
                 {% if (loop.index%3 == 0) and (loop.index!=count) %}
@@ -165,7 +181,7 @@
         </table>
     </div>
 		<p>Included Cases</p>
-		<div class='incCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
+		<div class='incCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
 		{% if editCase %}
 			{% for o in editCase %}
 				<div draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">

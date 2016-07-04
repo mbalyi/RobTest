@@ -9,16 +9,18 @@ function requestSet(){
 }
 
 function SetSetup(mode){
-	$.get("/setForm",
+	$("#mainHeader").css('margin-bottom','5px');
+    $(".setup_buttons").hide();
+    $.get("/setForm",
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data);
+				$(".divContainer").empty().append(data);
 			};
 		}
 	);
     if(mode != "false"){
         $(".col-md-12-object").empty();
-        $(".setup_buttons").empty().append(setBtn);
+        $(".buttonSetup").empty().append(setBtn);
         $(".col-md-12-execution").empty();
         requestSet();
     }
@@ -53,7 +55,7 @@ function loadSet(setId,mode){
 			if(status){
 				if(mode == "exeCasesBySet"){return data;}
 				else{
-					$(".col-md-9").empty().append(data);
+					$(".divContainer").empty().append(data);
 				}
 			};
 		}
@@ -65,15 +67,15 @@ function deleteSet(setId){
 		function(data,status){
 			if(status){
 				SetSetup("false");
-				$(".setup_buttons").empty().append(setBtn);
-				$(".col-md-9").empty().append(SetForm);
+				$(".buttonSetup").empty().append(setBtn);
+				$(".divContainer").empty().append(SetForm);
 			};
 		}
 	);
 }
 
 function newSet(){
-    if($("a[name=editSet]")==[]){
+    if($(".setForm").attr("data-dbid")=="newSet"){
         $(".incCases").attr('ondrop','drop(event)');
         $(".incCases").attr('ondragover','allowDrop(event)');
         $("input[type=checkBox]").removeAttr("disabled");
@@ -139,7 +141,7 @@ $(function(){
 		}
 		if( event.target.id == "cancelSet"){
 			SetSetup("false");
-			$(".setup_buttons").empty().append(setBtn);
+			$(".buttonSetup").empty().append(setBtn);
 		}
 		if( $(event.target).attr('name')=="deleteset" ){
 			deleteSet(event.target.id);

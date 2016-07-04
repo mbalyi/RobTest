@@ -14,7 +14,7 @@
         </tr>
     </table>
 </div>
-<div class='objectList' style="width:100%;">
+<div class='objectList' style="width:100%;overflow-y: auto;">
 	{% for k in object %}
     <div class='elementOfObjectList' data-dbid='object{{k[0]}}'>
 		<a href='#' id={{k[0]}} class='object'>{{k[1]}}</a>
@@ -24,7 +24,6 @@
 {% endif %}
 
 {% if objectForm %}
-<h1>Object</h1>
 <div class='editableObject' data-dbid='newObject' style='width:100%'>
     <table style='width:100%'>
         <tr>
@@ -59,6 +58,7 @@
         </tr>
     </table>
     <div class='AreaField' style='100%'>
+        <h2>Areas: </h2>
         <table>
             {% for k in objectForm %}
                 {% if loop.index == 1 %}
@@ -79,7 +79,6 @@
 {% endif %}
 
 {% if loadObject %}
-	<h1>Object</h1>
 	<a href='#' name='editObject' id='{{loadObject[0]}}' class='btn btn-default btn-sm'>Edit</a>
 	<a name='deleteObject' id='{{loadObject[0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
 	<div style='width:100%'>
@@ -106,6 +105,7 @@
 				</tr>
 		</table>
         <div class='AreaField' style='100%'>
+            <h2>Areas: </h2>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
@@ -132,7 +132,6 @@
 {%endif%}
 
 {% if editObject %}
-	<h1>Object</h1>
 	<div class='editableObject' data-dbid='{{editObject[0]}}' style='width:100%'>
 		<table style='width:100%'>
 				<tr>
@@ -157,6 +156,7 @@
 				</tr>
 		</table>
         <div class='AreaField' style='100%'>
+            <h2>Areas: </h2>
             <table>
                 {% for k in areas %}
                     {% if loop.index == 1 %}

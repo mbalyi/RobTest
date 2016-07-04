@@ -1,3 +1,6 @@
+var DivForm="<div class='divContainer' style='width:100%;height:100%'></div>";
+var buttonSetup="<div class='buttonSetup' style='width:100%;'></div>";
+
 function requestHeader(options, callback){
     $.ajax({ url: "/home",
         data: options,
@@ -8,7 +11,9 @@ function requestHeader(options, callback){
 }
 
 function caseSetUp(){
-	$(".setup_buttons").empty().append(caseBtn);
+    $("#mainHeader").css('margin-bottom','5px');
+    $(".setup_buttons").hide();
+	$(".buttonSetup").empty().append(caseBtn);
 	caseForm();
 	$(".col-md-12-set").empty();
 	$(".col-md-12-object").empty();
@@ -54,7 +59,8 @@ $(function(){
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "dashboard"){
             $(".text_area").hide();
 			$(".insert_jira_button").empty();
-			$(".setup_buttons").empty();
+            $("#mainHeader").css('margin-bottom','20px');
+			$(".setup_buttons").empty().show();
 			document.getElementById("col-md-9").style.width = '100%'
             dashboardLoad();
             chartFilterBar("pie",".chartFilter#pie");
@@ -69,6 +75,8 @@ $(function(){
         }
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "reportBlog"){
 			document.getElementById("col-md-9").style.width = '70%';
+            $("#mainHeader").css('margin-bottom','20px');
+            $(".setup_buttons").show();
             requestDashboard(
 					{ active:true, filter:"" },
 					function(res){
@@ -84,7 +92,8 @@ $(function(){
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "design"){
 			document.getElementById("col-md-9").style.width = '70%';
-            $(".col-md-9").empty();
+            $(".col-md-9").empty().append(DivForm);
+            $(".col-md-9").prepend(buttonSetup);
 			$(".setup_buttons").empty();
 			$(".setup").show();
 			requestCase();
@@ -93,12 +102,16 @@ $(function(){
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "sets"){
 			document.getElementById("col-md-9").style.width = '70%';
+            $(".col-md-9").empty().append(DivForm);
+            $(".col-md-9").prepend(buttonSetup);
             SetSetup("true");
 			requestCase();
 			$(".setup").show();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "executions"){
 			document.getElementById("col-md-9").style.width = '70%';
+            $(".col-md-9").empty().append(DivForm);
+            $(".col-md-9").prepend(buttonSetup);
             var boo="true";
             exeSetup(boo);
 			requestSet();
@@ -107,10 +120,14 @@ $(function(){
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "cases"){
 			document.getElementById("col-md-9").style.width = '70%';
+            $(".col-md-9").empty().append(DivForm);
+            $(".col-md-9").prepend(buttonSetup);
             caseSetUp();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "objects"){
 			document.getElementById("col-md-9").style.width = '70%';
+            $(".col-md-9").empty().append(DivForm);
+            $(".col-md-9").prepend(buttonSetup);
             requestObject();
             objectSetup();
 			$(".col-md-12-set").empty();

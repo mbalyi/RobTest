@@ -14,7 +14,7 @@
         </tr>
     </table>
 </div>
-<div class='exeList' style="width:100%;">
+<div class='exeList' style="width:100%;overflow-y: auto;">
 	{% for k in execution %}
     <div class='elementOfExeList' data-dbid='exe{{k[0]}}'>
 		<a href='#' class='execution' data-dbid='{{k[0]}}' id='{{k[0]}}'>{{k[1]}}</a>
@@ -46,14 +46,17 @@
 		</tr>
 	</table>
     <div class='AreaField' style='100%'>
+        <h2>Areas: </h2>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
                     <tr>
                 {% endif %}
                         <td>
-                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>{{k[1]}}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>
                         </td>
+                        <td>{{k[1]}}</td>
+                        <td style="width:5px"></td>
                 {% if (loop.index%3 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
@@ -65,14 +68,13 @@
         </table>
     </div>
 	<p>Included Cases</p>
-	<div class='incExeCases' style='height: 300px; background-color: #777;'>
+	<div class='incExeCases' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
 	</div>
 </div>
 {% endif %}
 
 {% if loadExe %}
 <div class='exeHeader'>
-	<p><b>Execution</b></p>
 	<a name='editExe' data-dbid='{{loadExe[0][0]}}' class='btn btn-default btn-sm' href='#' role='button'>Edit</a>
 	<a name='deleteExe' data-dbid='{{loadExe[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
 	<br>
@@ -97,6 +99,7 @@
 		</table>
 	</div>
 	<div class='AreaField' style='100%'>
+        <h2>Areas: </h2>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
@@ -104,9 +107,15 @@
                 {% endif %}
                         <td>
                             {% if k[1] == "checked" %}
-                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>
+                        </td>
+                        <td>{{k[0][1]}}</td>
+                        <td style="width:5px"></td>
                             {% else %}
-                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>
+                        </td>
+                        <td>{{k[0][1]}}</td>
+                        <td style="width:5px"></td>
                             {% endif %}
                         </td>
                 {% if (loop.index%3 == 0) and (loop.index!=count) %}
@@ -120,7 +129,7 @@
         </table>
     </div>
 	<p>Included Cases</p>
-	<div class='incCases' style='height: 300px; background-color: #777;'>
+	<div class='incCases' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
 	{% if loadCase %}
 		<table>
 			<tr>
@@ -161,6 +170,7 @@
 		</tr>
 	</table>
     <div class='AreaField' style='100%'>
+        <h2>Areas: </h2>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
@@ -168,9 +178,15 @@
                 {% endif %}
                         <td>
                             {% if k[1] == "checked" %}
-                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>
+                        </td>
+                        <td>{{k[0][1]}}</td>
+                        <td style="width:5px"></td>
                             {% else %}
-                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>
+                        </td>
+                        <td>{{k[0][1]}}</td>
+                        <td style="width:5px"></td>
                             {% endif %}
                         </td>
                 {% if (loop.index%3 == 0) and (loop.index!=count) %}
@@ -184,7 +200,7 @@
         </table>
     </div>
 	<p>Included Cases</p>
-	<div class='incExeCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777;'>
+	<div class='incExeCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
 	{% if loadEditableCase %}
 		<table>
 			<tr>

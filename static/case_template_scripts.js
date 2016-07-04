@@ -1,8 +1,7 @@
-
-caseBtn="<table><tr><td class='newCase' style='width:50px'><a class='btn btn-default btn-sm' href='#' role='button' id='newCase'>New</a></td>";
+caseBtn="<table><tr><td><h3 style='margin-bottom:0px;margin-top:0px;'>Cases: </h3></td><td class='newCase' style='width:50px'><a class='btn btn-default btn-sm' href='#' role='button' id='newCase'>New</a></td>";
 caseBtn+="<td class='saveCase' id='saveCase' style='width:53px'><a class='btn btn-default btn-sm disabled' id='saveCase' href='#' role='button'>Save</a></td>";
 caseBtn+="<td class='cancelCase' style='width:50px'><a class='btn btn-default btn-sm' href='#' role='button' id='cancelCase'>Cancel</a></td><td style='width:50px'></td>"
-caseBtn+="<td style='width: 20px'></td><td class='deleteCase'><td></tr></table><hr>"
+caseBtn+="<td style='width: 20px'></td><td class='deleteCase'><td></tr></table><hr style='margin-bottom:5px;margin-top:5px;'>"
 
 newCaseDis="<a class='btn btn-default btn-sm disabled' href='#' role='button' id='newCase'>New</a>"
 saveCaseEn1="<a class='editablecase btn btn-default btn-sm' id='saveCase' data-dbid='";

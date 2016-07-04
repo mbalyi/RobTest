@@ -6,7 +6,7 @@
 {% endif %}
 
 {% if newExe %}
-<div class='exeHeader'>
+<div class='exeHeader'  data-dbid='newExecution'>
 	<table style='width:100%'>
 		<tr>
 			<th>Name:</th>
@@ -53,6 +53,7 @@
 {% endif %}
 
 {% if loadExe %}
+<div class='exeHeader'>
 	<p><b>Execution</b></p>
 	<a name='editExe' data-dbid='{{loadExe[0][0]}}' class='btn btn-default btn-sm' href='#' role='button'>Edit</a>
 	<a name='deleteExe' data-dbid='{{loadExe[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
@@ -115,10 +116,11 @@
 		</table>
 	{% endif %}
 	</div>
+</div>
 {% endif %}
 
 {% if loadEditableExe %}
-<div class='exeHeader'>
+<div class='exeHeader' data-dbid='{{exeId}}'>
 	<table style='width:100%'>
 		<tr>
 			<th>Name:</th>
@@ -126,7 +128,7 @@
 		</tr>
 		<tr>
 			<th>Date:</th>
-			<th><input type='date' name='priority' class='form-control' readonly></th>
+			<th><input type='date' name='date' class='form-control' readonly></th>
 		</tr>
 		<tr>
 			<th>Test Object:</th>

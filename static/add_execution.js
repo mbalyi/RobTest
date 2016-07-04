@@ -43,6 +43,23 @@ function saveExe(){
 	);
 }
 
+function updateExecution(exeId){
+    var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=date]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
+    sendData = sendData+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&")+"&ID="+$(".incExeCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID=")+"&TO="+$(".objectSeletor").find(":selected").attr('data-dbid');
+    sendData += "&exeId=";
+    sendData+=exeId;
+    sendData+="&projectId=";
+    sendData+=$(".projectSelector").find(":selected").attr('data-dbid');
+	$.post("/updateExe", sendData,
+		function(data,status){
+			if(status){
+				requestExe();
+				loadExecution(data,"loadExe")
+			}
+		},"json"
+	);
+}
+
 function newExe(){
 	$(".incExeCases").attr('ondrop','drop(event)');
     $(".incExeCases").attr('ondragover','allowDrop(event)');
@@ -82,8 +99,14 @@ $(function(){
 			loadExecution($(event.target).attr('data-dbid'), "loadExe");
 		}
 		if( event.target.id == "saveExe"){
-			saveExe();
-			$(".setup_buttons").empty().append(exeBtn);
+            if($(".exeHeader").attr('data-dbid')=="newExecution"){
+                saveExe();
+                $(".setup_buttons").empty().append(exeBtn);
+            }
+            else{
+                updateExecution($(".exeHeader").attr('data-dbid'));
+                 $(".setup_buttons").empty().append(exeBtn);
+            }
 		}
 		if( event.target.id == "newExe"){
 			if($("a[name=editExe]")==[]){
@@ -102,6 +125,8 @@ $(function(){
 		}
 		if( $(event.target).attr('name')=="editExe" ){
 			loadExecution($(event.target).attr('data-dbid'),"editExe");
+            $("#newExe").attr('disabled', true);
+            $(".saveExe").empty().append(saveExeEn);
 		}
 	});
 });

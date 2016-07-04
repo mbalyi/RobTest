@@ -272,6 +272,32 @@ class Database:
 			conn.commit()
 		return ExeID[0]
 	
+	def updateExecution(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Execution SET ExeName=?,ProjectId=? WHERE ExecutionId=?",[kwargs['name'],kwargs['projectId'],kwargs['exeId']])
+		conn.commit()
+		c.execute("UPDATE Exe_Object SET ObjectId=? WHERE ExecutionId=?",[kwargs['testObject'],kwargs['exeId']])
+		conn.commit()
+		c.execute("SELECT AreaId FROM Area_Execution WHERE ExecutionId=?",[kwargs['exeId']])
+		areas=c.fetchall()
+		conn.commit()
+		temp=[]
+		for k in areas:
+			temp.append(k[0])
+		allArea=[]
+		for k in kwargs['areas']:
+			allArea.append(int(k))
+		for k in allArea:
+			if temp.count(k) == 0:
+				c.execute("INSERT INTO Area_Execution (AreaId,ExecutionId) VALUES (?,?)",[k,kwargs['exeId']])
+				conn.commit()
+		for j in temp:
+			if allArea.count(j) == 0:
+				c.execute("DELETE FROM Area_Execution WHERE AreaId=? AND ExecutionId=?",[j,kwargs['exeId']])
+				conn.commit()
+		return
+	
 	def saveCaseExe(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -290,7 +316,7 @@ class Database:
 				c.execute("INSERT INTO Step_Execution (StepId,ExecutionId,Case_ExecutionId,Result) VALUES (?,?,?,?)",[l[0],kwargs['exeID'],ID[0],"NOTRUN"])
 				conn.commit()
 		return
-		
+	
 	def getExeParameters(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -305,6 +331,7 @@ class Database:
 		c.execute("SELECT ObjectId FROM Exe_Object WHERE ExecutionId=?",[kwargs['id']])
 		ObjectId=c.fetchone()
 		conn.commit()
+		print(ObjectId)
 		c.execute("SELECT * FROM Objects WHERE ObjectId=?",[ObjectId[0]])
 		Object=c.fetchone()
 		conn.commit()

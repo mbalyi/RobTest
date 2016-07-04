@@ -209,11 +209,16 @@ def SaveExecution():
 	DB.saveCaseExe(ID=request.form.getlist('ID'),exeID=exeId)
 	return json.dumps(exeId)
 
+@app.route('/updateExe', methods=['POST'])
+def UpdateExecution():
+	DB.updateExecution(exeId=request.form['exeId'],name=request.form["title"],testObject=request.form["TO"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'))
+	print(request.form['exeId'])
+	return json.dumps(request.form['exeId'])
+	
 @app.route('/loadExecution/<int:ID>/<mode>', methods=['GET'])
 def loadExecution(ID,mode):
 	query=DB.getExeParameters(id=ID)
 	object=DB.getExeObject(id=ID)
-	print(object)
 	cases=DB.getExeCases(id=ID)
 	objects=DB.get_object(projectId=projectSession(), notRes=object[0])
 	areaInExe = DB.getExeArea(exeId=ID)
@@ -230,9 +235,9 @@ def loadExecution(ID,mode):
 			temp.append([k,'checked'])
 			boolen='false'
 	if mode == "loadExe":
-		return render_template('execution.html', loadExe=query, loadCase=cases, loadObject=object,areas=temp,count=len(areas))
+		return render_template('execution.html', loadExe=query, loadCase=cases, loadObject=object,areas=temp,count=len(areas),exeId=ID)
 	if mode == "editExe":
-		return render_template('execution.html', loadEditableExe=query, loadEditableCase=cases, loadEditableObject=object, loadObjects=objects,areas=temp,count=len(areas))
+		return render_template('execution.html', loadEditableExe=query, loadEditableCase=cases, loadEditableObject=object, loadObjects=objects,areas=temp,count=len(areas),exeId=ID)
 	#else:
 	#	return render_template('execution.html', loadEditableSet=query, editCase=cases)
 

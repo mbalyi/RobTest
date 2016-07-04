@@ -21,7 +21,7 @@ class Database:
 	def get_case(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT CaseId,Title FROM Cases WHERE ProjectId=?",[kwargs['projectId']])
+		c.execute("SELECT CaseId,Title FROM Cases WHERE ProjectId=? AND Active=1 AND CaseUpdated=0",[kwargs['projectId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -29,7 +29,7 @@ class Database:
 	def save_case(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Cases (Title,Priority,Data,ProjectId) VALUES (?,?,?,?)",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId']])
+		c.execute("INSERT INTO Cases (Title,Priority,Data,ProjectId,CaseUpdated,Active) VALUES (?,?,?,?,?,?)",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId'],0,1])
 		conn.commit()
 		c.execute("SELECT CaseId FROM Cases WHERE Title=? AND Priority=? AND Data=? AND ProjectId=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId']])
 		CaseID=c.fetchone()
@@ -92,6 +92,13 @@ class Database:
 			c.execute("DELETE FROM Steps WHERE StepId=? AND ProjectId=?",[k[0],kwargs['projectId']])
 			conn.commit()
 	
+	def deleteCaseLogic(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Cases SET Active=0 WHERE CaseId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
+		conn.commit()
+		return
+	
 	def updateCase(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -115,7 +122,6 @@ class Database:
 				c.execute("DELETE FROM Area_Case WHERE AreaId=? AND CaseId=?",[j,kwargs['caseId']])
 				conn.commit()
 		
-	
 	def updateStep(self, **kwargs):
 		step=[]
 		actions=kwargs['action'];
@@ -125,6 +131,20 @@ class Database:
 		c.execute("SELECT * FROM Case_Step WHERE CaseId=?",[kwargs['caseId']])
 		stepID=c.fetchall()
 		conn.commit()
+	
+	def updateCaseLogic(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Cases SET CaseUpdated=1 WHERE CaseId=?",[kwargs['caseId']])
+		conn.commit()
+		return
+	
+	def caseUpdateFlag(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Cases SET UpdateFromId=? WHERE CaseId=?",[kwargs['oldCaseId'],kwargs['newCaseId']])
+		conn.commit()
+		return
 	
 	#-----object-----
 	def get_object(self, **kwargs):

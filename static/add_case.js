@@ -52,6 +52,7 @@ function updateCase(caseId){
 		function(data,status){
 			if(status){
 				loadCase(caseId,"loadCase");
+                requestCase();
 			};
 		}
 	);

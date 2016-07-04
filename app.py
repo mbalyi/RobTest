@@ -88,16 +88,33 @@ def get_step(ID,mode):
 	elif mode == "editStep":
 		return render_template('step.html', editablestep=query)
 
-@app.route('/deleteCase/<int:ID>', methods=['GET'])
-def deleteCase(ID):
+#---Fizikai törlés
+@app.route('/deleteCasePhysical/<int:ID>', methods=['GET'])
+def deleteCasePhysical(ID):
 	DB.deleteCase(id=ID, projectId=projectSession())
 	return "ok"
+#---Logikai törlés
+@app.route('/deleteCase/<int:ID>', methods=['GET'])
+def deleteCase(ID):
+	#DB.deleteCase(id=ID, projectId=projectSession())
+	DB.deleteCaseLogic(id=ID, projectId=projectSession())
+	return "ok"
 
-@app.route('/updateCase/<int:ID>', methods=['POST'])
-def updateCase(ID):
+#---Fizikai update	
+@app.route('/updateCasePhysical/<int:ID>', methods=['POST'])
+def updateCasePhysical(ID):
 	DB.updateCase(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],caseId=ID,area=request.form.getlist('areaBox'))
 	DB.updateStep(caseId=ID,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'))
 	return str(ID)
+
+#---Logikai update
+@app.route('/updateCase/<int:ID>', methods=['POST'])
+def updateCase(ID):
+	DB.updateCaseLogic(caseId=ID)
+	newCaseId=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],area=request.form.getlist('areaBox'),projectId=projectSession())
+	DB.caseUpdateFlag(oldCaseId=ID,newCaseId=newCaseId)
+	DB.save_steps(id=newCaseId,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'),projectId=projectSession())
+	return json.dumps(newCaseId)
 	
 #-----object page-----	
 @app.route('/object_page', methods=['GET'])

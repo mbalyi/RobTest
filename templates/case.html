@@ -1,10 +1,26 @@
 {% if cases %}
-	<p><b>Cases</b></p>
+<div class='casePageHeader' style="width:100%;">    
+    <table style="width:100%;">
+        <tr style="width:100%;">
+            <td style="width:15%;"><b>Cases</b></td>
+            <td style="width:60%;">
+                <input type="text" name="caseSearch" class="form-control" onchange="caseSearch()" style="height:25px;">
+            </td>
+            <td style="width:2%;">
+            </td>
+            <td style="width:20%;">
+                <a href="#" class="caseHideShow" onclick='caseHideShow()' data-mode="show"><span class='glyphicon glyphicon-collapse-up'></span></a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div class='caseList' style="width:100%;">
 	{% for k in cases%}
-		<div data-dbid='case{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
-			<a href='#' data-dbid='{{k[0]}}' class='case'>{{k[1]}}</a>
+		<div class='elementOfCaseList' data-dbid='case{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+			<a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='case'>{{k[1]}}</a>
 		</div>
 	{% endfor %}
+</div>
 {% endif %}
 
 {% if caseForm %}

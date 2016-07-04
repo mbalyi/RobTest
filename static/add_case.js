@@ -115,6 +115,39 @@ function enableForm(){
     $(".saveCase").empty().append(saveCaseEn1+"newCase"+saveCaseEn2);
 }
 
+function caseHideShow(){
+    if($(".caseHideShow").attr("data-mode")=="show"){
+        $(".caseList").hide();
+        $(".caseHideShow").attr("data-mode",'hide');
+        $(".caseHideShow").empty().append("<span class='glyphicon glyphicon-collapse-down'></span>");
+    }
+    else{
+        $(".caseList").show();
+        $(".caseHideShow").attr("data-mode",'show');
+        $(".caseHideShow").empty().append("<span class='glyphicon glyphicon-collapse-up'></span>");
+    }
+}
+
+function caseSearch(){
+    for (i=0; i < $(".case").length;i++){
+        var search=$("input[name=caseSearch]").val();
+        if($(".case")[i].innerHTML.toLowerCase().indexOf(search.toLowerCase()) >= 0){
+            var classFilt= $(".case")[i].id;
+            $("[data-dbid=case"+classFilt.toString()+"]").show();
+        }
+        else{
+           var classFilt= $(".case")[i].id;
+            $("[data-dbid=case"+classFilt.toString()+"]").hide();
+        }
+        if (search == ""){
+            for (i=0; i < $(".case").length;i++){
+                var classFilt= $(".case")[i].id;
+                $("[data-dbid=case"+classFilt.toString()+"]").show();
+            }
+        }
+    }
+}
+
 $(function(){
 	$("body").on("click","#add_step",function(){
 				$(".case_table_no").append(add_step());

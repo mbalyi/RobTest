@@ -43,7 +43,8 @@ def design():
 @app.route('/case_page', methods=['GET'])
 def case_page():
 	query = DB.get_case(projectId = projectSession())
-	return render_template('case.html', cases=query)
+	count = len(query)
+	return render_template('case.html', cases=query, count=count)
 	#return json.dumps(query)
 
 @app.route('/caseForm/<int:projectId>', methods=['GET'])

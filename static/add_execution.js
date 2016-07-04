@@ -27,7 +27,8 @@ function exeSetup(request,checker){
 				alert("DB query was unsuccessfull")
 			}
 		}
-	)
+	);
+    $(".elementOfCaseList").removeAttr('draggable');
 }
 
 function saveExe(){

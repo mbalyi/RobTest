@@ -298,6 +298,30 @@ class Database:
 				conn.commit()
 		return
 	
+	def updateCaseExe(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT CaseId,ExecutionId FROM Case_Execution WHERE ExecutionId=?",[kwargs['exeId']])
+		caseIds=c.fetchall()
+		conn.commit()
+		temp=[]
+		for k in caseId:
+			temp.append(k[0])
+		allCases=[]
+		for k in kwargs['ID']:
+			allCases.append(int(k))
+		for k in allCases:
+			if temp.count(k) == 0:
+				c.execute("SELECT Title FROM Cases WHERE CaseId=?",[k])
+				title=c.fetchone()
+				conn.commit()
+				c.execute("INSERT INTO Case_Execution (ExecutionId,CaseId,Result,title,) VALUES (?,?)",[k,kwargs['exeId'],"NOTRUN",title[0]])
+				conn.commit()
+		for j in temp:
+			if allArea.count(j) == 0:
+				c.execute("DELETE FROM Case_Execution WHERE CaseId=? AND ExecutionId=?",[j,kwargs['exeId']])
+				conn.commit()
+	
 	def saveCaseExe(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()

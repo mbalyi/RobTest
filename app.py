@@ -212,7 +212,7 @@ def SaveExecution():
 @app.route('/updateExe', methods=['POST'])
 def UpdateExecution():
 	DB.updateExecution(exeId=request.form['exeId'],name=request.form["title"],testObject=request.form["TO"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'))
-	print(request.form['exeId'])
+	DB.updateCaseExe(ID=request.form.getlist('ID'),exeID=exeId)
 	return json.dumps(request.form['exeId'])
 	
 @app.route('/loadExecution/<int:ID>/<mode>', methods=['GET'])

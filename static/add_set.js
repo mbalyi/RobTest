@@ -35,6 +35,18 @@ function saveSet(){
 	);
 }
 
+function updateSet(setId){
+    var sendData=$("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=date]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&")+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&")+"&ID="+$(".incCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID=")+"&setId=";
+    sendData+=setId;
+	$.post("/updateSet", sendData,
+		function(data,status){
+			if(status){
+				requestSet()
+			};
+		}
+	);
+}
+
 function loadSet(setId,mode){
 	$.get("/load_set/"+setId+"/"+mode,
 		function(data,status){
@@ -82,7 +94,12 @@ $(function(){
 			//alert(event.target.id + $(event.target).attr('class'));
 		}
 		if( event.target.id == "saveSet"){
-			saveSet();
+            if($(".setForm").attr('data-dbid')=="newSet"){
+				saveSet();
+			}
+			else{
+				updateSet($(".setForm").attr('data-dbid'));
+			}
 		}
 		if( event.target.id == "newSet"){
 			newSet();

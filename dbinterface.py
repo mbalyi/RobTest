@@ -209,6 +209,47 @@ class Database:
 			c.execute("INSERT INTO Area_Set (AreaId,SetId) VALUES (?,?)",[k,setID[0]])
 		return setID[0]
 	
+	def updateSet(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Sets SET SetName=?,ProjectId=?,SetDate=?,SetPriority=? WHERE SetId=?",[kwargs['name'],kwargs['projectId'],kwargs['date'],kwargs['priority'],kwargs['setId']])
+		conn.commit()
+		c.execute("SELECT AreaId FROM Area_Set WHERE SetId=?",[kwargs['setId']])
+		areas=c.fetchall()
+		conn.commit()
+		temp=[]
+		for k in areas:
+			temp.append(k[0])
+		allArea=[]
+		for k in kwargs['areas']:
+			allArea.append(int(k))
+		for k in allArea:
+			if temp.count(k) == 0:
+				c.execute("INSERT INTO Area_Set (AreaId,SetId) VALUES (?,?)",[k,kwargs['setId']])
+				conn.commit()
+		for j in temp:
+			if allArea.count(j) == 0:
+				c.execute("DELETE FROM Area_Set WHERE AreaId=? AND SetId=?",[j,kwargs['setId']])
+				conn.commit()
+		c.execute("SELECT CaseId FROM Set_Case WHERE SetId=?",[kwargs['setId']])
+		caseIds=c.fetchall()
+		conn.commit()
+		temp=[]
+		for k in caseIds:
+			temp.append(k[0])
+		allCases=[]
+		for k in kwargs['ID']:
+			allCases.append(int(k))
+		for k in allCases:
+			if temp.count(k) == 0:
+				c.execute("INSERT INTO Set_Case (SetId,CaseId) VALUES (?,?)",[kwargs['setId'],k])
+				conn.commit()
+		for j in temp:
+			if allArea.count(j) == 0:
+				c.execute("DELETE FROM Set_Case WHERE CaseId=? AND SetId=?",[j,kwargs['setId']])
+				conn.commit()
+		return
+	
 	def saveSetCase(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()

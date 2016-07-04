@@ -162,6 +162,11 @@ def save_set():
 	DB.saveSetCase(ID=request.form.getlist('ID'),setID=setId)
 	return "OK"
 
+@app.route('/updateSet', methods=['POST'])	
+def updateSet():
+	DB.updateSet(setId=request.form['setId'],ID=request.form.getlist('ID'),name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
+	return "OK"
+	
 @app.route('/load_set/<int:ID>/<mode>', methods=['GET'])
 def load_set(ID,mode):
 	query=DB.get_set_parameters(id=ID)

@@ -9,7 +9,7 @@
 
 {% if setForm %}
 <h1>Sets</h1>
-<div style='width:100%'>
+<div style='width:100%' class='setForm' data-dbid='newSet'>
     <table style='width:100%' class='set_no'>
         <tr>
             <td class='set_staic_name'>Name:</td>
@@ -55,7 +55,7 @@
 	<h1>Set</h1>
 	<a name='editSet' id='{{loadSet[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
 	<a name='deleteset' id='{{loadSet[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
-	<div style='width:100%'>
+	<div style='width:100%' class='setForm'>
 		<table style='width:100%' class='set_no'>
 			{% for k in loadSet%}
 			<tr>
@@ -111,7 +111,7 @@
 	<h1>Set</h1>
 	<a name='editSet' id='{{loadEditableSet[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
 	<a name='deleteset' id='{{loadEditableSet[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
-	<div style='width:100%'>
+	<div style='width:100%' class='setForm' data-dbid='{{loadEditableSet[0][0]}}'>
 		<table style='width:100%' class='set_no'>
 			{% for k in loadEditableSet%}
 			<tr>

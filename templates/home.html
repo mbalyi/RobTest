@@ -48,7 +48,9 @@
 	
 	<script type="text/javascript" src="{{ url_for('static', filename='dashboard_control.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='dashboard_template.js') }}"></script>
-	
+	{% if user == "admin" %}
+    <script type="text/javascript" src="{{ url_for('static', filename='admin.js') }}"></script>
+    {% endif %}
 	<!-- Canvas -->
 	<script type="text/javascript" src="{{ url_for('static', filename='source/canvasjs.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='canvasjs.min.js') }}"></script>
@@ -82,7 +84,6 @@
 							<li><a class='header' href="#">Jira Board</a></li>
 							{% endif %}
 						</ul>
-					  </li>
 					</li>
 					<li role="presentation" class="dropdown">
 						<a class="dropdown-toggle" id="design" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
@@ -117,7 +118,17 @@
 							Admin <span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
-						  ...
+						  {% if user %}
+                            <li class="dropdown-header">Admin Settings</li>
+							<li><a class='header' id="users" href="#" onclick="userSetup()">Manage Users</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li class="dropdown-header">Project Settings</li>
+                            <li><a class='header' id="settings" href="#">Manage Projects</a></li>
+							<li><a class='header' id="tasks" href="#">Manage Tasks</a></li>
+                            <li role="separator" class="divider"></li>
+							<li><a class='header' id="database" href="#">Manage Database</a></li>
+                            <li><a class='header' id="export/import" href="#">Export/Import</a></li>
+							{% endif %}
 						</ul>
 					</li>
 					{% endif %}

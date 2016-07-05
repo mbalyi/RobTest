@@ -150,7 +150,7 @@ $(function(){
         }
     );
 	
-	$("#admin").on("click",function(){
+	/*$("#admin").on("click",function(){
 		requestAdmin(
 			{ active:true, filter:"" },
 			function(res){
@@ -160,7 +160,7 @@ $(function(){
 				addAdminButtons();
 			}
 		);
-	});
+	});*/
 	
 	$("body").on("click","#logout",function(){
 		$.get("/logout",

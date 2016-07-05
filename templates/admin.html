@@ -1,9 +1,18 @@
 {% if admin %}
 	<div class="form-group">
-		<table style="width:100%" class="admin_form">
-			<tr><td class="admin_table">Username</td><td class="admin_table">Active</td><td class="admin_table">Bann</td><td class="admin_table">Delete</td></tr>
+        <table>
+            <tr>
+                <td><h3>Manage Users</h3></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+		<table style="width:100%" class="admin_form table table-condensed">
+            <tr><th>#</th><th class="admin_table">Username</th><th class="admin_table">Active</th><th class="admin_table">Bann</th><th class="admin_table">Delete</th></tr>
 			{% for elements in admin %}
-					<tr><td class="admin_table">{{elements[1]}}<a href="#" id={{elements[0]}} class="glyphicon glyphicon-edit" name="edit"></a></td>
+					<tr data-row="editRow" id={{elements[0]}}>
+                        <td><a href="#" id={{elements[0]}} class="glyphicon glyphicon-edit" name="edit" style="padding-left:3px;"></a></td>
+                        <td class="admin_table"><a href="#" class="rowLink" id={{elements[0]}} onclick="selectRow()" style="color:#eee; text-decoration: none;">{{elements[1]}}</a></td>
 					{% if elements[3] == 1 %}
 						<td class="admin_table"><span id={{elements[0]}}></span><input type="checkbox" name="active" value={{elements[0]}} checked></td>
 					{% else %}
@@ -14,11 +23,40 @@
 					{% else %}
 						<td class="admin_table"><input type="checkbox" name="bann" value={{elements[0]}}></td>
 					{% endif %}
-						<td class="admin_table"><input type="checkbox" name="delete[]" value={{elements[0]}}></td></tr>
-						<tr id={{elements[0]}} class="slideMoving"><td class="admin_table"><input type='password' id={{elements[0]}} name='oldPw' class='form-control'  placeholder="Old Password"></td>
-						<td rowspan="2"><a href="#" id={{elements[0]}} class="glyphicon glyphicon-play-circle btn-lg" name="savePw"></a></td></tr>
-						<tr id={{elements[0]}} class="slideMoving"><td class="admin_table"><input type='password' id={{elements[0]}} name='newPw' class='form-control' placeholder="New Password"></td></tr>
+                            <td class="admin_table"><input type="checkbox" name="delete[]" value={{elements[0]}}></td>
+                    </tr>
+						<tr id={{elements[0]}} class="slideMoving">
+                            <td></td>
+                            <td class="admin_table">
+                                <input type='password' id={{elements[0]}} name='oldPw' class='form-control'  placeholder="Old Password">
+                            </td>
+						    <td class="admin_table">
+                                <input type='password' id={{elements[0]}} name='newPw' class='form-control' placeholder="New Password">
+                            </td>
+                            <td>
+                                <a href="#" id={{elements[0]}} class="glyphicon glyphicon-play-circle btn-lg" name="savePw" onclick="saveNewPw()" style="padding: 3px 16px;">
+                                </a>
+                            </td>
+                            <td>
+                            </td>
+                        </tr>
 			{% endfor %}
 		</table>
 	</div>
+{% endif %}
+
+{% if adminNav %}
+<div class="form-control" style="height:100%;">
+    <ul class="nav nav-pills nav-stacked">
+        <li role="presentation"><a href="#" onclick="userSetup()">Manage Users</a></li>
+        <hr style="margin-top: 0px;margin-bottom: 0px;">
+        <li role="presentation"><a href="#">Manage Projects</a></li>
+        <hr style="margin-top: 0px;margin-bottom: 0px;">
+        <li role="presentation"><a href="#">Manage Tasks</a></li>
+        <hr style="margin-top: 0px;margin-bottom: 0px;">
+        <li role="presentation"><a href="#">Manage Database</a></li>
+        <hr style="margin-top: 0px;margin-bottom: 0px;">
+        <li role="presentation"><a href="#">Export/Import</a></li>
+    </ul>
+</div>
 {% endif %}

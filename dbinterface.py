@@ -1,11 +1,27 @@
 import sqlite3
 
 class Database:
-	def login_querry(self, **kwargs):
-		
+	def isAdmin(self,**kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT COUNT(*) FROM Users WHERE UserName = ? AND UserPassword= ?",[kwargs['title'],kwargs['pw']])
+		c.execute("SELECT RO.RoleName FROM Users AS US LEFT JOIN Roles AS RO ON US.RoleId=RO.RoleId WHERE US.UserName=?",[kwargs['user']])
+		result=c.fetchone()
+		conn.commit()
+		return result[0]
+	
+	def getUsers(self, **kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Users")
+		result=c.fetchall()
+		return result;
+	
+	def login_querry(self, **kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		print(kwargs['title'])
+		print(kwargs['pw'])
+		c.execute("SELECT COUNT(*) FROM Users WHERE UserName=? AND UserPassword=?",[kwargs['title'],kwargs['pw']])
 		result=c.fetchone()
 		conn.commit()
 		return result[0]
@@ -668,5 +684,17 @@ class Database:
 		result=c.fetchall()
 		conn.commit()
 		return result
-	
+		
+	#------Admin------
+	def updatePw(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT UserPassword FROM Users WHERE UserName=?",[kwargs['user']])
+		username=c.fetchone()
+		conn.commit()
+		if username == kwargs['oldPw']:
+			c.execute("UPDATE Users SET UserPassword=? WHERE UserName=?",[kwargs['newPw'],kwargs['user']])
+			conn.commit()
+			return "success"
+		return "false"
 DB = Database()

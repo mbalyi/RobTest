@@ -14,12 +14,12 @@ def login(active=None):
 def login_form():
 	if request.method == 'POST':
 		session['username'] = request.form['user']
-	log = Report.login_querry(title=request.form["user"],pw=request.form["password"])
+	log = DB.login_querry(title=request.form["user"],pw=request.form["password"])
 	if log == 1 and 'username' in session:
-		query = Report.getRecords()
 		projects = DB.getProjects()
 		projectId = DB.getSelectedProject(user=request.form['user'])
-		return render_template('home.html',user = request.form['user'], Projects = projects, selectedProject = projectId)
+		admin=DB.isAdmin(user=request.form['user'])
+		return render_template('home.html',user = admin, Projects = projects, selectedProject = projectId)
 	else:
 		return redirect(url_for('login'))
 
@@ -306,7 +306,7 @@ def getUser(active=None):
 
 @app.route('/getUsers', methods=['GET'])
 def getUsers():
-	query = Report.getUsers();
+	query = DB.getUsers();
 	return render_template('admin.html', admin=query)
 
 @app.route('/getReports', methods=['GET'])
@@ -353,7 +353,7 @@ def updatePw(ID):
 	
 @app.route('/loadSearchForm', methods=['GET'])
 def loadSearchForm():
-	query = Report.getUsers();
+	query = DB.getUsers();
 	return render_template('search.html', users=query)
 
 #-----Test-----
@@ -618,6 +618,14 @@ def jenkinsRadiator():
 def dashboardLoad():
 	return render_template('slide.html')
 
+#-----Admin----
+@app.route('/getAdminNav', methods=['GET'])
+def getAdminNav():
+	return render_template('admin.html', adminNav="true")
+	
+@app.route('/savePassword', methods=['POST'])
+def savePassword():
+	return DB.updatePw(oldPw=request.form["oldPw"],newPw=request.form["newPw"],use=session['username'])
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

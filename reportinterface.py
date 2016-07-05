@@ -9,13 +9,6 @@ class ReportDatabase:
 		result=c.fetchone()
 		return result[0]
 	
-	def getUsers(self, **kwargs):
-		conn = sqlite3.connect("InsightReport.s3db")
-		c = conn.cursor()
-		c.execute("SELECT * FROM Users")
-		result=c.fetchall()
-		return result;
-	
 	def getRecords(self, **kwargs):
 		conn = sqlite3.connect("InsightReport.s3db")
 		c = conn.cursor()

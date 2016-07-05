@@ -1,11 +1,3 @@
-function requestAdmin(options, callback){
-    $.ajax({ url: "/getUsers",
-        data: options,
-        type: "get",
-        success: callback
-    });
-}
-
 function requestDashboard(options, callback){
     $.ajax({ url: "/getReports",
         data: options,

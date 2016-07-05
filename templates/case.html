@@ -46,7 +46,7 @@
         </tr>
     </table>
     <div class='AreaField' style='100%'>
-        <h2>Areas: </h2>
+        <h3>Areas: </h3>
         <table>
             {% for k in caseForm %}
                 {% if loop.index == 1 %}
@@ -80,20 +80,30 @@
                 </td>
             </tr>
         </table>
-        <table style='width:100%' class='case_table_no'>
+        <div class='case_table_no' style='width:100%'>
+        <table style='width:100%;'>
             <tr>
-                <th>Action</th>
-                <th>Result</th>
-            </tr>
-            <tr>
-                <th>
-                    <input class='action form-control' type='text' name='action[]' value='Action description' readonly='true'>
-                </th>
-                <th>
-                    <input class='result form-control' type='text' name='result[]' value='Result description' readonly='true'>
-                </th>
+                <th>#</th>
+                <th style='width:49%;'>Action</th>
+                <th style='width:49%;'>Result</th>
             </tr>
         </table>
+        <div class='newStepPlace' ondrop='drop(event)' ondragover='allowDrop(event)' style='border-radius: 5px;'>
+            <div draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+                <table style='width:100%;'>
+                    <tr>
+                        <th><a href='#' data-dbid='' id='' class='step'>#</a><th>
+                        <th>
+                            <textarea name='action[]' class="action form-control" rows="3" overflow="auto" disabled="disabled" resize="none" onkeypress="reSizeTextarea(event)">Action description</textarea>
+                        </th>
+                        <th>
+                            <textarea name='result[]' class="result form-control" rows="3" overflow="hidden" disabled="disabled" resize="none" onkeypress="reSizeTextarea(event)">Result description</textarea>
+                        </th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        </div>
     </div>
 </div>
 {% endif %}
@@ -131,7 +141,7 @@
 		</table>
 	</div>
     <div class='AreaField' style='100%'>
-        <h2>Areas: </h2>
+        <h3>Areas: </h3>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
@@ -155,10 +165,8 @@
         </table>
     </div>
 	<div class='stepBtn'></div>
-	<div style='width:100%'>
-		<table style='width:100%' class='case_table_no'>
-		</table>
-	</div>
+	<div class='case_table_no' style='width:100%'>
+    </div>
 {% endif %}
 
 {% if editablecase %}
@@ -178,7 +186,7 @@
 		</tr>
 	</table>
     <div class='AreaField' style='100%'>
-        <h2>Areas: </h2>
+        <h3>Areas: </h3>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
@@ -218,8 +226,8 @@
                 </td>
             </tr>
         </table>
-		<table style='width:100%' class='case_table_no'>
-		</table>
+        <div class='case_table_no' style='width:100%'>
+        </div>
 	</div>
 </div>
 {% endif %}

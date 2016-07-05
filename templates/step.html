@@ -1,14 +1,27 @@
 {% if editablestep %}
+<table style='width:100%'>
 	<tr>
-		<th>Action</th>
-		<th>Result</th>
+		<th style='width:50%'>Action</th>
+		<th style='width:50%'>Result</th>
 	</tr>
+</table>
+<div class='newStepPlace' ondrop='drop(event)' ondragover='allowDrop(event)' style='border-radius: 5px;'>
 	{% for k in editablestep %}
-		<tr>
-			<th><input id='{{k[0]}}' class='action form-control' type='text' name='action[]' value='{{k[1]}}' style='font-color:#000000'></th>
-			<th><input id='{{k[0]}}' class='result form-control' type='text' name='result[]' value='{{k[2]}}' style='font-color:#000000'></th>
-		</tr>
+    <div draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+    <table style='width:100%'>
+        <tr>
+            <th><a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='step'>#</a><th>
+            <th>
+                <textarea name='action[]' class="action form-control" id='{{k[0]}}' rows="3" overflow="auto" resize="none" onkeypress="reSizeTextarea(event)">{{k[1]}}</textarea>
+            </th>
+            <th>
+                <textarea name='result[]' class="result form-control" rows="3" id='{{k[0]}}' overflow="hidden" resize="none" onkeypress="reSizeTextarea(event)">{{k[2]}}</textarea>
+            </th>
+        </tr>
+    </table>
+    </div>
 	{% endfor %}
+</div>
 {% endif %}
 
 {% if step %}

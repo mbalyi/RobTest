@@ -24,9 +24,9 @@ function caseForm(checker){
 }
 
 function add_step(){
-	var html="<tr><th><input id=action_'"+iterator+"' class='action form-control' type='text' name='action[]' value='Event'></th><th>"
-	html+="<input id=result_'"+iterator+"' class='result form-control' type='text' name='result[]' value='Result'></th></tr>"
-	iterator++;
+    var html="<div draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'><table style='width:100%'><tr><th><a href='#' class='step'>#</a><th>";
+    html+="<th><textarea name='action[]' class='action form-control' rows='3' overflow='auto' resize='none' onkeypress='reSizeTextarea(event)'>Action description</textarea></th><th>";
+    html+="<textarea name='result[]' class='result form-control' rows='3' overflow='hidden' resize='none' onkeypress='reSizeTextarea(event)'>Result description</textarea></th></tr></table></div>";
 	return html;
 }
 
@@ -106,8 +106,9 @@ function enableForm(){
     $("input[type=text][name=title]").removeAttr('readonly');
     $("input[type=number][name=priority]").removeAttr('readonly');
     $("input[type=text][name=data]").removeAttr('readonly');
-    $("input[type=text][name='action[]']").removeAttr('readonly');
-    $("input[type=text][name='result[]']").removeAttr('readonly');
+    //$("input[type=text][name='action[]']").removeAttr('readonly');
+    //$("input[type=text][name='result[]']").removeAttr('readonly');
+    $('textarea').removeAttr('disabled');
     document.getElementById('add_step').disabled=false;
     document.getElementById('delete_step').disabled=false;
     document.getElementById('up_step').disabled=false;
@@ -149,9 +150,19 @@ function caseSearch(){
     }
 }
 
+function reSizeTextarea(ev){
+    console.log($(ev.target)[0].offsetHeight);
+    console.log($(ev.target)[0].scrollHeight);
+    if ($(ev.target)[0].offsetHeight < $(ev.target)[0].scrollHeight+2){
+        var number=parseInt($(ev.target).attr('rows'))
+        number=number+2;
+        return $(ev.target).attr('rows',number);
+    }
+}
+
 $(function(){
 	$("body").on("click","#add_step",function(){
-				$(".case_table_no").append(add_step());
+				$(".newStepPlace").append(add_step());
 	});
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "case"){

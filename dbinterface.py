@@ -31,7 +31,7 @@ class Database:
 		c = conn.cursor()
 		c.execute("INSERT INTO Cases (Title,Priority,Data,ProjectId,CaseUpdated,Active) VALUES (?,?,?,?,?,?)",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId'],0,1])
 		conn.commit()
-		c.execute("SELECT CaseId FROM Cases WHERE Title=? AND Priority=? AND Data=? AND ProjectId=? AND Active=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId'],1])
+		c.execute("SELECT CaseId FROM Cases WHERE Title=? AND Priority=? AND Data=? AND ProjectId=? AND Active=? AND CaseUpdated=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId'],1,0])
 		CaseID=c.fetchone()
 		conn.commit()
 		for k in kwargs['area']:
@@ -142,7 +142,7 @@ class Database:
 	def caseUpdateFlag(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("UPDATE Cases SET UpdateFromId=? WHERE CaseId=?",[kwargs['oldCaseId'],kwargs['newCaseId']])
+		c.execute("UPDATE Cases SET (UpdateFromId) VALUES (?) WHERE CaseId=?",[kwargs['oldCaseId'],kwargs['newCaseId']])
 		conn.commit()
 		return
 	
@@ -164,7 +164,7 @@ class Database:
 		ObjectID=c.fetchone()
 		conn.commit()
 		for k in kwargs['areas']:
-			c.execute("INSERT INTO Area_Object (AreaId,ObjecId) VALUES (?,?)",[k,ObjectID[0]])
+			c.execute("INSERT INTO Area_Object (AreaId,ObjectId) VALUES (?,?)",[k,ObjectID[0]])
 			conn.commit()
 		return ObjectID[0]
 	

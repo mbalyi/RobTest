@@ -183,7 +183,7 @@ def setForm():
 
 @app.route('/save_set', methods=['POST'])	
 def save_set():
-	setId=DB.save_set(name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
+	setId=DB.save_set(name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession(),area=request.form.getlist('areaBox'))
 	DB.saveSetCase(ID=request.form.getlist('ID'),setID=setId)
 	return "OK"
 
@@ -599,7 +599,8 @@ def jenkinsRadiator():
 			sorting.insert(0,('default','default',('default','default')))
 			temp = []
 			iterator+=1
-	if len(sorting) == 1:
+	print(sorting)
+	if len(sorting) == 1 and sorting[0][0] != "default":
 		passed=sorting[0][4][0]
 		skipped=sorting[0][4][1]
 		failed=sorting[0][4][2]

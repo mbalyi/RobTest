@@ -33,6 +33,7 @@ function add_step(){
 function saveCase(){
     var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=number]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
     sendData = sendData+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&");
+    sendData = sendData+"&"+$("textarea").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
 	$.post("/save_case", sendData,
 	//$.post("/save_case", $("input").serialize()+"&"+$("textarea").serialize(),
 		function(data,status){
@@ -48,6 +49,7 @@ function saveCase(){
 function updateCase(caseId){
      var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=number]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
     sendData = sendData+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&");
+    sendData = sendData+"&"+$("textarea").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
 	$.post("/updateCase/"+caseId, sendData,
 		function(data,status){
 			if(status){
@@ -151,8 +153,6 @@ function caseSearch(){
 }
 
 function reSizeTextarea(ev){
-    console.log($(ev.target)[0].offsetHeight);
-    console.log($(ev.target)[0].scrollHeight);
     if ($(ev.target)[0].offsetHeight < $(ev.target)[0].scrollHeight+2){
         var number=parseInt($(ev.target).attr('rows'))
         number=number+2;

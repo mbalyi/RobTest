@@ -137,6 +137,7 @@ $(function(){
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "test"){
 			document.getElementById("col-md-9").style.width = '70%';
+            $(".setup_buttons").show();
             testSetup();
 		}
 	});

@@ -27,7 +27,7 @@ function testPage(pageID){
 		function(data,status){
 			if(status){
 				$(".col-md-9").empty().append(data);
-				divId=$($('.col-md-9').children()[1]).attr('class');
+				divId=$($('.stepHolder').children()[0]).attr('data-stepMarkerId');
 				$("#"+divId+".stepMarker").empty().append(cursor);
 				caseIdInExe=pageID;
 			};
@@ -73,11 +73,11 @@ function saveCaseStatus(){
 }
 
 function checkDivId(direction){
-	if( direction == "NEXT" && $($('.'+divId).next()).attr('class') != "testButtons"){
-		divId=$($('.'+divId).next()).attr('class');
+	if( direction == "NEXT" && $($("[data-stepMarkerId='"+divId+"']").next()).attr('data-stepMarkerId') != undefined){
+		divId=$($("[data-stepMarkerId='"+divId+"'").next()).attr('data-stepMarkerId');
 	}
-	if( direction == "PREV" && $($('.'+divId).prev()).attr('class') != "testHeader"){
-		divId=$($('.'+divId).prev()).attr('class');
+	if( direction == "PREV" && ($($("[data-stepMarkerId='"+divId+"']").prev()).attr('data-stepMarkerId') != undefined )){
+		divId=$($("[data-stepMarkerId='"+divId+"']").prev()).attr('data-stepMarkerId');
 	}
 }
 
@@ -129,23 +129,27 @@ $(function(){
 			testPage($(event.target).attr('data-dbid'));
 			caseIdInExe=$(event.target).attr('data-dbid');
 			$($(".caseMarker")[caseIterator]).empty().append(cursor);
-			divId=$($('.col-md-9').children()[1]).attr('class');
+			divId=$($('.stepHolder').children()[0]).attr('data-stepMarkerId');
 		}
 		if( event.target.id == "NEXTCASE"){
-			$($(".caseMarker")[caseIterator]).empty();
-			caseIterator++;
-			caseIdInExe=$($('.caseMain'+'#'+caseIdInExe).next()).attr('id');
-			testPage(caseIdInExe);
-			$($(".caseMarker")[caseIterator]).empty().append(cursor);
-			divId=$($('.col-md-9').children()[1]).attr('class');
+			if($($('.caseMain'+'#'+caseIdInExe).next()).attr('id') != undefined){
+                $($(".caseMarker")[caseIterator]).empty();
+                caseIterator++;
+                caseIdInExe=$($('.caseMain'+'#'+caseIdInExe).next()).attr('id');
+                testPage(caseIdInExe);
+                $($(".caseMarker")[caseIterator]).empty().append(cursor);
+                divId=$($('.stepHolder').children()[0]).attr('data-stepMarkerId');
+            }
 		}
 		if( event.target.id == "BACKCASE"){
-			$($(".caseMarker")[caseIterator]).empty();
-			caseIterator--;
-			caseIdInExe=$($('.caseMain'+'#'+caseIdInExe).prev()).attr('id');
-			testPage(caseIdInExe);
-			$($(".caseMarker")[caseIterator]).empty().append(cursor);
-			divId=$($('.col-md-9').children()[1]).attr('class');
+            if($($('.caseMain'+'#'+caseIdInExe).prev()).attr('id') != undefined){
+                $($(".caseMarker")[caseIterator]).empty();
+                caseIterator--;
+                caseIdInExe=$($('.caseMain'+'#'+caseIdInExe).prev()).attr('id');
+                testPage(caseIdInExe);
+                $($(".caseMarker")[caseIterator]).empty().append(cursor);
+                divId=$($('.stepHolder').children()[0]).attr('data-stepMarkerId');
+            }
 		}
 	});
 });

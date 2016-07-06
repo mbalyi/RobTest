@@ -620,8 +620,8 @@ class Database:
 			else:
 				query+=" CE.Result IS NOT NULL AND"
 				kwargs['status']="NOT NULL"
-				query+=" AO.AreaId="
-				query+=str(kwargs['areaId'])
+			query+=" AO.AreaId="
+			query+=str(kwargs['areaId'])
 		c.execute(query)
 		result=c.fetchall()
 		conn.commit()

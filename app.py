@@ -625,8 +625,7 @@ def userActive():
 
 @app.route('/saveUser', methods=['POST'])	
 def saveUser():
-	DB.saveUser(userName=request.form['userName'],pw=request.form['password'],roleId=request.form['roleId'],projectId=request.form['projectId'])
-	return "OK"
+	return DB.saveUser(userName=request.form['userName'],pw=request.form['password'],roleId=request.form['roleId'],projectId=request.form['projectId'])
 
 @app.route('/deleteUser', methods=['POST'])	
 def deleteUser():

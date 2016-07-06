@@ -743,6 +743,7 @@ class Database:
 			roleId=int(kwargs['roleId'])
 			c.execute("INSERT INTO Users (UserName,UserPassword,ProjectId,RoleId,Active) VALUES (?,?,?,?,?)",[kwargs['userName'],kwargs['pw'],projectId,roleId,1])
 			conn.commit()
-		return
+			return "success"
+		return "failed"
 	
 DB = Database()

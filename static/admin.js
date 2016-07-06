@@ -90,7 +90,12 @@ function saveNewPw(){
 
 function saveUser(){
 	if($("input[type='text'][data-newuser='userName']").val()=="" || $("input[type='password'][data-newuser='userPassword']").val()==""){
-        $(".userErrorMessage").tooltip({title: "Missing value!"});
+        if($("input[type='text'][data-newuser='userName']").val()=="" && $("input[type='password'][data-newuser='userPassword']").val()=="")
+            $(".userErrorMessage").tooltip({title: "Username and password are missing!"});
+        if($("input[type='text'][data-newuser='userName']").val()=="")
+            $(".userErrorMessage").tooltip({title: "Username is missing!"});
+        if($("input[type='password'][data-newuser='userPassword']").val()=="")
+            $(".userErrorMessage").tooltip({title: "Password is missing!"});
         $(".userErrorMessage").tooltip('show');
     }
     else{
@@ -99,7 +104,13 @@ function saveUser(){
         sendData=sendData+$(".newRoleSelector").find(':selected').attr('data-roleid')+"&projectId="+$(".projectSelector").find(':selected').attr('data-dbid');
         $.post("/saveUser",sendData,function(data,status){
             if(status){
-                requestAdmin();
+                if(data == "success"){
+                    requestAdmin();
+                }
+                else{
+                    $(".userErrorMessage").tooltip({title: "Username still exists!"});
+                    $(".userErrorMessage").tooltip('show');
+                }
             }
         });
     }

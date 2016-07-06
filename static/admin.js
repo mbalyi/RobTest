@@ -35,6 +35,7 @@ function selectRow(){
 function saveNewPw(){
     var id = $(event.target).attr('id');
     var sendData="oldPw="+$("input[name=oldPw][id="+id+"]").val()+"&newPw="+$("input[name=newPw][id="+id+"]").val();
+    sendData+="&id="+id;
     $.post("/savePassword",sendData,
           function(data,status){
             if(data=="false"){
@@ -42,6 +43,84 @@ function saveNewPw(){
             }
             else{
                 alert("success");
+                $("input[name=oldPw][id="+id+"]").val('');
+                $("input[name=newPw][id="+id+"]").val('');
+                $("#"+id+".slideMoving").slideUp();
             }
     });
 }
+
+function saveUser(){
+	$.post("/saveUser",$("input").serialize(),
+		function(data,status){
+			if(status){
+				requestAdmin(
+					{ active:true, filter:"" },
+					function(res){
+						//window.location.reload();
+						$(".col-md-9").empty().append(res);
+						$(".col-md-9").append(insertUser)
+						addAdminButtons();
+					}
+				);
+			}
+		}
+	)
+}
+
+function deleteUser(){
+	$.post("/deleteUser", $("input").serialize(),
+		function(data,status){
+			if(status){
+				requestAdmin(
+					{ active:true, filter:"" },
+					function(res){
+						//window.location.reload();
+						$(".col-md-9").empty().append(res);
+						$(".col-md-9").append(insertUser)
+						addAdminButtons();
+					}
+				);
+			}
+		}
+	)
+}
+
+function roleChange(){
+    var userId=$(event.target).attr("data-selectorid");
+    var sendData="userId="+userId+"&roleId="+$(".roleSelector[data-selectorid="+userId+"]").find(":selected").attr('data-roleid');
+    $.post("/updateUserRole", sendData,
+		function(data,status){
+			     if(data=="error"){
+                     alert("error");
+                 }
+			}
+	);
+}
+
+$(function(){
+    if( event.target.id == "new_user"){
+			$(".newUserInsert").append(newUser+iterator+newUser2+iterator+newUser3);
+			$(".insert_save_button").empty().append(SaveUserEn);
+			$(".insert_delete_button").empty().append(delUserbtnDis);
+			iterator=iterator+1;
+		}
+		if( event.target.id == "save_user"){
+			saveUser();
+			iterator=0;
+		}
+		if( event.target.id == "cancel_user"){
+			$(".newUserInsert").empty();
+			$(".insert_save_button").empty().append(SaveDis);
+			$(".insert_delete_button").empty().append(delUserbtnEn);
+			$(".slideMoving").slideUp();
+			iterator=0;
+		}
+		if( event.target.id == "delete_user"){
+			deleteUser();
+		}
+        if($(event.target).attr('name')=="edit"){
+			ID=event.target.id;
+			$("#"+ID+".slideMoving").slideToggle();
+		}
+})

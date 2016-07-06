@@ -1,21 +1,6 @@
 import sqlite3
 
-class Database:
-	def isAdmin(self,**kwargs):
-		conn = sqlite3.connect("ROB_2016.s3db")
-		c = conn.cursor()
-		c.execute("SELECT RO.RoleName FROM Users AS US LEFT JOIN Roles AS RO ON US.RoleId=RO.RoleId WHERE US.UserName=?",[kwargs['user']])
-		result=c.fetchone()
-		conn.commit()
-		return result[0]
-	
-	def getUsers(self, **kwargs):
-		conn = sqlite3.connect("ROB_2016.s3db")
-		c = conn.cursor()
-		c.execute("SELECT * FROM Users")
-		result=c.fetchall()
-		return result;
-	
+class Database:	
 	def login_querry(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -689,12 +674,45 @@ class Database:
 	def updatePw(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT UserPassword FROM Users WHERE UserName=?",[kwargs['user']])
+		c.execute("SELECT UserPassword FROM Users WHERE UserId=?",[kwargs['id']])
 		username=c.fetchone()
+		print(username)
 		conn.commit()
-		if username == kwargs['oldPw']:
-			c.execute("UPDATE Users SET UserPassword=? WHERE UserName=?",[kwargs['newPw'],kwargs['user']])
+		if username[0] == kwargs['oldPw']:
+			c.execute("UPDATE Users SET UserPassword=? WHERE UserId=?",[kwargs['newPw'],kwargs['id']])
 			conn.commit()
 			return "success"
 		return "false"
+	
+	def isAdmin(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT RO.RoleName FROM Users AS US LEFT JOIN Roles AS RO ON US.RoleId=RO.RoleId WHERE US.UserName=?",[kwargs['user']])
+		result=c.fetchone()
+		conn.commit()
+		return result[0]
+	
+	def getUsers(self, **kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT US.UserId,US.UserName,US.Active,Us.ProjectId,US.RoleId,RO.RoleName FROM Users AS US LEFT JOIN Roles AS RO ON US.RoleId=RO.RoleId")
+		result=c.fetchall()
+		conn.commit()
+		return result;
+	
+	def getRoles(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT RoleId,RoleName FROM Roles")
+		result=c.fetchall()
+		conn.commit()
+		return result
+		
+	def updateUserRole(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Users SET RoleId=? WHERE UserId=?",[kwargs['roleId'],kwargs['userId']])
+		conn.commit()
+		return "OK"
+		
 DB = Database()

@@ -82,49 +82,6 @@ function getReporttoLoad(id){
 	)
 }
 
-function saveUser(){
-	$.post("/saveUser",$("input").serialize(),
-		function(data,status){
-			if(status){
-				requestAdmin(
-					{ active:true, filter:"" },
-					function(res){
-						//window.location.reload();
-						$(".col-md-9").empty().append(res);
-						$(".col-md-9").append(insertUser)
-						addAdminButtons();
-					}
-				);
-			}
-		}
-	)
-}
-
-function deleteUser(){
-	$.post("/deleteUser", $("input").serialize(),
-		function(data,status){
-			if(status){
-				requestAdmin(
-					{ active:true, filter:"" },
-					function(res){
-						//window.location.reload();
-						$(".col-md-9").empty().append(res);
-						$(".col-md-9").append(insertUser)
-						addAdminButtons();
-					}
-				);
-			}
-		}
-	)
-}
-
-function updatePw(ID){
-	$.post("/updatePw/"+ID, $("input").serialize(),
-		function(data,status){
-			$("#"+ID+".slideMoving").slideUp();
-		}
-	)
-}
 
 function loadSearchForm(){
 	$.get("/loadSearchForm",
@@ -201,30 +158,6 @@ $(function(){
 			saveEditedRecord(recordid);
 			$(".insert_save_button").empty().append(SaveDis);
 			editable="true";
-		}
-		if( event.target.id == "new_user"){
-			$(".newUserInsert").append(newUser+iterator+newUser2+iterator+newUser3);
-			$(".insert_save_button").empty().append(SaveUserEn);
-			$(".insert_delete_button").empty().append(delUserbtnDis);
-			iterator=iterator+1;
-		}
-		if( event.target.id == "save_user"){
-			saveUser();
-			iterator=0;
-		}
-		if( event.target.id == "cancel_user"){
-			$(".newUserInsert").empty();
-			$(".insert_save_button").empty().append(SaveDis);
-			$(".insert_delete_button").empty().append(delUserbtnEn);
-			$(".slideMoving").slideUp();
-			iterator=0;
-		}
-		if( event.target.id == "delete_user"){
-			deleteUser();
-		}
-		if($(event.target).attr('name')=="edit"){
-			ID=event.target.id;
-			$("#"+ID+".slideMoving").slideToggle();
 		}
 		if($(event.target).attr('name')=="savePw"){
 			ID=event.target.id;

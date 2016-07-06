@@ -300,15 +300,6 @@ def getFirstCaseID(id):
 	
 #-----Report-----	
 
-@app.route('/getUser', methods=['GET'])
-def getUser(active=None):
-	return json.dumps(session['username'])
-
-@app.route('/getUsers', methods=['GET'])
-def getUsers():
-	query = DB.getUsers();
-	return render_template('admin.html', admin=query)
-
 @app.route('/getReports', methods=['GET'])
 def getReports():
 	query = Report.getRecords()
@@ -344,11 +335,6 @@ def saveUser():
 @app.route('/deleteUser', methods=['POST'])	
 def deleteUser():
 	Report.deleteUser(ID=request.form.getlist('delete[]'))
-	return "OK"
-
-@app.route('/updatePw/<int:ID>', methods=['POST'])	
-def updatePw(ID):
-	Report.updatePw(ID=ID,oldPw=request.form['oldPw'],newPw=request.form['newPw'])
 	return "OK"
 	
 @app.route('/loadSearchForm', methods=['GET'])
@@ -619,13 +605,28 @@ def dashboardLoad():
 	return render_template('slide.html')
 
 #-----Admin----
+@app.route('/getUser', methods=['GET'])
+def getUser(active=None):
+	return json.dumps(session['username'])
+
+@app.route('/getUsers', methods=['GET'])
+def getUsers():
+	query = DB.getUsers();
+	roles = DB.getRoles();
+	return render_template('admin.html', admin=query,roles=roles)
+
 @app.route('/getAdminNav', methods=['GET'])
 def getAdminNav():
 	return render_template('admin.html', adminNav="true")
 	
 @app.route('/savePassword', methods=['POST'])
 def savePassword():
-	return DB.updatePw(oldPw=request.form["oldPw"],newPw=request.form["newPw"],use=session['username'])
+	return DB.updatePw(oldPw=request.form["oldPw"],newPw=request.form["newPw"],id=request.form['id'])
+
+@app.route('/updateUserRole', methods=['POST'])
+def updateUserRole():
+	return DB.updateUserRole(userId=request.form['userId'],roleId=request.form['roleId'])
+
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

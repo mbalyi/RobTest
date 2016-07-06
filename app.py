@@ -631,6 +631,25 @@ def saveUser():
 def deleteUser():
 	DB.deleteUser(userId=request.form['userId'])
 	return "OK"
+
+@app.route('/getProjectManagement', methods=['GET'])	
+def getProjectManagement():
+	projects = DB.getProjects()
+	return render_template('admin.html', projectManagement=projects)
+	
+@app.route('/projectActive', methods=['POST'])
+def projectActive():
+	DB.projectActive(projectId=request.form['projectId'],projectStatus=request.form['status'])
+	return render_template('admin.html', projectStatus=request.form['status'])
+	
+@app.route('/deleteProject', methods=['POST'])	
+def deleteProject():
+	DB.deleteProject(projectId=request.form['projectId'])
+	return "OK"
+
+@app.route('/saveProject', methods=['POST'])	
+def saveProject():
+	return str(DB.saveProject(projectName=request.form['projectName']))
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

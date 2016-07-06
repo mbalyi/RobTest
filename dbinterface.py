@@ -497,7 +497,7 @@ class Database:
 	def getProjects(self):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT ProjectId,Name FROM Projects")
+		c.execute("SELECT ProjectId,Name,Active FROM Projects")
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -744,6 +744,38 @@ class Database:
 			c.execute("INSERT INTO Users (UserName,UserPassword,ProjectId,RoleId,Active) VALUES (?,?,?,?,?)",[kwargs['userName'],kwargs['pw'],projectId,roleId,1])
 			conn.commit()
 			return "success"
+		return "failed"
+		
+	def projectActive(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		if kwargs['projectStatus'] == "active":
+			c.execute("UPDATE Projects SET Active=? WHERE ProjectId=?",[1,kwargs['projectId']])
+		else:
+			c.execute("UPDATE Projects SET Active=? WHERE ProjectId=?",[0,kwargs['projectId']])
+		conn.commit()
+		return "OK"
+	
+	def deleteProject(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Projects WHERE ProjectId=?",[kwargs['projectId']])
+		conn.commit()
+		return
+	
+	def saveProject(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT ProjectId FROM Projects WHERE Name=?",[kwargs['projectName']])
+		result=c.fetchone()
+		conn.commit()
+		if result == None:
+			c.execute("INSERT INTO Projects (Name,Active) VALUES (?,?)",[kwargs['projectName'],1])
+			conn.commit()
+			c.execute("SELECT ProjectId FROM Projects WHERE Name=? AND Active=?",[kwargs['projectName'],1])
+			id=c.fetchone()
+			conn.commit()
+			return id[0]
 		return "failed"
 	
 DB = Database()

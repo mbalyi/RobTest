@@ -80,9 +80,9 @@
 {% if adminNav %}
 <div class="form-control" style="height:100%;">
     <ul class="nav nav-pills nav-stacked">
-        <li role="presentation"><a href="#" onclick="userSetup()">Manage Users</a></li>
+        <li role="presentation"><a href="#" onclick="requestAdminWNav()">Manage Users</a></li>
         <hr style="margin-top: 0px;margin-bottom: 0px;">
-        <li role="presentation"><a href="#">Manage Projects</a></li>
+        <li role="presentation"><a href="#" onclick="requestProManWNav()">Manage Projects</a></li>
         <hr style="margin-top: 0px;margin-bottom: 0px;">
         <li role="presentation"><a href="#">Manage Tasks</a></li>
         <hr style="margin-top: 0px;margin-bottom: 0px;">
@@ -98,5 +98,59 @@
 {% endif %}
 
 {% if userStatus == "inactive" %}
+<span class="slideIcon" style="background-color:#d9534f;"></span> Inactive
+{% endif %}
+
+{% if projectManagement %}
+	<div class="form-group">
+        <table>
+            <tr>
+                <td>
+                    <h3 style="margin-top: 10px;margin-right:10px;">Manage Projects</h3>
+                </td>
+                <td><a href="#" class="btn btn-default btn-xs" onclick="addProject()" style="margin-right:2px;">Add Project</a></td>
+                <td><a href="#" class="btn btn-default btn-xs" onclick="activateProject()" style="margin-right:2px;"><span class="slideIcon" style="background-color:#5cb85c;"></span> Activate</a></td>
+                <td><a href="#" class="btn btn-default btn-xs" onclick="deactivateProject()" style="margin-right:2px;"><span class="slideIcon" style="background-color:#d9534f;"></span>Deactivate</a></td>
+            </tr>
+        </table>
+		<table style="width:100%" class="admin_form table table-condensed">
+            <tr><th>#</th><th class="admin_table">Projects</th><th class="admin_table">Active</th><th class="admin_table">Delete</th></tr>
+            <tr class="newProjectForm" style="display: none;">
+                <th >#</th>
+                <th class="admin_table">Project: <input type='text' class="form-control" data-newproject='projectName' placeholder="Projectname" style='width:100%;height:25px;padding-bottom:1px;padding-top:1px;'></th>
+                <th class="admin_table" style='padding-top: 20px;'>
+                    <a href="#" class="projectErrorMessage" onclick="saveProject()" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-ok"></span></a>
+                </th>
+                <th></th>
+            </tr>
+			{% for elements in projectManagement %}
+					<tr data-row="editRow" id={{elements[0]}}>
+                        <td>#</td>
+                        <td class="admin_table"><a href="#" class="rowLink" id={{elements[0]}} onclick="selectRowProject()" style="color:#eee; text-decoration: none;">{{elements[1]}}</a></td>
+					{% if elements[2] == 1 %}
+						<td class="admin_table">
+                            <p class="projectStatus" data-dbid="{{elements[0]}}" style="color:#5cb85c;margin:0px;"><span class="slideIcon" style="background-color:#5cb85c;"></span> Active</p>
+                        </td>
+					{% else %}
+						<td class="admin_table">
+                            <p class="projectStatus" data-dbid="{{elements[0]}}" style="color:#d9534f;margin:0px;"><span class="slideIcon" style="background-color:#d9534f;"></span> Inactive</p>
+                        </td>
+					{% endif %}
+                        <td class="admin_table">
+                            <a href="#" class='projectDeletion' onclick="confirmProjectDeletion()" id={{elements[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
+                                <span class="glyphicon glyphicon-remove" id={{elements[0]}}></span>
+                            </a>
+                        </td>
+                    </tr>
+			{% endfor %}
+		</table>
+	</div>
+{% endif %}
+
+{% if projectStatus == "active" %}
+<span class="slideIcon" style="background-color:#5cb85c;"></span> Active
+{% endif %}
+
+{% if projectStatus == "inactive" %}
 <span class="slideIcon" style="background-color:#d9534f;"></span> Inactive
 {% endif %}

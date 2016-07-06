@@ -23,6 +23,16 @@ function requestAdmin(){
             $(".col-md-12-set").empty().append(data);
     });
 }
+function requestAdminWNav(){
+    $("#mainHeader").css('margin-bottom','0px');
+    $(".setup").css('padding-left','0px');
+    $.get("/getUsers",
+         function(data,status){
+            if(status){
+                $(".col-md-9").empty().append(data);
+            } 
+    });
+}
 
 function selectRow(){
     if(rowId == ""){
@@ -105,7 +115,7 @@ function saveUser(){
         $.post("/saveUser",sendData,function(data,status){
             if(status){
                 if(data == "success"){
-                    requestAdmin();
+                    requestAdminWNav();
                 }
                 else{
                     $(".userErrorMessage").tooltip({title: "Username still exists!"});
@@ -133,7 +143,7 @@ function deleteUser(){
     $.post("/deleteUser",sendData,function(data,status){
        if(status){
            $("#"+id+".userDeletion").popover('hide');
-           requestAdmin();
+           requestAdminWNav();
        } 
     });
 }

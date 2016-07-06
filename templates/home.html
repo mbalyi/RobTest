@@ -50,6 +50,7 @@
 	<script type="text/javascript" src="{{ url_for('static', filename='dashboard_template.js') }}"></script>
 	{% if user == "admin" %}
     <script type="text/javascript" src="{{ url_for('static', filename='admin.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='projectManaging.js') }}"></script>
     {% endif %}
 	<!-- Canvas -->
 	<script type="text/javascript" src="{{ url_for('static', filename='source/canvasjs.js') }}"></script>
@@ -123,7 +124,7 @@
 							<li><a class='header' id="users" href="#" onclick="userSetup()">Manage Users</a></li>
                             <li role="separator" class="divider"></li>
                             <li class="dropdown-header">Project Settings</li>
-                            <li><a class='header' id="settings" href="#">Manage Projects</a></li>
+                            <li><a class='header' id="settings" href="#" onclick="projectManagementSetup()">Manage Projects</a></li>
 							<li><a class='header' id="tasks" href="#">Manage Tasks</a></li>
                             <li role="separator" class="divider"></li>
 							<li><a class='header' id="database" href="#">Manage Database</a></li>

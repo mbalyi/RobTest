@@ -24,8 +24,8 @@ function caseForm(checker){
 }
 
 function add_step(){
-    var html="<div draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'><table style='width:100%'><tr><th><a href='#' class='step'>#</a><th>";
-    html+="<th><textarea name='action[]' class='action form-control' rows='1' overflow='auto' resize='none' onkeypress='reSizeTextarea(event)'>Action description</textarea></th><th>";
+    var html="<div draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'><table style='width:100%'><tr><th><a href='#' class='step'>#</a></th>";
+    html+="<th'><textarea name='action[]' class='action form-control' rows='1' overflow='auto' resize='none' onkeypress='reSizeTextarea(event)'>Action description</textarea></th><th >";
     html+="<textarea name='result[]' class='result form-control' rows='1' overflow='hidden' resize='none' onkeypress='reSizeTextarea(event)'>Result description</textarea></th></tr></table></div>";
 	return html;
 }

@@ -51,6 +51,7 @@
 	{% if user == "admin" %}
     <script type="text/javascript" src="{{ url_for('static', filename='admin.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='projectManaging.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='databaseManaging.js') }}"></script>
     {% endif %}
 	<!-- Canvas -->
 	<script type="text/javascript" src="{{ url_for('static', filename='source/canvasjs.js') }}"></script>
@@ -127,7 +128,7 @@
                             <li><a class='header' id="settings" href="#" onclick="projectManagementSetup()">Manage Projects</a></li>
 							<li><a class='header' id="tasks" href="#">Manage Tasks</a></li>
                             <li role="separator" class="divider"></li>
-							<li><a class='header' id="database" href="#">Manage Database</a></li>
+							<li><a class='header' id="database" href="#" onclick="databaseManagementSetup()">Manage Database</a></li>
                             <li><a class='header' id="export/import" href="#">Export/Import</a></li>
 							{% endif %}
 						</ul>
@@ -187,7 +188,7 @@
 					
 				</div>
             </div>
-            <div class="col-md-9" id="col-md-9" style='color: #eee;' ><!---overflow-y:scroll;-->
+            <div class="col-md-9" id="col-md-9" style='color: #eee; overflow-y:auto;' ><!---overflow-y:scroll;-->
 				<div class='new_form'>
 				</div>
             </div>

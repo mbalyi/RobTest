@@ -42,7 +42,7 @@ def design():
 #-----case page-----
 @app.route('/case_page', methods=['GET'])
 def case_page():
-	query = DB.get_case(projectId = projectSession())
+	query = DB.get_case(projectId = projectSession(),active=1, update=0)
 	count = len(query)
 	return render_template('case.html', cases=query, count=count)
 	#return json.dumps(query)
@@ -92,7 +92,10 @@ def get_step(ID,mode):
 @app.route('/deleteCasePhysical/<int:ID>', methods=['GET'])
 def deleteCasePhysical(ID):
 	DB.deleteCase(id=ID, projectId=projectSession())
-	return "ok"
+	cases = DB.get_case(projectId = projectSession(),active=1,update=1)
+	cases += DB.get_case(projectId = projectSession(),active=0,update=0)
+	return render_template('admin.html', newCaseRequest="true", caseData=cases)
+	
 #---Logikai törlés
 @app.route('/deleteCase/<int:ID>', methods=['GET'])
 def deleteCase(ID):
@@ -119,7 +122,7 @@ def updateCase(ID):
 #-----object page-----	
 @app.route('/object_page', methods=['GET'])
 def object_page():
-	query = DB.get_object(projectId=projectSession())
+	query = DB.get_object(projectId=projectSession(),active=1)
 	return render_template("object.html", object=query)
 
 @app.route('/objectForm/<int:projectId>', methods=['GET'])
@@ -162,7 +165,8 @@ def updateObject():
 @app.route('/deleteObjectPhysical/<int:ID>', methods=['GET'])
 def deleteObjectPhysical(ID):
 	DB.deleteObject(id=ID,projectId=projectSession())
-	return "ok"
+	query = DB.get_object(projectId=projectSession(),active=0)
+	return render_template('admin.html', newObjectRequest="true", objectData=query)
 
 #--- Logikai törlés
 @app.route('/deleteObject/<int:ID>', methods=['GET'])
@@ -173,7 +177,7 @@ def deleteObject(ID):
 #-----set page-----	
 @app.route('/set_page', methods=['GET'])
 def set_page():
-	query = DB.get_set(projectId=projectSession())
+	query = DB.get_set(projectId=projectSession(),active=1,update=0)
 	return render_template('set.html', set=query)
 
 @app.route('/setForm', methods=['GET'])
@@ -230,13 +234,16 @@ def load_set(ID,mode):
 @app.route('/deleteSetPhysical/<int:ID>', methods=['GET'])
 def deleteSetPhysical(ID):
 	DB.deleteSet(id=ID)
-	return "ok"
+	sets = DB.get_set(projectId=projectSession(),active=0,update=0)
+	sets += DB.get_set(projectId=projectSession(),active=1,update=1)
+	return render_template('admin.html',newSetRequest="true",setData=sets)
 
 #--- Logikai törlés	
 @app.route('/deleteSet/<int:ID>', methods=['GET'])
 def deleteSet(ID):
 	DB.deleteSetLogical(id=ID)
-	return "ok"
+	return "OK"
+	
 	
 #-----execution-----	
 @app.route('/execution_page', methods=['GET'])
@@ -246,7 +253,7 @@ def execution_page():
 
 @app.route('/newExe', methods=['GET'])
 def newExecution():
-	query=DB.get_object(projectId=projectSession())
+	query=DB.get_object(projectId=projectSession(),active=1)
 	areas=DB.getAreas(projectId=projectSession())
 	return render_template('execution.html', newExe=query,areas=areas,count=len(areas))	
 
@@ -267,7 +274,7 @@ def loadExecution(ID,mode):
 	query=DB.getExeParameters(id=ID)
 	object=DB.getExeObject(id=ID)
 	cases=DB.getExeCases(id=ID)
-	objects=DB.get_object(projectId=projectSession(), notRes=object[0])
+	objects=DB.get_object(projectId=projectSession(), notRes=object[0],active=1)
 	areaInExe = DB.getExeArea(exeId=ID)
 	areas = DB.getAreas(projectId=projectSession())
 	temp=[]
@@ -650,6 +657,22 @@ def deleteProject():
 @app.route('/saveProject', methods=['POST'])	
 def saveProject():
 	return str(DB.saveProject(projectName=request.form['projectName']))
+
+@app.route('/getDatabaseManagement', methods=['GET'])	
+def getDatabaseManagement():
+	cases = DB.get_case(projectId = projectSession(),active=1,update=1)
+	cases += DB.get_case(projectId = projectSession(),active=0,update=0)
+	sets = DB.get_set(projectId=projectSession(),active=0,update=0)
+	sets += DB.get_set(projectId=projectSession(),active=1,update=1)
+	executions = DB.getExecution(projectId=projectSession())
+	objects = DB.get_object(projectId=projectSession(),active=0)
+	temp = [cases,sets,executions,objects]
+	print(cases)
+	print(sets)
+	print(executions)
+	print(objects)
+	print(temp)
+	return render_template('admin.html', databaseManagement=temp)
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

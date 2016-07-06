@@ -6,7 +6,9 @@ function projectManagementSetup(){
     $(".col-md-12-set").empty();
     $(".col-md-12-case").empty();
     $(".col-md-12-execution").empty();
+    $(".col-md-12-object").empty();
     $(".setup").show();
+    $(".col-md-9").empty().append(DivForm);
     requestProjectManaging();
 }
 
@@ -15,7 +17,7 @@ function requestProjectManaging(){
     $(".setup").css('padding-left','0px');
     $.get("/getProjectManagement",function(data,status){
         if(status){
-            $(".col-md-9").empty().append(data);
+            $(".divContainer").empty().append(data);
         }
     });
     $.get("/getAdminNav",

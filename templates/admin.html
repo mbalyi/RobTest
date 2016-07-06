@@ -86,7 +86,7 @@
         <hr style="margin-top: 0px;margin-bottom: 0px;">
         <li role="presentation"><a href="#">Manage Tasks</a></li>
         <hr style="margin-top: 0px;margin-bottom: 0px;">
-        <li role="presentation"><a href="#">Manage Database</a></li>
+        <li role="presentation"><a href="#" onclick="requestDatManWNav()">Manage Database</a></li>
         <hr style="margin-top: 0px;margin-bottom: 0px;">
         <li role="presentation"><a href="#">Export/Import</a></li>
     </ul>
@@ -153,4 +153,183 @@
 
 {% if projectStatus == "inactive" %}
 <span class="slideIcon" style="background-color:#d9534f;"></span> Inactive
+{% endif %}
+
+{% if databaseManagement %}
+	<div class="form-group">
+        <table>
+            <tr>
+                <td>
+                    <h3 style="margin-top: 10px;margin-right:10px;">Manage Database</h3>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        <div class="objectManage col-md-6">
+            <h3>Objects</h3>
+            <table class="admin_form table table-condensed">
+                <tr>
+                    <th>#</th>
+                    <th class="admin_table">Name</th>
+                    <th class="admin_table">Status</th>
+                    <th class="admin_table">Delete</th>
+                </tr>
+                {% for k in  databaseManagement[3] %}
+                <tr>
+                    <td>{{k[0]}}</td>
+                    <td class="admin_table">{{k[1]}}</td>
+                    <td class="admin_table">Inactive</td>
+                    <td class="admin_table">
+                        <a href="#" class="objectDeletion" onclick="confirmObjectDeletion()" id={{k[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
+                            <span class="glyphicon glyphicon-remove" id={{k[0]}}></span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="executionManage col-md-6">
+            <h3>Executions</h3>
+            <table class="admin_form table table-condensed">
+                <tr>
+                    <th>#</th>
+                    <th class="admin_table">Name</th>
+                    <th class="admin_table">Status</th>
+                    <th class="admin_table">Delete</th>
+                </tr>
+                {% for k in  databaseManagement[2] %}
+                <tr>
+                    <td>{{k[0]}}</td>
+                    <td class="admin_table">{{k[1]}}</td>
+                    <td class="admin_table">Still live!</td>
+                    <td class="admin_table">
+                        <a href="#" class="exeDeletion" onclick="confirmExeDeletion()" id={{k[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
+                            <span class="glyphicon glyphicon-remove" id={{k[0]}}></span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="setManage col-md-6">
+            <h3>Sets</h3>
+            <table class="admin_form table table-condensed">
+                <tr>
+                    <th>#</th>
+                    <th class="admin_table">Name</th>
+                    <th class="admin_table">Status</th>
+                    <th class="admin_table">Delete</th>
+                </tr>
+                {% for k in  databaseManagement[1] %}
+                <tr>
+                    <td>{{k[0]}}</td>
+                    <td class="admin_table">{{k[1]}}</td>
+                    <td class="admin_table">?</td>
+                    <td class="admin_table">
+                        <a href="#" class="setDeletion" onclick="confirmSetDeletion()" id={{k[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
+                            <span class="glyphicon glyphicon-remove" id={{k[0]}}></span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="caseManage col-md-6">
+            <h3>Cases</h3>
+            <table class="admin_form table table-condensed">
+                <tr>
+                    <th>#</th>
+                    <th class="admin_table">Name</th>
+                    <th class="admin_table">Status</th>
+                    <th class="admin_table">Delete</th>
+                </tr>
+                {% for k in  databaseManagement[0] %}
+                <tr>
+                    <td>{{k[0]}}</td>
+                    <td class="admin_table">{{k[1]}}</td>
+                    <td class="admin_table">?</td>
+                    <td class="admin_table">
+                        <a href="#" class="caseDeletion" onclick="confirmCaseDeletion()" id={{k[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
+                            <span class="glyphicon glyphicon-remove" id={{k[0]}}></span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+	</div>
+{% endif %}
+
+{% if newObjectRequest %}
+<h3>Objects</h3>
+<table class="admin_form table table-condensed">
+    <tr>
+        <th>#</th>
+        <th class="admin_table">Name</th>
+        <th class="admin_table">Status</th>
+        <th class="admin_table">Delete</th>
+    </tr>
+    {% for k in  objectData %}
+    <tr>
+        <td>{{k[0]}}</td>
+        <td class="admin_table">{{k[1]}}</td>
+        <td class="admin_table">Inactive</td>
+        <td class="admin_table">
+            <a href="#" class="objectDeletion" onclick="confirmObjectDeletion()" id={{k[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
+                <span class="glyphicon glyphicon-remove" id={{k[0]}}></span>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% if newSetRequest %}
+<h3>Sets</h3>
+<table class="admin_form table table-condensed">
+    <tr>
+        <th>#</th>
+        <th class="admin_table">Name</th>
+        <th class="admin_table">Status</th>
+        <th class="admin_table">Delete</th>
+    </tr>
+    {% for k in  setData %}
+    <tr>
+        <td>{{k[0]}}</td>
+        <td class="admin_table">{{k[1]}}</td>
+        <td class="admin_table">Inactive</td>
+        <td class="admin_table">
+            <a href="#" class="setDeletion" onclick="confirmSetDeletion()" id={{k[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
+                <span class="glyphicon glyphicon-remove" id={{k[0]}}></span>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% if newCaseRequest %}
+<h3>Sets</h3>
+<table class="admin_form table table-condensed">
+    <tr>
+        <th>#</th>
+        <th class="admin_table">Name</th>
+        <th class="admin_table">Status</th>
+        <th class="admin_table">Delete</th>
+    </tr>
+    {% for k in  caseData %}
+    <tr>
+        <td>{{k[0]}}</td>
+        <td class="admin_table">{{k[1]}}</td>
+        <td class="admin_table">Inactive</td>
+        <td class="admin_table">
+            <a href="#" class="caseDeletion" onclick="confirmCaseDeletion()" id={{k[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
+                <span class="glyphicon glyphicon-remove" id={{k[0]}}></span>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 {% endif %}

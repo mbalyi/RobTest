@@ -4,9 +4,7 @@ class Database:
 	def login_querry(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		print(kwargs['title'])
-		print(kwargs['pw'])
-		c.execute("SELECT COUNT(*) FROM Users WHERE UserName=? AND UserPassword=?",[kwargs['title'],kwargs['pw']])
+		c.execute("SELECT COUNT(*) FROM Users WHERE UserName=? AND UserPassword=? AND Active=?",[kwargs['title'],kwargs['pw'],1])
 		result=c.fetchone()
 		conn.commit()
 		return result[0]
@@ -22,7 +20,7 @@ class Database:
 	def get_case(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT CaseId,Title FROM Cases WHERE ProjectId=? AND Active=1 AND CaseUpdated=0",[kwargs['projectId']])
+		c.execute("SELECT CaseId,Title FROM Cases WHERE ProjectId=? AND Active=? AND CaseUpdated=?",[kwargs['projectId'],kwargs['active'],kwargs['update']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -151,7 +149,7 @@ class Database:
 	def get_object(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT ObjectId,ObjectName FROM Objects WHERE ProjectId=? AND Active=?",[kwargs['projectId'],1])
+		c.execute("SELECT ObjectId,ObjectName FROM Objects WHERE ProjectId=? AND Active=?",[kwargs['projectId'],kwargs['active']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -219,7 +217,7 @@ class Database:
 	def get_set(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT SetId,SetName FROM Sets WHERE ProjectId=? AND Active=? AND SetUpdated=?",[kwargs['projectId'],1,0])
+		c.execute("SELECT SetId,SetName FROM Sets WHERE ProjectId=? AND Active=? AND SetUpdated=?",[kwargs['projectId'],kwargs['active'],kwargs['update']])
 		result=c.fetchall()
 		conn.commit()
 		return result

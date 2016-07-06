@@ -5,24 +5,39 @@
                 <td>
                     <h3 style="margin-top: 10px;margin-right:10px;">Manage Users</h3>
                 </td>
-                <td><a href="" style="margin-right:2px;">Add User</a></td>
-                <td><a href="" style="margin-right:2px;">Activate</a></td>
-                <td><a href="" style="margin-right:2px;">Deactivate</a></td>
+                <td><a href="#" class="btn btn-default btn-xs" onclick="addUser()" style="margin-right:2px;">Add User</a></td>
+                <td><a href="#" class="btn btn-default btn-xs" onclick="activateUser()" style="margin-right:2px;"><span class="slideIcon" style="background-color:#5cb85c;"></span> Activate</a></td>
+                <td><a href="#" class="btn btn-default btn-xs" onclick="deactivateUser()" style="margin-right:2px;"><span class="slideIcon" style="background-color:#d9534f;"></span>Deactivate</a></td>
             </tr>
         </table>
 		<table style="width:100%" class="admin_form table table-condensed">
             <tr><th>#</th><th class="admin_table">Username</th><th class="admin_table">Active</th><th class="admin_table">Role</th><th class="admin_table">Delete</th></tr>
+            <tr class="newUserForm" style="display: none;">
+                <th >#</th>
+                <th class="admin_table">Username: <input type='text' class="form-control" data-newuser='userName' placeholder="Username" style='width:100%;height:25px;padding-bottom:1px;padding-top:1px;'></th>
+                <th class="admin_table">Password: <input type="password" class="form-control" data-newuser='userPassword' placeholder="Password" style='width:100%;height:25px;padding-bottom:1px;padding-top:1px;'></th>
+                <th class="admin_table">Role: 
+                    <select class='newRoleSelector form-control' style='width:100%;height:25px;padding-bottom:1px;padding-top:1px;'>
+                    {% for k in roles %}
+                        <option data-roleid='{{k[0]}}'>{{k[1]}}</option>
+                    {% endfor %}
+                     </select>
+                </th>
+                <th class="admin_table" style='padding-top: 20px;'>
+                    <a href="#" class="userErrorMessage" onclick="saveUser()" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-ok"></span></a>
+                </th>
+            </tr>
 			{% for elements in admin %}
 					<tr data-row="editRow" id={{elements[0]}}>
                         <td><a href="#" id={{elements[0]}} class="glyphicon glyphicon-edit" onclick="$('#'+event.target.id+'.slideMoving').slideToggle()" style="padding-left:3px;"></a></td>
                         <td class="admin_table"><a href="#" class="rowLink" id={{elements[0]}} onclick="selectRow()" style="color:#eee; text-decoration: none;">{{elements[1]}}</a></td>
 					{% if elements[2] == 1 %}
 						<td class="admin_table">
-                            <p style="color:#5cb85c;margin:0px;"><span class="slideIcon" style="background-color:#5cb85c;"></span> Active</p>
+                            <p class="userStatus" data-dbid="{{elements[0]}}" style="color:#5cb85c;margin:0px;"><span class="slideIcon" style="background-color:#5cb85c;"></span> Active</p>
                         </td>
 					{% else %}
 						<td class="admin_table">
-                            <p style="color:#d9534f;margin:0px;"><span class="slideIcon" style="background-color:#d9534f;"></span> Inactive</p>
+                            <p class="userStatus" data-dbid="{{elements[0]}}" style="color:#d9534f;margin:0px;"><span class="slideIcon" style="background-color:#d9534f;"></span> Inactive</p>
                         </td>
 					{% endif %}
                         <td class="admin_table">
@@ -37,8 +52,8 @@
 			                 </select>
                         </td>
                         <td class="admin_table">
-                            <a href="#" onclick="comfirmPop()" id={{elements[0]}} style="color:#d9534f; text-decoration: none;">
-                                <span class="glyphicon glyphicon-remove"></span>
+                            <a href="#" class='userDeletion' onclick="confirmUserDeletion()" id={{elements[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
+                                <span class="glyphicon glyphicon-remove" id={{elements[0]}}></span>
                             </a>
                         </td>
                     </tr>
@@ -76,4 +91,12 @@
         <li role="presentation"><a href="#">Export/Import</a></li>
     </ul>
 </div>
+{% endif %}
+
+{% if userStatus == "active" %}
+<span class="slideIcon" style="background-color:#5cb85c;"></span> Active
+{% endif %}
+
+{% if userStatus == "inactive" %}
+<span class="slideIcon" style="background-color:#d9534f;"></span> Inactive
 {% endif %}

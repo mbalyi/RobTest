@@ -714,5 +714,35 @@ class Database:
 		c.execute("UPDATE Users SET RoleId=? WHERE UserId=?",[kwargs['roleId'],kwargs['userId']])
 		conn.commit()
 		return "OK"
-		
+	
+	def userActive(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		if kwargs['userStatus'] == "active":
+			c.execute("UPDATE Users SET Active=? WHERE UserId=?",[1,kwargs['userId']])
+		else:
+			c.execute("UPDATE Users SET Active=? WHERE UserId=?",[0,kwargs['userId']])
+		conn.commit()
+		return "OK"
+	
+	def deleteUser(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Users WHERE UserId=?",[kwargs['userId']])
+		conn.commit()
+		return
+	
+	def saveUser(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT UserId FROM Users WHERE UserName=?",[kwargs['userName']])
+		result=c.fetchone()
+		conn.commit()
+		if result == None:
+			projectId=int(kwargs['projectId'])
+			roleId=int(kwargs['roleId'])
+			c.execute("INSERT INTO Users (UserName,UserPassword,ProjectId,RoleId,Active) VALUES (?,?,?,?,?)",[kwargs['userName'],kwargs['pw'],projectId,roleId,1])
+			conn.commit()
+		return
+	
 DB = Database()

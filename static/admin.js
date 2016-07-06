@@ -25,11 +25,49 @@ function requestAdmin(){
 }
 
 function selectRow(){
-    $("[data-row='editRow']#"+rowId).removeAttr('class');
-    $("#"+rowId+".rowLink").css("color","#eee");
-    $("[data-row='editRow']#"+$(event.target).attr('id')).attr('class','info');
-    $(event.target).css("color","black");
-    rowId=$(event.target).attr('id');
+    if(rowId == ""){
+        rowId=$(event.target).attr('id');
+        $("[data-row='editRow']#"+$(event.target).attr('id')).attr('class','info');
+        $(event.target).css("color","black");
+    }
+    else{
+        if(rowId != $(event.target).attr('id')){
+            $("[data-row='editRow']#"+rowId).removeAttr('class');
+            $("#"+rowId+".rowLink").css("color","#eee");
+            $("[data-row='editRow']#"+$(event.target).attr('id')).attr('class','info');
+            $(event.target).css("color","black");
+            rowId=$(event.target).attr('id');
+        }
+        else{
+            $("[data-row='editRow']#"+rowId).removeAttr('class');
+            $("#"+rowId+".rowLink").css("color","#eee");
+            rowId="";
+        }
+    }
+}
+
+function activateUser(){
+    if(rowId != ""){
+        var sendData="userId="+rowId+"&status=active";
+        $.post("/userActive",sendData,function(data,status){
+            if(status){
+                $(".userStatus[data-dbid="+rowId+"]").empty().append(data);
+                $(".userStatus[data-dbid="+rowId+"]").css("color","#5cb85c");
+            }
+        });
+    }
+}
+
+function deactivateUser(){
+    if(rowId != ""){
+        var sendData="userId="+rowId+"&status=inactive";
+        $.post("/userActive",sendData,function(data,status){
+            if(status){
+                $(".userStatus[data-dbid="+rowId+"]").empty().append(data);
+                $(".userStatus[data-dbid="+rowId+"]").css("color","#d9534f");
+            }
+        });
+    }
 }
 
 function saveNewPw(){
@@ -51,39 +89,42 @@ function saveNewPw(){
 }
 
 function saveUser(){
-	$.post("/saveUser",$("input").serialize(),
-		function(data,status){
-			if(status){
-				requestAdmin(
-					{ active:true, filter:"" },
-					function(res){
-						//window.location.reload();
-						$(".col-md-9").empty().append(res);
-						$(".col-md-9").append(insertUser)
-						addAdminButtons();
-					}
-				);
-			}
-		}
-	)
+	if($("input[type='text'][data-newuser='userName']").val()=="" || $("input[type='password'][data-newuser='userPassword']").val()==""){
+        $(".userErrorMessage").tooltip({title: "Missing value!"});
+        $(".userErrorMessage").tooltip('show');
+    }
+    else{
+        $(".userErrorMessage").tooltip('hide');
+        var sendData="userName="+$("input[type='text'][data-newuser='userName']").val()+"&password="+$("input[type='password'][data-newuser='userPassword']").val()+"&roleId=";
+        sendData=sendData+$(".newRoleSelector").find(':selected').attr('data-roleid')+"&projectId="+$(".projectSelector").find(':selected').attr('data-dbid');
+        $.post("/saveUser",sendData,function(data,status){
+            if(status){
+                requestAdmin();
+            }
+        });
+    }
 }
 
+function addUser(){
+    $(".newUserForm").slideToggle();
+}
+
+function confirmUserDeletion(){
+    id=event.target.id;
+	$("#"+id+".userDeletion").popover({content: "<p style='color:black;'>Are you sure to delete this user?</p><button type='button' class='btn btn-danger btn-xs' data-dbid='"+id+"' onclick='deleteUser()' style='width:50%;'>Delete</button><button type='button' class='btn btn-default btn-xs' onclick='cancelUser("+id+")' style='width:50%;'>Cancel</button>",html:true});
+    $("#"+id+".userDeletion").popover('show');
+}
+function cancelUser(id){
+    $("#"+id+".userDeletion").popover('hide');
+}
 function deleteUser(){
-	$.post("/deleteUser", $("input").serialize(),
-		function(data,status){
-			if(status){
-				requestAdmin(
-					{ active:true, filter:"" },
-					function(res){
-						//window.location.reload();
-						$(".col-md-9").empty().append(res);
-						$(".col-md-9").append(insertUser)
-						addAdminButtons();
-					}
-				);
-			}
-		}
-	)
+    var sendData="userId="+$(event.target).attr('data-dbid');
+    $.post("/deleteUser",sendData,function(data,status){
+       if(status){
+           $("#"+id+".userDeletion").popover('hide');
+           requestAdmin();
+       } 
+    });
 }
 
 function roleChange(){
@@ -98,27 +139,8 @@ function roleChange(){
 	);
 }
 
+
 $(function(){
-    if( event.target.id == "new_user"){
-			$(".newUserInsert").append(newUser+iterator+newUser2+iterator+newUser3);
-			$(".insert_save_button").empty().append(SaveUserEn);
-			$(".insert_delete_button").empty().append(delUserbtnDis);
-			iterator=iterator+1;
-		}
-		if( event.target.id == "save_user"){
-			saveUser();
-			iterator=0;
-		}
-		if( event.target.id == "cancel_user"){
-			$(".newUserInsert").empty();
-			$(".insert_save_button").empty().append(SaveDis);
-			$(".insert_delete_button").empty().append(delUserbtnEn);
-			$(".slideMoving").slideUp();
-			iterator=0;
-		}
-		if( event.target.id == "delete_user"){
-			deleteUser();
-		}
         if($(event.target).attr('name')=="edit"){
 			ID=event.target.id;
 			$("#"+ID+".slideMoving").slideToggle();

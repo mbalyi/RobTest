@@ -326,16 +326,7 @@ def save_edited_record(id):
 	Report.save_edited_record(ID=id,title=request.form["title"],user=request.form["user"],date=request.form["date"],report=request.form["desc"])
 	query = Report.getRecords()
 	return render_template('dashboard.html', dashboard=query, user=session['username'])
-		
-@app.route('/saveUser', methods=['POST'])	
-def saveUser():
-	Report.saveNewUser(name=request.form.getlist('user_name[]'),password=request.form.getlist('user_password[]'),active=request.form.getlist('user_active[]'),bann=request.form.getlist('user_bann[]'))
-	return "OK"
-
-@app.route('/deleteUser', methods=['POST'])	
-def deleteUser():
-	Report.deleteUser(ID=request.form.getlist('delete[]'))
-	return "OK"
+	
 	
 @app.route('/loadSearchForm', methods=['GET'])
 def loadSearchForm():
@@ -626,7 +617,21 @@ def savePassword():
 @app.route('/updateUserRole', methods=['POST'])
 def updateUserRole():
 	return DB.updateUserRole(userId=request.form['userId'],roleId=request.form['roleId'])
+	
+@app.route('/userActive', methods=['POST'])
+def userActive():
+	DB.userActive(userId=request.form['userId'],userStatus=request.form['status'])
+	return render_template('admin.html', userStatus=request.form['status'])
 
+@app.route('/saveUser', methods=['POST'])	
+def saveUser():
+	DB.saveUser(userName=request.form['userName'],pw=request.form['password'],roleId=request.form['roleId'],projectId=request.form['projectId'])
+	return "OK"
+
+@app.route('/deleteUser', methods=['POST'])	
+def deleteUser():
+	DB.deleteUser(userId=request.form['userId'])
+	return "OK"
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

@@ -153,9 +153,9 @@ function caseSearch(){
 }
 
 function reSizeTextarea(ev){
-    if ($(ev.target)[0].offsetHeight < $(ev.target)[0].scrollHeight+2){
+    if ($(ev.target)[0].offsetHeight <= $(ev.target)[0].scrollHeight+2){
         var number=parseInt($(ev.target).attr('rows'))
-        number=number+2;
+        number=number+1;
         return $(ev.target).attr('rows',number);
     }
 }

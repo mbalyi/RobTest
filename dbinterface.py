@@ -335,7 +335,7 @@ class Database:
 	def getExecution(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT ExecutionId,ExeName FROM Execution WHERE ProjectId=?",[kwargs['projectId']])
+		c.execute("SELECT ExecutionId,ExeName FROM Execution WHERE ProjectId=? ORDER BY ExecutionId DESC",[kwargs['projectId']])
 		result=c.fetchall()
 		conn.commit()
 		return result

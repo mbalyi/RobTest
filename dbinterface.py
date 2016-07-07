@@ -149,7 +149,7 @@ class Database:
 	def get_object(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT ObjectId,ObjectName FROM Objects WHERE ProjectId=? AND Active=?",[kwargs['projectId'],kwargs['active']])
+		c.execute("SELECT ObjectId,ObjectName FROM Objects WHERE ProjectId=? AND Active=? ORDER BY ObjectId DESC",[kwargs['projectId'],kwargs['active']])
 		result=c.fetchall()
 		conn.commit()
 		return result

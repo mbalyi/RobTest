@@ -53,11 +53,11 @@
                     <tr>
                 {% endif %}
                         <td><input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>{{k[1]}}</td>
-                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                {% if (loop.index%6 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
                 {% endif %}
-                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                {% if (loop.index%6 == 0) and (loop.index==count) %}
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -154,11 +154,11 @@
                             <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
                             {% endif %}
                         </td>
-                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                {% if (loop.index%6 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
                 {% endif %}
-                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                {% if (loop.index%6 == 0) and (loop.index==count) %}
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -199,11 +199,11 @@
                             <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
                             {% endif %}
                         </td>
-                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                {% if (loop.index%6 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
                 {% endif %}
-                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                {% if (loop.index%6 == 0) and (loop.index==count) %}
                     </tr>
                 {% endif %}
             {% endfor %}

@@ -1,0 +1,2 @@
+="INSERT INTO Steps (StepId,Action,Result,ProjectId) VALUES ("&A20&",'"&SUBSTITUTE(B20;"'";"''")&"','"&SUBSTITUTE(C20;"'";"''")&"',"&G20&")"
+"INSERT INTO Steps (StepId,Action,Result,ProjectId) VALUES ("&A2&",'"&SUBSTITUTE(SUBSTITUTE(B2;"'";"''");CHAR(10);"\n")&"','"&SUBSTITUTE(SUBSTITUTE(C2;"'";"''");CHAR(10);"\n")&"',"&G20&");"

@@ -583,7 +583,6 @@ def jenkinsRadiator():
 			sorting.insert(0,('default','default',('default','default')))
 			temp = []
 			iterator+=1
-	print(sorting)
 	if len(sorting) == 1 and sorting[0][0] != "default":
 		passed=sorting[0][4][0]
 		skipped=sorting[0][4][1]

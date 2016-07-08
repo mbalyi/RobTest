@@ -14,7 +14,7 @@
         </tr>
     </table>
 </div>
-<div class='setList' style="width:100%; overflow-y: auto;">
+<div class='setList' style="width:100%;height:100%; overflow-y: auto;">
 	{% for k in set %}
 		<div data-dbid='set{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
 			<a href='#' data-dbid='{{k[0]}}' class='set' id='{{k[0]}}'>{{k[1]}}</a>

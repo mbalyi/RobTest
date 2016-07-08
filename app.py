@@ -383,9 +383,11 @@ def projectSession():
 @app.route('/requestChart/<type>/<int:projectId>', methods=['GET'])
 def requestChart(type,projectId):
 	if type=="line":
+		return
 		return chartReload(type,"All",0,0,"All")
 	else:
 		query = DB.getDataForCharts(projectId=projectId)
+		print(query)
 		passed=0
 		failed=0
 		skipped=0
@@ -402,6 +404,7 @@ def requestChart(type,projectId):
 				notimp+=1
 			all+=1
 		rate=[passed,failed,skipped,notimp,all]
+		print(rate)
 		return render_template('test2.html',type=type,rate=rate).replace('\n','')
 	
 @app.route('/chartFilter/<type>/<int:projectId>', methods=['GET'])
@@ -487,6 +490,7 @@ def chartReload(type,interval,obId,areaId,status):
 	
 @app.route('/jenkinsRadiator', methods=['GET'])
 def jenkinsRadiator():
+	return "ok"
 	query = DB.getJenkinsData(projectId=projectSession())
 	cases = DB.getJenkinsCaseResult(data=query,projectId=projectSession())
 	default = [cases[0]]

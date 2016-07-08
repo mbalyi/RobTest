@@ -573,7 +573,7 @@ class Database:
 	def getDataForCharts(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT CE.ExecutionId,CE.CaseId,CE.Result,CE.title,EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE EX.ProjectId=? ORDER BY CE.ExecutionId DESC limit 15",[kwargs['projectId']])
+		c.execute("SELECT CE.ExecutionId,CE.CaseId,CE.Result,CE.title,EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE EX.ProjectId=? ORDER BY OB.ObjectId DESC limit 500",[kwargs['projectId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -622,7 +622,7 @@ class Database:
 				kwargs['status']="NOT NULL"
 			query+=" AO.AreaId="
 			query+=str(kwargs['areaId'])
-			query+=" ORDER BY CE.Id DESC limit 15"
+			query+=" ORDER BY OB.ObjectId DESC limit 500"
 		c.execute(query)
 		result=c.fetchall()
 		conn.commit()

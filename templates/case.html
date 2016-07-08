@@ -14,7 +14,7 @@
         </tr>
     </table>
 </div>
-<div class='caseList' style="width:100%;overflow-y: auto;">
+<div class='caseList' style="width:100%;height:100%;overflow-y: auto;">
 	{% for k in cases%}
 		<div class='elementOfCaseList' data-dbid='case{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
 			<a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='case'>{{k[1]}}</a>

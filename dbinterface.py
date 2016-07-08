@@ -558,7 +558,9 @@ class Database:
 	def getJenkinsData(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT OB.ObjectId,OB.ObjectName,OB.ObjectVersion,Exe.ExecutionId,Exe.ExeName FROM Exe_Object AS EO LEFT JOIN Execution AS Exe ON EO.ExecutionId=Exe.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND Exe.ProjectId=? ORDER BY OB.ObjectId DESC LIMIT 200",[kwargs['projectId'],kwargs['projectId']])
+		query="SELECT OB.ObjectId,OB.ObjectName,OB.ObjectVersion,Exe.ExecutionId,Exe.ExeName FROM Exe_Object AS EO LEFT JOIN Execution AS Exe ON EO.ExecutionId=Exe.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND Exe.ProjectId=? ORDER BY OB.ObjectId DESC LIMIT "
+		query+=str(kwargs['limit'])
+		c.execute(query,[kwargs['projectId'],kwargs['projectId']])
 		ExeObjectIds = c.fetchall()
 		conn.commit()
 		return ExeObjectIds
@@ -578,7 +580,9 @@ class Database:
 	def getDataForCharts(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT CE.ExecutionId,CE.CaseId,CE.Result,CE.title,EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE EX.ProjectId=? ORDER BY OB.ObjectId DESC limit 100",[kwargs['projectId']])
+		query="SELECT CE.ExecutionId,CE.CaseId,CE.Result,CE.title,EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE EX.ProjectId=? ORDER BY OB.ObjectId DESC LIMIT "
+		query+=str(kwargs['limit'])
+		c.execute(query,[kwargs['projectId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -628,7 +632,8 @@ class Database:
 				kwargs['status']="NOT NULL"
 			query+=" AO.AreaId="
 			query+=str(kwargs['areaId'])
-			query+=" ORDER BY OB.ObjectId DESC limit 1000"
+			query+=" ORDER BY OB.ObjectId DESC limit "
+			query+=str(kwargs['limit'])
 		c.execute(query)
 		result=c.fetchall()
 		conn.commit()

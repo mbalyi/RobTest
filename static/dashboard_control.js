@@ -37,10 +37,13 @@ $(function(){
     document.getElementById("col-md-9").style.width = '100%'
 	dashboardLoad();
 	chartFilterBar("pie",".chartFilter#pie");
-	addChart("pie","pieChart");
+	addChart("pie","pieChart","pie",100);
 	chartFilterBar("line",".chartFilter#line");
-	addChart("line","lineChart");
-	jenkinsRadiator(".jenkinsRad");
+	addChart("line","lineChart","line",1000);
+	jenkinsRadiator(".jenkinsRad",200);
+    addChart("pie","allPie","allPie",500);
+    addChart("line","allLine","allLine",200);
+    jenkinsRadiator(".allJenkinsRad",50);
 	dashboardButtonPanel();
 	$("body").on("click","a",function(event) {
 		if($(event.target).attr('class') == "dashboardPrev"){
@@ -50,8 +53,15 @@ $(function(){
 			$('#carousel-example-generic').carousel('next');
 		}
 	});
-    $('body').one('slid.bs.carousel','#carousel-example-generic', function (){
-        lineChart.render();
+    $('body').on('slid.bs.carousel','#carousel-example-generic', function (){
+        if($("#idPieChart").attr('class')=="item active")
+            pieChart.render();
+        if($("#idLineChart").attr('class')=="item active")
+            lineChart.render();
+        if($("#idAllChart").attr('class')=="item active"){
+            allPieChart.render();
+            allLineChart.render();
+        }
         //addChart("line","lineChart");
     });
 });

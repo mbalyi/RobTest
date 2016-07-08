@@ -379,12 +379,12 @@ def projectSession():
 	return DB.getSelectedProject(user=session['username'])
 	
 #-----Chart-----
-@app.route('/requestChart/<type>/<int:projectId>', methods=['GET'])
-def requestChart(type,projectId):
+@app.route('/requestChart/<type>/<int:projectId>/<int:limit>', methods=['GET'])
+def requestChart(type,projectId,limit):
 	if type=="line":
-		return chartReload(type,"All",0,0,"All")
+		return chartReload(type,"All",0,0,"All",limit)
 	else:
-		query = DB.getDataForCharts(projectId=projectId)
+		query = DB.getDataForCharts(projectId=projectId,limit=limit)
 		passed=0
 		failed=0
 		skipped=0
@@ -409,14 +409,14 @@ def chartFilter(type,projectId):
 	areas = DB.getAreas(projectId=projectId)
 	return render_template('chartFilter.html',type=type,data=query,areas=areas)
 
-@app.route('/chartReload/<type>/<interval>/<int:obId>/<int:areaId>/<status>', methods=['GET'])
-def chartReload(type,interval,obId,areaId,status):
+@app.route('/chartReload/<type>/<interval>/<int:obId>/<int:areaId>/<status>/<int:limit>', methods=['GET'])
+def chartReload(type,interval,obId,areaId,status,limit):
 	passed=0
 	failed=0
 	skipped=0
 	notimp=0
 	all=0
-	result = DB.getFilteredPar(interval=interval,objectId=obId,areaId=areaId,status=status)
+	result = DB.getFilteredPar(interval=interval,objectId=obId,areaId=areaId,status=status,limit=limit)
 	render=""
 	if result:
 		if type == "pie":
@@ -484,9 +484,9 @@ def chartReload(type,interval,obId,areaId,status):
 		else:
 			return render_template('test2.html',result="line")
 	
-@app.route('/jenkinsRadiator', methods=['GET'])
-def jenkinsRadiator():
-	query = DB.getJenkinsData(projectId=projectSession())
+@app.route('/jenkinsRadiator/<int:limit>', methods=['GET'])
+def jenkinsRadiator(limit):
+	query = DB.getJenkinsData(projectId=projectSession(),limit=limit)
 	cases = DB.getJenkinsCaseResult(data=query,projectId=projectSession())
 	default = [cases[0]]
 	temp = []

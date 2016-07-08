@@ -21,22 +21,22 @@ function getTooltipInfo(){
 	);
 }
 
-function addChart(type,direction){
-	$.get("/requestChart/"+type+"/"+$(".projectSelector").find(":selected").attr('data-dbid'),
+function addChart(type,direction,chart,limit){
+	$.get("/requestChart/"+type+"/"+$(".projectSelector").find(":selected").attr('data-dbid')+"/"+limit,
 		function(data,status){
 			if(status){
 				if(type == "line")
-					createLineChart(data,direction)
+					createLineChart(data,direction,chart)
 				if(type == "pie")
-					createPieChart(data,direction)
+					createPieChart(data,direction,chart)
 			};
 		},
 		"json"
 	);
 }
 
-function jenkinsRadiator(direction){
-	$.get("/jenkinsRadiator",
+function jenkinsRadiator(direction,limit){
+	$.get("/jenkinsRadiator/"+limit,
 		function(data,status){
 			if(status){
 				$(direction).prepend(data);
@@ -47,8 +47,11 @@ function jenkinsRadiator(direction){
 
 var lineChart;
 var pieChart;
-function createLineChart(template,direction){
-	lineChart = new CanvasJS.Chart(direction,
+var allPieChart;
+var allLineChart;
+
+function createLineChart(template,direction,chart){
+	Chart = new CanvasJS.Chart(direction,
 		{
 			theme: "theme3",
                         animationEnabled: true,
@@ -66,6 +69,7 @@ function createLineChart(template,direction){
 			data: [ ],
           legend:{
             cursor:"pointer",
+            itemWrap: false,
             itemclick: function(e){
               if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
               	e.dataSeries.visible = false;
@@ -73,16 +77,20 @@ function createLineChart(template,direction){
               else {
                 e.dataSeries.visible = true;
               }
-            	lineChart.render();
+            	Chart.render();
             }
           },
         });
-		lineChart.options.data=template;
-		lineChart.render();
+		Chart.options.data=template;
+		Chart.render();
+        if(chart=="line")
+            lineChart=Chart;
+        else
+            allLineChart=Chart;
 }
 
-function createPieChart(template,direction){
-	pieChart = new CanvasJS.Chart(direction,
+function createPieChart(template,direction,chart){
+	Chart = new CanvasJS.Chart(direction,
 		{
 			title:{
 				text: "All Results"
@@ -94,8 +102,13 @@ function createPieChart(template,direction){
 			},
 			data: [ ], 
         });
-		pieChart.options.data=template;
-		pieChart.render();
+		Chart.options.data=template;
+		Chart.render();
+        if(chart=="pie"){
+            pieChart=Chart;
+        }
+        else
+            allPieChart=Chart;
 }
 
 function pieReload(type){
@@ -128,8 +141,3 @@ function lineReload(type){
 		"json"
 	);
 }
-
-$(function(){
-	//chartFilterBar();
-	//addChart("pie","chartID");
-});

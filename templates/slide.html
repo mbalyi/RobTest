@@ -1,33 +1,35 @@
-<div id="carousel-example-generic" class="carousel slide">
+<div id="carousel-example-generic" class="carousel slide" style="height:100%;">
   <!-- Indicators -->
   <ol class="carousel-indicators">
     <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
     <li data-target="#carousel-example-generic" data-slide-to="1"></li>
     <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="3"></li>
   </ol>
 
   <!-- Wrapper for slides -->
-  <div class="carousel-inner" role="listbox" style="width:100%;">
-    <div class="item active" style="margo:auto;width:100%;overflow: hidden;">
+  <div class="carousel-inner" role="listbox" style="width:100%;height:100%;">
+    <div class="item active" id="idAllChart" style="margo:auto;width:100%;overflow: hidden;height:100%;">
+	  <div style="float:left;width:40%;height:100%;">
+          <div class="allPie" id="allPie" style="width:100%;height:50%;"></div>
+          <div class="allLine" id="allLine" style="width:100%;height:50%;"></div>
+      </div>
+      <div class='allJenkinsRad container' style='width:60%;padding-bottom:0px;overflow-y:auto;height:100%;'></div>
+    </div>
+    <div class="item" id="idPieChart" style="margo:auto;width:100%;overflow: hidden;height:100%;">
 	  <!--<img src="{{ url_for('static', filename='template.jpg') }}" alt="template">-->
-	  <div class="chartFilter" id="pie" style="width:30%;height:500px;float:left;"></div>
-	  <div class="pieChart" id="pieChart" style="width:70%;height:500px;"></div>
-      <div class="carousel-caption">
-        Pie chart for reprezentation.
-      </div>
+	  <div class="chartFilter" id="pie" style="width:30%;height:100%;float:left;"></div>
+	  <div class="pieChart" id="pieChart" style="width:70%;height:100%;"></div>
     </div>
-    <div class="item" style="margo:auto;width:100%;overflow: hidden;">
+    <div class="item" id="idLineChart" style="margo:auto;width:100%;overflow: hidden;height:100%;">
       <!--<img src="{{ url_for('static', filename='template.jpg') }}" alt="template">-->
-	  <div class="chartFilter" id="line" style="width:30%;height:500px;float:left;"></div>
-	  <div class="lineChart" id="lineChart" style="width:70%;height:500px;"></div>
-	  <div class="carousel-caption">
-        Line chart for reprezentation.
-      </div>
+	  <div class="chartFilter" id="line" style="width:30%;height:100%;float:left;"></div>
+	  <div class="lineChart" id="lineChart" style="width:70%;height:100%;"></div>
     </div>
-    <div class="item">
+    <div class="item" style="height:100%;">
       <!--<img src="{{ url_for('static', filename='template.jpg') }}" alt="template">-->
-	  <div class="jenkinsRadiator" id="jenkins" style="width:100%;height:500px;">
-          <div class='jenkinsRad container' style='width:100%;padding-bottom:0px;overflow-y:auto;'></div>
+	  <div class="jenkinsRadiator" id="jenkins" style="width:100%;height:100%;">
+          <div class='jenkinsRad container' style='width:100%;padding-bottom:0px;overflow-y:auto;height:100%;'></div>
       </div>
       <div class="carousel-caption">
         Jenkins Radiator diagram

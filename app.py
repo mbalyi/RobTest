@@ -524,6 +524,15 @@ def jenkinsRadiator():
 		rate.append(skipped)
 		rate.append(failed)
 		rate.append(all)
+		for l in temp[iterator]:
+			tupList=list(l)
+			tupList[3]=tupList[3].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+			l=tuple(tupList)
+		tupList=list(query[iterator])
+		tupList[1]=tupList[1].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+		tupList[2]=tupList[2].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+		tupList[4]=tupList[4].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+		query[iterator]=tuple(tupList)
 		if passed/all >= 0.8:
 			#rendered += render_template('jenkinsRadiator.html', mode='success', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
 			sorting.append(('success',temp[iterator],query[iterator],iterator,rate))

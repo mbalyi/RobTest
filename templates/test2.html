@@ -134,7 +134,7 @@
             ,
             {% endif %}
             {% if rate[3] > 0 %}
-			{  "y": "{{(rate[3]/rate[4]*100)|int}}, "legendText":"NOTIMP" , "indexLabel": "Not Implemented"}
+			{  "y": {{(rate[3]/rate[4]*100)|int}}, "legendText":"NOTIMP" , "indexLabel": "Not Implemented"}
             {% endif %}
 		]
 	}

@@ -71,7 +71,12 @@ class Database:
 		case_parameter = []
 		for k in result:
 			c.execute("SELECT * FROM Steps WHERE StepId=? AND ProjectId=?",[k[0],kwargs['projectId']])
-			case_parameter.append(c.fetchone())
+			tupleList=c.fetchone()
+			strList=list(tupleList)
+			strList[1]=strList[1].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+			strList[2]=strList[2].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+			tupleList=tuple(strList)
+			case_parameter.append(tupleList)
 			conn.commit()
 		return case_parameter
 	
@@ -553,7 +558,7 @@ class Database:
 	def getJenkinsData(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT OB.ObjectId,OB.ObjectName,OB.ObjectVersion,Exe.ExecutionId,Exe.ExeName FROM Exe_Object AS EO LEFT JOIN Execution AS Exe ON EO.ExecutionId=Exe.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND Exe.ProjectId=? ORDER BY OB.ObjectId DESC",[kwargs['projectId'],kwargs['projectId']])
+		c.execute("SELECT OB.ObjectId,OB.ObjectName,OB.ObjectVersion,Exe.ExecutionId,Exe.ExeName FROM Exe_Object AS EO LEFT JOIN Execution AS Exe ON EO.ExecutionId=Exe.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND Exe.ProjectId=? ORDER BY OB.ObjectId DESC LIMIT 200",[kwargs['projectId'],kwargs['projectId']])
 		ExeObjectIds = c.fetchall()
 		conn.commit()
 		return ExeObjectIds

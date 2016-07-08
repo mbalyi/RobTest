@@ -50,7 +50,6 @@ def case_page():
 @app.route('/caseForm/<int:projectId>', methods=['GET'])
 def caseForm(projectId):
 	query = DB.getAreas(projectId=projectId)
-	print(query)
 	return render_template('case.html', caseForm=query,count=len(query))
 	
 @app.route('/save_case', methods=['POST'])
@@ -402,7 +401,6 @@ def requestChart(type,projectId):
 				notimp+=1
 			all+=1
 		rate=[passed,failed,skipped,notimp,all]
-		print(rate)
 		return render_template('test2.html',type=type,rate=rate).replace('\n','')
 	
 @app.route('/chartFilter/<type>/<int:projectId>', methods=['GET'])
@@ -676,11 +674,6 @@ def getDatabaseManagement():
 	executions = DB.getExecution(projectId=projectSession())
 	objects = DB.get_object(projectId=projectSession(),active=0)
 	temp = [cases,sets,executions,objects]
-	print(cases)
-	print(sets)
-	print(executions)
-	print(objects)
-	print(temp)
 	return render_template('admin.html', databaseManagement=temp)
 	
 # set the secret key.  keep this really secret:

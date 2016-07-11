@@ -67,9 +67,8 @@ function saveCaseStatus(){
 	$.get("/saveCaseStatus/"+$(".executionSelector").find(":selected").attr('data-dbid')+"/"+caseIdInExe,
 		function(data,status){
 			$("#"+caseIdInExe+".Res").empty().append(data);
-		},
-		"json"
-	)
+		}
+	);
 }
 
 function checkDivId(direction){
@@ -79,6 +78,32 @@ function checkDivId(direction){
 	if( direction == "PREV" && ($($("[data-stepMarkerId='"+divId+"']").prev()).attr('data-stepMarkerId') != undefined )){
 		divId=$($("[data-stepMarkerId='"+divId+"']").prev()).attr('data-stepMarkerId');
 	}
+}
+
+function addComment(){
+    eventId=$(event.target).attr('data-dbid');
+    $("[data-dbid='"+eventId+"'][data-popname='stepPop']").popover({content: "<table><tr><td colspan='2'><textarea rows='1' class='commentArea' data-dbid='"+eventId+"' overflow='auto' resize='none' onkeypress='reSizeTextarea(event)' placeholder='"+event.target.innerHTML+"'></textarea></td></tr><tr><td style='width:50%;><button type='button' class='btn btn-danger btn-xs' onclick='saveComment("+eventId+")'>Save</button></td><td style='width:50%;><button type='button' class='btn btn-default btn-xs' onclick='cancelCom("+eventId+")'>Cancel</button></td></tr></table>",html:true});
+    $("[data-dbid='"+eventId+"'][data-popname='stepPop']").popover('show');
+}
+function cancelCom(eventId){
+    $("[data-dbid='"+eventId+"'][data-popname='stepPop']").popover('hide');
+}
+function saveComment(eventId){
+    var sendData="comment="+$("textarea[class='commentArea'][data-dbid='"+eventId+"']").val();
+    $.post("/saveComment/"+eventId+"/"+$(".executionSelector").find(":selected").attr('data-dbid'),sendData,function(data,status){
+        if(status){
+            $("[data-comment='comment'][data-dbid='"+eventId+"']").empty().append(data);
+            $("[data-dbid='"+eventId+"'][data-popname='stepPop']").popover('hide');
+        }
+    });
+}
+
+function updateIds(){
+    $.get("/updateStepExeCorrectWay",function(data,status){
+        if(status){
+            alert("ok");
+        }
+    });
 }
 
 $(function(){
@@ -98,6 +123,11 @@ $(function(){
 		if( event.target.id == "NOTRUN"){
 			saveStatus("NOTRUN",divId);
 			$("#"+divId+".Result").empty().append(statusNotRun);
+			saveCaseStatus();
+		}
+        if( event.target.id == "SKIPPED"){
+			saveStatus("SKIPPED",divId);
+			$("#"+divId+".Result").empty().append(statusSkipped);
 			saveCaseStatus();
 		}
 		if( event.target.id == "FAILED"){

@@ -4,7 +4,7 @@
 		<td style='width:85%;'>
 			<select class="executionSelector form-control" style='width:100%;'>
 			{% for k in Exe %}
-				<option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+				<option data-dbid='{{k[0]}}'>{{k[1]}} ({{k[3]}})</option>
 			{% endfor %}
 			</select>
 		</td>
@@ -43,7 +43,23 @@
             </td>
             <td style='width:20%;'>
                 <a href='#' class='caseInExe' data-dbid='{{k[2]}}' data-index='{{loop.index}}' id='{{k[2]}}'>
-                    <p class='Res' id='{{k[2]}}'>{{k[3]}}</p>
+                    <p class='Res' id='{{k[2]}}'>
+                        {% if k[3] == "RUN" %}
+                            <span class='glyphicon glyphicon-ok-circle' style='color:#5cb85c;'></span>
+                        {% endif %}
+                        {% if k[3] == "FAILED" %}
+                            <span class='glyphicon glyphicon-remove-circle' style='color:#d9534f;'></span>
+                        {% endif %}
+                        {% if k[3] == "NOTRUN" %}
+                            {{k[3]}}
+                        {% endif %}
+                        {% if k[3] == "SKIPPED" %}
+                            <span class='glyphicon glyphicon-warning-sign' style='color:#f0ad4e;'></span>
+                        {% endif %}
+                        {% if k[3] == "NOTIMP" %}
+                            <span class='glyphicon glyphicon-ban-circle' style='color:#5bc0de;'></span>
+                        {% endif %}
+                    </p>
                 </a>
             </td>
             <td style='width:18%;'>
@@ -89,10 +105,26 @@
                     <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][2]}}</a>
                 </td>
                 <td data-dbid='{{k[0][0]}}' id='{{k[0][0]}}' style='width:10%;'>
-                    <a href='#' class='Result' data-dbid='{{k[0][0]}}' id='{{k[0][0]}}'>{{k[1][0]}}</a>
+                    <a href='#' class='Result' data-dbid='{{k[0][0]}}' id='{{k[0][0]}}'>
+                        {% if k[1][0] == "RUN" %}
+                            <span class='glyphicon glyphicon-ok-circle' style='color:#5cb85c;'></span>
+                        {% endif %}
+                        {% if k[1][0] == "FAILED" %}
+                            <span class='glyphicon glyphicon-remove-circle' style='color:#d9534f;'></span>
+                        {% endif %}
+                        {% if k[1][0] == "NOTRUN" %}
+                            {{k[1][0]}}
+                        {% endif %}
+                        {% if k[1][0] == "SKIPPED" %}
+                            <span class='glyphicon glyphicon-warning-sign' style='color:#f0ad4e;'></span>
+                        {% endif %}
+                        {% if k[1][0] == "NOTIMP" %}
+                            <span class='glyphicon glyphicon-ban-circle' style='color:#5bc0de;'></span>
+                        {% endif %}
+                    </a>
                 </td>
                 <td class='Step' data-dbid='{{k[0][0]}}' style='width:15%;'>
-                    <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[1][1]}}</a>
+                    <a href='#' class='Step' data-comment='comment' data-dbid='{{k[0][0]}}' data-popname="stepPop" data-toggle="popover" data-placement="bottom" data-title='Comment: ' onclick="addComment({{k[0][0]}})">{{k[1][1]}}</a>
                 </td>
             </tr>
         </table>
@@ -130,7 +162,28 @@
             <td>
                 <a class='btn btn-default btn-xs' href='#' role='button' id='NOTIMP'>NOTIMP</a> &nbsp
             </td>
+            <td>
+                <a class='btn btn-default btn-xs' href='#' role='button' id='SKIPPED'>SKIPPED</a> &nbsp
+            </td>
         </tr>
     </table>
 </div>
+{% endif %}
+
+{% if status %}
+    {% if status == "FAILED" %}
+        <span class='glyphicon glyphicon-remove-circle' style='color:#d9534f;'></span>
+    {% endif %}
+    {% if status == "RUN" %}
+        <span class='glyphicon glyphicon-ok-circle' style='color:#5cb85c;'></span>
+    {% endif %}
+    {% if status == "NOTRUN" %}
+        {{status}}
+    {% endif %}
+    {% if status == "SKIPPED" %}
+        <span class='glyphicon glyphicon-warning-sign' style='color:#f0ad4e;'></span>
+    {% endif %}
+    {% if status == "NOTIMP" %}
+        <span class='glyphicon glyphicon-ban-circle' style='color:#5bc0de;'></span>
+    {% endif %}
 {% endif %}

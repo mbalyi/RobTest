@@ -159,7 +159,7 @@ def save_object():
 def updateObject():
 	DB.updateObject(objectId=request.form["objectId"],name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],version=request.form["version"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'))
 	return json.dumps(request.form["objectId"])
-
+	
 #--- Fizikai törlés	
 @app.route('/deleteObjectPhysical/<int:ID>', methods=['GET'])
 def deleteObjectPhysical(ID):
@@ -247,7 +247,7 @@ def deleteSet(ID):
 #-----execution-----	
 @app.route('/execution_page', methods=['GET'])
 def execution_page():
-	query=DB.getExecution(projectId=projectSession())
+	query=DB.getExeOBTest(projectId=projectSession())
 	return render_template('execution.html', execution=query)
 
 @app.route('/newExe', methods=['GET'])
@@ -343,8 +343,8 @@ def loadSearchForm():
 
 @app.route('/testSetup', methods=['GET'])
 def testSetup():
-	query = DB.getExecution(projectId=projectSession())
-	return render_template('test.html', Exe=query)
+	object=DB.getExeOBTest(projectId=projectSession())
+	return render_template('test.html', Exe=object)
 	
 @app.route('/loadTest/<int:id>', methods=['GET'])
 def loadTest(id):
@@ -366,9 +366,23 @@ def saveStatus(stepId,caseExeId,status):
 @app.route('/saveCaseStatus/<int:exeId>/<int:caseId>', methods=['GET'])
 def saveCaseStatus(exeId,caseId):
 	status=DB.saveCaseStatus(exeId=exeId,caseId=caseId)
-	return json.dumps(status)
+	print(status)
+	return render_template("test.html", status=status)
 
+@app.route('/saveComment/<int:stepId>/<int:exeId>', methods=['POST'])
+def saveComment(stepId,exeId):
+	if request.form['comment']=="":
+		comment="NULL"
+	else:
+		comment=request.form['comment']
+	DB.saveComment(stepId=stepId,exeId=exeId,comment=comment)
+	return comment
 
+@app.route('/updateStepExeCorrectWay', methods=['GET'])
+def updateStepExeCorrectWay():
+	DB.updateStepExeCorrectWay()
+	return "ok"
+	
 #-----Project-----
 @app.route('/projectChanging/<int:id>', methods=['GET'])
 def projectChanging(id):

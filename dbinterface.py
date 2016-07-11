@@ -524,8 +524,6 @@ class Database:
 	def saveSetStatus(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		print(kwargs['caseExeId'])
-		print(kwargs['stepId'])
 		c.execute("UPDATE Step_Execution SET Result=? WHERE StepId=? AND ExecutionId=?",[kwargs['status'],kwargs['stepId'],kwargs['caseExeId']])
 		conn.commit()
 	
@@ -538,6 +536,7 @@ class Database:
 		c.execute("SELECT Result FROM Step_Execution WHERE ExecutionId=? AND Case_ExecutionId=?",[kwargs['exeId'],caseExeId[0][0]])
 		Results=c.fetchall()
 		conn.commit()
+		print(Results)
 		for k in Results:
 			if k[0] == "FAILED":
 				c.execute("UPDATE Case_Execution SET Result=? WHERE ExecutionId=? AND CaseId=?",["FAILED",kwargs['exeId'],kwargs['caseId']])
@@ -551,10 +550,22 @@ class Database:
 				c.execute("UPDATE Case_Execution SET Result=? WHERE ExecutionId=? AND CaseId=?",["NOTIMP",kwargs['exeId'],kwargs['caseId']])
 				conn.commit()
 				return "NOTIMP"
+			if k[0] == "SKIPPED":
+				c.execute("UPDATE Case_Execution SET Result=? WHERE ExecutionId=? AND CaseId=?",["SKIPPED",kwargs['exeId'],kwargs['caseId']])
+				conn.commit()
+				return "SKIPPED"
 		c.execute("UPDATE Case_Execution SET Result=? WHERE ExecutionId=? AND CaseId=?",["RUN",kwargs['exeId'],kwargs['caseId']])
 		conn.commit()
 		return "RUN"
 	
+	def saveComment(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("UPDATE Step_Execution SET Comment=? WHERE ExecutionId=? AND StepId=?",[kwargs['comment'],kwargs['exeId'],kwargs['stepId']])
+		conn.commit()
+		return
+	
+	#-----Jenkins----
 	def getJenkinsData(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -578,7 +589,15 @@ class Database:
 			request+=c.fetchall()
 			conn.commit()
 		return request
-		
+	
+	def getExeOBTest(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT EX.ExecutionId,EX.ExeName,OB.ObjectId,OB.ObjectName FROM Execution AS EX LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.Active=1 AND EX.ProjectId=? ORDER BY EX.ExecutionId DESC",[kwargs['projectId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
 	#----Charts----
 	def getDataForCharts(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -797,5 +816,22 @@ class Database:
 			conn.commit()
 			return id[0]
 		return "failed"
+	
+	
+	def updateStepExeCorrectWay(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT CE.ExecutionId,CE.Id FROM Case_Execution AS CE LEFT JOIN Step_Execution AS SE ON SE.Case_ExecutionId=CE.Id")
+		result=c.fetchall()
+		conn.commit()
+		j=1
+		count=len(list(result))
+		print(count)
+		for k in result:
+			c.execute("UPDATE Step_Execution SET ExecutionId=? WHERE Case_ExecutionId=?",[k[0],k[1]])
+			conn.commit()
+			print(str(j/count*100)+"%")
+			j=j+1
+		return
 	
 DB = Database()

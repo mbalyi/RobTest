@@ -64,13 +64,14 @@ $(function(){
 			document.getElementById("col-md-9").style.width = '100%'
             dashboardLoad();
             chartFilterBar("pie",".chartFilter#pie");
-            addChart("pie","pieChart","pie",100);
+            addChart("pie","pieChart","pie",10);
             chartFilterBar("line",".chartFilter#line");
-            addChart("line","lineChart","line",1000);
-            jenkinsRadiator(".jenkinsRad",200);
-            addChart("pie","allPie","allPie",500);
-            addChart("line","allLine","allLine",200);
-            jenkinsRadiator(".allJenkinsRad",50);
+            addChart("line","lineChart","line",10);
+            jenkinsFilter();
+            jenkinsRadiator(".jenkinsRad",30);
+            addChart("pie","allPie","allPie",10);
+            addChart("line","allLine","allLine",10);
+            jenkinsRadiator(".allJenkinsRad",10);
             dashboardButtonPanel();
             $('body').on('slid.bs.carousel','#carousel-example-generic', function (){
                 lineChart.render();

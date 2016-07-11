@@ -451,6 +451,7 @@ def chartReload(type,interval,obId,areaId,status,limit):
 					passed=0
 					skipped=0
 					failed=0
+					notimp=0
 					all=0
 					for o in temp:
 						if o[0] != "default":

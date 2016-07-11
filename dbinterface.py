@@ -558,9 +558,12 @@ class Database:
 	def getJenkinsData(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		query="SELECT OB.ObjectId,OB.ObjectName,OB.ObjectVersion,Exe.ExecutionId,Exe.ExeName FROM Exe_Object AS EO LEFT JOIN Execution AS Exe ON EO.ExecutionId=Exe.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND Exe.ProjectId=? ORDER BY OB.ObjectId DESC LIMIT "
-		query+=str(kwargs['limit'])
-		c.execute(query,[kwargs['projectId'],kwargs['projectId']])
+		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['limit'])+","+str(kwargs['limit'])
+		c.execute(objectLimit)
+		objectId=c.fetchone()
+		conn.commit()
+		query="SELECT OB.ObjectId,OB.ObjectName,OB.ObjectVersion,Exe.ExecutionId,Exe.ExeName FROM Exe_Object AS EO LEFT JOIN Execution AS Exe ON EO.ExecutionId=Exe.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND Exe.ProjectId=? AND OB.ObjectId>=? ORDER BY OB.ObjectId DESC"
+		c.execute(query,[kwargs['projectId'],kwargs['projectId'],objectId[0]])
 		ExeObjectIds = c.fetchall()
 		conn.commit()
 		return ExeObjectIds
@@ -580,9 +583,12 @@ class Database:
 	def getDataForCharts(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		query="SELECT CE.ExecutionId,CE.CaseId,CE.Result,CE.title,EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE EX.ProjectId=? ORDER BY OB.ObjectId DESC LIMIT "
-		query+=str(kwargs['limit'])
-		c.execute(query,[kwargs['projectId']])
+		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['limit'])+","+str(kwargs['limit'])
+		c.execute(objectLimit)
+		objectId=c.fetchone()
+		conn.commit()
+		query="SELECT CE.ExecutionId,CE.CaseId,CE.Result,CE.title,EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE EX.ProjectId=? AND OB.ObjectId>=? ORDER BY OB.ObjectId DESC"
+		c.execute(query,[kwargs['projectId'],objectId[0]])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -598,6 +604,10 @@ class Database:
 	def getFilteredPar(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
+		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['limit'])+","+str(kwargs['limit'])
+		c.execute(objectLimit)
+		objectId=c.fetchone()
+		conn.commit()
 		if kwargs['areaId'] == 0:
 			query = "SELECT CE.Result,OB.ObjectName,OB.ObjectVersion,OB.ObjectId,CE.Id FROM Case_Execution AS CE LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE"
 			if kwargs['objectId'] != 0:
@@ -613,7 +623,6 @@ class Database:
 			else:
 				query+=" CE.Result IS NOT NULL"
 				kwargs['status']="NOT NULL"
-			query+=" ORDER BY OB.ObjectId DESC limit 1000"
 		else:
 			query = "SELECT CE.Result,OB.ObjectName,OB.ObjectVersion,OB.ObjectId,CE.Id FROM Case_Execution AS CE LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId"
 			query+= " LEFT JOIN Area_Object AS AO ON OB.ObjectId=AO.ObjectId WHERE"
@@ -632,8 +641,9 @@ class Database:
 				kwargs['status']="NOT NULL"
 			query+=" AO.AreaId="
 			query+=str(kwargs['areaId'])
-			query+=" ORDER BY OB.ObjectId DESC limit "
-			query+=str(kwargs['limit'])
+		query+=" AND OB.ObjectId>="
+		query+=str(objectId[0])
+		query+=" ORDER BY OB.ObjectId DESC"
 		c.execute(query)
 		result=c.fetchall()
 		conn.commit()

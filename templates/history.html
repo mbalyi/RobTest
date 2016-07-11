@@ -1,0 +1,148 @@
+{% if historyForm %}
+<div class="panel panel-default" style="width:100%;height:100px;">
+    <table class='historyFilter table'>
+        <tr>
+            <td style="color:black;padding-top: 14px;">Interval: <td>
+            <td>
+                <select class='historyFilter form-control' data-selectorid='interval' onchange="historyReload()" style='width:100%;'>
+                    <option data-interval='100'>All</option>
+                    <option data-interval='1' selected>Last 1 Result</option>
+                    <option data-interval='5'>Last 5 Result</option>
+                    <option data-interval='10'>Last 10 Result</option>
+                    <option data-interval='20'>Last 20 Result</option>
+                    <option data-interval='30'>Last 30 Result</option>
+                    <option data-interval='40'>Last 40 Result</option>
+                    <option data-interval='50'>Last 50 Result</option>
+                </select>
+            </td>
+            <td>
+                <select class='historyFilter form-control' data-selectorid='execution' onchange="historyReload()" style='width:100%;'>
+                {% for k in historyForm %}
+                    {% if loop.index == 1 %}
+                        <option data-dbid='{{k[0]}}' selected>{{k[1]}} ({{k[3]}})</option>
+                    {% endif %}
+                    <option data-dbid='{{k[0]}}'>{{k[1]}} ({{k[3]}})</option>
+                {% endfor %}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td colspan="2">Methotds: 
+            </td>
+            <td>
+                <a href="#" class="btn btn-default btn-xs" onclick="toggleStatus('RUN')" style="margin-right: 2px;">
+                    <span class="slideIcon" style="background-color:#5cb85c;"></span>
+                    Run
+                </a>
+                <a href="#" class="btn btn-default btn-xs" onclick="toggleStatus('FAILED')" style="margin-right: 2px;">
+                    <span class="slideIcon" style="background-color:#d9534f;"></span>
+                    Failed
+                </a>
+                <a href="#" class="btn btn-default btn-xs" onclick="toggleStatus('SKIPPED')" style="margin-right: 2px;">
+                    <span class="slideIcon" style="background-color:#f0ad4e;"></span>
+                    Skipped
+                </a>
+                <a href="#" class="btn btn-default btn-xs" onclick="toggleStatus('NOTRUN')" style="margin-right: 2px;">
+                    <span class="slideIcon"></span>
+                    Not Run
+                </a>
+                <a href="#" class="btn btn-default btn-xs" onclick="toggleStatus('NOTIMP')" style="margin-right: 2px;">
+                    <span class="slideIcon" style="background-color:#5bc0de;"></span>
+                    Not Implemented
+                </a>
+            </td>
+        </tr>
+        </table>
+</div>
+<div class="executionTable" style="height:calc(100%-100px);">
+</div>
+{% endif %}
+
+{% if historyNav %}
+<div style="width:100%;height:100%;overflow-y: auto;">
+    <table class="historyNav">
+        <tr style='width:100%;'>
+            <th style='width:2%;'></th>
+            <th style='width:2%;' style="padding-left:2px;">ID</th>
+            <th style='width:50%;' style="padding-left:5px;">Title</th>
+        </tr>
+        {% for k in historyNav %}
+        <tr class='exeInHistory'  id='{{k[0]}}' data-index='{{loop.index}}' style='width:100%;'>
+            <td class='exeMarker' id='{{k[0]}}' style='width:2%;color:red;'></td>
+            <td style='width:2%;padding-left:2px;'>
+                <a href='#' class='exeIndex'  id='{{k[0]}}' data-dbid='{{k[0]}}' data-index='{{loop.index}}' onclick="selectMoreExe()">
+                    {{k[0]}}
+                </a>
+            </td>
+            <td style='width:96%;padding-left:5px;'>
+                <a href='#' class='exeName' data-dbid='{{k[0]}}' data-index='{{loop.index}}' id='{{k[0]}}' onclick="selectMoreExe()">
+                    {{k[1]}} ({{k[3]}})
+                </a>
+            </td>
+        </tr>
+        {% endfor %}	
+    </table>
+</div>
+{% endif %}
+
+{% if loadHistory %}
+<div class="executionInHistory panel panel-default" data-dbid='{{loadHistory[0][0]}}' style="width:100%;color:black;overflow:active;float: left;">
+    <table class='exeHist table'>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Result</th>
+            <th></th>
+            {% if status == "first" %}
+            <th></th>
+            {% else %}
+            <th>
+                <a href="#" data-dbid='{{loadHistory[0][0]}}' onclick="closeHistoryForm({{loadHistory[0][4]}})">
+                    <span class="glyphicon glyphicon-remove-circle" style='color:#d9534f;'></span>
+                </a>
+            </th>
+            {% endif %}
+        </tr>
+        <tr>
+            <th>#</th>
+            <th colspan="2">{{exeName[1]}} ({{exeName[2]}})</th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+        {% for k in loadHistory %}
+            {% if k[2] == "RUN" %}
+                <tr class="success resultRow">
+            {% endif %}
+            {% if k[2] == "FAILED" %}
+                <tr class="danger resultRow">
+            {% endif %}
+            {% if k[2] == "SKIPPED" %}
+                <tr class="warning resultRow">
+            {% endif %}
+            {% if k[2] == "NOTRUN" %}
+                <tr class="active resultRow">
+            {% endif %}
+            {% if k[2] == "NOTIMP" %}
+                <tr class="info resultRow">
+            {% endif %}
+            <td>{{loop.index}}</td>
+            <td>{{k[1]}}</td>
+            <td>{{k[2]}}</td>
+            <td>
+                <a href="#" data-dbid='{{k[0]}}' onclick="seeComment({{k[0]}})">
+                    <span class="glyphicon glyphicon-envelope"></span>
+                </a>
+            </td>
+            <td>
+                <a href="#" data-dbid='{{k[0]}}' onclick="seeAttached({{k[0]}})">
+                    <span class="glyphicon glyphicon-cloud"></span>
+                </a>
+            </td>
+            <td></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}

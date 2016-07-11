@@ -496,6 +496,30 @@ class Database:
 		conn.commit()
 		return result
 	
+	def getExeResult(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT Id,title,Result,CaseId,ExecutionId FROM Case_Execution WHERE ExecutionId=? ORDER BY CaseId DESC",[kwargs['exeId']])
+		caseExeId=c.fetchall()
+		conn.commit()
+		return caseExeId
+	
+	def getOneExe(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT ExecutionId,ExeName FROM Execution WHERE ExecutionId=?",[kwargs['exeId']])
+		ExeId=c.fetchone()
+		conn.commit()
+		return ExeId
+	
+	def getExeOBHist(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT EX.ExecutionId,EX.ExeName,OB.ObjectName FROM Execution AS EX LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.Active=1 AND EX.ProjectId=? AND EX.ExecutionId=?",[kwargs['projectId'],kwargs['exeId']])
+		result=c.fetchone()
+		conn.commit()
+		return result
+	
     #-----Projects-----
 	def getProjects(self):
 		conn= sqlite3.connect("ROB_2016.s3db")

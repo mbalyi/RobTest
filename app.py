@@ -695,6 +695,23 @@ def getDatabaseManagement():
 	objects = DB.get_object(projectId=projectSession(),active=0)
 	temp = [cases,sets,executions,objects]
 	return render_template('admin.html', databaseManagement=temp)
+
+#----History----
+@app.route('/HistoryForm', methods=['GET'])	
+def HistoryForm():
+	historyForm=DB.getExeOBTest(projectId=projectSession())
+	return render_template('history.html', historyForm=historyForm)
+	
+@app.route('/historyExe', methods=['GET'])	
+def historyExe():
+	historyNav=DB.getExeOBTest(projectId=projectSession())
+	return render_template('history.html', historyNav=historyNav)
+	
+@app.route('/loadHistoryExe/<int:exeId>/<exeStatus>', methods=['GET'])	
+def loadHistoryExe(exeId,exeStatus):
+	loadHistory=DB.getExeResult(exeId=exeId)
+	exe=DB.getExeOBHist(projectId=projectSession(),exeId=exeId)
+	return render_template('history.html', loadHistory=loadHistory, exeName=exe, status=exeStatus)
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

@@ -48,6 +48,7 @@
 	
 	<script type="text/javascript" src="{{ url_for('static', filename='dashboard_control.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='dashboard_template.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='add_history.js') }}"></script>
 	{% if user == "admin" %}
     <script type="text/javascript" src="{{ url_for('static', filename='admin.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='projectManaging.js') }}"></script>
@@ -107,11 +108,14 @@
 						<a class="header" id="test" href="#">Test</a>
 					</li>
 					<li role="presentation" class="dropdown">
-						<a class="dropdown-toggle" id="setup" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-							Setup <span class="caret"></span>
+						<a class="dropdown-toggle" id="reporting" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+							Reporting <span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
-						  ...
+							{% if user %}
+							<li><a class='header' id="reportGenerator" href="#">Report Generating</a></li>
+							<li><a class='header' id="history" href="#" onclick="histoyPage()">History</a></li>
+							{% endif %}
 						</ul>
 					</li>
 					{% if user == "admin" %}

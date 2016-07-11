@@ -40,6 +40,7 @@ $(function(){
 	addChart("pie","pieChart","pie",10);
 	chartFilterBar("line",".chartFilter#line");
 	addChart("line","lineChart","line",10);
+    jenkinsFilter();
 	jenkinsRadiator(".jenkinsRad",30);
     addChart("pie","allPie","allPie",10);
     addChart("line","allLine","allLine",10);

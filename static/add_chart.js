@@ -44,6 +44,15 @@ function jenkinsRadiator(direction,limit){
 		}
 	);
 }
+function jenkinsFilter(){
+    $.get("/jenkinsFilter",
+		function(data,status){
+			if(status){
+				$(".jenkinsFilter").prepend(data);
+			};
+		}
+	);
+}
 
 var lineChart;
 var pieChart;

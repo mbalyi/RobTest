@@ -605,6 +605,11 @@ def jenkinsRadiator(limit):
 		rendered+=render_template('jenkinsRadiator.html', objectExe=sorting, iterator=iterator, rate=rate)
 	return rendered #render_template('jenkinsRadiator.html', jenkins=rendered)	
 
+	
+@app.route('/jenkinsFilter', methods=['GET'])
+def jenkinsFilter():
+	return render_template("jenkinsFilter.html")
+	
 #-----Dashboard-----
 @app.route('/dashboardLoad', methods=['GET'])
 def dashboardLoad():

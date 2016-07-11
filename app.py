@@ -384,7 +384,7 @@ def requestChart(type,projectId,limit):
 	if type=="line":
 		return chartReload(type,"All",0,0,"All",limit)
 	else:
-		query = DB.getDataForCharts(projectId=projectId,limit=limit)
+		query = DB.getDataForCharts(projectId=projectId,interval=limit)
 		passed=0
 		failed=0
 		skipped=0
@@ -416,7 +416,7 @@ def chartReload(type,interval,obId,areaId,status,limit):
 	skipped=0
 	notimp=0
 	all=0
-	result = DB.getFilteredPar(interval=interval,objectId=obId,areaId=areaId,status=status,limit=limit)
+	result = DB.getFilteredPar(objectId=obId,areaId=areaId,status=status,interval=limit)
 	render=""
 	if result:
 		if type == "pie":

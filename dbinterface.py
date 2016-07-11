@@ -583,7 +583,7 @@ class Database:
 	def getDataForCharts(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['limit'])+","+str(kwargs['limit'])
+		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['interval'])+","+str(kwargs['interval'])
 		c.execute(objectLimit)
 		objectId=c.fetchone()
 		conn.commit()
@@ -604,7 +604,7 @@ class Database:
 	def getFilteredPar(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['limit'])+","+str(kwargs['limit'])
+		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['interval'])+","+str(kwargs['interval'])
 		c.execute(objectLimit)
 		objectId=c.fetchone()
 		conn.commit()

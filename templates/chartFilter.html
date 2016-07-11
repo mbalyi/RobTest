@@ -12,9 +12,13 @@
 		<td style="color:black;">Interval: <td>
 		<td>
 			<select class='{{type}} form-control' data-selectorid='{{type}}Interval' onchange="{{type}}Reload('{{type}}')" style='width:100%;'>
-				<option data-interval='All'>All</option>
-				<option data-interval='LTW'>Last Two Weeks</option>
-				<option data-interval='LS'>Last Sprint</option>
+				<option data-interval='100'>All</option>
+				<option data-interval='5'>Last 5 Result</option>
+				<option data-interval='10' selected>Last 10 Result</option>
+                <option data-interval='20'>Last 20 Result</option>
+                <option data-interval='30'>Last 30 Result</option>
+                <option data-interval='40'>Last 40 Result</option>
+                <option data-interval='50'>Last 50 Result</option>
 			</select>
 		<td>
 	</tr>

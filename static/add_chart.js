@@ -112,7 +112,7 @@ function createPieChart(template,direction,chart){
 }
 
 function pieReload(type){
- $.get("/chartReload/"+type+"/"+$('[data-selectorid="pieInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="pieVersion"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieArea"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieStatus"]').find(":selected").attr('data-status'),
+ $.get("/chartReload/"+type+"/"+$('[data-selectorid="pieInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="pieVersion"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieArea"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieStatus"]').find(":selected").attr('data-status')+"/"+$('[data-selectorid="pieInterval"]').find(":selected").attr('data-interval'),
 		function(data,status){
 			if(status){
                 if(type=="pie"){
@@ -127,7 +127,7 @@ function pieReload(type){
 	);
 }
 function lineReload(type){
- $.get("/chartReload/"+type+"/"+$('[data-selectorid="lineInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="lineVersion"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="lineArea"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="lineStatus"]').find(":selected").attr('data-status'),
+ $.get("/chartReload/"+type+"/"+$('[data-selectorid="lineInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="lineVersion"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="lineArea"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="lineStatus"]').find(":selected").attr('data-status')+"/"+$('[data-selectorid="lineInterval"]').find(":selected").attr('data-interval'),
 		function(data,status){
 			if(status){
                 if(type=="line"){

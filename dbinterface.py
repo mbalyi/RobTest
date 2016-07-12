@@ -482,7 +482,7 @@ class Database:
 		conn.commit()
 		c.execute("DELETE FROM Exe_Object WHERE ExecutionId=? AND ObjectId=?",[kwargs['id'],kwargs['obid']])
 		conn.commit()
-		c.execute("DELETE FROM Area_Execution WHERE ExecutionId=",[kwargs['id']])
+		c.execute("DELETE FROM Area_Execution WHERE ExecutionId=?",[kwargs['id']])
 		conn.commit()
 	
 	def getStatusFromStepExe(self, **kwargs):
@@ -857,5 +857,93 @@ class Database:
 			print(str(j/count*100)+"%")
 			j=j+1
 		return
+	
+	def getLastExes(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		query="SELECT EO.ExecutionId,EX.ExeName,OB.ObjectName FROM Exe_Object AS EO LEFT JOIN Execution AS EX ON EO.ExecutionId=EX.ExecutionId LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId ORDER BY EO.ExecutionId DESC LIMIT "+str(kwargs['limit'])
+		c.execute(query)
+		exeIds=c.fetchall()
+		conn.commit()
+		for l in exeIds:
+			tupList=list(l)
+			tupList[1]=tupList[1].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+			tupList[2]=tupList[2].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+			l=tupList
+		return exeIds
+	
+	def getExeTitles(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		temp=[]
+		for k in kwargs['exeIds']:
+			c.execute("SELECT title FROM Case_Execution WHERE ExecutionId=?",[k[0]])
+			temp.append(c.fetchall())
+			conn.commit()
+		return temp
+	
+	def getCaseHistory(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		exeIds=kwargs['exeIds']
+		temp=[]
+		iterator=0
+		for k in exeIds:
+			c.execute("SELECT Result FROM Case_Execution WHERE ExecutionId=?",[k[0]])
+			res=c.fetchall()
+			temp.append(res)
+			conn.commit()
+			for l in temp[iterator]:
+				tupList=list(l)
+				tupList[0]=tupList[0].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+				l=tupList
+			iterator=iterator+1
+		result=[]
+		it2=0
+		for j in temp[1]:
+			it3=0
+			result.append([])
+			for l in exeIds:
+				result[it2].append(temp[it3][it2][0])
+				it3=it3+1
+			it2=it2+1
+		return result
+	
+	def getStepHistory(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		exeIds=kwargs['exeIds']
+		temp=[]
+		iterator=0
+		for k in exeIds:
+			c.execute("SELECT Result FROM Step_Execution WHERE ExecutionId=?",[k[0]])
+			res=c.fetchall()
+			temp.append(res)
+			conn.commit()
+			for l in temp[iterator]:
+				tupList=list(l)
+				tupList[0]=tupList[0].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+				l=tupList
+			iterator=iterator+1
+		result=[]
+		it2=0
+		for j in temp[1]:
+			it3=0
+			result.append([])
+			for l in exeIds:
+				result[it2].append(temp[it3][it2][0])
+				it3=it3+1
+			it2=it2+1
+		return result
+	
+	def getStepTitles(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		temp=[]
+		for k in kwargs['exeIds']:
+			c.execute("SELECT ST.Action FROM Steps AS ST LEFT JOIN Case_Step AS CS ON ST.StepId=CS.StepId LEFT JOIN Case_Execution AS CE ON CE.CaseId=CS.CaseId WHERE CE.ExecutionId=?",[k[0]])
+			temp.append(c.fetchall())
+			conn.commit()
+		return temp
 	
 DB = Database()

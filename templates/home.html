@@ -49,6 +49,8 @@
 	<script type="text/javascript" src="{{ url_for('static', filename='dashboard_control.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='dashboard_template.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='add_history.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='add_case_history.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='add_step_history.js') }}"></script>
 	{% if user == "admin" %}
     <script type="text/javascript" src="{{ url_for('static', filename='admin.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='projectManaging.js') }}"></script>
@@ -114,7 +116,9 @@
 						<ul class="dropdown-menu">
 							{% if user %}
 							<li><a class='header' id="reportGenerator" href="#">Report Generating</a></li>
-							<li><a class='header' id="history" href="#" onclick="histoyPage()">History</a></li>
+							<li><a class='header' id="history" href="#" onclick="histoyPage()">Case Execution List</a></li>
+                            <li><a class='header' id="caseResHis" href="#" onclick="caseHistPage()">Case Result History</a></li>
+                            <li><a class='header' id="stepResHis" href="#" onclick="stepHistPage()">Step Result History</a></li>
 							{% endif %}
 						</ul>
 					</li>

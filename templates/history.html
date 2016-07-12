@@ -20,8 +20,9 @@
                 {% for k in historyForm %}
                     {% if loop.index == 1 %}
                         <option data-dbid='{{k[0]}}' selected>{{k[1]}} ({{k[3]}})</option>
+                    {% else %}
+                        <option data-dbid='{{k[0]}}'>{{k[1]}} ({{k[3]}})</option>
                     {% endif %}
-                    <option data-dbid='{{k[0]}}'>{{k[1]}} ({{k[3]}})</option>
                 {% endfor %}
                 </select>
             </td>
@@ -94,7 +95,7 @@
             <th>Title</th>
             <th>Result</th>
             <th></th>
-            {% if status == "first" %}
+            {% if status == "first" or status == "new" %}
             <th></th>
             {% else %}
             <th>

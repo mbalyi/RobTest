@@ -713,6 +713,28 @@ def loadHistoryExe(exeId,exeStatus):
 	exe=DB.getExeOBHist(projectId=projectSession(),exeId=exeId)
 	return render_template('history.html', loadHistory=loadHistory, exeName=exe, status=exeStatus)
 	
+@app.route('/loaResultForm', methods=['GET'])	
+def loaResultForm():
+	return render_template('resultHistory.html', resultForm="true")
+	
+@app.route('/loadLastResultHist/<int:limit>', methods=['GET'])	
+def loadLastResultHist(limit):
+	exes=DB.getLastExes(limit=limit)
+	titles=DB.getExeTitles(exeIds=exes)
+	result=DB.getCaseHistory(exeIds=exes)
+	return render_template('resultHistory.html', loadLastResultHist=result, exes=exes, title=titles)
+	
+@app.route('/loadResStepForm', methods=['GET'])	
+def loadResStepForm():
+	return render_template('resultHistory.html', resultStepForm="true")
+	
+@app.route('/loadLastResStepHist/<int:limit>', methods=['GET'])	
+def loadLastResStepHist(limit):
+	exes=DB.getLastExes(limit=limit)
+	titles=DB.getStepTitles(exeIds=exes)
+	result=DB.getStepHistory(exeIds=exes)
+	return render_template('resultHistory.html', loadLastResStepHist=result, exes=exes, title=titles)
+	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 		

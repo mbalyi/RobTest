@@ -1,0 +1,119 @@
+{% if resultForm %}
+<div class="panel panel-default" style="width:100%;height:50px;">
+    <table class='resultForm table'>
+        <tr style="width:40%;">
+            <td style="color:black;padding-top: 14px;">Interval: <td>
+            <td>
+                <select class='resultFilter form-control' data-selectorid='interval' onchange="resultReload()" style='width:100%;'>
+                    <option data-interval='3' selected>Last 3 Result</option>
+                    <option data-interval='5'>Last 5 Result</option>
+                    <option data-interval='10'>Last 10 Result</option>
+                    <option data-interval='20'>Last 20 Result</option>
+                    <option data-interval='30'>Last 30 Result</option>
+                    <option data-interval='40'>Last 40 Result</option>
+                    <option data-interval='50'>Last 50 Result</option>
+                </select>
+            </td>
+        </tr>
+        </table>
+</div>
+<div class="resultFormCont" style="height:calc(100%-50px);">
+</div>
+{% endif %}
+
+{% if loadLastResultHist %}
+<div style="width:100%;height:100%;">
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            {% for k in exes %}
+            <th>{{k[1]}} ({{k[2]}})</th>
+            {% endfor %}
+        </tr>
+        {% for k in loadLastResultHist %}
+        <tr>
+            <td>{{loop.index}}</td>
+            <td>{{title[0][loop.index-1][0]}}</td>
+            {% for j in k %}
+                {% if j == "RUN" %}
+                    <td style="color:#2ECC71;">{{j}}</td>
+                {% endif %}
+                {% if j == "FAILED" %}
+                    <td style="color:#E74C3C;">{{j}}</td>
+                {% endif %}
+                {% if j == "SKIPPED" %}
+                    <td style="color:#F1C40F;">{{j}}</td>
+                {% endif %}
+                {% if j == "NOTRUN" %}
+                    <td>{{j}}</td>
+                {% endif %}
+                {% if j == "NOTIMP" %}
+                    <td style="color:#3498DB;">{{j}}</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}
+
+{% if resultStepForm %}
+<div class="panel panel-default" style="width:100%;height:50px;">
+    <table class='resultForm table'>
+        <tr style="width:40%;">
+            <td style="color:black;padding-top: 14px;">Interval: <td>
+            <td>
+                <select class='resultFilter form-control' data-selectorid='interval' onchange="resultReload()" style='width:100%;'>
+                    <option data-interval='3' selected>Last 3 Result</option>
+                    <option data-interval='5'>Last 5 Result</option>
+                    <option data-interval='10'>Last 10 Result</option>
+                    <option data-interval='20'>Last 20 Result</option>
+                    <option data-interval='30'>Last 30 Result</option>
+                    <option data-interval='40'>Last 40 Result</option>
+                    <option data-interval='50'>Last 50 Result</option>
+                </select>
+            </td>
+        </tr>
+        </table>
+</div>
+<div class="resultFormCont" style="height:calc(100%-50px);">
+</div>
+{% endif %}
+
+{% if loadLastResStepHist %}
+<div style="width:100%;height:100%;">
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            {% for k in exes %}
+            <th>{{k[1]}} ({{k[2]}})</th>
+            {% endfor %}
+        </tr>
+        {% for k in loadLastResStepHist %}
+        <tr>
+            <td>{{loop.index}}</td>
+            <td>{{title[0][loop.index-1]}}</td>
+            {% for j in k %}
+                {% if j == "RUN" %}
+                    <td style="color:#2ECC71;">{{j}}</td>
+                {% endif %}
+                {% if j == "FAILED" %}
+                    <td style="color:#E74C3C;">{{j}}</td>
+                {% endif %}
+                {% if j == "SKIPPED" %}
+                    <td style="color:#F1C40F;">{{j}}</td>
+                {% endif %}
+                {% if j == "NOTRUN" %}
+                    <td>{{j}}</td>
+                {% endif %}
+                {% if j == "NOTIMP" %}
+                    <td style="color:#3498DB;">{{j}}</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endif %}

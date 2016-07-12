@@ -40,8 +40,11 @@ function loadHistoryExe(exeStatus,executionId){
         exeId=executionId;
     $.get("/loadHistoryExe/"+exeId+"/"+exeStatus,function(data,status){
         if(status){
-            if(exeStatus == "first")
+            if(exeStatus == "first" || exeStatus == "new"){
                 $(".executionTable").empty().append(data);
+                $(".executionInHistory").css("width","100%");
+                historyFormCount = 1;
+            }
             else{
                 $(".executionTable").append(data);
                 if(historyFormCount/3 == 1)
@@ -56,7 +59,7 @@ function loadHistoryExe(exeStatus,executionId){
 }
 var ids=[];
 function selectMoreExe(){
-    if (historyFormCount != 3){
+    if (historyFormCount != 3 || ids.indexOf($(event.target).attr('data-dbid')) > -1){
         historyFormCount++;
         id=$(event.target).attr('data-dbid');
         ids.push(id);
@@ -95,4 +98,9 @@ function toggleStatus(status){
     if(status=="NOTIMP"){
         $(".info.resultRow").slideToggle();
     }
+}
+
+function historyReload(){
+    exeid=$("select[data-selectorid='execution']").find(":selected").attr("data-dbid");
+    loadHistoryExe("new",exeid);
 }

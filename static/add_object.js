@@ -137,6 +137,7 @@ $(function(){
             if($(".editableObject").attr('data-dbid')=="newObject"){
                 save_object();
                 $(".buttonSetup").empty().append(objectBtn);
+                requestObject();
             }
             else{
                 updateObject($(".editableObject").attr('data-dbid'));

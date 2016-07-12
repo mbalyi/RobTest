@@ -82,7 +82,7 @@ function checkDivId(direction){
 
 function addComment(){
     eventId=$(event.target).attr('data-dbid');
-    $("[data-dbid='"+eventId+"'][data-popname='stepPop']").popover({content: "<table><tr><td colspan='2'><textarea rows='1' class='commentArea' data-dbid='"+eventId+"' overflow='auto' resize='none' onkeypress='reSizeTextarea(event)' placeholder='"+event.target.innerHTML+"'></textarea></td></tr><tr><td style='width:50%;><button type='button' class='btn btn-danger btn-xs' onclick='saveComment("+eventId+")'>Save</button></td><td style='width:50%;><button type='button' class='btn btn-default btn-xs' onclick='cancelCom("+eventId+")'>Cancel</button></td></tr></table>",html:true});
+    $("[data-dbid='"+eventId+"'][data-popname='stepPop']").popover({content: "<table style='color:black;'><tr><td colspan='2'><textarea rows='1' class='commentArea' data-dbid='"+eventId+"' overflow='auto' resize='none' onkeypress='reSizeTextarea(event)' placeholder='"+event.target.innerHTML+"'></textarea></td></tr><tr><td style='width:50%;><button type='button' class='btn btn-danger btn-xs' onclick='saveComment("+eventId+")'>Save</button></td><td style='width:50%;><button type='button' class='btn btn-default btn-xs' onclick='cancelCom("+eventId+")'>Cancel</button></td></tr></table>",html:true});
     $("[data-dbid='"+eventId+"'][data-popname='stepPop']").popover('show');
 }
 function cancelCom(eventId){

@@ -25,6 +25,14 @@ class Database:
 		conn.commit()
 		return result
 	
+	def get_case_name(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT Title FROM Cases WHERE CaseId=?",[kwargs['caseId']])
+		result=c.fetchone()
+		conn.commit()
+		return result
+	
 	def save_case(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -222,7 +230,7 @@ class Database:
 	def get_set(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT SetId,SetName FROM Sets WHERE ProjectId=? AND Active=? AND SetUpdated=?",[kwargs['projectId'],kwargs['active'],kwargs['update']])
+		c.execute("SELECT SetId,SetName FROM Sets WHERE ProjectId=? AND Active=? AND SetUpdated=? ORDER BY SetId DESC",[kwargs['projectId'],kwargs['active'],kwargs['update']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -517,6 +525,15 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT EX.ExecutionId,EX.ExeName,OB.ObjectName FROM Execution AS EX LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.Active=1 AND EX.ProjectId=? AND EX.ExecutionId=?",[kwargs['projectId'],kwargs['exeId']])
 		result=c.fetchone()
+		conn.commit()
+		return result
+		
+	def getExeOBLimit(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		query="SELECT EX.ExecutionId,EX.ExeName,OB.ObjectName FROM Execution AS EX LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId LEFT JOIN Case_Execution AS CE ON CE.ExecutionId=EX.ExecutionId WHERE OB.Active=1 AND EX.ProjectId=? AND CE.CaseId=? ORDER BY OB.ObjectId LIMIT "+str(kwargs['limit'])
+		c.execute(query,[kwargs['projectId'],kwargs['caseIds'][0][0]])
+		result=c.fetchall()
 		conn.commit()
 		return result
 	
@@ -945,5 +962,50 @@ class Database:
 			temp.append(c.fetchall())
 			conn.commit()
 		return temp
+	
+	def getResultCases(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		temp=[]
+		for k in kwargs['exes']:
+			c.execute("SELECT CaseId,Result FROM Case_Execution WHERE ExecutionId=?",[k[0]])
+			temp.append(c.fetchall())
+			conn.commit()
+		it1=0
+		sortedTemp=[]
+		for k in temp[0]:
+			sortedTemp.append([k[0],[]])
+			it2=0
+			for j in kwargs['exes']:
+				sortedTemp[it1][1].append(temp[it2][it1][1])
+				it2=it2+1
+			it1=it1+1
+		result=[]
+		for k in sortedTemp:
+			failed=0
+			for j in k[1]:
+				if j == "FAILED":
+					failed=failed+1
+			calc=failed/5
+			result.append([k[0],calc])
+		return result
+	
+	def getCaseResHist(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT ExecutionId,CaseId,Result,title FROM Case_Execution WHERE CaseId=?",[kwargs['caseId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def getExesForCases(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		result=[]
+		for k in kwargs['cases']:
+			c.execute("SELECT EX.ExeName,OB.ObjectName FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId WHERE CE.CaseId=? AND CE.ExecutionId=?",[k[1],k[0]])
+			result.append(c.fetchall())
+			conn.commit()
+		return result
 	
 DB = Database()

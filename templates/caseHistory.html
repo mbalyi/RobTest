@@ -1,0 +1,174 @@
+{% if caseHistForm %}
+<div>
+    <div class="panel panel-default" id="historyMainHeader" style="width:100%;height:71px;">
+        <div class="filters" style="float:left;width:50%;">
+            <table class='historyFilter table'>
+                <tr>
+                    <th style="color:black;">Set: </th>
+                    <th>
+                        <select class='setFilter form-control' data-selectorid='setnames' onchange="setHistReload()" style='width:100%;'>
+                            {% for k in caseHistForm %}
+                                {% if loop.index == 1 %}
+                                    <option data-dbid='{{k[0]}}' selected>{{k[1]}}</option>
+                                {% else %}
+                                    <option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+                                {% endif %}
+                            {% endfor %}
+                    </select>
+                    </th>
+                    <th>
+                        <button type="button" class="btn btn-default btn-xs" id="modeButton" onclick="autoMode()">Auto mode</button>
+                    </th>
+                    <th>
+                        <button type="button" class="btn btn-default btn-xs" id="showLegends" onclick="toggleHistLegends()">Show legends</button>
+                    </th>
+                </tr>
+            </table>
+        </div>
+        <div style="float:left;width:50%">
+            <div class="basiclegends" id="basiclegends" style="float:left;width:50%;display: none;">
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #F7E847;'>
+                    <p>Less than 20% of the last 5 tests failed</p>
+                </div>
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #FBC13D;'>
+                    <p>Less than 40% of the last 5 tests failed</p>
+                </div>
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #FF9933;'>
+                    <p>Less than 60% of the last 5 tests failed</p>
+                </div>
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #D4A05E;'>
+                    <p>Less than 80% of the last 5 tests failed</p>       
+                </div>
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #A8A788;'>
+                    <p>More than 79% of the last 5 tests failed</p>        
+                </div>
+            </div>
+            <div class="speciallegends" id="speciallegends" style="float:left;width:50%;display: none">
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #A8A788;'>
+                    <p>Last test FAILED</p>
+                </div>
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #A84848;'>
+                    <p>Last test FAILED and Show Stopper</p>
+                </div>
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #9DD1F1;'>
+                    <p>Less than 5 and all SKIPPED or NOTRUN</p>
+                </div>
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #CF83EB;'>
+                    <p>At least the last 5 tests SKIPPED or NOTRUN</p>       
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="diagramField" id="diagramField" style="width:100%;"></div>
+</div>
+{% endif %}
+
+{% if resultDiagrams %}
+    {% for k in resultDiagrams %}
+        {% if k[1] < 0.2 %}
+        <div data-dbid='{{k[0]}}' style="margin:1px;">
+            <a href="#" onclick="openResult({{k[0]}})">
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #F7E847;'>
+                    <p>{{cases[loop.index-1][1]}}</p>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+        {% if (k[1] < 0.4) and (k[1] >= 0.2) %}
+        <div data-dbid='{{k[0]}}' style="margin:1px;">
+            <a href="#" onclick="openResult({{k[0]}})">
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #FBC13D;'>
+                    <p>{{cases[loop.index-1][1]}}</p>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+        {% if (k[1] < 0.6) and (k[1] >= 0.4) %}
+        <div data-dbid='{{k[0]}}' style="margin:1px;">
+            <a href="#" onclick="openResult({{k[0]}})">
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #FF9933;'>
+                    <p>{{cases[loop.index-1][1]}}</p>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+        {% if (k[1] < 0.8) and (k[1] >= 0.6) %}
+        <div data-dbid='{{k[0]}}' style="margin:1px;">
+            <a href="#" onclick="openResult({{k[0]}})">
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #D4A05E;'>
+                    <p>{{cases[loop.index-1][1]}}</p>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+        {% if k[1] >= 0.8 %}
+        <div data-dbid='{{k[0]}}' style="margin:1px;">
+            <a href="#" onclick="openResult({{k[0]}})">
+                <div class="alert" style='height:30px;color:black;width:100%;margin-bottom:0px;padding:5px;background-color: #A8A788;'>
+                    <p>{{cases[loop.index-1][1]}}</p>
+                </div>
+            </a>
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+            
+{% if caseStatus %}
+<div>
+    <div class="header" style="padding-bottom:20px;">
+        <h3>{{caseStatus[0][3]}}</h3>
+        <table>
+            <tr>
+                {% for k in caseStatus %}
+                {% if k[2] == "RUN" %}
+                <td style="color:green;">
+                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="{{exes[loop.index-1][0][0]}} ({{exes[loop.index-1][0][1]}})" onmouseover="onMouseTooltip(event)" style="color:green;">
+                        <span class="glyphicon glyphicon-ok-sign"></span>
+                    </a>
+                </td>
+                {% else %}
+                <td style="color:red;">
+                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="{{exes[loop.index-1][0][0]}} ({{exes[loop.index-1][0][1]}})" onmouseover="onMouseTooltip(event)" style="color:red;">
+                        <span class="glyphicon glyphicon-remove-sign"></span>
+                    </a>
+                </td>
+                {% endif %}
+                {% if loop.index%10 == 0 %}
+                </tr><tr>
+                {% endif %}
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
+    <div class="list">
+        <table class="table">
+            <tr>
+                <td>ID</td>
+                <td>Title</td>
+                <td>Result</td>
+            </tr>
+    {% for k in exes %}
+            {% if caseStatus[loop.index-1][2] == "RUN" %}
+            <tr class="success" style="color:black;">
+            {% endif %}
+            {% if caseStatus[loop.index-1][2] == "FAILED" %}
+            <tr class="danger" style="color:black;">
+            {% endif %}
+            {% if caseStatus[loop.index-1][2] == "SKIPPED" %}
+            <tr class="warning" style="color:black;">
+            {% endif %}
+            {% if caseStatus[loop.index-1][2] == "NOTRUN" %}
+            <tr>
+            {% endif %}
+            {% if caseStatus[loop.index-1][2] == "NOTIMP" %}
+            <tr class="info" style="color:black;">
+            {% endif %}
+                <td>{{loop.index}}</td>
+                <td>{{k[0][0]}} ({{k[0][1]}})</td>
+                <td>{{caseStatus[loop.index-1][2]}}</td>
+            </tr>
+    {% endfor %}
+        </table>
+    </div>
+</div>
+{% endif %}

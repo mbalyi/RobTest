@@ -51,6 +51,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='add_history.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='add_case_history.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='add_step_history.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='add_case_status_history.js') }}"></script>
 	{% if user == "admin" %}
     <script type="text/javascript" src="{{ url_for('static', filename='admin.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='projectManaging.js') }}"></script>
@@ -116,7 +117,11 @@
 						<ul class="dropdown-menu">
 							{% if user %}
 							<li><a class='header' id="reportGenerator" href="#">Report Generating</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a class='header' id="caseStatusHis" href="#" onclick="caseStatusHistory()">Set List/Case Status</a></li>
+                            <li role="separator" class="divider"></li>
 							<li><a class='header' id="history" href="#" onclick="histoyPage()">Case Execution List</a></li>
+                            <li role="separator" class="divider"></li>
                             <li><a class='header' id="caseResHis" href="#" onclick="caseHistPage()">Case Result History</a></li>
                             <li><a class='header' id="stepResHis" href="#" onclick="stepHistPage()">Step Result History</a></li>
 							{% endif %}
@@ -205,7 +210,7 @@
         <footer>
             <div class="row">
                 <div class="col-lg-12">
-                    <p>Copyright &copy; ASDASD</p>
+                    <p>Copyright &copy; Mark Balyi</p>
                 </div>
             </div>
         </footer>

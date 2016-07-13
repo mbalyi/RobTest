@@ -735,6 +735,32 @@ def loadLastResStepHist(limit):
 	result=DB.getStepHistory(exeIds=exes)
 	return render_template('resultHistory.html', loadLastResStepHist=result, exes=exes, title=titles)
 	
+@app.route('/CaseHistForm', methods=['GET'])	
+def CaseHistForm():
+	sets=DB.get_set(projectId=projectSession(),active=1,update=0)
+	return render_template('caseHistory.html', caseHistForm=sets)
+	
+@app.route('/historyCase/<int:setId>', methods=['GET'])	
+def historyCase(setId):
+	caseIds=DB.getSetCases(id=setId)
+	exes=DB.getExeOBLimit(projectId=projectSession(),caseIds=caseIds,limit=5)
+	result=DB.getResultCases(exes=exes)
+	it1=0
+	cases=[]
+	for k in caseIds:
+		res=DB.get_case_name(caseId=k[0])
+		cases.append([k[0],res[0]])
+		it1=it1+1
+	return render_template('caseHistory.html', resultDiagrams=result,exes=exes,cases=caseIds)
+
+@app.route('/loadCaseHistory/<int:caseId>', methods=['GET'])	
+def loadCaseHistory(caseId):
+	cases=DB.getCaseResHist(caseId=caseId)
+	print(cases)
+	exes=DB.getExesForCases(cases=cases)
+	print(exes)
+	return render_template('caseHistory.html', caseStatus=cases,exes=exes)
+	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 		

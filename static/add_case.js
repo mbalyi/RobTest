@@ -78,7 +78,8 @@ function getStep(caseId,mode){
 		function(data,status){
 			if(status){
 				$(".case_table_no").empty().append(data);
-				}
+                testareaDesign();
+            }
         }	
 	);
 }
@@ -117,6 +118,7 @@ function enableForm(){
     document.getElementById('down_step').disabled=false;
     $("#newCase").attr('disabled', true);
     $(".saveCase").empty().append(saveCaseEn1+"newCase"+saveCaseEn2);
+    testareaDesign();
 }
 
 function caseHideShow(){
@@ -162,7 +164,8 @@ function reSizeTextarea(ev){
 
 $(function(){
 	$("body").on("click","#add_step",function(){
-				$(".newStepPlace").append(add_step());
+        $(".newStepPlace").append(add_step());
+        testareaDesign();
 	});
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "case"){

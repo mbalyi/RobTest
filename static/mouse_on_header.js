@@ -48,6 +48,20 @@ function projectChanging(){
 	);
 }
 
+function testareaDesign(){
+    tinymce.init({ 
+        selector:'textarea',
+        theme: 'modern',
+        height: 50,
+        plugins: [
+          'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+          'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+          'save table contextmenu directionality emoticons template paste textcolor'
+        ],
+        toolbar: ' styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image print'
+    });
+}
+
 $(function(){
     $( ".projectSelector" ).change(function() {
         alert( "Handler for .change() called." );

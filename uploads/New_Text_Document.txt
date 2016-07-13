@@ -1,0 +1,26 @@
+Project: /opt
+
+Ruby and HTML Based Apps
+
+Server: Httpd
+Path: /etc/httpd/conf.d (Tarantula)
+
+-----
+
+Python3 Based App
+
+You have flask resource in each direct
+For each project run the following command:
+nohup flask/bin/python3.4 app.py &
+
+kill -9 <pid>
+
+Process list:
+jobs -l
+netstat -tulp
+
+
+
+----
+app.py:
+app.run(host='0.0.0.0', debug=True, port=9005)

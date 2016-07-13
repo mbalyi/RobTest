@@ -5,7 +5,7 @@ import json, os
 from flask import Flask, render_template, session, redirect, url_for, escape, request, jsonify, Response
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = '/uploads'
+UPLOAD_FOLDER = './uploads/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'csv','xslx'])
 
 app = Flask(__name__, static_url_path='/static')
@@ -771,31 +771,28 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-@app.route('/upload_file', methods=['GET', 'POST'])
-def upload_file():
+@app.route('/upload_file/<int:stepexeId>', methods=['GET', 'POST'])
+def upload_file(stepexeId):
 	if request.method == 'POST':
-		# check if the post request has the file part
-		if 'file' not in request.files:
-			flash('No file part')
+		if 'fileToUpload' not in request.files:
 			return "No file part"
-		file = request.files['file']
-		# if user does not select file, browser also
-		# submit a empty part without filename
+		file = request.files['fileToUpload']
 		if file.filename == '':
-			flash('No selected file')
 			return "No selected file"
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
 			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-			return redirect(url_for('uploaded_file',filename=filename))
-		return "error"
+			result=UP.saveTestFile(stepexeId=stepexeId,url=os.path.join(app.config['UPLOAD_FOLDER'], filename),filename=filename,extension=filename.rsplit('.', 1)[1])
+			return render_template("upload.html", addPlusToTest=result)
+	return "error"
 
 @app.route('/fileProperty/<int:exeId>/<int:stepId>', methods=['GET'])	
 def fileProperty(exeId,stepId):
 	files=UP.getTestFiles(exeId=exeId,stepId=stepId)
+	stepexeId=DB.getStepExeId(exeId=exeId,stepId=stepId)
 	if files == []:
 		files="empty"
-	return render_template('upload.html', testUpload=files)
+	return render_template('upload.html', testUpload=files, stepId=stepId,stepexeId=stepexeId)
 		
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

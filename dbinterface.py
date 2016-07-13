@@ -537,6 +537,14 @@ class Database:
 		conn.commit()
 		return result
 	
+	def getStepExeId(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT Id FROM Step_Execution WHERE StepId=? AND ExecutionId=?",[kwargs['stepId'],kwargs['exeId']])
+		id=c.fetchone()
+		conn.commit()
+		return id[0]
+	
     #-----Projects-----
 	def getProjects(self):
 		conn= sqlite3.connect("ROB_2016.s3db")

@@ -1,9 +1,9 @@
 {% if testUpload %}
 <div style="color:black;" style="width:100%;">
     {% if testUpload != "empty" %}
-    <table style="width:100%;">
+    <table class="fileStep" data-stepexeid='{{stepexeId}}' style="width:100%;">
     {% for k in testUpload %}
-        <tr>
+        <tr data-fileid='{{k[0]}}'>
             <td>
                 <a href="file://///"+{{k[1]}}>
                     {% if k[3] == "txt" or k[3] == "pdf" or k[3] == "log" %}
@@ -21,7 +21,7 @@
                 {{k[2]}}.{{k[3]}}
             </td>
             <td>
-                <a href="#" onclick="deleteFileTest()" style="color:red;">
+                <a href="#" onclick="deleteFileTest({{k[0]}})" style="color:red;">
                     <span class="glyphicon glyphicon-remove"></span>
                 </a>
             </td>
@@ -30,11 +30,38 @@
     </table>
     {% endif %}
     New File Upload:
-    <form style="width:100%;">
+    <form action='/upload_file/{{stepexeId}}' method="post" enctype="multipart/form-data" style="width:100%;">
         Select file to upload:
-        <input type="file" name="fileToUpload" id="fileToUpload">
-        <button type="button" onclick="saveFileTest()" style="width:50%; float:left;">Upload</button>
-        <button type="button" onclick="cancelFileTest()" style="width:50%;float:left;">Cancel</button>
+        <input type="file" name="fileToUpload" id='{{stepexeId}}'>
+        <!---<button type="button" onclick="saveFileTest({{stepexeId}})" style="width:50%; float:left;">Upload</button>-->
+        <input type="submit" value="Upload" name="submit" style="width:50%;float:left;">
+        <button type="button" onclick="cancelFileTest(stepId)" style="width:50%;float:left;">Cancel</button>
     </form>
 </div>
+{% endif %}
+
+{% if addPlusToTest %}
+<tr data-fileid='{{addPlusToTest[0]}}'>
+    <td>
+        <a href="file://///"+{{addPlusToTest[2]}}>
+            {% if addPlusToTest[4] == "txt" or addPlusToTest[4] == "pdf" or addPlusToTest[4] == "log" %}
+            <span class="glyphicon glyphicon-file"></span>
+            {% elif addPlusToTest[4] == "jpg" or addPlusToTest[4] == "jpeg" or addPlusToTest[4] == "png" %}
+            <span class="glyphicon glyphicon-picture"></span>
+            {% elif addPlusToTest[4] == "avi" or addPlusToTest[4] == "mp4" %}
+            <span class="glyphicon glyphicon-film"></span>
+            {% else %}
+            <span class="glyphicon glyphicon-cog"></span>
+            {% endif %}
+        </a>
+    </td>
+    <td>
+        {{addPlusToTest[3]}}.{{addPlusToTest[4]}}
+    </td>
+    <td>
+        <a href="#" onclick="deleteFileTest({{addPlusToTest[0]}})" style="color:red;">
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+    </td>
+</tr>
 {% endif %}

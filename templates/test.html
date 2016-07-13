@@ -86,7 +86,8 @@
             <th style='width:2%;'>ID</th>
             <th style='width:40%;'>Description</th>
             <th style='width:31%;'>Result</th>
-            <th style='width:10%;'>Result</th>
+            <th style='width:5%;'>Result</th>
+            <th style='width:5%;'>File</th>
             <th style='width:15%;'>Comment</th>
         </tr>
     </table>
@@ -104,7 +105,7 @@
                 <td class='Step' data-dbid='{{k[0][0]}}' style='width:31%;'>
                     <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][2]}}</a>
                 </td>
-                <td data-dbid='{{k[0][0]}}' id='{{k[0][0]}}' style='width:10%;'>
+                <td data-dbid='{{k[0][0]}}' id='{{k[0][0]}}' style='width:5%;'>
                     <a href='#' class='Result' data-dbid='{{k[0][0]}}' id='{{k[0][0]}}'>
                         {% if k[1][0] == "RUN" %}
                             <span class='glyphicon glyphicon-ok-circle' style='color:#5cb85c;'></span>
@@ -122,6 +123,11 @@
                             <span class='glyphicon glyphicon-ban-circle' style='color:#5bc0de;'></span>
                         {% endif %}
                     </a>
+                </td>
+                <td class="Step" data-dbid='{{k[0][0]}}' style='width:5%;'>
+                    <button type="button" class="btn btn-default btn-xs" onclick="fileUploadTest({{k[0][0]}})" data-popname="uploadPop" data-dbid='{{k[0][0]}}' data-toggle="popover" data-placement="bottom" data-title='Upload: '>
+                        <span class="glyphicon glyphicon-cloud-upload"></span>
+                    </button>
                 </td>
                 <td class='Step' data-dbid='{{k[0][0]}}' style='width:15%;'>
                     <a href='#' class='Step' data-comment='comment' data-dbid='{{k[0][0]}}' data-popname="stepPop" data-toggle="popover" data-placement="bottom" data-title='Comment: ' onclick="addComment({{k[0][0]}})">{{k[1][1]}}</a>

@@ -121,13 +121,13 @@
             <tr>
                 {% for k in caseStatus %}
                 {% if k[2] == "RUN" %}
-                <td style="color:green;">
+                <td style="color:green;padding:2px;">
                     <a href="#" data-toggle="tooltip" data-placement="bottom" title="{{exes[loop.index-1][0][0]}} ({{exes[loop.index-1][0][1]}})" onmouseover="onMouseTooltip(event)" style="color:green;">
                         <span class="glyphicon glyphicon-ok-sign"></span>
                     </a>
                 </td>
                 {% else %}
-                <td style="color:red;">
+                <td style="color:red;padding:2px;">
                     <a href="#" data-toggle="tooltip" data-placement="bottom" title="{{exes[loop.index-1][0][0]}} ({{exes[loop.index-1][0][1]}})" onmouseover="onMouseTooltip(event)" style="color:red;">
                         <span class="glyphicon glyphicon-remove-sign"></span>
                     </a>

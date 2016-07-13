@@ -774,15 +774,13 @@ def allowed_file(filename):
 @app.route('/upload_file/<int:stepexeId>', methods=['GET', 'POST'])
 def upload_file(stepexeId):
 	if request.method == 'POST':
-		if 'fileToUpload' not in request.files:
-			return "No file part"
-		file = request.files['fileToUpload']
-		if file.filename == '':
+		if request.form['name'] == '':
 			return "No selected file"
-		if file and allowed_file(file.filename):
-			filename = secure_filename(file.filename)
-			file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-			result=UP.saveTestFile(stepexeId=stepexeId,url=os.path.join(app.config['UPLOAD_FOLDER'], filename),filename=filename,extension=filename.rsplit('.', 1)[1])
+		if allowed_file(request.form['name']):
+			file = open(os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),'w')
+			file.write(request.form['context'])
+			file.close()
+			result=UP.saveTestFile(stepexeId=stepexeId,url=os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),filename=request.form['name'],extension=request.form['name'].rsplit('.', 1)[1])
 			return render_template("upload.html", addPlusToTest=result)
 	return "error"
 
@@ -793,7 +791,11 @@ def fileProperty(exeId,stepId):
 	if files == []:
 		files="empty"
 	return render_template('upload.html', testUpload=files, stepId=stepId,stepexeId=stepexeId)
-		
+
+@app.route('/deleteFileTest/<int:fileId>', methods=['GET'])	
+def deleteFileTest(fileId):
+	return UP.deleteFileTest(fileId=fileId)
+	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 		

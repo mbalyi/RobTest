@@ -13,12 +13,30 @@ function cancelFileTest(stepId){
 }
 
 function saveFileTest(stepexeId){
-    var file = new FormData(document.getElementById(stepexeId));
-    $.post("/upload_file",file,function(data,status){
+    var title = "file"+stepexeId;
+    var file = document.getElementById(title).files[0];
+    var reader = new FileReader();
+    reader.readAsText(file, 'UTF-8');
+    reader.onload = shipOff.bind(null,stepexeId);
+}
+
+function shipOff(id,event){
+    var result=event.target.result;
+    var title = "file"+id;
+    var fileName = document.getElementById(title).files[0].name;
+    $.post("/upload_file/"+id,{ name: fileName, context: result },function(data,status){
         if(status){
-            $(".fileStep[data-stepexeid="+stepexeId+"]").append(data);
+            $(".fileStep[data-stepexeid="+id+"]").append(data);
         }
     }).fail(function() {
     alert( "error" );
   });
+}
+
+function deleteFileTest(id){
+    $.get("/deleteFileTest/"+id,function(data,status){
+        if(status){
+            $("[data-fileid="+id+"]").remove();
+        }
+    });
 }

@@ -18,5 +18,12 @@ class Upload:
 		result = c.fetchone()
 		conn.commit()
 		return result
-		
+	
+	def deleteFileTest(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Uploads_Test WHERE UploadTestId=?",[kwargs['fileId']])
+		conn.commit()
+		return "success"
+	
 UP = Upload()

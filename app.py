@@ -1,7 +1,7 @@
 from upload import UP
 from dbinterface import DB
 from reportinterface import Report
-import json, os
+import json, os, base64
 from flask import Flask, render_template, session, redirect, url_for, escape, request, jsonify, Response
 from werkzeug.utils import secure_filename
 
@@ -766,19 +766,26 @@ def loadCaseHistory(caseId):
 	return render_template('caseHistory.html', caseStatus=cases,exes=exes)
 
 #----File Upload----
+PIC_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 	
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-@app.route('/upload_file/<int:stepexeId>', methods=['GET', 'POST'])
-def upload_file(stepexeId):
+@app.route('/upload_file_test/<int:stepexeId>', methods=['GET', 'POST'])
+def upload_file_test(stepexeId):
+	UPLOAD_FOLDER = './uploads/test/'
+	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
 		if request.form['name'] == '':
 			return "No selected file"
 		if allowed_file(request.form['name']):
-			file = open(os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),'w')
-			file.write(request.form['context'])
+			if request.form['name'].rsplit('.', 1)[1] in PIC_EXTENSIONS:
+				file = open(os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),'wb')
+				file.write(base64.b64decode(request.form['context'].split(',')[1]))
+			else:
+				file = open(os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),'w')
+				file.write(request.form['context'])
 			file.close()
 			result=UP.saveTestFile(stepexeId=stepexeId,url=os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),filename=request.form['name'],extension=request.form['name'].rsplit('.', 1)[1])
 			return render_template("upload.html", addPlusToTest=result)
@@ -794,6 +801,8 @@ def fileProperty(exeId,stepId):
 
 @app.route('/deleteFileTest/<int:fileId>', methods=['GET'])	
 def deleteFileTest(fileId):
+	file=UP.getFileURL(fileId=fileId)
+	os.remove(file)
 	return UP.deleteFileTest(fileId=fileId)
 	
 # set the secret key.  keep this really secret:

@@ -19,6 +19,14 @@ class Upload:
 		conn.commit()
 		return result
 	
+	def getFileURL(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT File_URL FROM Uploads_Test WHERE UploadTestId=?",[kwargs['fileId']])
+		name=c.fetchone()
+		conn.commit()
+		return name[0]
+	
 	def deleteFileTest(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()

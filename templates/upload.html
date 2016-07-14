@@ -1,7 +1,7 @@
 {% if testUpload %}
 <div style="color:black;" style="width:100%;">
-    {% if testUpload != "empty" %}
     <table class="fileStep" data-stepexeid='{{stepexeId}}' style="width:100%;">
+    {% if testUpload != "empty" %}
     {% for k in testUpload %}
         <tr data-fileid='{{k[0]}}'>
             <td>
@@ -27,12 +27,12 @@
             </td>
         </tr>
     {% endfor %}
-    </table>
     {% endif %}
+    </table>
     New File Upload:
     <form data-formid='{{stepexeId}}'  method="post" enctype="multipart/form-data" style="width:100%;">
         Select file to upload:
-        <input type="file" name="fileToUpload" id='file{{stepexeId}}' data-fileid='{{stepexeId}}'>
+        <input type="file" name="fileToUpload" id='file{{stepexeId}}' data-fileid='{{stepexeId}}' multiple>
         <button type="button" onclick="saveFileTest({{stepexeId}})" style="width:50%; float:left;">Upload</button>
         <!---<input type="submit" value="Upload" name="submit" style="width:50%;float:left;">-->
         <button type="button" onclick="cancelFileTest({{stepId}})" style="width:50%;float:left;">Cancel</button>

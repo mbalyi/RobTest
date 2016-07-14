@@ -780,6 +780,7 @@ def upload_file_test(stepexeId):
 		if request.form['name'] == '':
 			return "No selected file"
 		if allowed_file(request.form['name']):
+			print(request.form['name'])
 			if request.form['name'].rsplit('.', 1)[1] in PIC_EXTENSIONS:
 				file = open(os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),'wb')
 				file.write(base64.b64decode(request.form['context'].split(',')[1]))

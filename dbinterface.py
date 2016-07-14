@@ -226,6 +226,22 @@ class Database:
 		c.execute("UPDATE Objects SET Active=0 WHERE ObjectId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
 		conn.commit()
 	
+	def getObjectFiles(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Uploads_Object WHERE ObjectId=?",[kwargs['obId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def checkFileInObjects(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Uploads_Object WHERE ObjectId=? AND FileName=?",[kwargs['objectId'],kwargs['filename']])
+		result=c.fetchone()
+		conn.commit()
+		return result
+	
 	#-----set-----
 	def get_set(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")

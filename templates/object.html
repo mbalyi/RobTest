@@ -57,7 +57,7 @@
             </td>
         </tr>
     </table>
-    <div class='AreaField' style='100%'>
+    <div class='AreaField' style='widt:100%;'>
         <h2>Areas: </h2>
         <table>
             {% for k in objectForm %}
@@ -65,15 +65,36 @@
                     <tr>
                 {% endif %}
                         <td><input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>{{k[1]}}</td>
-                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                {% if (loop.index%5 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
                 {% endif %}
-                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                {% if (loop.index%5 == 0) and (loop.index==count) %}
                     </tr>
                 {% endif %}
             {% endfor %}
         </table>
+    </div>
+    <div class="FileUpload" style='widt:100%;'>
+        <div class="uploadHeader" style='widt:100%;'>
+            <h3>
+                <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
+                    FileUpload: 
+                </a>
+            </h3>
+        </div>
+        <div class="uploadContent" style='widt:100%;display: none;'>
+            <div style="width:50%; float:left;">
+                <form class="form-group" data-formid='newObjectFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                    Select file to upload:
+                    <input type="file" name="fileToUpload" id="fileUploadObject" multiple>
+                </form>
+            </div>
+            <div style="width:50%; float:left;">
+                <table class="objectFiles" style="width:100%;">
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 {% endif %}
@@ -128,6 +149,55 @@
             {% endfor %}
         </table>
     </div>
+    <div class="FileUpload" style='widt:100%;'>
+        <div class="uploadHeader" style='widt:100%;'>
+            <h3>
+                <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
+                    FileUpload: 
+                </a>
+            </h3>
+        </div>
+        <div class="uploadContent" style='widt:100%;'>
+            <div style="width:50%; float:left;">
+                <form class="form-group" data-formid='newObjectFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                    Select file to upload:
+                    <input type="file" name="fileToUpload" id="fileUploadObject" multiple>
+                    <button class="btn btn-default btn-xs" type="button" onclick="updateFilesToObject({{loadObject[0]}})" style="width:50%; float:left;">Upload</button>
+                </form>
+            </div>
+            <div style="width:50%; float:left;">
+                <table class="objectFiles" style="width:100%;">
+                    {% if files != "empty" %}
+                    {% for k in files %}
+                        <tr data-fileid='{{k[0]}}'>
+                            <td>
+                                <a href="{{k[2]}}">
+                                    {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" %}
+                                    <span class="glyphicon glyphicon-file"></span>
+                                    {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                                    <span class="glyphicon glyphicon-picture"></span>
+                                    {% elif k[4] == "avi" or k[4] == "mp4" %}
+                                    <span class="glyphicon glyphicon-film"></span>
+                                    {% else %}
+                                    <span class="glyphicon glyphicon-cog"></span>
+                                    {% endif %}
+                                </a>
+                            </td>
+                            <td>
+                                {{k[3]}}
+                            </td>
+                            <td>
+                                <a href="#" onclick="deleteFileObject({{k[0]}})" style="color:red;">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
 	</div>
 {%endif%}
 
@@ -179,5 +249,53 @@
                 {% endfor %}
             </table>
         </div>
+        <div class="FileUpload" style='widt:100%;'>
+        <div class="uploadHeader" style='widt:100%;'>
+            <h3>
+                <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
+                    FileUpload: 
+                </a>
+            </h3>
+        </div>
+        <div class="uploadContent" style='widt:100%;'>
+            <div style="width:50%; float:left;">
+                <form class="form-group" data-formid='newObjectFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                    Select file to upload:
+                    <input type="file" name="fileToUpload" id="fileUploadObject" multiple>
+                </form>
+            </div>
+            <div style="width:50%; float:left;">
+                <table class="objectFiles" style="width:100%;">
+                    {% if files != "empty" %}
+                    {% for k in files %}
+                        <tr data-fileid='{{k[0]}}'>
+                            <td>
+                                <a href="{{k[2]}}">
+                                    {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" %}
+                                    <span class="glyphicon glyphicon-file"></span>
+                                    {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                                    <span class="glyphicon glyphicon-picture"></span>
+                                    {% elif k[4] == "avi" or k[4] == "mp4" %}
+                                    <span class="glyphicon glyphicon-film"></span>
+                                    {% else %}
+                                    <span class="glyphicon glyphicon-cog"></span>
+                                    {% endif %}
+                                </a>
+                            </td>
+                            <td>
+                                {{k[3]}}
+                            </td>
+                            <td>
+                                <a href="#" onclick="deleteFileObject({{k[0]}})" style="color:red;">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
+                </table>
+            </div>
+        </div>
+    </div>
 	</div>
 {%endif%}

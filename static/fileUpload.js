@@ -43,7 +43,7 @@ function shipOff(data,event){
     var result=event.target.result;
     var title = "file"+data[0];
     var fileName = data[1];
-    $.post("/upload_file_test/"+data[0],{ name: fileName, context: result },function(datas,status){
+    $.post("/upload_file_test/"+data[0]+"/test",{ name: fileName, context: result },function(datas,status){
             $(".fileStep[data-stepexeid="+data[0]+"]").append(datas);
     }).fail(function() {
     alert( "error" );
@@ -51,7 +51,7 @@ function shipOff(data,event){
 }
 
 function deleteFileTest(id){
-    $.get("/deleteFileTest/"+id,function(data,status){
+    $.get("/deleteFiles/"+id+"/test",function(data,status){
         if(status){
             $("[data-fileid="+id+"]").remove();
         }

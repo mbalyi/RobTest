@@ -14,6 +14,9 @@ function save_object(){
 	$.post("/save_object", sendData,
 		function(data,status){
 			if(status){
+                if(document.getElementById("fileUploadObject").files.length > 0){
+                    updateFilesToObject(data);
+                }
 				loadObject(data,"loadObject");
 			}
 		},
@@ -30,6 +33,7 @@ function updateObject(objectId){
 	$.post("/updateObject", sendData,
 		function(data,status){
 			if(status){
+                fileUpdateOnObject(objectId);
 				loadObject(data,"loadObject");
 			}
 		},
@@ -114,6 +118,11 @@ function objectSearch(){
             }
         }
     }
+}
+
+function toggleObjectFileCont(){
+    if($("#newObject").attr('disabled')=="disabled")
+        $(".uploadContent").slideToggle();
 }
 
 $(function(){

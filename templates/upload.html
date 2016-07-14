@@ -29,13 +29,12 @@
     {% endfor %}
     {% endif %}
     </table>
-    New File Upload:
-    <form data-formid='{{stepexeId}}'  method="post" enctype="multipart/form-data" style="width:100%;">
+    <form class="form-group" data-formid='{{stepexeId}}'  method="post" enctype="multipart/form-data" style="width:100%;">
         Select file to upload:
         <input type="file" name="fileToUpload" id='file{{stepexeId}}' data-fileid='{{stepexeId}}' multiple>
-        <button type="button" onclick="saveFileTest({{stepexeId}})" style="width:50%; float:left;">Upload</button>
+        <button class="btn btn-default btn-xs" type="button" onclick="saveFileTest({{stepexeId}})" style="width:50%; float:left;">Upload</button>
         <!---<input type="submit" value="Upload" name="submit" style="width:50%;float:left;">-->
-        <button type="button" onclick="cancelFileTest({{stepId}})" style="width:50%;float:left;">Cancel</button>
+        <button class="btn btn-default btn-xs" type="button" onclick="cancelFileTest({{stepId}})" style="width:50%;float:left;">Cancel</button>
     </form>
 </div>
 {% endif %}
@@ -60,6 +59,32 @@
     </td>
     <td>
         <a href="#" onclick="deleteFileTest({{addPlusToTest[0]}})" style="color:red;">
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+    </td>
+</tr>
+{% endif %}
+
+{% if objectFile %}
+<tr data-fileid='{{objectFile[0]}}'>
+    <td>
+        <a href='{{objectFile[2]}}'>
+            {% if objectFile[4] == "txt" or objectFile[4] == "pdf" or addPlusToTest[4] == "log" %}
+            <span class="glyphicon glyphicon-file"></span>
+            {% elif objectFile[4] == "jpg" or objectFile[4] == "jpeg" or objectFile[4] == "png" %}
+            <span class="glyphicon glyphicon-picture"></span>
+            {% elif objectFile[4] == "avi" or objectFile[4] == "mp4" %}
+            <span class="glyphicon glyphicon-film"></span>
+            {% else %}
+            <span class="glyphicon glyphicon-cog"></span>
+            {% endif %}
+        </a>
+    </td>
+    <td>
+        {{objectFile[3]}}
+    </td>
+    <td>
+        <a href="#" onclick="deleteFileObject({{objectFile[0]}})" style="color:red;">
             <span class="glyphicon glyphicon-remove"></span>
         </a>
     </td>

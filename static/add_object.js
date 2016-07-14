@@ -46,6 +46,17 @@ function loadObject(ObjectId,mode){
 		function(data,status){
 			if(status){
 				$(".divContainer").empty().append(data);
+                //loadObjectModel(ObjectId);
+			};
+		}
+	);
+}
+
+function loadObjectModel(id){
+    $.get("/loadObjectModal/"+id,
+		function(data,status){
+			if(status){
+				$(".objectModalCont").empty().append(data);
 			};
 		}
 	);

@@ -18,7 +18,12 @@ function shipOffObject(data,event){
     var result=event.target.result;
     var fileName = data[1];
     $.post("/upload_file_test/"+data[0]+"/object",{ name: fileName, context: result },function(datas,status){
+        if(fileTypes.indexOf(data[1].split('.').pop().toLowerCase()) >-1){
+            $(".imgFiles").append(datas);
+        }
+        else{
             $(".objectFiles").append(datas);
+        }
     }).fail(function() {
     alert( "error" );
   });
@@ -52,7 +57,12 @@ function shipOffObjectUpdate(data,event){
     var result=event.target.result;
     var fileName = data[1];
     $.post("/upload_file_update/"+data[0]+"/object",{ name: fileName, context: result },function(datas,status){
+        if(fileTypes.indexOf(data[1].split('.').pop().toLowerCase()) >-1){
+            $(".imgFiles").append(datas);
+        }
+        else{
             $(".objectFiles").append(datas);
+        }
     }).fail(function() {
     alert( "error" );
   });

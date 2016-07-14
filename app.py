@@ -2,7 +2,7 @@ from upload import UP
 from dbinterface import DB
 from reportinterface import Report
 import json, os, base64
-from flask import Flask, render_template, session, redirect, url_for, escape, request, jsonify, Response
+from flask import Flask, render_template, session, redirect, url_for, escape, request, jsonify, Response, send_from_directory
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = './uploads/'
@@ -15,6 +15,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def login(active=None):
 	return render_template('Login.html')
 
+@app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
+def uploads(filename):
+	return send_from_directory("./uploads/", filename)
 	
 @app.route('/home', methods=['GET', 'POST'])
 def login_form():
@@ -164,7 +167,12 @@ def save_object():
 	ID=DB.save_object(name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],version=request.form["version"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
 	return json.dumps(ID)
 
-@app.route('/updateObject', methods=['POST'])	
+@app.route('/loadObjectModal/<int:id>', methods=['GET'])	
+def loadObjectModal(id):
+	files=DB.getObjectFiles(obId=id)
+	return render_template("object.html", modalFiles=files)
+
+@app.route('/updateObject', methods=['GET'])	
 def updateObject():
 	DB.updateObject(objectId=request.form["objectId"],name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],version=request.form["version"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'))
 	return json.dumps(request.form["objectId"])
@@ -780,7 +788,7 @@ def upload_file_test(Id,mode):
 	if mode == "test":
 		UPLOAD_FOLDER = './uploads/test/'
 	if mode == "object":
-		UPLOAD_FOLDER = './uploads/object/'
+		UPLOAD_FOLDER = './static/uploads/object/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
 		if request.form['name'] == '':
@@ -812,7 +820,7 @@ def fileProperty(exeId,stepId):
 @app.route('/upload_file_update/<int:id>/<mode>', methods=['POST'])	
 def upload_file_update(id,mode):
 	if mode == "object":
-		UPLOAD_FOLDER = './uploads/object/'
+		UPLOAD_FOLDER = './static/uploads/object/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
 		if request.form['name'] == '':

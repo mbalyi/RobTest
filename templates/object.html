@@ -75,7 +75,7 @@
             {% endfor %}
         </table>
     </div>
-    <div class="FileUpload" style='widt:100%;'>
+    <div class="Files" style='widt:100%;'>
         <div class="uploadHeader" style='widt:100%;'>
             <h3>
                 <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
@@ -94,6 +94,7 @@
                 <table class="objectFiles" style="width:100%;">
                 </table>
             </div>
+            <div class="imgFiles"></div>
         </div>
     </div>
 </div>
@@ -149,7 +150,7 @@
             {% endfor %}
         </table>
     </div>
-    <div class="FileUpload" style='widt:100%;'>
+    <div class="Files" style='widt:100%;'>
         <div class="uploadHeader" style='widt:100%;'>
             <h3>
                 <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
@@ -171,17 +172,19 @@
                     {% for k in files %}
                         <tr data-fileid='{{k[0]}}'>
                             <td>
-                                <a href="{{k[2]}}">
+                                <!--<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg[data-filemodalid='{{k[0]}}']">-->
+                                <a href="{{ url_for('uploads',filename='object/'+k[3]) }}" download>
                                     {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" %}
                                     <span class="glyphicon glyphicon-file"></span>
-                                    {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
-                                    <span class="glyphicon glyphicon-picture"></span>
+                                    
+                                    <!--<span class="glyphicon glyphicon-picture"></span>-->
                                     {% elif k[4] == "avi" or k[4] == "mp4" %}
                                     <span class="glyphicon glyphicon-film"></span>
                                     {% else %}
                                     <span class="glyphicon glyphicon-cog"></span>
                                     {% endif %}
                                 </a>
+                                <!--</button>-->
                             </td>
                             <td>
                                 {{k[3]}}
@@ -196,8 +199,27 @@
                     {% endif %}
                 </table>
             </div>
+            <div class="imgFiles">
+                {% for k in files %}
+                {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                    <div class="responsive" data-fileid='{{k[0]}}'>
+                      <div class="img">
+                        <a target="_blank" href="{{ url_for('uploads',filename='object/'+k[3]) }}" download>
+                          <img src="{{ url_for('uploads',filename='object/'+k[3]) }}" alt="Trolltunga Norway" width="300" height="200">
+                        </a>
+                        <div class="desc">{{k[3]}} 
+                            <a href="#" onclick="deleteFileObject({{k[0]}})" style="color:red;">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                          </div>
+                      </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
+        <div class="objectModalCont"></div>
 	</div>
 {%endif%}
 
@@ -270,17 +292,19 @@
                     {% for k in files %}
                         <tr data-fileid='{{k[0]}}'>
                             <td>
-                                <a href="{{k[2]}}">
+                                <!--<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg[data-filemodalid='{{k[0]}}']">-->
+                                <a href="{{ url_for('uploads',filename='object/'+k[3]) }}" download>
                                     {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" %}
                                     <span class="glyphicon glyphicon-file"></span>
-                                    {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
-                                    <span class="glyphicon glyphicon-picture"></span>
+                                    
+                                    <!--<span class="glyphicon glyphicon-picture"></span>-->
                                     {% elif k[4] == "avi" or k[4] == "mp4" %}
                                     <span class="glyphicon glyphicon-film"></span>
                                     {% else %}
                                     <span class="glyphicon glyphicon-cog"></span>
                                     {% endif %}
                                 </a>
+                                <!--</button>-->
                             </td>
                             <td>
                                 {{k[3]}}
@@ -295,7 +319,47 @@
                     {% endif %}
                 </table>
             </div>
+            <div class="imgFiles">
+                {% for k in files %}
+                {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                    <div class="responsive" data-fileid='{{k[0]}}'>
+                      <div class="img">
+                        <a target="_blank" href="{{ url_for('uploads',filename='object/'+k[3]) }}" download>
+                          <img src="{{ url_for('uploads',filename='object/'+k[3]) }}" alt="Trolltunga Norway" width="300" height="200">
+                        </a>
+                        <div class="desc">{{k[3]}} 
+                            <a href="#" onclick="deleteFileObject({{k[0]}})" style="color:red;">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                          </div>
+                      </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 	</div>
 {%endif%}
+
+{% if modalFiles %}
+    {% for k in modalFiles %}
+    <div class="modal fade bs-example-modal-lg" data-filemodalid='{{k[0]}}' tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">{{k[3]}}</h4>
+            </div>
+            <div class="modal-body">
+          {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                <img src="{{ url_for('uploads',filename='object/'+k[3]) }}">
+          {% else %}
+                <a href="{{ url_for('uploads',filename='object/'+k[3]) }}" download>Download: {{k[3]}}</a>
+          {% endif %}
+            </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+{% endif %}

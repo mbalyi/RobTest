@@ -66,13 +66,13 @@
 {% endif %}
 
 {% if objectFile %}
+{% if objectFile[4] != "jpg" and objectFile[4] != "jpeg" and objectFile[4] != "png" %}
 <tr data-fileid='{{objectFile[0]}}'>
     <td>
         <a href='{{objectFile[2]}}'>
-            {% if objectFile[4] == "txt" or objectFile[4] == "pdf" or addPlusToTest[4] == "log" %}
+            {% if objectFile[4] == "txt" or objectFile[4] == "pdf" or objectFile[4] == "log" %}
             <span class="glyphicon glyphicon-file"></span>
-            {% elif objectFile[4] == "jpg" or objectFile[4] == "jpeg" or objectFile[4] == "png" %}
-            <span class="glyphicon glyphicon-picture"></span>
+            <!--<span class="glyphicon glyphicon-picture"></span>-->
             {% elif objectFile[4] == "avi" or objectFile[4] == "mp4" %}
             <span class="glyphicon glyphicon-film"></span>
             {% else %}
@@ -89,4 +89,18 @@
         </a>
     </td>
 </tr>
+{% else %}
+    <div class="responsive" data-fileid='{{objectFile[0]}}'>
+      <div class="img">
+        <a target="_blank" href="{{ url_for('uploads',filename='object/'+objectFile[3]) }}" download>
+          <img src="{{ url_for('uploads',filename='object/'+objectFile[3]) }}" alt="Trolltunga Norway" width="300" height="200">
+        </a>
+        <div class="desc">{{objectFile[3]}} 
+            <a href="#" onclick="deleteFileObject({{objectFile[0]}})" style="color:red;">
+                    <span class="glyphicon glyphicon-remove"></span>
+            </a>
+          </div>
+      </div>
+    </div>
+{% endif %}
 {% endif %}

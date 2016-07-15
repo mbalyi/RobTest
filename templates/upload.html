@@ -104,3 +104,44 @@
     </div>
 {% endif %}
 {% endif %}
+
+{% if setFile %}
+{% if setFile[4] != "jpg" and setFile[4] != "jpeg" and setFile[4] != "png" %}
+<tr data-fileid='{{setFile[0]}}'>
+    <td>
+        <a href='{{setFile[2]}}' download>
+            {% if setFile[4] == "txt" or setFile[4] == "pdf" or setFile[4] == "log" or setFile[4] == "doc" or setFile[4] == "docx" %}
+            <span class="glyphicon glyphicon-file"></span>
+            {% elif setFile[4] == "jpg" or setFile[4] == "jpeg" or setFile[4] == "png" %}
+            <span class="glyphicon glyphicon-picture"></span>
+            {% elif setFile[4] == "avi" or setFile[4] == "mp4" %}
+            <span class="glyphicon glyphicon-film"></span>
+            {% else %}
+            <span class="glyphicon glyphicon-cog"></span>
+            {% endif %}
+        </a>
+    </td>
+    <td>
+        {{setFile[3]}}
+    </td>
+    <td>
+        <a href="#" onclick="deleteFileSet({{setFile[0]}})" style="color:red;">
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+    </td>
+</tr>
+{% else %}
+    <div class="responsive" data-fileid='{{setFile[0]}}'>
+      <div class="img">
+        <a target="_blank" href="{{ url_for('uploads',filename='set/'+setFile[3]) }}" download>
+          <img src="{{ url_for('uploads',filename='set/'+setFile[3]) }}"width="300" height="200">
+        </a>
+        <div class="desc">{{setFile[3]}} 
+            <a href="#" onclick="deleteFileSet({{setFile[0]}})" style="color:red;">
+                    <span class="glyphicon glyphicon-remove"></span>
+            </a>
+          </div>
+      </div>
+    </div>
+{% endif %}
+{% endif %}

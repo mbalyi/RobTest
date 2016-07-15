@@ -80,5 +80,39 @@ class Upload:
 			else:
 				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
 				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
+		if kwargs['mode'] == "set":
+			c.execute("SELECT * FROM Uploads_Set WHERE File_URL=?",[kwargs['path']])
+			result=c.fetchone()
+			conn.commit()
+			if result == None:
+				return kwargs['name']
+			else:
+				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
+				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
+	
+	def saveSetFile(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("INSERT INTO Uploads_Set (SetId,File_URL,FileName,Extension) VALUES (?,?,?,?)",[kwargs['setId'],kwargs['url'],kwargs['filename'],kwargs['extension']])
+		conn.commit()
+		c.execute("SELECT * FROM Uploads_Set WHERE SetId=? AND File_URL=? AND FileName=? AND Extension=?",[kwargs['setId'],kwargs['url'],kwargs['filename'],kwargs['extension']])
+		result = c.fetchone()
+		conn.commit()
+		return result
+	
+	def getSetFileURL(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT File_URL FROM Uploads_Set WHERE UploadSetId=?",[kwargs['fileId']])
+		name=c.fetchone()
+		conn.commit()
+		return name[0]
+		
+	def deleteFileSet(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Uploads_Set WHERE UploadSetId=?",[kwargs['fileId']])
+		conn.commit()
+		return "success"
 	
 UP = Upload()

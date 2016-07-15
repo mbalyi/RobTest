@@ -360,6 +360,22 @@ class Database:
 		c.execute("UPDATE Sets SET Active=? WHERE SetId=?",[0,kwargs['id']])
 		conn.commit()
 	
+	def checkFileInSets(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Uploads_Set WHERE SettId=? AND FileName=?",[kwargs['setId'],kwargs['filename']])
+		result=c.fetchone()
+		conn.commit()
+		return result
+	
+	def getSetFiles(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Uploads_Set WHERE SetId=?",[kwargs['setId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
 	#-----execution-----
 	def getExecution(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")

@@ -228,6 +228,7 @@ def load_set(ID,mode):
 	cases=DB.getSetCases(id=ID)
 	areaInSet = DB.getSetArea(setId=ID)
 	areas = DB.getAreas(projectId=projectSession())
+	files=DB.getSetFiles(setId=ID)
 	temp=[]
 	boolen='false'
 	for k in areas:
@@ -240,11 +241,11 @@ def load_set(ID,mode):
 			temp.append([k,'checked'])
 			boolen='false'
 	if mode == "loadSet":
-		return render_template('set.html', loadSet=query, loadCase=cases,areas=temp,count=len(areas))
+		return render_template('set.html', loadSet=query, loadCase=cases,areas=temp,count=len(areas),files=files)
 	if mode == "exeCasesBySet":
 		return render_template('set.html', exeCasesBySet=cases)
 	else:
-		return render_template('set.html', loadEditableSet=query, editCase=cases,areas=temp,count=len(areas))
+		return render_template('set.html', loadEditableSet=query, editCase=cases,areas=temp,count=len(areas),files=files)
 
 #--- Fizikai törlés
 @app.route('/deleteSetPhysical/<int:ID>', methods=['GET'])
@@ -790,6 +791,8 @@ def upload_file_test(Id,mode):
 		UPLOAD_FOLDER = './uploads/test/'
 	if mode == "object":
 		UPLOAD_FOLDER = './uploads/object/'
+	if mode == "set":
+		UPLOAD_FOLDER = './uploads/set/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
 		if request.form['name'] == '':
@@ -812,6 +815,9 @@ def upload_file_test(Id,mode):
 			if mode == "object":
 				result=UP.saveObjectFile(objectId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1])
 				return render_template("upload.html", objectFile=result)
+			if mode == "set":
+				result=UP.saveSetFile(setId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1])
+				return render_template("upload.html", setFile=result)
 	return "error"
 
 @app.route('/fileProperty/<int:exeId>/<int:stepId>', methods=['GET'])	
@@ -826,6 +832,8 @@ def fileProperty(exeId,stepId):
 def upload_file_update(id,mode):
 	if mode == "object":
 		UPLOAD_FOLDER = './uploads/object/'
+	if mode == "set":
+		UPLOAD_FOLDER = './uploads/set/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
 		if request.form['name'] == '':
@@ -847,6 +855,21 @@ def upload_file_update(id,mode):
 					file.close()
 					result=UP.saveObjectFile(objectId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1])
 					return render_template('upload.html', objectFile=result)
+			if mode == "set":
+				result=DB.checkFileInSets(setId=id,filename=request.form['name'])
+				if result == None:
+					if request.form['name'].rsplit('.', 1)[1] in PIC_EXTENSIONS:
+						file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'wb')
+						file.write(base64.b64decode(request.form['context'].split(',')[1]))
+					elif request.form['name'].rsplit('.', 1)[1] in DOC_EXTENSIONS:
+						file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'wb')
+						file.write(base64.b64decode(request.form['context'].split(',')[1]))
+					else:
+						file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'w')
+						file.write(request.form['context'].encode('ascii', 'backslashreplace').decode("utf-8", "replace"))
+					file.close()
+					result=UP.saveSetFile(objectId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1])
+					return render_template('upload.html', objectFile=result)
 		return "ok"
 	return "error"
 	
@@ -860,6 +883,10 @@ def deleteFiles(fileId,mode):
 		file=UP.getObjectFileURL(fileId=fileId)
 		os.remove(file)
 		return UP.deleteFileObject(fileId=fileId)
+	if mode == "set":
+		file=UP.getSetFileURL(fileId=fileId)
+		os.remove(file)
+		return UP.deleteFileSet(fileId=fileId)
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

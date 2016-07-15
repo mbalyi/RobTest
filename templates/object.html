@@ -79,7 +79,7 @@
         <div class="uploadHeader" style='widt:100%;'>
             <h3>
                 <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
-                    FileUpload: 
+                    Files: 
                 </a>
             </h3>
         </div>
@@ -156,7 +156,7 @@
         <div class="uploadHeader" style='width:100%;'>
             <h3>
                 <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
-                    FileUpload: 
+                    Files: 
                 </a>
             </h3>
         </div>
@@ -177,10 +177,10 @@
                                 <td>
                                     <!--<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg[data-filemodalid='{{k[0]}}']">-->
                                     <a href="{{ url_for('uploads',filename='object/'+k[3]) }}" download>
-                                        {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" %}
+                                        {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" or k[4] == "doc" or k[4] == "docx" or k[4] == "xls" or k[4] == "xlsx" or k[4] == "csv" or k[4] == "xlt" %}
                                         <span class="glyphicon glyphicon-file"></span>
-
-                                        <!--<span class="glyphicon glyphicon-picture"></span>-->
+                                        {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                                        <span class="glyphicon glyphicon-picture"></span>
                                         {% elif k[4] == "avi" or k[4] == "mp4" %}
                                         <span class="glyphicon glyphicon-film"></span>
                                         {% else %}
@@ -279,7 +279,7 @@
         <div class="uploadHeader" style='width:100%;'>
             <h3>
                 <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
-                    FileUpload: 
+                    Files: 
                 </a>
             </h3>
         </div>
@@ -299,10 +299,10 @@
                                 <td>
                                     <!--<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg[data-filemodalid='{{k[0]}}']">-->
                                     <a href="{{ url_for('uploads',filename='object/'+k[3]) }}" download>
-                                        {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" %}
+                                        {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" or k[4] == "doc" or k[4] == "docx" or k[4] == "xls" or k[4] == "xlsx" or k[4] == "csv" or k[4] == "xlt" %}
                                         <span class="glyphicon glyphicon-file"></span>
-
-                                        <!--<span class="glyphicon glyphicon-picture"></span>-->
+                                        {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                                        <span class="glyphicon glyphicon-picture"></span>
                                         {% elif k[4] == "avi" or k[4] == "mp4" %}
                                         <span class="glyphicon glyphicon-film"></span>
                                         {% else %}

@@ -31,6 +31,9 @@ function saveSet(){
 	$.post("/save_set", sendData,
 		function(data,status){
 			if(status){
+                if(document.getElementById("fileUploadSet").files.length > 0){
+                    updateFilesToSet(data);
+                }
 				requestSet()
 			};
 		}
@@ -43,6 +46,7 @@ function updateSet(setId){
 	$.post("/updateSet", sendData,
 		function(data,status){
 			if(status){
+                fileUpdateOnSet(setId);
 				requestSet()
 			};
 		}
@@ -123,6 +127,11 @@ function setSearch(){
             }
         }
     }
+}
+
+function toggleSetFileCont(){
+    if($("#newSet").attr('disabled')=="disabled")
+        $(".uploadContent").slideToggle();
 }
 
 $(function(){

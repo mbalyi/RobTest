@@ -39,6 +39,9 @@ function saveExe(){
 	$.post("/saveExe", sendData,
 		function(data,status){
 			if(status){
+                if(document.getElementById("fileUploadExe").files.length > 0){
+                    updateFilesToExe(data);
+                }
 				requestExe();
 				loadExecution(data,"loadExe")
 			}
@@ -56,6 +59,7 @@ function updateExecution(exeId){
 	$.post("/updateExe", sendData,
 		function(data,status){
 			if(status){
+                fileUpdateOnExe(exeId);
 				requestExe();
 				loadExecution(data,"loadExe")
 			}

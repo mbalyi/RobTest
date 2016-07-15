@@ -158,6 +158,14 @@ class Database:
 		conn.commit()
 		return
 	
+	def getCaseFiles(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Uploads_Case WHERE CaseId=?",[kwargs['caseId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
 	#-----object-----
 	def get_object(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")

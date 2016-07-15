@@ -72,6 +72,7 @@ def load_case(ID,mode):
 	query = DB.get_case_parameters(id=ID, projectId=projectSession())
 	areaInCase = DB.getCaseArea(caseId=query[0][0])
 	areas = DB.getAreas(projectId=projectSession())
+	files = DB.getCaseFiles(caseId=ID)
 	temp=[]
 	boolen='false'
 	for k in areas:
@@ -84,9 +85,9 @@ def load_case(ID,mode):
 			temp.append([k,'checked'])
 			boolen='false'
 	if mode == "loadCase":
-		return render_template('case.html', loadcase=query, areaInCase=areaInCase,areas=temp,count=len(areas))
+		return render_template('case.html', loadcase=query, areaInCase=areaInCase,areas=temp,count=len(areas),files=files)
 	elif mode == "editCase":
-		return render_template('case.html', editablecase=query, areaInCase=areaInCase,areas=temp,count=len(areas))	
+		return render_template('case.html', editablecase=query, areaInCase=areaInCase,areas=temp,count=len(areas),files=files)	
 
 @app.route('/get_step/<int:ID>/<mode>', methods=['GET'])
 def get_step(ID,mode):
@@ -796,6 +797,8 @@ def upload_file_test(Id,mode):
 		UPLOAD_FOLDER = './uploads/set/'
 	if mode == "exe":
 		UPLOAD_FOLDER = './uploads/execution/'
+	if mode == "case":
+		UPLOAD_FOLDER = './uploads/case/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
 		if request.form['name'] == '':
@@ -824,6 +827,9 @@ def upload_file_test(Id,mode):
 			if mode == "exe":
 				result=UP.saveExeFile(exeId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1])
 				return render_template("upload.html", exeFile=result)
+			if mode == "case":
+				result=UP.saveCaseFile(caseId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1])
+				return render_template("upload.html", caseFile=result)
 	return "error"
 
 @app.route('/fileProperty/<int:exeId>/<int:stepId>', methods=['GET'])	
@@ -840,6 +846,8 @@ def upload_file_update(id,mode):
 		UPLOAD_FOLDER = './uploads/object/'
 	if mode == "set":
 		UPLOAD_FOLDER = './uploads/set/'
+	if mode == "case":
+		UPLOAD_FOLDER = './uploads/case/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
 		if request.form['name'] == '':
@@ -891,6 +899,21 @@ def upload_file_update(id,mode):
 					file.close()
 					result=UP.saveExeFile(exeId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1])
 					return render_template('upload.html', exeFile=result)
+			if mode == "case":
+				result=DB.checkFileInCases(caseId=id,filename=request.form['name'])
+				if result == None:
+					if request.form['name'].rsplit('.', 1)[1] in PIC_EXTENSIONS:
+						file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'wb')
+						file.write(base64.b64decode(request.form['context'].split(',')[1]))
+					elif request.form['name'].rsplit('.', 1)[1] in DOC_EXTENSIONS:
+						file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'wb')
+						file.write(base64.b64decode(request.form['context'].split(',')[1]))
+					else:
+						file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'w')
+						file.write(request.form['context'].encode('ascii', 'backslashreplace').decode("utf-8", "replace"))
+					file.close()
+					result=UP.saveCaseFile(caseId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1])
+					return render_template('upload.html', caseFile=result)
 		return "ok"
 	return "error"
 	
@@ -912,6 +935,10 @@ def deleteFiles(fileId,mode):
 		file=UP.getExeFileURL(fileId=fileId)
 		os.remove(file)
 		return UP.deleteFileExe(fileId=fileId)
+	if mode == "case":
+		file=UP.getCaseFileURL(fileId=fileId)
+		os.remove(file)
+		return UP.deleteFileCase(fileId=fileId)
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

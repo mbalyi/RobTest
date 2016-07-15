@@ -38,6 +38,9 @@ function saveCase(){
 	//$.post("/save_case", $("input").serialize()+"&"+$("textarea").serialize(),
 		function(data,status){
 			if(status){
+                if(document.getElementById("fileUploadCase").files.length > 0){
+                    updateFilesToCase(data);
+                }
 				requestCase();
 				loadCase(data,"loadCase");
 			};
@@ -53,6 +56,7 @@ function updateCase(caseId){
 	$.post("/updateCase/"+caseId, sendData,
 		function(data,status){
 			if(status){
+                fileUpdateOnCase(caseId);
 				loadCase(caseId,"loadCase");
                 requestCase();
 			};
@@ -160,6 +164,11 @@ function reSizeTextarea(ev){
         number=number+1;
         return $(ev.target).attr('rows',number);
     }
+}
+
+function toggleCaseFileCont(){
+    if($("#newCase").attr('disabled')=="disabled")
+        $(".uploadContent").slideToggle();
 }
 
 $(function(){

@@ -98,6 +98,15 @@ class Upload:
 			else:
 				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
 				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
+		if kwargs['mode'] == "case":
+			c.execute("SELECT * FROM Uploads_Case WHERE File_URL=?",[kwargs['path']])
+			result=c.fetchone()
+			conn.commit()
+			if result == None:
+				return kwargs['name']
+			else:
+				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
+				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
 	
 	def saveSetFile(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -148,5 +157,30 @@ class Upload:
 		c.execute("DELETE FROM Uploads_Execution WHERE UploadExeId=?",[kwargs['fileId']])
 		conn.commit()
 		return "success"
+	
+	def saveCaseFile(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("INSERT INTO Uploads_Case (CaseId,File_URL,FileName,Extension) VALUES (?,?,?,?)",[kwargs['caseId'],kwargs['url'],kwargs['filename'],kwargs['extension']])
+		conn.commit()
+		c.execute("SELECT * FROM Uploads_Case WHERE CaseId=? AND File_URL=? AND FileName=? AND Extension=?",[kwargs['caseId'],kwargs['url'],kwargs['filename'],kwargs['extension']])
+		result = c.fetchone()
+		conn.commit()
+		return result
+	
+	def getCaseFileURL(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT File_URL FROM Uploads_Case WHERE UploadCaseId=?",[kwargs['fileId']])
+		name=c.fetchone()
+		conn.commit()
+		return name[0]
 		
+	def deleteFileCase(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Uploads_Case WHERE UploadCaseId=?",[kwargs['fileId']])
+		conn.commit()
+		return "success"
+	
 UP = Upload()

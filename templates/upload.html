@@ -186,3 +186,44 @@
     </div>
 {% endif %}
 {% endif %}
+
+{% if caseFile %}
+{% if caseFile[4] != "jpg" and caseFile[4] != "jpeg" and caseFile[4] != "png" %}
+<tr data-fileid='{{caseFile[0]}}'>
+    <td>
+        <a href='{{caseFile[2]}}' download>
+            {% if caseFile[4] == "txt" or caseFile[4] == "pdf" or caseFile[4] == "log" or caseFile[4] == "doc" or caseFile[4] == "docx" %}
+            <span class="glyphicon glyphicon-file"></span>
+            {% elif caseFile[4] == "jpg" or caseFile[4] == "jpeg" or caseFile[4] == "png" %}
+            <span class="glyphicon glyphicon-picture"></span>
+            {% elif caseFile[4] == "avi" or caseFile[4] == "mp4" %}
+            <span class="glyphicon glyphicon-film"></span>
+            {% else %}
+            <span class="glyphicon glyphicon-cog"></span>
+            {% endif %}
+        </a>
+    </td>
+    <td>
+        {{caseFile[3]}}
+    </td>
+    <td>
+        <a href="#" onclick="deleteFileCase({{caseFile[0]}})" style="color:red;">
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+    </td>
+</tr>
+{% else %}
+    <div class="responsive" data-fileid='{{caseFile[0]}}'>
+      <div class="img">
+        <a target="_blank" href="{{ url_for('uploads',filename='case/'+caseFile[3]) }}" download>
+          <img src="{{ url_for('uploads',filename='case/'+caseFile[3]) }}"width="300" height="200">
+        </a>
+        <div class="desc">{{exeFile[3]}} 
+            <a href="#" onclick="deleteFileCase({{caseFile[0]}})" style="color:red;">
+                    <span class="glyphicon glyphicon-remove"></span>
+            </a>
+          </div>
+      </div>
+    </div>
+{% endif %}
+{% endif %}

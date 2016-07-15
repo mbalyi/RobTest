@@ -363,7 +363,7 @@ class Database:
 	def checkFileInSets(self,**kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT * FROM Uploads_Set WHERE SettId=? AND FileName=?",[kwargs['setId'],kwargs['filename']])
+		c.execute("SELECT * FROM Uploads_Set WHERE SetId=? AND FileName=?",[kwargs['setId'],kwargs['filename']])
 		result=c.fetchone()
 		conn.commit()
 		return result
@@ -576,6 +576,22 @@ class Database:
 		id=c.fetchone()
 		conn.commit()
 		return id[0]
+	
+	def checkFileInExes(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Uploads_Execution WHERE ExecutionId=? AND FileName=?",[kwargs['exeId'],kwargs['filename']])
+		result=c.fetchone()
+		conn.commit()
+		return result
+	
+	def getExeFiles(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Uploads_Execution WHERE ExecutionId=?",[kwargs['exeId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
 	
     #-----Projects-----
 	def getProjects(self):

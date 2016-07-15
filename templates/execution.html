@@ -45,7 +45,7 @@
 			</th>
 		</tr>
 	</table>
-    <div class='AreaField' style='100%'>
+    <div class='AreaField' style='width:100%;'>
         <h2>Areas: </h2>
         <table>
             {% for k in areas %}
@@ -56,7 +56,7 @@
                             <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>
                         </td>
                         <td>{{k[1]}}</td>
-                        <td style="width:5px"></td>
+                        <td style="width:5px;"></td>
                 {% if (loop.index%3 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
@@ -66,6 +66,30 @@
                 {% endif %}
             {% endfor %}
         </table>
+    </div>
+    <div class="Files" style='widt:100%;'>
+        <div class="uploadHeader" style='widt:100%;'>
+            <h3>
+                <a href="#" onclick="toggleExeFileCont()" style="text-decoration: none;">
+                    Files: 
+                </a>
+            </h3>
+        </div>
+        <div class="uploadContent" style='widt:100%;display: none;'>
+            <div style="width:100%;min-height:75px">
+                <div style="width:50%; float:left;">
+                    <form class="form-group" data-formid='newExeFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                        Select file to upload:
+                        <input type="file" name="fileToUpload" id="fileUploadExe" multiple>
+                    </form>
+                </div>
+                <div style="width:50%; float:left;">
+                    <table class="exeFiles" style="width:100%;">
+                    </table>
+                </div>
+            </div>
+            <div class="imgFiles" style="width:100%;"></div>
+        </div>
     </div>
 	<p>Included Cases</p>
 	<div class='incExeCases' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
@@ -98,7 +122,7 @@
 		</tr>
 		</table>
 	</div>
-	<div class='AreaField' style='100%'>
+	<div class='AreaField' style='widt:100%;'>
         <h2>Areas: </h2>
         <table>
             {% for k in areas %}
@@ -110,12 +134,12 @@
                             <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>
                         </td>
                         <td>{{k[0][1]}}</td>
-                        <td style="width:5px"></td>
+                        <td style="width:5px;"></td>
                             {% else %}
                             <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>
                         </td>
                         <td>{{k[0][1]}}</td>
-                        <td style="width:5px"></td>
+                        <td style="width:5px;"></td>
                             {% endif %}
                         </td>
                 {% if (loop.index%3 == 0) and (loop.index!=count) %}
@@ -127,6 +151,77 @@
                 {% endif %}
             {% endfor %}
         </table>
+    </div>
+    <div class="Files" style='width:100%;'>
+        <div class="uploadHeader" style='width:100%;'>
+            <h3>
+                <a href="#" onclick="toggleExeFileCont()" style="text-decoration: none;">
+                    Files: 
+                </a>
+            </h3>
+        </div>
+        <div class="uploadContent" style='width:100%; min-height:50px;'>
+            <div style="width:100%;min-height:70px;">
+                <div style="width:50%; float:left;">
+                    <form class="form-group" data-formid='newExeFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                        Select file to upload:
+                        <input type="file" name="fileToUpload" id="fileUploadExe" multiple>
+                        <button class="btn btn-default btn-xs" type="button" onclick="updateFilesToExe({{loadExe[0][0]}})" style="width:50%; float:left;">Upload</button>
+                    </form>
+                </div>
+                <div style="width:50%; float:left;">
+                    <table class="exeFiles" style="width:100%;">
+                        {% if files != "empty" %}
+                        {% for k in files %}
+                            <tr data-fileid='{{k[0]}}'>
+                                <td>
+                                    <!--<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg[data-filemodalid='{{k[0]}}']">-->
+                                    <a href="{{ url_for('uploads',filename='execution/'+k[3]) }}" download>
+                                        {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" or k[4] == "doc" or k[4] == "docx" or k[4] == "xls" or k[4] == "xlsx" or k[4] == "csv" or k[4] == "xlt" %}
+                                        <span class="glyphicon glyphicon-file"></span>
+                                        {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                                        <span class="glyphicon glyphicon-picture"></span>
+                                        {% elif k[4] == "avi" or k[4] == "mp4" %}
+                                        <span class="glyphicon glyphicon-film"></span>
+                                        {% else %}
+                                        <span class="glyphicon glyphicon-cog"></span>
+                                        {% endif %}
+                                    </a>
+                                    <!--</button>-->
+                                </td>
+                                <td>
+                                    {{k[3]}}
+                                </td>
+                                <td>
+                                    <a href="#" onclick="deleteFileExe({{k[0]}})" style="color:red;">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+            <div class="imgFiles" style="min-height:50px;">
+                {% for k in files %}
+                {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                    <div class="responsive" data-fileid='{{k[0]}}'>
+                      <div class="img">
+                        <a target="_blank" href="{{ url_for('uploads',filename='execution/'+k[3]) }}" download>
+                          <img src="{{ url_for('uploads',filename='execution/'+k[3]) }}" alt="Trolltunga Norway" width="300" height="200">
+                        </a>
+                        <div class="desc">{{k[3]}} 
+                            <a href="#" onclick="deleteFileExe({{k[0]}})" style="color:red;">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                          </div>
+                      </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
 	<p>Included Cases</p>
 	<div class='incCases' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
@@ -169,7 +264,7 @@
 			</th>
 		</tr>
 	</table>
-    <div class='AreaField' style='100%'>
+    <div class='AreaField' style='width:100%;'>
         <h2>Areas: </h2>
         <table>
             {% for k in areas %}
@@ -181,12 +276,12 @@
                             <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>
                         </td>
                         <td>{{k[0][1]}}</td>
-                        <td style="width:5px"></td>
+                        <td style="width:5px;"></td>
                             {% else %}
                             <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>
                         </td>
                         <td>{{k[0][1]}}</td>
-                        <td style="width:5px"></td>
+                        <td style="width:5px;"></td>
                             {% endif %}
                         </td>
                 {% if (loop.index%3 == 0) and (loop.index!=count) %}
@@ -198,6 +293,76 @@
                 {% endif %}
             {% endfor %}
         </table>
+    </div>
+    <div class="FileUpload" style='width:100%;'>
+        <div class="uploadHeader" style='width:100%;'>
+            <h3>
+                <a href="#" onclick="toggleExeFileCont()" style="text-decoration: none;">
+                    Files: 
+                </a>
+            </h3>
+        </div>
+        <div class="uploadContent" style='width:100%;min-height:50px;'>
+            <div style="width:100%;min-height:75px;">
+                <div style="width:100%;">
+                    <form class="form-group" data-formid='newExeFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                        Select file to upload:
+                        <input type="file" name="fileToUpload" id="fileUploadExe" multiple>
+                    </form>
+                </div>
+                <div style="width:50%; float:left;">
+                    <table class="exeFiles" style="width:100%;">
+                        {% if files != "empty" %}
+                        {% for k in files %}
+                            <tr data-fileid='{{k[0]}}'>
+                                <td>
+                                    <!--<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target=".bs-example-modal-lg[data-filemodalid='{{k[0]}}']">-->
+                                    <a href="{{ url_for('uploads',filename='execution/'+k[3]) }}" download>
+                                        {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" or k[4] == "doc" or k[4] == "docx" or k[4] == "xls" or k[4] == "xlsx" or k[4] == "csv" or k[4] == "xlt" %}
+                                        <span class="glyphicon glyphicon-file"></span>
+                                        {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                                        <span class="glyphicon glyphicon-picture"></span>
+                                        {% elif k[4] == "avi" or k[4] == "mp4" %}
+                                        <span class="glyphicon glyphicon-film"></span>
+                                        {% else %}
+                                        <span class="glyphicon glyphicon-cog"></span>
+                                        {% endif %}
+                                    </a>
+                                    <!--</button>-->
+                                </td>
+                                <td>
+                                    {{k[3]}}
+                                </td>
+                                <td>
+                                    <a href="#" onclick="deleteFileExe({{k[0]}})" style="color:red;">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+            <div class="imgFiles" style="width:100%;">
+                {% for k in files %}
+                {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                    <div class="responsive" data-fileid='{{k[0]}}'>
+                      <div class="img">
+                        <a target="_blank" href="{{ url_for('uploads',filename='execution/'+k[3]) }}" download>
+                          <img src="{{ url_for('uploads',filename='execution/'+k[3]) }}" width="300" height="200">
+                        </a>
+                        <div class="desc">{{k[3]}} 
+                            <a href="#" onclick="deleteFileExe({{k[0]}})" style="color:red;">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                          </div>
+                      </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
     </div>
 	<p>Included Cases</p>
 	<div class='incExeCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>

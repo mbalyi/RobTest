@@ -132,6 +132,11 @@ function exeSearch(){
     }
 }
 
+function toggleExeFileCont(){
+    if($("#newExe").attr('disabled')=="disabled")
+        $(".uploadContent").slideToggle();
+}
+
 $(function(){
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "execution"){

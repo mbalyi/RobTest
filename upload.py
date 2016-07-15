@@ -1,4 +1,4 @@
-import sqlite3
+import sqlite3, json, os, base64
 
 class Upload:
 	def getTestFiles(self,**kwargs):
@@ -58,5 +58,27 @@ class Upload:
 		c.execute("DELETE FROM Uploads_Object WHERE UploadObjectId=?",[kwargs['fileId']])
 		conn.commit()
 		return "success"
+	
+	def nameExists(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		if kwargs['mode'] == "test":
+			c.execute("SELECT * FROM Uploads_Test WHERE File_URL=?",[kwargs['path']])
+			result=c.fetchone()
+			conn.commit()
+			if result == None:
+				return kwargs['name']
+			else:
+				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy"+kwargs['name'].rsplit('.', 1)[1]
+				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
+		if kwargs['mode'] == "object":
+			c.execute("SELECT * FROM Uploads_Object WHERE File_URL=?",[kwargs['path']])
+			result=c.fetchone()
+			conn.commit()
+			if result == None:
+				return kwargs['name']
+			else:
+				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
+				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
 	
 UP = Upload()

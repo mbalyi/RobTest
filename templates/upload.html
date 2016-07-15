@@ -69,7 +69,7 @@
 {% if objectFile[4] != "jpg" and objectFile[4] != "jpeg" and objectFile[4] != "png" %}
 <tr data-fileid='{{objectFile[0]}}'>
     <td>
-        <a href='{{objectFile[2]}}'>
+        <a href='{{objectFile[2]}}' download>
             {% if objectFile[4] == "txt" or objectFile[4] == "pdf" or objectFile[4] == "log" %}
             <span class="glyphicon glyphicon-file"></span>
             <!--<span class="glyphicon glyphicon-picture"></span>-->

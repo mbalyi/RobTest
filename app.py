@@ -831,20 +831,21 @@ def upload_file_update(id,mode):
 		if request.form['name'] == '':
 			return "No selected file"
 		if allowed_file(request.form['name']):
+			name=UP.nameExists(path=os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),mode=mode,name=request.form['name'],folder=app.config['UPLOAD_FOLDER'])
 			if mode == "object":
 				result=DB.checkFileInObjects(objectId=id,filename=request.form['name'])
 				if result == None:
 					if request.form['name'].rsplit('.', 1)[1] in PIC_EXTENSIONS:
-						file = open(os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),'wb')
+						file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'wb')
 						file.write(base64.b64decode(request.form['context'].split(',')[1]))
 					elif request.form['name'].rsplit('.', 1)[1] in DOC_EXTENSIONS:
-						file = open(os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),'wb')
+						file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'wb')
 						file.write(base64.b64decode(request.form['context'].split(',')[1]))
 					else:
-						file = open(os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),'w')
-						file.write(request.form['context'])
+						file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'w')
+						file.write(request.form['context'].encode('ascii', 'backslashreplace').decode("utf-8", "replace"))
 					file.close()
-					result=UP.saveObjectFile(objectId=id,url=os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),filename=request.form['name'],extension=request.form['name'].rsplit('.', 1)[1])
+					result=UP.saveObjectFile(objectId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1])
 					return render_template('upload.html', objectFile=result)
 		return "ok"
 	return "error"

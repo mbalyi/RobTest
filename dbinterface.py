@@ -166,6 +166,22 @@ class Database:
 		conn.commit()
 		return result
 	
+	def getStepPics(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		result=[]
+		if isinstance(kwargs['stepIds'], list):
+			for k in kwargs['stepIds']:
+				print(k)
+				c.execute("SELECT * FROM Uploads_Step WHERE StepId=?",[k])
+				result.append(c.fetchall())
+				conn.commit()
+		else:
+			c.execute("SELECT * FROM Uploads_Step WHERE StepId=?",[kwargs['stepIds']])
+			result.append(c.fetchall())
+			conn.commit()
+		return result
+	
 	#-----object-----
 	def get_object(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")

@@ -107,6 +107,15 @@ class Upload:
 			else:
 				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
 				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
+		if kwargs['mode'] == "action" or kwargs['mode'] == "result":
+			c.execute("SELECT * FROM Uploads_Step WHERE File_URL=?",[kwargs['path']])
+			result=c.fetchone()
+			conn.commit()
+			if result == None:
+				return kwargs['name']
+			else:
+				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
+				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
 	
 	def saveSetFile(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -180,6 +189,31 @@ class Upload:
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		c.execute("DELETE FROM Uploads_Case WHERE UploadCaseId=?",[kwargs['fileId']])
+		conn.commit()
+		return "success"
+		
+	def saveStepFile(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("INSERT INTO Uploads_Step (StepId,File_URL,FileName,Extension,ReplaceTag) VALUES (?,?,?,?,?)",[kwargs['stepId'],kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['replaceTag']])
+		conn.commit()
+		c.execute("SELECT * FROM Uploads_Step WHERE StepId=? AND File_URL=? AND FileName=? AND Extension=? AND ReplaceTag=?",[kwargs['stepId'],kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['replaceTag']])
+		result = c.fetchone()
+		conn.commit()
+		return result
+	
+	def getStepFileURL(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT File_URL FROM Uploads_Step WHERE UploadStepId=?",[kwargs['fileId']])
+		name=c.fetchone()
+		conn.commit()
+		return name[0]
+		
+	def deleteFileStep(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Uploads_Step WHERE UploadStepId=?",[kwargs['fileId']])
 		conn.commit()
 		return "success"
 	

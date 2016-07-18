@@ -92,11 +92,37 @@ def load_case(ID,mode):
 @app.route('/get_step/<int:ID>/<mode>', methods=['GET'])
 def get_step(ID,mode):
 	query=DB.get_step_parameters(id=ID,projectId=projectSession())
-	if mode == "getStep":
+	stepIds=[]
+	for k in query:
+		stepIds=k[0]
+	pics=DB.getStepPics(stepIds=stepIds)
+	pics=list(pics)
+	query=list(query)
+	iterator=0
+	if mode == "get_step":
+		for k in query:
+			k=list(k)
+			for l in pics:
+				for j in l:
+					if j[5] in k[1]:
+						string = "<img src='"+j[2]+"' alt='"+j[3]+"' class='img-rounded' style='max-height:140px;max-width:140px;'>"
+						k[1]=k[1].replace(j[5], string)
+						j=['<-default->','<-default->','<-default->','<-default->','<-default->','<-default->']
+					if j[5] in k[2]:
+						string = "<img src='"+j[2]+"' alt='"+j[3]+"' class='img-rounded' style='max-height:140px;max-width:140px;'>"
+						k[2]=k[2].replace(j[5], string)
+						j=['<-default->','<-default->','<-default->','<-default->','<-default->','<-default->']
+			query[iterator]=k
+			iterator=iterator+1
 		return render_template('step.html', step=query)
 	elif mode == "editStep":
 		return render_template('step.html', editablestep=query)
-
+		
+@app.route('/getStep/<int:caseId>', methods=['GET'])
+def getStep(caseId):
+	query=DB.get_step_parameters(id=caseId,projectId=projectSession())
+	return json.dumps(query)
+		
 #---Fizikai törlés
 @app.route('/deleteCasePhysical/<int:ID>', methods=['GET'])
 def deleteCasePhysical(ID):
@@ -832,6 +858,32 @@ def upload_file_test(Id,mode):
 				return render_template("upload.html", caseFile=result)
 	return "error"
 
+@app.route('/upload_step_files/<int:Id>/<mode>/<replaceTag>', methods=['GET', 'POST'])
+def upload_step_files(Id,mode,replaceTag):
+	if mode == "action":
+		UPLOAD_FOLDER = './uploads/step/action/'
+	if mode == "result":
+		UPLOAD_FOLDER = './uploads/step/result/'
+	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+	if request.method == 'POST':
+		if request.form['name'] == '':
+			return "No selected file"
+		if allowed_file(request.form['name']):
+			name=UP.nameExists(path=os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),mode=mode,name=request.form['name'],folder=app.config['UPLOAD_FOLDER'])
+			if request.form['name'].rsplit('.', 1)[1] in PIC_EXTENSIONS:
+				file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'wb')
+				file.write(base64.b64decode(request.form['context'].split(',')[1]))
+			elif request.form['name'].rsplit('.', 1)[1] in DOC_EXTENSIONS:
+				file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'wb')
+				file.write(base64.b64decode(request.form['context'].split(',')[1]))
+			else:
+				file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'w')
+				file.write(request.form['context'].encode('ascii', 'backslashreplace').decode("utf-8", "replace"))
+			file.close()
+			if mode == "action" or mode == "result":
+				result=UP.saveStepFile(stepId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1],replaceTag=replaceTag)
+				return "OK"
+				
 @app.route('/fileProperty/<int:exeId>/<int:stepId>', methods=['GET'])	
 def fileProperty(exeId,stepId):
 	files=UP.getTestFiles(exeId=exeId,stepId=stepId)
@@ -939,6 +991,10 @@ def deleteFiles(fileId,mode):
 		file=UP.getCaseFileURL(fileId=fileId)
 		os.remove(file)
 		return UP.deleteFileCase(fileId=fileId)
+	if mode == "action" or mode == "result":
+		file=UP.getStepFileURL(fileId=fileId)
+		os.remove(file)
+		return UP.deleteFileStep(fileId=fileId)
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

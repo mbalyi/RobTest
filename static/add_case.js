@@ -25,10 +25,13 @@ function caseForm(checker){
 }
 
 function add_step(){
-    var html="<div class='stepDragg' draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'><table style='width:100%'><tr><th><a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='step' onclick='selectStep(event)'>#</a></th>";
+    var html="<div class='stepDragg' draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'><div style='width:100%;'><table style='width:100%'><tr><th><a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='step' onclick='selectStep(event)'>#</a></th>";
     html+="<th><textarea name='action[]' class='action form-control' rows='1' overflow='auto' onkeypress='reSizeTextarea(event)' style='resize:none;'>Action description</textarea></th><th>";
-    html+="<textarea name='result[]' class='result form-control' rows='1' overflow='hidden' onkeypress='reSizeTextarea(event)' style='resize:none;'>Result description</textarea></th>";
+    html+="<textarea name='result[]' class='result form-control' rows='1' overflow='hidden' onkeypress='reSizeTextarea(event)' style='resize:none;'>Result description</textarea></th>"
     html+="<th><a href='#' data-dbid='' id='' class='step' onclick='removeStep(event)'><span class='glyphicon glyphicon-remove' style='color:red;'></span></a></th></tr></table></div>";
+    html+="<div style='height:30px;width:50%;padding-top:2px;float:left;'><form class='form-group' data-formid='newStepActionFile'  method='post' enctype='multipart/form-data' style='width:100%;height:100%;'>";
+    html+="<input type='file' name='fileToUploadStep' id='fileUploadStepAction' multiple></form></div><div style='height:30px;width:50%;padding-top:2px;float:left;'>";
+    html+="<form class='form-group' data-formid='newStepResultFile'  method='post' enctype='multipart/form-data' style='width:100%;height:100%;'><input type='file' name='fileToUploadStep' id='fileUploadStepResult' multiple></form></div></div>";
 	return html;
 }
 
@@ -43,6 +46,7 @@ function saveCase(){
                 if(document.getElementById("fileUploadCase").files.length > 0){
                     updateFilesToCase(data);
                 }
+                uploadStep(data);
 				requestCase();
 				loadCase(data,"loadCase");
 			};
@@ -66,6 +70,14 @@ function updateCase(caseId){
 	);
 }
 
+function uploadStep(caseId){
+    $.get("/getStep/"+caseId,function(data,status){
+        if(status){
+            updateFilesToStep(data);
+        }
+    },"json");
+}
+
 function loadCase(caseId,mode){
 	$.get("/load_case/"+caseId+"/"+mode,
 		function(data,status){
@@ -75,7 +87,7 @@ function loadCase(caseId,mode){
 		}
 	);
 	if(mode == "loadCase"){
-		getStep(caseId,"getStep");
+		getStep(caseId,"get_step");
 	}
 }
 
@@ -178,7 +190,7 @@ function removeStep(event){
 }
 
 function selectStep(event){
-    if(event!=selectedStepEvent){
+    if(event.target!=selectedStepEvent){
         if(selectedStepEvent){
             $(selectedStepEvent).closest('.stepDragg').css("background-color","#333");
             $(selectedStepEvent).closest('.stepDragg').css("color","white");
@@ -188,6 +200,14 @@ function selectStep(event){
         $(event.target).closest('.stepDragg').css("background-color","#eee");
         $(event.target).closest('.stepDragg').css("color","black");
         $(event.target).closest('.stepDragg').css("padding","2px");
+    }
+    else{
+        if(selectedStepEvent){
+            $(selectedStepEvent).closest('.stepDragg').css("background-color","#333");
+            $(selectedStepEvent).closest('.stepDragg').css("color","white");
+            $(selectedStepEvent).closest('.stepDragg').css("padding","0px");
+            selectedStepEvent=false;
+        }
     }
 }
 

@@ -93,6 +93,8 @@ class Database:
 		c = conn.cursor()
 		c.execute("DELETE FROM Cases WHERE CaseId=? AND ProjectId=?",[kwargs['id'],kwargs['projectId']])
 		conn.commit()
+		c.execute("DELETE FROM Uploads_Case WHERE CaseId=?",[kwargs['id']])
+		conn.commit()
 		c.execute("DELETE FROM Area_Case WHERE CaseId=?",[kwargs['id']])
 		conn.commit()
 		c.execute("SELECT StepId FROM Case_Step WHERE CaseId=?",[kwargs['id']])
@@ -102,6 +104,8 @@ class Database:
 		conn.commit()
 		for k in result:
 			c.execute("DELETE FROM Steps WHERE StepId=? AND ProjectId=?",[k[0],kwargs['projectId']])
+			conn.commit()
+			c.execute("DELETE FROM Uploads_Step WHERE StepId=?",[k[0]])
 			conn.commit()
 	
 	def deleteCaseLogic(self, **kwargs):

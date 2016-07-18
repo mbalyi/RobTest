@@ -116,7 +116,7 @@ def get_step(ID,mode):
 			iterator=iterator+1
 		return render_template('step.html', step=query)
 	elif mode == "editStep":
-		return render_template('step.html', editablestep=query)
+		return render_template('step.html', editablestep=query, pics=pics)
 		
 @app.route('/getStep/<int:caseId>', methods=['GET'])
 def getStep(caseId):
@@ -881,7 +881,7 @@ def upload_step_files(Id,mode,replaceTag):
 				file.write(request.form['context'].encode('ascii', 'backslashreplace').decode("utf-8", "replace"))
 			file.close()
 			if mode == "action" or mode == "result":
-				result=UP.saveStepFile(stepId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1],replaceTag=replaceTag)
+				result=UP.saveStepFile(stepId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1],replaceTag=replaceTag,status=mode)
 				return "OK"
 				
 @app.route('/fileProperty/<int:exeId>/<int:stepId>', methods=['GET'])	

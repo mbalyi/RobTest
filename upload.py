@@ -195,9 +195,9 @@ class Upload:
 	def saveStepFile(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Uploads_Step (StepId,File_URL,FileName,Extension,ReplaceTag) VALUES (?,?,?,?,?)",[kwargs['stepId'],kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['replaceTag']])
+		c.execute("INSERT INTO Uploads_Step (StepId,File_URL,FileName,Extension,ReplaceTag,Status) VALUES (?,?,?,?,?,?)",[kwargs['stepId'],kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['replaceTag'],kwargs['status']])
 		conn.commit()
-		c.execute("SELECT * FROM Uploads_Step WHERE StepId=? AND File_URL=? AND FileName=? AND Extension=? AND ReplaceTag=?",[kwargs['stepId'],kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['replaceTag']])
+		c.execute("SELECT * FROM Uploads_Step WHERE StepId=? AND File_URL=? AND FileName=? AND Extension=? AND ReplaceTag=? AND Status=?",[kwargs['stepId'],kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['replaceTag'],kwargs['status']])
 		result = c.fetchone()
 		conn.commit()
 		return result

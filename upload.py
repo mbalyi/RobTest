@@ -217,4 +217,11 @@ class Upload:
 		conn.commit()
 		return "success"
 	
+	def deleteFileStepUrl(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Uploads_Step WHERE File_URL=?",[kwargs['url']])
+		conn.commit()
+		return "success"
+	
 UP = Upload()

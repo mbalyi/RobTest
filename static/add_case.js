@@ -63,6 +63,7 @@ function updateCase(caseId){
 		function(data,status){
 			if(status){
                 fileUpdateOnCase(caseId);
+                uploadStep(data);
 				loadCase(caseId,"loadCase");
                 requestCase();
 			};

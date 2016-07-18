@@ -5,6 +5,14 @@ function loadFiles(event,status){
         $(event.target).parent().children("ul").append("<li> <-pic-"+status+"-"+i.toString()+"-> "+event.target.files[i].name);
     }
 }
+function loadFilesUpdate(event,status){
+    var beginId=$($(event.target).parent().children("ul").children()[$(event.target).parent().children("ul").children().length-1]).attr("data-fileid");
+    beginId=parseInt(beginId.split("-")[3]);
+    for(i=0;i<event.target.files.length;i++){
+        beginId++;
+        $(event.target).parent().children("ul").append("<li> <-pic-"+status+"-"+beginId.toString()+"-> "+event.target.files[i].name);
+    }
+}
 
 function updateFilesToStep(stepIds){
     for(j=0;j<stepIds.length;j++){
@@ -46,10 +54,11 @@ function shipOffStep(data,event){
   });
 }
 
-function deleteFileCase(id){
-    $.get("/deleteFiles/"+id+"/step",function(data,status){
+function deleteFilesStepMan(event){
+    fileUrl="url="+$(event.target).attr("data-fileurl");
+    $.post("/deleteStepFile/step",fileUrl,function(data,status){
         if(status){
-            $("[data-fileid="+id+"]").remove();
+            $(event.target).remove();
         }
     });
 }

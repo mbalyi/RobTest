@@ -247,6 +247,8 @@ class Database:
 		conn.commit()
 		c.execute("DELETE FROM Area_Object WHERE ObjectId=?",[kwargs['id']])
 		conn.commit()
+		c.execute("DELETE FROM Uploads_Object WHERE ObjectId=?",[kwargs['id']])
+		conn.commit()
 	
 	def deleteObjectLogical(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -380,6 +382,8 @@ class Database:
 		c.execute("DELETE FROM Set_Case WHERE SetId=?",[kwargs['id']])
 		conn.commit()
 		c.execute("DELETE FROM Area_Set WHERE SetId=?",[kwargs['id']])
+		conn.commit()
+		c.execute("DELETE FROM Uploads_Set WHERE SetId=?",[kwargs['id']])
 		conn.commit()
 	
 	def deleteSetLogical(self, **kwargs):
@@ -552,6 +556,8 @@ class Database:
 		conn.commit()
 		c.execute("DELETE FROM Area_Execution WHERE ExecutionId=?",[kwargs['id']])
 		conn.commit()
+		c.execute("DELETE FROM Uploads_Execution WHERE ExecutionId=?",[kwargs['id']])
+		conn.commit()
 	
 	def getStatusFromStepExe(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
@@ -689,6 +695,18 @@ class Database:
 		c.execute("UPDATE Step_Execution SET Comment=? WHERE ExecutionId=? AND StepId=?",[kwargs['comment'],kwargs['exeId'],kwargs['stepId']])
 		conn.commit()
 		return
+	
+	def deleteFilesInTest(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT Id FROM Step_Execution WHERE ExecutionId=?",[kwargs['exeId']])
+		Ids=c.fetchall()
+		conn.commit()
+		for k in Ids:
+			c.execute("DELETE FROM Uploads_Test WHERE Step_ExecutionId=?",[k[0]])
+			conn.commit()
+		return
+	
 	
 	#-----Jenkins----
 	def getJenkinsData(self, **kwargs):

@@ -116,7 +116,7 @@ def get_step(ID,mode):
 			iterator=iterator+1
 		return render_template('step.html', step=query)
 	elif mode == "editStep":
-		return render_template('step.html', editablestep=query, pics=pics)
+		return render_template('step.html', editablestep=query, pics=pics[0])
 		
 @app.route('/getStep/<int:caseId>', methods=['GET'])
 def getStep(caseId):
@@ -343,6 +343,7 @@ def loadExecution(ID,mode):
 @app.route('/deleteExe/<int:ID>/<int:obID>', methods=['GET'])
 def deleteExe(ID,obID):
 	DB.deleteExe(id=ID,obid=obID)
+	DB.deleteFilesInTest(exeId=ID)
 	return "ok"
 
 @app.route('/getFirstCaseID/<int:id>', methods=['GET'])
@@ -996,6 +997,12 @@ def deleteFiles(fileId,mode):
 		os.remove(file)
 		return UP.deleteFileStep(fileId=fileId)
 	
+@app.route('/deleteStepFile/<url>/<mode>', methods=['GET'])	
+def deleteStepFile(url,mode):
+	if mode == "step":
+		os.remove(url)
+		return UP.deleteFileStepUrl(url=url)
+		
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 		

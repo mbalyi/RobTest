@@ -15,11 +15,11 @@
                     </select>
                 </td>
                 <td style="color:black;padding-top: 14px;">Passed: </td>
-                <td style="padding-top: 14px;"><input type="checkbox" name="passed" onchange="jenkinsReload()"></td>
+                <td style="padding-top: 14px;"><input type="checkbox" name="passed" onchange="jenkinsHide('passed')"></td>
                 <td style="color:black;padding-top: 14px;">Failed: </td>
-                <td style="padding-top: 14px;"><input type="checkbox" name="failed" onchange="jenkinsReload()"></td>
+                <td style="padding-top: 14px;"><input type="checkbox" name="failed" onchange="jenkinsHide('failed')"></td>
                 <td style="color:black;padding-top: 14px;">Skipped: </td>
-                <td style="padding-top: 14px;"><input type="checkbox" name="skipped" onchange="jenkinsReload()"></td>
+                <td style="padding-top: 14px;"><input type="checkbox" name="skipped" onchange="jenkinsHide('skipped')"></td>
             </tr>
         </table>
 </div>

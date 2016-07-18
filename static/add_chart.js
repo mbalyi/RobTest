@@ -53,6 +53,24 @@ function jenkinsFilter(){
 		}
 	);
 }
+function jenkinsReload(){
+    jenkinsRadiator(".jenkinsRad",$(".jenkinsFilter").find(":selected").attr('data-interval'));
+}
+
+function jenkinsHide(status){
+    if($("[name=passed]").is(':checked'))
+        $(".passed").hide();
+    else
+        $(".passed").show();
+    if($("[name=failed]").is(':checked'))
+        $(".danger").hide();
+    else
+        $(".danger").show();
+    if($("[name=skipped]").is(':checked'))
+        $(".warning").hide();
+    else
+        $(".warning").show();
+}
 
 var lineChart;
 var pieChart;

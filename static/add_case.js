@@ -1,4 +1,5 @@
-iterator = 1;
+var iterator = 1;
+var selectedStepEvent;
 
 function requestCase(){
     $.get("/case_page",
@@ -24,9 +25,10 @@ function caseForm(checker){
 }
 
 function add_step(){
-    var html="<div draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'><table style='width:100%'><tr><th><a href='#' class='step'>#</a></th>";
-    html+="<th'><textarea name='action[]' class='action form-control' rows='1' overflow='auto' resize='none' onkeypress='reSizeTextarea(event)'>Action description</textarea></th><th >";
-    html+="<textarea name='result[]' class='result form-control' rows='1' overflow='hidden' resize='none' onkeypress='reSizeTextarea(event)'>Result description</textarea></th></tr></table></div>";
+    var html="<div class='stepDragg' draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'><table style='width:100%'><tr><th><a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='step' onclick='selectStep(event)'>#</a></th>";
+    html+="<th><textarea name='action[]' class='action form-control' rows='1' overflow='auto' onkeypress='reSizeTextarea(event)' style='resize:none;'>Action description</textarea></th><th>";
+    html+="<textarea name='result[]' class='result form-control' rows='1' overflow='hidden' onkeypress='reSizeTextarea(event)' style='resize:none;'>Result description</textarea></th>";
+    html+="<th><a href='#' data-dbid='' id='' class='step' onclick='removeStep(event)'><span class='glyphicon glyphicon-remove' style='color:red;'></span></a></th></tr></table></div>";
 	return html;
 }
 
@@ -82,7 +84,7 @@ function getStep(caseId,mode){
 		function(data,status){
 			if(status){
 				$(".case_table_no").empty().append(data);
-                testareaDesign();
+                //testareaDesign();
             }
         }	
 	);
@@ -118,11 +120,11 @@ function enableForm(){
     $('textarea').removeAttr('disabled');
     document.getElementById('add_step').disabled=false;
     document.getElementById('delete_step').disabled=false;
-    document.getElementById('up_step').disabled=false;
-    document.getElementById('down_step').disabled=false;
+    //document.getElementById('up_step').disabled=false;
+    //document.getElementById('down_step').disabled=false;
     $("#newCase").attr('disabled', true);
     $(".saveCase").empty().append(saveCaseEn1+"newCase"+saveCaseEn2);
-    testareaDesign();
+    //testareaDesign();
 }
 
 function caseHideShow(){
@@ -171,10 +173,35 @@ function toggleCaseFileCont(){
         $(".uploadContent").slideToggle();
 }
 
+function removeStep(event){
+    $(event.target).closest('.stepDragg').remove();
+}
+
+function selectStep(event){
+    if(event!=selectedStepEvent){
+        if(selectedStepEvent){
+            $(selectedStepEvent).closest('.stepDragg').css("background-color","#333");
+            $(selectedStepEvent).closest('.stepDragg').css("color","white");
+            $(selectedStepEvent).closest('.stepDragg').css("padding","0px");
+        }
+        selectedStepEvent=event.target;
+        $(event.target).closest('.stepDragg').css("background-color","#eee");
+        $(event.target).closest('.stepDragg').css("color","black");
+        $(event.target).closest('.stepDragg').css("padding","2px");
+    }
+}
+
+function deleteStep(){
+    if(selectedStepEvent){
+        $(selectedStepEvent).closest('.stepDragg').remove();
+        selectedStepEvent=false;
+    }
+}
+
 $(function(){
 	$("body").on("click","#add_step",function(){
         $(".newStepPlace").append(add_step());
-        testareaDesign();
+        //testareaDesign();
 	});
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "case"){

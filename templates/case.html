@@ -94,13 +94,13 @@
                     <button name='add_step' id='add_step' class='btn btn-default btn-sm' disabled="true">Add Step</button>
                 </td>
                 <td>
-                    <button name='delete_step' id='delete_step' class='btn btn-default btn-sm' disabled="true">Delete Step</button>
+                    <button name='delete_step' id='delete_step' class='btn btn-default btn-sm' disabled="true" onclick="deleteStep()">Delete Step</button>
                 </td>
                 <td>
-                    <button name='up_step' id='up_step' class='btn btn-default btn-sm' disabled="true">Up</button>
+                    <button name='up_step' id='up_step' class='btn btn-default btn-sm' disabled="true" onclick="moveStep('up')">Up</button>
                 </td>
                 <td>
-                    <button name='down_step' id='down_step' class='btn btn-default btn-sm' disabled="true">Down</button>
+                    <button name='down_step' id='down_step' class='btn btn-default btn-sm' disabled="true" onclick="moveStep('down')">Down</button>
                 </td>
             </tr>
         </table>
@@ -110,18 +110,24 @@
                 <th>#</th>
                 <th style='width:49%;'>Action</th>
                 <th style='width:49%;'>Result</th>
+                <th></th>
             </tr>
         </table>
         <div class='newStepPlace' ondrop='drop(event)' ondragover='allowDrop(event)' style='border-radius: 5px;'>
-            <div draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+            <div class="stepDragg" draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
                 <table style='width:100%;'>
                     <tr>
-                        <th><a href='#' data-dbid='' id='' class='step'>#</a><th>
+                        <th><a href='#' data-dbid='' id='' class='step' onclick='selectStep(event)'>#</a><th>
                         <th>
-                            <textarea name='action[]' class="action form-control" rows="1" overflow="auto" disabled="disabled" resize="none" onkeypress="reSizeTextarea(event)">Action description</textarea>
+                            <textarea name='action[]' class="action form-control" rows="1" overflow="auto" disabled="disabled" onkeypress="reSizeTextarea(event)" style="resize:none;">Action description</textarea>
                         </th>
                         <th>
-                            <textarea name='result[]' class="result form-control" rows="1" overflow="hidden" disabled="disabled" resize="none" onkeypress="reSizeTextarea(event)">Result description</textarea>
+                            <textarea name='result[]' class="result form-control" rows="1" overflow="hidden" disabled="disabled" onkeypress="reSizeTextarea(event)" style="resize:none;">Result description</textarea>
+                        </th>
+                        <th>
+                            <a href='#' data-dbid='' id='' class='step' onclick="removeStep(event)">
+                                <span class="glyphicon glyphicon-remove" style="color:red;"></span>
+                            </a>
                         </th>
                     </tr>
                 </table>
@@ -379,13 +385,13 @@
                     <button name='add_step' id='add_step' class='btn btn-default btn-sm'>Add Step</button>
                 </td>
                 <td>
-                    <button name='delete_step' id='delete_step' class='btn btn-default btn-sm'>Delete Step</button>
+                    <button name='delete_step' id='delete_step' class='btn btn-default btn-sm' onclick="deleteStep()">Delete Step</button>
                 </td>
                 <td>
-                    <button name='up_step' id='up_step' class='btn btn-default btn-sm'>Up</button>
+                    <button name='up_step' id='up_step' class='btn btn-default btn-sm' onclick="moveStep('up')" disabled="true">Up</button>
                 </td>
                 <td>
-                    <button name='down_step' id='down_step' class='btn btn-default btn-sm'>Down</button>
+                    <button name='down_step' id='down_step' class='btn btn-default btn-sm' onclick="moveStep('down')" disabled="true">Down</button>
                 </td>
             </tr>
         </table>

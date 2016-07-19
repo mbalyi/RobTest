@@ -1,0 +1,34 @@
+html{
+    height: 100%;
+    width: 100%;
+}
+
+.navigation{
+    height: 50px;
+}
+
+.navbar.navbar-default.navbar-static-top{
+    margin-bottom: 0;
+}
+
+#page-wrapper{
+    min-height: 415px;
+    height: calc(100% - 52px);
+    width: calc(100% - 250px);
+}
+
+#wrapper{
+    height: 100%;
+    width: 100%;
+}
+
+.col-md-9{
+    height:calc(100% - 52px); 
+    overflow-y:auto;
+    width:100%;
+}
+
+.row{
+    height: 100%;
+    width: 100%;
+}

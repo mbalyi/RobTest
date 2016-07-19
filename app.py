@@ -8,16 +8,18 @@ from werkzeug.utils import secure_filename
 UPLOAD_FOLDER = './uploads/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'csv','doc', 'docx', 'xlsx', 'xlt', 'xls'])
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/', methods=['GET', 'POST'])
 def login(active=None):
-	return render_template('Login.html')
+	return render_template('login.html')
 
 @app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
 def uploads(filename):
 	return send_from_directory("./uploads/", filename)
+	
+
 	
 @app.route('/home', methods=['GET', 'POST'])
 def login_form():
@@ -28,7 +30,7 @@ def login_form():
 		projects = DB.getProjects()
 		projectId = DB.getSelectedProject(user=request.form['user'])
 		admin=DB.isAdmin(user=request.form['user'])
-		return render_template('home.html',user = admin, Projects = projects, selectedProject = projectId)
+		return render_template('index.html',user = admin, Projects = projects, selectedProject = projectId)
 	else:
 		return redirect(url_for('login'))
 
@@ -46,7 +48,7 @@ def setup():
 
 @app.route('/design', methods=['POST'])
 def design():
-	return render_template('Login.html')
+	return render_template('login.html')
 	
 #-----case page-----
 @app.route('/case_page', methods=['GET'])

@@ -88,7 +88,7 @@
 {% endif %}
 
 {% if loadHistory %}
-<div class="executionInHistory panel panel-default" data-dbid='{{loadHistory[0][0]}}' style="width:100%;color:black;overflow:active;float: left;">
+<div class="executionInHistory panel panel-default" data-dbid='{{exeName[0]}}' style="width:100%;color:black;overflow:active;float: left;">
     <table class='exeHist table'>
         <tr>
             <th>ID</th>
@@ -132,12 +132,32 @@
             <td>{{k[1]}}</td>
             <td>{{k[2]}}</td>
             <td>
-                <a href="#" data-dbid='{{k[0]}}' onclick="seeComment({{k[0]}})">
+                <a href="#" class="commentPop" data-dbid='{{k[0]}}' onclick="seeComment({{k[0]}})" data-container="body" data-toggle="popover" data-placement="bottom" data-content="
+                <table>
+                {% for j in comments %}
+                {% if j[3] == k[0] and j[1] != 'NULL' %}
+                <tr><td>{{j[1]}}<td></tr>
+                {% endif %}
+                {% endfor %}
+                </table>
+                ">
                     <span class="glyphicon glyphicon-envelope"></span>
                 </a>
             </td>
             <td>
-                <a href="#" data-dbid='{{k[0]}}' onclick="seeAttached({{k[0]}})">
+                <a href="#" class="filePop" data-dbid='{{k[0]}}' onclick="seeAttached({{k[0]}})" data-toggle="popover" data-placement="bottom" data-content="
+                    <table>
+                        {% for j in files %}
+                            {% if j[4] == k[0] %}
+                                <tr>
+                                    <td>
+                                        <a href='#' src='{{j[1]}}' download>{{j[2]}}</a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                   ">
                     <span class="glyphicon glyphicon-cloud"></span>
                 </a>
             </td>

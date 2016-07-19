@@ -104,3 +104,13 @@ function historyReload(){
     exeid=$("select[data-selectorid='execution']").find(":selected").attr("data-dbid");
     loadHistoryExe("new",exeid);
 }
+
+function seeComment(ceId){
+    $(".commentPop[data-dbid="+ceId+"]").popover({html:true});
+    $(".commentPop[data-dbid="+ceId+"]").popover("toggle");
+}
+
+function seeAttached(ceId){
+    $(".filePop[data-dbid="+ceId+"]").popover({html:true});
+    $(".filePop[data-dbid="+ceId+"]").popover("toggle");
+}

@@ -627,6 +627,22 @@ class Database:
 		conn.commit()
 		return result
 	
+	def getExeComments(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT SE.ExecutionId,SE.Comment,CE.CaseId,CE.Id FROM Step_Execution AS SE LEFT JOIN Case_Execution AS CE ON CE.Id=SE.Case_ExecutionId WHERE SE.ExecutionId=?",[kwargs['exeId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def getExeStepFiles(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT UT.UploadTestId,UT.File_URL,UT.FileName,CE.CaseId,CE.Id FROM Uploads_Test AS UT LEFT JOIN Step_Execution AS SE ON UT.Step_ExecutionId=SE.Id LEFT JOIN Case_Execution AS CE ON CE.Id=SE.Case_ExecutionId WHERE SE.ExecutionId=?",[kwargs['exeId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
     #-----Projects-----
 	def getProjects(self):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -1095,7 +1111,7 @@ class Database:
 	def getCaseResHist(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT ExecutionId,CaseId,Result,title FROM Case_Execution WHERE CaseId=?",[kwargs['caseId']])
+		c.execute("SELECT ExecutionId,CaseId,Result,title FROM Case_Execution WHERE CaseId=? ORDER BY ExecutionId DESC",[kwargs['caseId']])
 		result=c.fetchall()
 		conn.commit()
 		return result

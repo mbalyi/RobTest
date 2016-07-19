@@ -757,8 +757,10 @@ def historyExe():
 @app.route('/loadHistoryExe/<int:exeId>/<exeStatus>', methods=['GET'])	
 def loadHistoryExe(exeId,exeStatus):
 	loadHistory=DB.getExeResult(exeId=exeId)
+	comments=DB.getExeComments(exeId=exeId)
+	files=DB.getExeStepFiles(exeId=exeId)
 	exe=DB.getExeOBHist(projectId=projectSession(),exeId=exeId)
-	return render_template('history.html', loadHistory=loadHistory, exeName=exe, status=exeStatus)
+	return render_template('history.html', loadHistory=loadHistory, exeName=exe, status=exeStatus,files=files,comments=comments)
 	
 @app.route('/loaResultForm', methods=['GET'])	
 def loaResultForm():

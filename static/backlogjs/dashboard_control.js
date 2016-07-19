@@ -55,9 +55,9 @@ $(function(){
 		}
 	});
     $('body').on('slid.bs.carousel','#carousel-example-generic', function (){
-        if($("#idPieChart").attr('class')=="item active")
+        if($("#idPieChart").attr('class')=="item chart active")
             pieChart.render();
-        if($("#idLineChart").attr('class')=="item active")
+        if($("#idLineChart").attr('class')=="item chart active")
             lineChart.render();
         if($("#idAllChart").attr('class')=="item active"){
             allPieChart.render();

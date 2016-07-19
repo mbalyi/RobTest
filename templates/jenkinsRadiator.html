@@ -1,14 +1,14 @@
 {% if jenkins %}
-<div class='container' style='width:100%;padding-bottom:0px;'>
+<div class='container' id="jenkinsContainer">
     <!--- A dolgok helye... -->
 	<div id='success'>
 		<a href="#" onclick="onClick1()">
-			<div class="alert alert-success" style='width:100%;margin-bottom:0px;'>
-				<table style='width:100%;'>
-					<tr style='width:100%;'>
-						<td style='width:20%;'>version </td>
-						<td style='width:40%;'>set </td>
-						<td style='width:40%;'>area </td>
+			<div class="alert alert-success" id="jenkinsContainer">
+				<table id="td-100">
+					<tr id="td-100">
+						<td id="td-20">version </td>
+						<td id="td-40">set </td>
+						<td id="td-40">area </td>
 					</tr>
 				</table>
 			</div>
@@ -23,7 +23,7 @@
 					<th>Comment</th>
 					<th>Attached Files</th>
 				</tr>
-				<tr class="success" style="color:black;">
+				<tr class="success">
 					<td>1</td>
 					<td>First Case for reprezentation</td>
 					<td>Case description</td>
@@ -48,12 +48,12 @@
 	</div>
 	<div class="info">
 		<a href="#" onclick="onClick2()">
-			<div class="alert alert-info" style='width:100%;margin-bottom:0px;'>
-				<table style='width:100%;'>
-					<tr style='width:100%;'>
-						<td style='width:20%;'>version </td>
-						<td style='width:40%;'>set </td>
-						<td style='width:40%;'>area </td>
+			<div class="alert alert-info" id="jenkinsContainer">
+				<table id="td-100">
+					<tr id="td-100">
+						<td id="td-20">version </td>
+						<td id="td-40">set </td>
+						<td id="td-40">area </td>
 					</tr>
 				</table>
 			</div>
@@ -93,12 +93,12 @@
 	</div>
 	<div class="warning">
 		<a href="#" onclick="onClick3()">
-			<div class="alert alert-warning" style='width:100%;margin-bottom:0px;'>
-				<table style='width:100%;'>
-					<tr style='width:100%;'>
-						<td style='width:20%;'>version </td>
-						<td style='width:40%;'>set </td>
-						<td style='width:40%;'>area </td>
+			<div class="alert alert-warning" id="jenkinsContainer">
+				<table id="td-100">
+					<tr id="td-100">
+						<td id="td-20">version </td>
+						<td id="td-40">set </td>
+						<td id="td-40">area </td>
 					</tr>
 				</table>
 			</div>
@@ -113,7 +113,7 @@
 					<th>Comment</th>
 					<th>Attached Files</th>
 				</tr>
-				<tr class="warning" style="color:black;">
+				<tr class="warning">
 					<td>1</td>
 					<td>First Case for reprezentation</td>
 					<td>Case description</td>
@@ -138,12 +138,12 @@
 	</div>
 	<div class="danger">
 		<a href="#" onclick="onClick4()">
-			<div class="alert alert-danger" style='width:100%;margin-bottom:0px;'>
-				<table style='width:100%;'>
-					<tr style='width:100%;'>
-						<td style='width:20%;'>version </td>
-						<td style='width:40%;'>set </td>
-						<td style='width:40%;'>area </td>
+			<div class="alert alert-danger" id="jenkinsContainer">
+				<table id="td-100">
+					<tr id="td-100">
+						<td id="td-20">version </td>
+						<td id="td-40">set </td>
+						<td id="td-40">area </td>
 					</tr>
 				</table>
 			</div>
@@ -158,7 +158,7 @@
 					<th>Comment</th>
 					<th>Attached Files</th>
 				</tr>
-				<tr class="danger" style="color:black;">
+				<tr class="danger">
 					<td>1</td>
 					<td>First Case for reprezentation</td>
 					<td>Case description</td>
@@ -187,12 +187,12 @@
 {% if mode %}
     <div class='{{mode}}'>
 		<a href="#" onclick='onClick{{iterator}}()'>
-			<div class="alert alert-{{mode}}" style='width:100%;margin-bottom:0px;'>
-				<table style='width:100%;'>
-					<tr style='width:100%;'>
-						<td style='width:20%;'>{{data[2]}}</td>
-						<td style='width:40%;'>{{data[1]}}</td>
-                        <td style='width:40%;'><i>Passed:{{rate[0]}}/{{rate[3]}} ({{(rate[0]/rate[3]*100)|int}}%)</i></td>
+			<div class="alert alert-{{mode}}" id="jenkinsContainer">
+				<table id="td-100">
+					<tr id="td-100">
+						<td id="td-20">{{data[2]}}</td>
+						<td id="td-40">{{data[1]}}</td>
+                        <td id="td-40"><i>Passed:{{rate[0]}}/{{rate[3]}} ({{(rate[0]/rate[3]*100)|int}}%)</i></td>
 					</tr>
 				</table>
 			</div>
@@ -209,7 +209,7 @@
 				</tr>
                 {% for k in param %}
                     {% if k[1] == "FAILED" %}
-				<tr class="danger" style="color:black;">
+				<tr class="danger">
 					<td>{{loop.index}}</td>
 					<td>{{k[3]}}</td>
                     <td>{{k[1]}}</td>
@@ -218,7 +218,7 @@
 				</tr>
                     {% endif %}
                     {% if k[1] == "NOTRUN" %}
-				<tr class="warning" style="color:black;">
+				<tr class="warning">
 					<td>{{loop.index}}</td>
 					<td>{{k[3]}}</td>
                     <td>{{k[1]}}</td>
@@ -227,7 +227,7 @@
 				</tr>
                     {% endif %}
                     {% if k[1] == "SKIPPED" %}
-				<tr class="warning" style="color:black;">
+				<tr class="warning">
 					<td>{{loop.index}}</td>
 					<td>{{k[3]}}</td>
                     <td>{{k[1]}}</td>
@@ -236,7 +236,7 @@
 				</tr>
                     {% endif %}
                     {% if k[1] == "NOTIMP" %}
-				<tr class="info" style="color:black;">
+				<tr class="info">
 					<td>{{loop.index}}</td>
 					<td>{{k[3]}}</td>
                     <td>{{k[1]}}</td>
@@ -267,24 +267,24 @@
     {% if rate[0]/rate[3] >= 0.8 %}
     <div class='success'>
 		<a href="#" onclick='onClick{{iterator}}()'>
-			<div class="alert alert-success" style='width:100%;margin-bottom:0px;'>
+			<div class="alert alert-success" id="jenkinsContainer">
     {% else %}
         {% if  rate[2]/rate[3] > 0%}
     <div class='danger'>
 		<a href="#" onclick='onClick{{iterator}}()'>
-			<div class="alert alert-danger" style='width:100%;margin-bottom:0px;'>
+			<div class="alert alert-danger" id="jenkinsContainer">
         {% else %}
     <div class='warning'>
 		<a href="#" onclick='onClick{{iterator}}()'>
-			<div class="alert alert-warning" style='width:100%;margin-bottom:0px;'>
+			<div class="alert alert-warning" id="jenkinsContainer">
         {% endif %}
     {% endif %}
-				<table style='width:100%;'>
-					<tr style='width:100%;'>
-						<td style='width:20%;'>{{objectExe[0][2][2]}}</td>
-						<td style='width:20%;'>{{objectExe[0][2][1]}}</td>
+				<table id="td-100">
+					<tr id="td-100">
+						<td id="td-20">{{objectExe[0][2][2]}}</td>
+						<td id="td-20">{{objectExe[0][2][1]}}</td>
                         </a>
-                        <td style='width:10%;'>
+                        <td id="td-10">
                             {% for k in objectExe %}
                         <a href='#' class='exe{{iterator}} wrapperJenk' id='exe{{k[2][3]}}' data-toggle="popover" data-trigger="focus" data-placement="bottom" onmouseover="onMouseOver{{k[2][3]}}{{iterator}}()" onmouseout="onMouseOut{{k[2][3]}}{{iterator}}()">
                             <span class='slideIcon'></span>
@@ -292,11 +292,11 @@
                         {% endfor %}
                         </td>
                         <a href="#" onclick='onClick{{iterator}}()'>
-                        <td style='10%'></td>
-                        <td style='width:10%;'>
+                        <td id="td-10"></td>
+                        <td id="td-10">
                             <i>Passed in </i>
                         </td>
-                        <td style='width:30%;'>
+                        <td id="td-30">
                             <i>Passed: {{rate[0]}}/{{rate[3]}} ({{(rate[0]/rate[3]*100)|int}}%)</i>
                         </td>
 					</tr>
@@ -309,14 +309,14 @@
 				<tr>
 					<th>#</th>
 					<th>Case Title</th>
-                    <th>Result</thth>
+                    <th>Result</th>
 					<th>Comment</th>
 					<th>Attached Files</th>
 				</tr>
                 {% for j in objectExe %}
                     {% for k in j[1] %}
                     {% if k[1] == "FAILED" %}
-				<tr class="danger" style="color:black;">
+				<tr class="danger">
 					<td>{{loop.index}}</td>
 					<td>{{k[3]}}</td>
                     <td>{{k[1]}}</td>
@@ -325,7 +325,7 @@
 				</tr>
                     {% endif %}
                     {% if k[1] == "NOTRUN" %}
-				<tr class="warning" style="color:black;">
+				<tr class="warning">
 					<td>{{loop.index}}</td>
 					<td>{{k[3]}}</td>
                     <td>{{k[1]}}</td>
@@ -334,7 +334,7 @@
 				</tr>
                     {% endif %}
                     {% if k[1] == "SKIPPED" %}
-				<tr class="warning" style="color:black;">
+				<tr class="warning">
 					<td>{{loop.index}}</td>
 					<td>{{k[3]}}</td>
                     <td>{{k[1]}}</td>
@@ -343,7 +343,7 @@
 				</tr>
                     {% endif %}
                     {% if k[1] == "NOTIMP" %}
-				<tr class="info" style="color:black;">
+				<tr class="info">
 					<td>{{loop.index}}</td>
 					<td>{{k[3]}}</td>
                     <td>{{k[1]}}</td>

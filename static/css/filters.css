@@ -1,0 +1,20 @@
+#filterTd-14{
+    padding-top: 14px;
+}
+
+#filterTd-3{
+    padding-top: 3px;
+}
+
+[data-selectorid='jenkins']{
+    padding-top: 3px;
+    height: 40px;
+}
+
+#fullWidth{
+    width:100%;
+}
+
+#fullHeight{
+    height:100%;
+}

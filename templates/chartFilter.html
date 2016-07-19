@@ -1,17 +1,17 @@
-<div class='panel panel-default' style='height:100%;'>
+<div class='panel panel-default' id="fullHeight">
   <!-- Default panel contents -->
   <div class='panel-heading'>Chart Filter</div>
   <div class='panel-body'>
-    <p style="color:black;">Dynamic chart generation for a fancy dashboard.</p>
+    <p>Dynamic chart generation for a fancy dashboard.</p>
   </div>
 
   <!-- Table -->
     {% if type %}
   <table class='{{type}} table'>
     <tr>
-		<td style="color:black;">Interval: <td>
+		<td>Interval: <td>
 		<td>
-			<select class='{{type}} form-control' data-selectorid='{{type}}Interval' onchange="{{type}}Reload('{{type}}')" style='width:100%;'>
+			<select class='{{type}} form-control' data-selectorid='{{type}}Interval' onchange="{{type}}Reload('{{type}}')" id="fullWidth">
 				<option data-interval='100'>All</option>
 				<option data-interval='5'>Last 5 Result</option>
 				<option data-interval='10' selected>Last 10 Result</option>
@@ -23,9 +23,9 @@
 		<td>
 	</tr>
 	<tr>
-		<td style="color:black;">Version: <td>
+		<td>Version: <td>
 		<td>
-			<select class='form-control' data-selectorid='{{type}}Version' onchange="{{type}}Reload('{{type}}')" style='width:100%;'>
+			<select class='form-control' data-selectorid='{{type}}Version' onchange="{{type}}Reload('{{type}}')" id="fullWidth">
 				<option data-dbid='0'>All</option>
                 {% for k in data %}
 				<option data-dbid='{{k[0]}}'>{{k[6]}} {{k[1]}}</option>
@@ -34,9 +34,9 @@
 		<td>
 	</tr>
     <tr>
-		<td style="color:black;">Area: <td>
+		<td>Area: <td>
 		<td>
-			<select class='form-control' data-selectorid='{{type}}Area' onchange="{{type}}Reload('{{type}}')" style='width:100%;'>
+			<select class='form-control' data-selectorid='{{type}}Area' onchange="{{type}}Reload('{{type}}')" id="fullWidth">
 				<option data-dbid='0'>All</option>
                 {% for k in areas %}
 				<option data-dbid='{{k[0]}}'>{{k[1]}}</option>
@@ -45,9 +45,9 @@
 		<td>
 	</tr>
 	<tr>
-		<td style="color:black;">Status: <td>
+		<td>Status: <td>
 		<td>
-			<select class='form-control' data-selectorid='{{type}}Status' onchange="{{type}}Reload('{{type}}')" style='width:100%;'>
+			<select class='form-control' data-selectorid='{{type}}Status' onchange="{{type}}Reload('{{type}}')" id="fullWidth">
 				<option data-status='All'>All</option>
 				<option data-status='RUN'>Passed</option>
 				<option data-status='FAILED'>Failed</option>

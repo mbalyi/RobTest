@@ -2,9 +2,9 @@
     <!-- Default panel contents -->
         <table class='jenkinsFilter table'>
             <tr>
-                <td style="color:black;padding-top: 14px;">Interval: <td>
-                <td>
-                    <select class='jenkinsFilter form-control' data-selectorid='jenkins' onchange="jenkinsReload()" style='width:100%;'>
+                <td id="filterTd-14">Interval: <td>
+                <td id="filterTd-3">
+                    <select class='jenkinsFilter form-control' data-selectorid='jenkins' onchange="jenkinsReload()">
                         <option data-interval='100'>All</option>
                         <option data-interval='5'>Last 5 Result</option>
                         <option data-interval='10'>Last 10 Result</option>
@@ -14,12 +14,12 @@
                         <option data-interval='50'>Last 50 Result</option>
                     </select>
                 </td>
-                <td style="color:black;padding-top: 14px;">Passed: </td>
-                <td style="padding-top: 14px;"><input type="checkbox" name="passed" onchange="jenkinsHide('passed')"></td>
-                <td style="color:black;padding-top: 14px;">Failed: </td>
-                <td style="padding-top: 14px;"><input type="checkbox" name="failed" onchange="jenkinsHide('failed')"></td>
-                <td style="color:black;padding-top: 14px;">Skipped: </td>
-                <td style="padding-top: 14px;"><input type="checkbox" name="skipped" onchange="jenkinsHide('skipped')"></td>
+                <td id="filterTd-14">Passed: </td>
+                <td id="filterTd-14"><input type="checkbox" name="passed" onchange="jenkinsHide('passed')"></td>
+                <td id="filterTd-14">Failed: </td>
+                <td id="filterTd-14"><input type="checkbox" name="failed" onchange="jenkinsHide('failed')"></td>
+                <td id="filterTd-14">Skipped: </td>
+                <td id="filterTd-14"><input type="checkbox" name="skipped" onchange="jenkinsHide('skipped')"></td>
             </tr>
         </table>
 </div>

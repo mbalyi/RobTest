@@ -1,0 +1,123 @@
+.carousel.slide{
+    height:100%;
+}
+
+.carousel-inner{
+    width:100%;
+    height:100%;
+}
+
+#idAllChart{
+    margo:auto;
+    width:100%;
+    overflow: hidden;
+    height:100%;
+}
+
+#allPie{
+    width:100%;
+    height:50%;
+}
+#allLine{
+    width:100%;
+    height:50%;
+}
+
+.allJenkinsRad{
+    width:60%;
+    padding-bottom:0px;
+    overflow-y:auto;
+    height:100%;
+}
+
+.item{
+    height:100%;
+}
+
+.item.chart{
+    margo:auto;
+    width:100%;
+    overflow: hidden;
+}
+
+.jenkinsRadiator{
+    width:100%;
+    height:100%;
+}
+
+.carousel-control{
+    width:0%;
+}
+
+.jenkinsFilter{
+    height:50px;
+    width:100%;
+    padding-right: 32px;
+}
+
+.jenkinsRad{
+    width:100%;
+    padding-bottom:0px;
+    overflow-y:auto;
+    height:calc(100% - 50px);
+}
+
+.chartFilter{
+    width:30%;
+    height:100%;
+    float:left;
+}
+
+.chartContainer{
+    width:70%;
+    height:100%;
+}
+
+#jenkinsContainer{
+    width:100%;
+    margin-bottom:0px;
+}
+
+#td-10{
+    width: 10%;
+}
+#td-20{
+    width: 20%;
+}
+#td-30{
+    width: 30%;
+}
+#td-40{
+    width: 40%;
+}
+#td-60{
+    width: 60%;
+}
+#td-80{
+    width: 80%;
+}
+#td-100{
+    width: 100%;
+}
+
+.slideIcon {
+  -webkit-border-radius: 35;
+  -moz-border-radius: 35;
+  border-radius: 35px;
+  -webkit-box-shadow: 0px 1px 3px #666666;
+  -moz-box-shadow: 0px 1px 3px #666666;
+  box-shadow: 0px 1px 3px #666666;
+  padding: 0px 8px 0px 8px;
+  text-decoration: none;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slideIcon:hover {
+  text-decoration: none;
+}
+
+.wrapperJenk{
+   white-space: normal;
+}

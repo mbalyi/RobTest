@@ -73,9 +73,8 @@ $(function(){
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "dashboard"){
             $(".text_area").hide();
 			$(".insert_jira_button").empty();
-            $("#mainHeader").css('margin-bottom','20px');
 			$(".setup_buttons").empty().show();
-			document.getElementById("col-md-9").style.width = '100%'
+			document.getElementsByClassName("col-md-9")[0].style.width = '100%';
             dashboardLoad();
             chartFilterBar("pie",".chartFilter#pie");
             addChart("pie","pieChart","pie",10);
@@ -92,8 +91,7 @@ $(function(){
             });
         }
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "reportBlog"){
-			document.getElementById("col-md-9").style.width = '70%';
-            $("#mainHeader").css('margin-bottom','20px');
+			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
             $(".setup_buttons").show();
             requestDashboard(
 					{ active:true, filter:"" },
@@ -109,7 +107,7 @@ $(function(){
 				$(".setup").hide();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "design"){
-			document.getElementById("col-md-9").style.width = '70%';
+			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
             $(".col-md-9").empty().append(DivForm);
             $(".col-md-9").prepend(buttonSetup);
 			$(".setup_buttons").empty();
@@ -119,7 +117,7 @@ $(function(){
 			requestObject();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "sets"){
-			document.getElementById("col-md-9").style.width = '70%';
+			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
             $(".col-md-9").empty().append(DivForm);
             $(".col-md-9").prepend(buttonSetup);
             SetSetup("true");
@@ -127,7 +125,7 @@ $(function(){
 			$(".setup").show();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "executions"){
-			document.getElementById("col-md-9").style.width = '70%';
+			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
             $(".col-md-9").empty().append(DivForm);
             $(".col-md-9").prepend(buttonSetup);
             var boo="true";
@@ -137,13 +135,13 @@ $(function(){
 			$(".setup").show();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "cases"){
-			document.getElementById("col-md-9").style.width = '70%';
+			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
             $(".col-md-9").empty().append(DivForm);
             $(".col-md-9").prepend(buttonSetup);
             caseSetUp();
 		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "objects"){
-			document.getElementById("col-md-9").style.width = '70%';
+			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
             $(".col-md-9").empty().append(DivForm);
             $(".col-md-9").prepend(buttonSetup);
             requestObject();

@@ -1,9 +1,21 @@
 {% if resultForm %}
 <div class="panel panel-default" style="width:100%;height:50px;">
     <table class='resultForm table'>
-        <tr style="width:40%;">
+        <tr style="width:100%;">
+            <td style="color:black;padding-top: 14px;">Set: <td>
+            <td style="max-width:40%;">
+                <select class='resultSet form-control' data-selectorid='set' onchange="resultReload()" style='width:100%;'>
+                    {% for k in sets %}
+                    {% if loop.index == 1 %}
+                    <option data-setid='{{k[0]}}' selected>{{k[1]}}</option>
+                    {% else %}
+                    <option data-setid='{{k[0]}}'>{{k[1]}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
             <td style="color:black;padding-top: 14px;">Interval: <td>
-            <td>
+            <td style="max-width:40%;">
                 <select class='resultFilter form-control' data-selectorid='interval' onchange="resultReload()" style='width:100%;'>
                     <option data-interval='3' selected>Last 3 Result</option>
                     <option data-interval='5'>Last 5 Result</option>
@@ -26,9 +38,11 @@
     <table class="table">
         <tr>
             <th>ID</th>
-            <th>Title</th>
-            {% for k in exes %}
-            <th>{{k[1]}} ({{k[2]}})</th>
+            <th style="white-space:pre;">Title</th>
+            {% for j in exes %}
+                {% for k in j %}
+                <th>{{k[1]}} ({{k[2]}})</th>
+                {% endfor %}
             {% endfor %}
         </tr>
         {% for k in loadLastResultHist %}
@@ -61,10 +75,22 @@
 {% if resultStepForm %}
 <div class="panel panel-default" style="width:100%;height:50px;">
     <table class='resultForm table'>
-        <tr style="width:40%;">
+        <tr style="width:100%;">
+            <td style="color:black;padding-top: 14px;">Set: <td>
+            <td style="max-width:40%;">
+                <select class='resultSet form-control' data-selectorid='set' onchange="resultStepReload()" style='width:100%;'>
+                    {% for k in sets %}
+                    {% if loop.index == 1 %}
+                    <option data-setid='{{k[0]}}' selected>{{k[1]}}</option>
+                    {% else %}
+                    <option data-setid='{{k[0]}}'>{{k[1]}}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
             <td style="color:black;padding-top: 14px;">Interval: <td>
-            <td>
-                <select class='resultFilter form-control' data-selectorid='interval' onchange="resultReload()" style='width:100%;'>
+            <td style="max-width:40%;">
+                <select class='resultFilter form-control' data-selectorid='interval' onchange="resultStepReload()" style='width:100%;'>
                     <option data-interval='3' selected>Last 3 Result</option>
                     <option data-interval='5'>Last 5 Result</option>
                     <option data-interval='10'>Last 10 Result</option>
@@ -87,14 +113,16 @@
         <tr>
             <th>ID</th>
             <th>Title</th>
-            {% for k in exes %}
-            <th>{{k[1]}} ({{k[2]}})</th>
+            {% for j in exes %}
+                {% for k in j %}
+                <th style="white-space:pre;">{{k[1]}} ({{k[2]}})</th>
+                {% endfor %}
             {% endfor %}
         </tr>
         {% for k in loadLastResStepHist %}
         <tr>
             <td>{{loop.index}}</td>
-            <td>{{title[0][loop.index-1]}}</td>
+            <td>{{title[loop.index-1]}}</td>
             {% for j in k %}
                 {% if j == "RUN" %}
                     <td style="color:#2ECC71;">{{j}}</td>

@@ -985,7 +985,6 @@ class Database:
 		conn.commit()
 		j=1
 		count=len(list(result))
-		print(count)
 		for k in result:
 			c.execute("UPDATE Step_Execution SET ExecutionId=? WHERE Case_ExecutionId=?",[k[0],k[1]])
 			conn.commit()
@@ -996,25 +995,33 @@ class Database:
 	def getLastExes(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		query="SELECT EO.ExecutionId,EX.ExeName,OB.ObjectName FROM Exe_Object AS EO LEFT JOIN Execution AS EX ON EO.ExecutionId=EX.ExecutionId LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId ORDER BY EO.ExecutionId DESC LIMIT "+str(kwargs['limit'])
-		c.execute(query)
-		exeIds=c.fetchall()
+		query1="SELECT ExecutionId FROM Case_Execution WHERE CaseId=? ORDER BY ExecutionId DESC LIMIT "+str(kwargs['limit'])
+		c.execute(query1,[kwargs['caseIds'][0][0]])
+		exeIds = c.fetchall()
 		conn.commit()
-		for l in exeIds:
-			tupList=list(l)
-			tupList[1]=tupList[1].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
-			tupList[2]=tupList[2].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
-			l=tupList
-		return exeIds
+		exes=[]
+		for k in exeIds:
+			query="SELECT EO.ExecutionId,EX.ExeName,OB.ObjectName FROM Exe_Object AS EO LEFT JOIN Execution AS EX ON EO.ExecutionId=EX.ExecutionId LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId WHERE EX.ExecutionId=?"
+			c.execute(query,[k[0]])
+			exes.append(c.fetchall())
+			conn.commit()
+		for j in exes:
+			for l in j:
+				tupList=list(l)
+				tupList[1]=tupList[1].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+				tupList[2]=tupList[2].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+				l=tupList
+		return exes
 	
 	def getExeTitles(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		temp=[]
-		for k in kwargs['exeIds']:
-			c.execute("SELECT title FROM Case_Execution WHERE ExecutionId=?",[k[0]])
-			temp.append(c.fetchall())
-			conn.commit()
+		for j in kwargs['exeIds']:
+			for k in j:
+				c.execute("SELECT title FROM Case_Execution WHERE ExecutionId=?",[k[0]])
+				temp.append(c.fetchall())
+				conn.commit()
 		return temp
 	
 	def getCaseHistory(self,**kwargs):
@@ -1023,16 +1030,17 @@ class Database:
 		exeIds=kwargs['exeIds']
 		temp=[]
 		iterator=0
-		for k in exeIds:
-			c.execute("SELECT Result FROM Case_Execution WHERE ExecutionId=?",[k[0]])
-			res=c.fetchall()
-			temp.append(res)
-			conn.commit()
-			for l in temp[iterator]:
-				tupList=list(l)
-				tupList[0]=tupList[0].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
-				l=tupList
-			iterator=iterator+1
+		for j in exeIds:
+			for k in j:
+				c.execute("SELECT Result FROM Case_Execution WHERE ExecutionId=?",[k[0]])
+				res=c.fetchall()
+				temp.append(res)
+				conn.commit()
+				for l in temp[iterator]:
+					tupList=list(l)
+					tupList[0]=tupList[0].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+					l=tupList
+				iterator=iterator+1
 		result=[]
 		it2=0
 		for j in temp[1]:
@@ -1050,16 +1058,17 @@ class Database:
 		exeIds=kwargs['exeIds']
 		temp=[]
 		iterator=0
-		for k in exeIds:
-			c.execute("SELECT Result FROM Step_Execution WHERE ExecutionId=?",[k[0]])
-			res=c.fetchall()
-			temp.append(res)
-			conn.commit()
-			for l in temp[iterator]:
-				tupList=list(l)
-				tupList[0]=tupList[0].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
-				l=tupList
-			iterator=iterator+1
+		for j in exeIds:
+			for k in j:
+				c.execute("SELECT Result FROM Step_Execution WHERE ExecutionId=?",[k[0]])
+				res=c.fetchall()
+				temp.append(res)
+				conn.commit()
+				for l in temp[iterator]:
+					tupList=list(l)
+					tupList[0]=tupList[0].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+					l=tupList
+				iterator=iterator+1
 		result=[]
 		it2=0
 		for j in temp[1]:
@@ -1075,11 +1084,19 @@ class Database:
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		temp=[]
-		for k in kwargs['exeIds']:
-			c.execute("SELECT ST.Action FROM Steps AS ST LEFT JOIN Case_Step AS CS ON ST.StepId=CS.StepId LEFT JOIN Case_Execution AS CE ON CE.CaseId=CS.CaseId WHERE CE.ExecutionId=?",[k[0]])
-			temp.append(c.fetchall())
-			conn.commit()
-		return temp
+		for j in kwargs['exeIds']:
+			for k in j:
+				c.execute("SELECT ST.Action FROM Steps AS ST LEFT JOIN Case_Step AS CS ON ST.StepId=CS.StepId LEFT JOIN Case_Execution AS CE ON CE.CaseId=CS.CaseId WHERE CE.ExecutionId=?",[k[0]])
+				temp.append(c.fetchall())
+				conn.commit()
+		temp2=[]
+		for j in temp:
+			for l in j:
+				tupList=list(l)
+				tupList[0]=tupList[0].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+				l=tupList[0]
+				temp2.append(tupList[0])
+		return temp2
 	
 	def getResultCases(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")

@@ -9,19 +9,27 @@ function stepHistPage(){
     $(".col-md-12-object").empty();
     $(".setup").hide();
     loadResStepForm();
-    loadLastResStep(3);
 }
 
 function loadResStepForm(){
     $.get("/loadResStepForm",function(data,status){
         if(status){
-           $(".col-md-9").empty().append(data); 
+           $(".col-md-9").empty().append(data);
+            loadLastResStep(3);
         }
     });
 }
 
 function loadLastResStep(limit){
-    $.get("/loadLastResStepHist/"+limit,function(data,status){
+    $.get("/loadLastResStepHist/"+limit+"/"+$(".resultSet").find(":selected").attr("data-setid"),function(data,status){
+        if(status){
+            $(".resultFormCont").empty().append(data); 
+        }
+    });
+}
+
+function resultStepReload(){
+    $.get("/loadLastResStepHist/"+$(".resultFilter").find(":selected").attr("data-interval")+"/"+$(".resultSet").find(":selected").attr("data-setid"),function(data,status){
         if(status){
             $(".resultFormCont").empty().append(data); 
         }

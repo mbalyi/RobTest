@@ -762,24 +762,28 @@ def loadHistoryExe(exeId,exeStatus):
 	exe=DB.getExeOBHist(projectId=projectSession(),exeId=exeId)
 	return render_template('history.html', loadHistory=loadHistory, exeName=exe, status=exeStatus,files=files,comments=comments)
 	
-@app.route('/loaResultForm', methods=['GET'])	
+@app.route('/loadResultForm', methods=['GET'])	
 def loaResultForm():
-	return render_template('resultHistory.html', resultForm="true")
+	sets=DB.get_set(projectId=projectSession(),active=1,update=0)
+	return render_template('resultHistory.html', resultForm="true",sets=sets)
 	
-@app.route('/loadLastResultHist/<int:limit>', methods=['GET'])	
-def loadLastResultHist(limit):
-	exes=DB.getLastExes(limit=limit)
+@app.route('/loadLastResultHist/<int:limit>/<int:setId>', methods=['GET'])	
+def loadLastResultHist(limit,setId):
+	caseIds=DB.getSetCases(id=setId)
+	exes=DB.getLastExes(limit=limit,caseIds=caseIds)
 	titles=DB.getExeTitles(exeIds=exes)
 	result=DB.getCaseHistory(exeIds=exes)
 	return render_template('resultHistory.html', loadLastResultHist=result, exes=exes, title=titles)
 	
 @app.route('/loadResStepForm', methods=['GET'])	
 def loadResStepForm():
-	return render_template('resultHistory.html', resultStepForm="true")
+	sets=DB.get_set(projectId=projectSession(),active=1,update=0)
+	return render_template('resultHistory.html', resultStepForm="true",sets=sets)
 	
-@app.route('/loadLastResStepHist/<int:limit>', methods=['GET'])	
-def loadLastResStepHist(limit):
-	exes=DB.getLastExes(limit=limit)
+@app.route('/loadLastResStepHist/<int:limit>/<int:setId>', methods=['GET'])	
+def loadLastResStepHist(limit,setId):
+	caseIds=DB.getSetCases(id=setId)
+	exes=DB.getLastExes(limit=limit,caseIds=caseIds)
 	titles=DB.getStepTitles(exeIds=exes)
 	result=DB.getStepHistory(exeIds=exes)
 	return render_template('resultHistory.html', loadLastResStepHist=result, exes=exes, title=titles)

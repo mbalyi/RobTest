@@ -99,3 +99,46 @@ function deleteCaseMan(){
         }
     });
 }
+
+function confirmObjectAllDel(event){
+    $(event.target).popover({content: "<p style='color:black;'>Are you sure to delete all objects?</p><button type='button' class='btn btn-danger btn-xs' onclick='deleteAllOb()' style='width:50%;'>Delete</button><button type='button' class='btn btn-default btn-xs' onclick='cancelObjectAll("+event.target+")' style='width:50%;'>Cancel</button>",html:true});
+    $(event.target).popover('show');
+}
+function cancelObjectAll(event){
+    $(event).popover('destroy');
+}
+function deleteAllOb(){
+    $.get("/deleteAllObject",function(data,status){
+        if(status){
+            $(".objectManage").append(data);
+        }
+    });
+}
+function confirmSetAllDel(event){
+    $(event.target).popover({content: "<p style='color:black;'>Are you sure to delete all sets?</p><button type='button' class='btn btn-danger btn-xs' onclick='deleteAllSet()' style='width:50%;'>Delete</button><button type='button' class='btn btn-default btn-xs' onclick='cancelSetAll("+event.target+")' style='width:50%;'>Cancel</button>",html:true});
+    $(event.target).popover('show');
+}
+function cancelSetAll(event){
+    $(event).popover('destroy');
+}
+function deleteAllSet(){
+    $.get("/deleteAllSet",function(data,status){
+        if(status){
+            $(".setManage").append(data);
+        }
+    });
+}
+function confirmCaseAllDel(event){
+    $(event.target).popover({content: "<p style='color:black;'>Are you sure to delete all casess?</p><button type='button' class='btn btn-danger btn-xs' onclick='deleteAllCase()' style='width:50%;'>Delete</button><button type='button' class='btn btn-default btn-xs' onclick='cancelCaseAll("+event.target+")' style='width:50%;'>Cancel</button>",html:true});
+    $(event.target).popover('show');
+}
+function cancelCaseAll(event){
+    $(event).popover('destroy');
+}
+function deleteAllCase(){
+    $.get("/deleteAllCase",function(data,status){
+        if(status){
+            $(".caseManage").append(data);
+        }
+    });
+}

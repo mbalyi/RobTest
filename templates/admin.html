@@ -168,7 +168,16 @@
             </tr>
         </table>
         <div class="objectManage col-md-6">
-            <h3>Objects</h3>
+            <table>
+                <tr>
+                    <td style="width:90%;">
+                        <h3>Objects</h3>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmObjectAllDel(event)" data-toggle="popover" data-trigger="focus" data-placement="bottom">Delete All</button>
+                    </td>
+                </tr>
+            </table>
             <table class="admin_form table table-condensed">
                 <tr>
                     <th>#</th>
@@ -214,7 +223,16 @@
             </table>
         </div>
         <div class="setManage col-md-6">
-            <h3>Sets</h3>
+            <table>
+                <tr>
+                    <td style="width:90%;">
+                        <h3>Sets</h3>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmSetAllDel(event)" data-toggle="popover" data-trigger="focus" data-placement="bottom">Delete All</button>
+                    </td>
+                </tr>
+            </table>
             <table class="admin_form table table-condensed">
                 <tr>
                     <th>#</th>
@@ -237,7 +255,16 @@
             </table>
         </div>
         <div class="caseManage col-md-6">
-            <h3>Cases</h3>
+            <table>
+                <tr>
+                    <td style="width:90%;">
+                        <h3>Cases</h3>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="confirmCaseAllDel(event)" data-toggle="popover" data-trigger="focus" data-placement="bottom">Delete All</button>
+                    </td>
+                </tr>
+            </table>
             <table class="admin_form table table-condensed">
                 <tr>
                     <th>#</th>
@@ -331,5 +358,68 @@
         </td>
     </tr>
     {% endfor %}
+</table>
+{% endif %}
+
+{% if emptyObMan %}
+ <table>
+    <tr>
+        <td style="width:90%;">
+            <h3>Objects</h3>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger btn-sm" onclick="confirmObjectAllDel(event)" data-toggle="popover" data-trigger="focus" data-placement="bottom">Delete All</button>
+        </td>
+    </tr>
+</table>
+<table class="admin_form table table-condensed">
+    <tr>
+        <th>#</th>
+        <th class="admin_table-0">Name</th>
+        <th class="admin_table-0">Status</th>
+        <th class="admin_table-0">Delete</th>
+    </tr>
+</table>
+{% endif %}
+
+{% if emptySetMan %}
+ <table>
+    <tr>
+        <td style="width:90%;">
+            <h3>Sets</h3>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger btn-sm" onclick="confirmSetAllDel(event)" data-toggle="popover" data-trigger="focus" data-placement="bottom">Delete All</button>
+        </td>
+    </tr>
+</table>
+<table class="admin_form table table-condensed">
+    <tr>
+        <th>#</th>
+        <th class="admin_table-0">Name</th>
+        <th class="admin_table-0">Status</th>
+        <th class="admin_table-0">Delete</th>
+    </tr>
+</table>
+{% endif %}
+
+{% if emptyCaseMan %}
+ <table>
+    <tr>
+        <td style="width:90%;">
+            <h3>Cases</h3>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger btn-sm" onclick="confirmCaseAllDel(event)" data-toggle="popover" data-trigger="focus" data-placement="bottom">Delete All</button>
+        </td>
+    </tr>
+</table>
+<table class="admin_form table table-condensed">
+    <tr>
+        <th>#</th>
+        <th class="admin_table-0">Name</th>
+        <th class="admin_table-0">Status</th>
+        <th class="admin_table-0">Delete</th>
+    </tr>
 </table>
 {% endif %}

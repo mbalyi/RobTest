@@ -131,6 +131,14 @@ def deleteCasePhysical(ID):
 	cases += DB.get_case(projectId = projectSession(),active=0,update=0)
 	return render_template('admin.html', newCaseRequest="true", caseData=cases)
 	
+@app.route('/deleteAllCase', methods=['GET'])
+def deleteAllCase():
+	cases = DB.get_case(projectId = projectSession(),active=1,update=1)
+	cases += DB.get_case(projectId = projectSession(),active=0,update=0)
+	for k in cases:
+		DB.deleteCase(id=k[0], projectId=projectSession())
+	return render_template('admin.html', emptyCaseMan="true")
+	
 #---Logikai törlés
 @app.route('/deleteCase/<int:ID>', methods=['GET'])
 def deleteCase(ID):
@@ -211,6 +219,13 @@ def deleteObjectPhysical(ID):
 	query = DB.get_object(projectId=projectSession(),active=0)
 	return render_template('admin.html', newObjectRequest="true", objectData=query)
 
+@app.route('/deleteAllObject', methods=['GET'])
+def deleteAllObject():
+	query = DB.get_object(projectId=projectSession(),active=0)
+	for k in query:
+		DB.deleteObject(id=k[0],projectId=projectSession())
+	return render_template('admin.html', emptyObMan="true")
+	
 #--- Logikai törlés
 @app.route('/deleteObject/<int:ID>', methods=['GET'])
 def deleteObject(ID):
@@ -280,8 +295,16 @@ def deleteSetPhysical(ID):
 	DB.deleteSet(id=ID)
 	sets = DB.get_set(projectId=projectSession(),active=0,update=0)
 	sets += DB.get_set(projectId=projectSession(),active=1,update=1)
-	return render_template('admin.html',newSetRequest="true",setData=sets)
+	return render_template('admin.html',emptySetMan="true")
 
+@app.route('/deleteAllSet', methods=['GET'])
+def deleteAllSet():
+	sets=DB.get_set(projectId=projectSession(),active=0,update=0)
+	sets += DB.get_set(projectId=projectSession(),active=1,update=1)
+	for k in ids:
+		DB.deleteSet(k[0])
+	return render_template('admin.html',newSetRequest="true",setData=sets)
+	
 #--- Logikai törlés	
 @app.route('/deleteSet/<int:ID>', methods=['GET'])
 def deleteSet(ID):

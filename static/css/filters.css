@@ -15,11 +15,24 @@
     width:100%;
 }
 
+#halfWidth{
+    width:50%;
+}
+
 #fullHeight{
     height:100%;
+}
+
+#halfHeight{
+    height:50%;
 }
 
 #fullSize{
     width:100%;
     height:100%;
+}
+
+#halfSize{
+    width:100%;
+    height:50%;
 }

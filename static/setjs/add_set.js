@@ -19,9 +19,9 @@ function SetSetup(mode){
 		}
 	);
     if(mode != "false"){
-        $(".col-md-12-object").empty();
+        $(".col-md-12-object").empty().hide();
         $(".buttonSetup").empty().append(setBtn);
-        $(".col-md-12-execution").empty();
+        $(".col-md-12-execution").empty().hide();
         requestSet();
     }
 }
@@ -80,8 +80,8 @@ function deleteSet(setId){
 
 function newSet(){
     if($(".setForm").attr("data-dbid")=="newSet"){
-        $(".incCases").attr('ondrop','drop(event)');
-        $(".incCases").attr('ondragover','allowDrop(event)');
+        $($(".incCases")[0]).attr('ondrop','drop(event)');
+        $($(".incCases")[0]).attr('ondragover','allowDrop(event)');
         $("input[type=checkBox]").removeAttr("disabled");
         $("input[type=text][name=name]").removeAttr('readonly');
         $("input[type=text][name=priority]").removeAttr('readonly');
@@ -98,14 +98,27 @@ function newSet(){
 
 function setHideShow(){
     if($(".setHideShow").attr("data-mode")=="show"){
-        $(".setList").hide();
+        $($(".panel-set")[0]).hide();
+        $(".col-md-12-set")[0].style.height="62px";
         $(".setHideShow").attr("data-mode",'hide');
-        $(".setHideShow").empty().append("<span class='glyphicon glyphicon-collapse-down'></span>");
+        $(".setHideShow").empty().append("<i class='fa fa-chevron-down'></i>");
+        if($(".caseHideShow").attr("data-mode")=="show"){
+            $(".col-md-12-case")[0].style.height="calc(100% - 62px)";
+        }
+        
     }
     else{
-        $(".setList").show();
+        if($(".caseHideShow").attr("data-mode")=="show"){
+            $(".col-md-12-set")[0].style.height="50%";
+            $($(".panel-set")[0]).show();
+            $(".setHideShow").attr("data-mode",'show');
+            $(".setHideShow").empty().append("<i class='fa fa-chevron-up'></i>");
+        }
+        else{
+            $(".col-md-12-set")[0].style.height="calc(100% - 62px)";
+        }
         $(".setHideShow").attr("data-mode",'show');
-        $(".setHideShow").empty().append("<span class='glyphicon glyphicon-collapse-up'></span>");
+        $(".setHideShow").empty().append("<i class='fa fa-chevron-up'></i>");
     }
 }
 

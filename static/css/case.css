@@ -2,6 +2,14 @@
     height:23px;
 }
 
+[name='objectSearch']{
+    height:23px;
+}
+
+[name='setSearch']{
+    height:23px;
+}
+
 #elementBody{
     overflow-y: auto;
     height: calc( 100% - 60px);
@@ -54,4 +62,19 @@
 .case_table_no{
     width:100%;
     table-layout: fixed;
+}
+
+#exeCase{
+    min-height: 450px;
+    height: 50%;
+}
+
+.incCases{
+    height: calc(100% - 41px);
+    overflow-y:auto;
+}
+
+.setForm{
+    width:100%;
+    height:calc(100% - 50px);
 }

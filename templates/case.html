@@ -8,11 +8,11 @@
             </button>
         </div>
         <div class="input-group pull-right">
-            <input type="text" name="caseSearch" class="form-control" onchange="caseSearch()" placeholder="Searching..." id="btn-input">
+            <input type="text" name="caseSearch" class="form-control" onchange="caseSearch()" placeholder="Search..." id="btn-input">
         </div>
     </div>
     <!-- /.panel-heading -->
-    <div class="panel-body" id="elementBody">
+    <div class="panel-body panel-case" id="elementBody">
         <div class='caseList'>
             {% for k in cases%}
                 <div class='elementOfCaseList' data-dbid='case{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">

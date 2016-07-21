@@ -102,12 +102,12 @@ function objectHideShow(){
     if($(".objectHideShow").attr("data-mode")=="show"){
         $(".objectList").hide();
         $(".objectHideShow").attr("data-mode",'hide');
-        $(".objectHideShow").empty().append("<span class='glyphicon glyphicon-collapse-down'></span>");
+        $(".objectHideShow").empty().append("<i class='fa fa-chevron-down'></i>");
     }
     else{
         $(".objectList").show();
         $(".objectHideShow").attr("data-mode",'show');
-        $(".objectHideShow").empty().append("<span class='glyphicon glyphicon-collapse-up'></span>");
+        $(".objectHideShow").empty().append("<i class='fa fa-chevron-up'></i>");
     }
 }
 

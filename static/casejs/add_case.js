@@ -142,12 +142,14 @@ function enableForm(){
 
 function caseHideShow(){
     if($(".caseHideShow").attr("data-mode")=="show"){
-        $(".caseList").hide();
+        $($(".panel-case")[0]).hide();
+        $(".col-md-12-case")[0].style.height="62px";
         $(".caseHideShow").attr("data-mode",'hide');
         $(".caseHideShow").empty().append("<i class='fa fa-chevron-down'></i>");
     }
     else{
-        $(".caseList").show();
+        $($(".panel-case")[0]).show();
+        $(".col-md-12-case")[0].style.height="50%";
         $(".caseHideShow").attr("data-mode",'show');
         $(".caseHideShow").empty().append("<i class='fa fa-chevron-up'></i>");
     }

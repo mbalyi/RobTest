@@ -30,6 +30,10 @@ html{
     width:100%;
 }
 
+#nav-design-col-md-9{
+    height: 100%;
+}
+
 .row{
     height: 100%;
     width: 100%;

@@ -66,6 +66,10 @@ function navCase(){
     $("#nav-col-md-9").empty().append(designNavbar);
     $("#nav-design-col-md-9").empty().append(DivForm);
     $("#nav-design-col-md-9").prepend(buttonSetup);
+    $(".col-md-12-case").empty().show();
+    $(".col-md-12-set").empty().hide();
+    $(".col-md-12-object").empty().hide();
+    $(".col-md-12-execution").empty().hide();
     caseSetUp();
 }
 
@@ -80,21 +84,28 @@ function navExecution(){
 }
 
 function navSet(){
-    $(".col-md-9").empty().append(DivForm);
-    $(".col-md-9").prepend(buttonSetup);
+    $("#nav-col-md-9").empty().append(designNavbar50);
+    $("#nav-design-col-md-9").empty().append(DivForm);
+    $("#nav-design-col-md-9").prepend(buttonSetup);
+    $(".col-md-12-set").empty().show();
+    $(".col-md-12-case").empty().show();
+    $(".col-md-12-object").empty().hide();
+    $(".col-md-12-execution").empty().hide();
     SetSetup("true");
     requestCase();
     $(".setup").show();
 }
 
 function navObject(){
-    $(".col-md-9").empty().append(DivForm);
-    $(".col-md-9").prepend(buttonSetup);
+    $("#nav-col-md-9").empty().append(designNavbar);
+    $("#nav-design-col-md-9").empty().append(DivForm);
+    $("#nav-design-col-md-9").prepend(buttonSetup);
+    $(".col-md-12-object").empty().show();
     requestObject();
     objectSetup();
-    $(".col-md-12-set").empty();
-    $(".col-md-12-case").empty();
-    $(".col-md-12-execution").empty();
+    $(".col-md-12-set").empty().hide();
+    $(".col-md-12-case").empty().hide();
+    $(".col-md-12-execution").empty().hide();
     $(".setup").show();
 }
 

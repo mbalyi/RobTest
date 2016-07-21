@@ -1,31 +1,38 @@
 {% if set %}
-<div class='setPageHeader' style="width:100%;">    
-    <table style="width:100%;">
-        <tr style="width:100%;">
-            <td style="width:15%;"><b>Sets</b></td>
-            <td style="width:60%;">
-                <input type="text" name="setSearch" class="form-control" onchange="setSearch()" style="height:25px;">
-            </td>
-            <td style="width:2%;">
-            </td>
-            <td style="width:20%;">
-                <a href="#" class="setHideShow" onclick='setHideShow()' data-mode="show"><span class='glyphicon glyphicon-collapse-up'></span></a>
-            </td>
-        </tr>
-    </table>
-</div>
-<div class='setList' style="width:100%;height:100%; overflow-y: auto;">
-	{% for k in set %}
-		<div data-dbid='set{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
-			<a href='#' data-dbid='{{k[0]}}' class='set' id='{{k[0]}}'>{{k[1]}}</a>
-		</div>
-    {% endfor %}
+<div class="panel panel-default" id="fullHeight">
+    <div class="panel-heading">
+        Sets
+        <div class="btn-group pull-right">
+            <button type="button" class="setHideShow btn btn-default btn-xs dropdown-toggle" onclick='setHideShow()' data-mode="show">
+                <i class="fa fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="input-group pull-right">
+            <input type="text" name="setSearch" class="form-control" onchange="setSearch()" placeholder="Search..." id="btn-input">
+        </div>
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body panel-set" id="elementBody">
+        <div class='setList'>
+        {% for k in set %}
+            <div data-dbid='set{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+                <a href='#' data-dbid='{{k[0]}}' class='set' id='{{k[0]}}'>{{k[1]}}</a>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    <!-- /.panel-body -->
+    <div class="panel-footer">
+        <div class="input-group">
+        </div>
+    </div>
+    <!-- /.panel-footer -->
 </div>
 {% endif %}
 
 {% if setForm %}
-<div style='width:100%' class='setForm' data-dbid='newSet'>
-    <table style='width:100%' class='set_no'>
+<div class='setForm' data-dbid='newSet'>
+    <table id="fullWidth" class='set_no'>
         <tr>
             <td class='set_staic_name'>Name:</td>
             <td class='set_staic_input'>
@@ -45,7 +52,7 @@
             </td>
         </tr>
     </table>
-    <div class='AreaField' style='width:100%;'>
+    <div class='AreaField' id="fullWidth">
         <h2>Areas: </h2>
         <table>
             {% for k in areas %}
@@ -57,49 +64,56 @@
                         </td>
                         <td>{{k[1]}}</td>
                         <td style="width:5px"></td>
-                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                {% if (loop.index%5 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
                 {% endif %}
-                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                {% if (loop.index%5 == 0) and (loop.index==count) %}
                     </tr>
                 {% endif %}
             {% endfor %}
         </table>
     </div>
-    <div class="Files" style='widt:100%;'>
-        <div class="uploadHeader" style='widt:100%;'>
+    <div class="Files" id="fullWidth">
+        <div class="uploadHeader" id="fullWidth">
             <h3>
-                <a href="#" onclick="toggleSetFileCont()" style="text-decoration: none;">
+                <a href="#" onclick="toggleSetFileCont()" id="no-dec-link">
                     Files: 
                 </a>
             </h3>
         </div>
         <div class="uploadContent" style='widt:100%;display: none;'>
             <div style="width:100%;min-height:75px">
-                <div style="width:50%; float:left;">
-                    <form class="form-group" data-formid='newSet'  method="post" enctype="multipart/form-data" style="width:100%;">
+                <div id="cont-50-left">
+                    <form class="form-group" data-formid='newSet'  method="post" enctype="multipart/form-data" id="fullWidth">
                         Select file to upload:
                         <input type="file" name="fileToUpload" id="fileUploadSet" multiple>
                     </form>
                 </div>
-                <div style="width:50%; float:left;">
-                    <table class="setFiles" style="width:100%;">
+                <div id="cont-50-left">
+                    <table class="setFiles" id="fullWidth">
                     </table>
                 </div>
             </div>
-            <div class="imgFiles" style="width:100%;"></div>
+            <div class="imgFiles" id="fullWidth"></div>
         </div>
     </div>
-    <p>Included Cases</p>
-    <div class='incCases' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'></div>
+    <div class="panel panel-default" id="exeCase">
+        <div class="panel-heading">
+        Included Cases
+        </div>
+        <!-- /.panel-heading -->
+        <div class="incCases panel-body">
+        </div>
+        <!-- /.panel-body -->
+    </div>
 </div>
 {% endif %}
 
 {% if loadSet %}
 	<a name='editSet' id='{{loadSet[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
 	<a name='deleteset' id='{{loadSet[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
-	<div style='width:100%' class='setForm'>
+	<div class='setForm' style="overflow-y:auto;">
 		<table style='width:100%' class='set_no'>
 			{% for k in loadSet%}
 			<tr>
@@ -133,11 +147,11 @@
                         <td style="width:5px;"></td>
                             {% endif %}
                         </td>
-                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                {% if (loop.index%5 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
                 {% endif %}
-                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                {% if (loop.index%5 == 0) and (loop.index==count) %}
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -213,19 +227,28 @@
             </div>
         </div>
     </div>
-		<p>Included Cases</p>
-		<div class='incCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
-		{% if loadCase %}
-			<table>
-				{% for l in loadCase %}
-				<tr>
-					<th>{{l[1]}}</th>
-				</tr>
-				{% endfor %}
-			</table>
-		{% endif %}
-		</div>
-	</div>
+        <div class="panel panel-default" id="exeCase">
+            <div class="panel-heading">
+            Included Cases
+            </div>
+            <!-- /.panel-heading -->
+            <div class="incCases panel-body" ondrop='drop(event)' ondragover='allowDrop(event)'>
+                {% if loadCase %}
+                    <table>
+                        {% for l in loadCase %}
+                        <tr>
+                            <th stye="border-right: 1px solid black; padding-right:5px;"> 
+                                {{loop.index}}
+                            </th>
+                            <th>{{l[1]}}</th>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+        <!-- /.panel-body -->
+    </div>
 {% endif %}
 
 {% if loadEditableSet %}
@@ -265,11 +288,11 @@
                         <td style="width:5px;"></td>
                             {% endif %}
                         </td>
-                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                {% if (loop.index%5 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
                 {% endif %}
-                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                {% if (loop.index%5 == 0) and (loop.index==count) %}
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -360,7 +383,16 @@
 {% if exeCasesBySet %}
 	{% for k in exeCasesBySet %}
 		<div data-dbid='case{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
-			<a href='#' data-dbid='{{k[0]}}' class='case'>{{k[1]}}</a>
+			<table>
+                <tr>
+                    <td stye="border-right: 1px solid black; padding-right:5px;"> 
+                        {{loop.index}}
+                    </td>
+                    <td>
+                        <a href='#' data-dbid='{{k[0]}}' class='case' id="no-dec-link">{{k[1]}}</a>
+                    </td>
+                </tr>
+            </table>
 		</div>
 	{% endfor %}
 {% endif %}

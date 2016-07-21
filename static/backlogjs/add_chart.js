@@ -39,7 +39,7 @@ function jenkinsRadiator(direction,limit){
 	$.get("/jenkinsRadiator/"+limit,
 		function(data,status){
 			if(status){
-				$(direction).prepend(data);
+				$(direction).empty().prepend(data);
 			};
 		}
 	);
@@ -48,7 +48,7 @@ function jenkinsFilter(){
     $.get("/jenkinsFilter",
 		function(data,status){
 			if(status){
-				$(".jenkinsFilter").prepend(data);
+				$(".jenkinsFilter").empty().prepend(data);
 			};
 		}
 	);

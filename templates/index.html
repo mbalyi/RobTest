@@ -32,6 +32,7 @@
     <link href="{{ url_for('static', filename='css/main_navbar.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/slide.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/filters.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/case.css') }}" rel="stylesheet">
     
     
     <!-- jQuery -->
@@ -53,6 +54,7 @@
     <script type='text/javascript' src="{{ url_for('static', filename='dist/js/sb-admin-2.js') }}/"></script>
     
     <script type='text/javascript' src="{{ url_for('static', filename='backlogjs/mouse_on_header.js') }}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='backlogjs/main.js') }}"></script>
 	<script type='text/javascript' src="{{ url_for('static', filename='casejs/add_case.js') }}"></script>
 	<script type='text/javascript' src="{{ url_for('static', filename='casejs/case_template_scripts.js') }}"></script>
 	<script type='text/javascript' src="{{ url_for('static', filename='setjs/add_set.js') }}"></script>
@@ -364,10 +366,10 @@
                             <a href="#"><i class="fa fa-desktop fa-fw"></i> Design<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 {% if user %}
-                                <li><a class='header' id="sets" href="#">Sets</a></li>
-                                <li><a class='header' id="executions" href="#">Executions</a></li>
-                                <li><a class='header' id="cases" href="#">Cases</a></li>
-                                <li><a class='header' id="objects" href="#">Objects</a></li>
+                                <li><a class='header' href="#" onclick="navSet()">Sets</a></li>
+                                <li><a class='header' href="#" onclick="navExecution()">Executions</a></li>
+                                <li><a class='header' href="#" onclick="navCase()">Cases</a></li>
+                                <li><a class='header' href="#" onclick="navObject()">Objects</a></li>
                                 {% endif %}
                             </ul>
                             <!-- /.nav-second-level -->
@@ -431,7 +433,7 @@
 
         <div id="page-wrapper">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-9" id="nav-col-md-9">
                 </div>
                 <!-- /.col-md-9 -->
             </div>

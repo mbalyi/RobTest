@@ -1,0 +1,57 @@
+[name='caseSearch']{
+    height:23px;
+}
+
+#elementBody{
+    overflow-y: auto;
+    height: calc( 100% - 60px);
+    white-space: nowrap;
+}
+
+.setup{
+    padding-left: 0px;
+}
+
+#no-dec-link{
+    text-decoration: none;
+    color:inherit;
+}
+
+.newStepPlace{
+    border-radius: 5px;
+}
+
+.action{
+    resize:none;
+}
+
+.result{
+    resize:none;
+}
+
+.uploadContainer{
+    height:30px;
+    width:50%;
+    padding-top:2px;
+    float:left;
+}
+
+.uploadContent{
+    width:100%; 
+    min-height:50px;
+}
+
+#cont-50-left{
+    width:50%; 
+    float:left;
+}
+
+#cont-50-right{
+    width:50%; 
+    float:right;
+}
+
+.case_table_no{
+    width:100%;
+    table-layout: fixed;
+}

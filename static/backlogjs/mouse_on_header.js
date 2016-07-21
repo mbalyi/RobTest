@@ -62,6 +62,42 @@ function testareaDesign(){
     });
 }
 
+function navCase(){
+    $("#nav-col-md-9").empty().append(designNavbar);
+    $("#nav-design-col-md-9").empty().append(DivForm);
+    $("#nav-design-col-md-9").prepend(buttonSetup);
+    caseSetUp();
+}
+
+function navExecution(){
+    $(".col-md-9").empty().append(DivForm);
+    $(".col-md-9").prepend(buttonSetup);
+    var boo="true";
+    exeSetup(boo);
+    requestSet();
+    requestCase();
+    $(".setup").show();
+}
+
+function navSet(){
+    $(".col-md-9").empty().append(DivForm);
+    $(".col-md-9").prepend(buttonSetup);
+    SetSetup("true");
+    requestCase();
+    $(".setup").show();
+}
+
+function navObject(){
+    $(".col-md-9").empty().append(DivForm);
+    $(".col-md-9").prepend(buttonSetup);
+    requestObject();
+    objectSetup();
+    $(".col-md-12-set").empty();
+    $(".col-md-12-case").empty();
+    $(".col-md-12-execution").empty();
+    $(".setup").show();
+}
+
 $(function(){
     $( ".projectSelector" ).change(function() {
         alert( "Handler for .change() called." );
@@ -91,7 +127,7 @@ $(function(){
             });
         }
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "reportBlog"){
-			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
+			document.getElementsByClassName("col-md-9")[0].style.width = '100%';
             $(".setup_buttons").show();
             requestDashboard(
 					{ active:true, filter:"" },
@@ -106,53 +142,7 @@ $(function(){
 				);
 				$(".setup").hide();
 		}
-		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "design"){
-			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
-            $(".col-md-9").empty().append(DivForm);
-            $(".col-md-9").prepend(buttonSetup);
-			$(".setup_buttons").empty();
-			$(".setup").show();
-			requestCase();
-			requestSet();
-			requestObject();
-		}
-		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "sets"){
-			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
-            $(".col-md-9").empty().append(DivForm);
-            $(".col-md-9").prepend(buttonSetup);
-            SetSetup("true");
-			requestCase();
-			$(".setup").show();
-		}
-		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "executions"){
-			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
-            $(".col-md-9").empty().append(DivForm);
-            $(".col-md-9").prepend(buttonSetup);
-            var boo="true";
-            exeSetup(boo);
-			requestSet();
-			requestCase();
-			$(".setup").show();
-		}
-		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "cases"){
-			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
-            $(".col-md-9").empty().append(DivForm);
-            $(".col-md-9").prepend(buttonSetup);
-            caseSetUp();
-		}
-		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "objects"){
-			document.getElementsByClassName("col-md-9")[0].style.width = '70%';
-            $(".col-md-9").empty().append(DivForm);
-            $(".col-md-9").prepend(buttonSetup);
-            requestObject();
-            objectSetup();
-			$(".col-md-12-set").empty();
-			$(".col-md-12-case").empty();
-			$(".col-md-12-execution").empty();
-			$(".setup").show();
-		}
 		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "test"){
-			document.getElementById("col-md-9").style.width = '70%';
             $(".setup_buttons").show();
             testSetup();
 		}

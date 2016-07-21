@@ -1,0 +1,3 @@
+var designNavbar="<div class='row'><div class='setup_buttons col-md-12' style='margin-bottom:15px;'></div><div class='search_form_place'></div>";
+designNavbar+="<div class='setup col-md-3' id='fullHeight'><div class='col-md-12-set'></div><div class='col-md-12-case' id='fullHeight'></div><div class='col-md-12-execution'>";
+designNavbar+="</div><div class='col-md-12-object'></div></div><div class='col-md-9' id='nav-design-col-md-9'></div></div>"

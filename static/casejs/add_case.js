@@ -25,13 +25,13 @@ function caseForm(checker){
 }
 
 function add_step(){
-    var html="<div class='stepDragg' draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'><div style='width:100%;'><table style='width:100%'><tr><th><a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='step' onclick='selectStep(event)'>#</a></th>";
+    var html="<div class='stepDragg' draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'><div id='fullWidth'><table id='fullWidth'><tr><th><a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='step' onclick='selectStep(event)'>#</a></th>";
     html+="<th><textarea name='action[]' class='action form-control' rows='1' overflow='auto' onkeypress='reSizeTextarea(event)' style='resize:none;'>Action description</textarea></th><th>";
     html+="<textarea name='result[]' class='result form-control' rows='1' overflow='hidden' onkeypress='reSizeTextarea(event)' style='resize:none;'>Result description</textarea></th>"
     html+="<th><a href='#' data-dbid='' id='' class='step' onclick='removeStep(event)'><span class='glyphicon glyphicon-remove' style='color:red;'></span></a></th></tr></table></div>";
-    html+="<div style='height:30px;width:50%;padding-top:2px;float:left;'><form class='form-group' data-formid='newStepActionFile'  method='post' enctype='multipart/form-data' style='width:100%;height:100%;'>";
-    html+="<input type='file' name='fileToUploadStep' id='fileUploadStepAction' multiple></form></div><div style='height:30px;width:50%;padding-top:2px;float:left;'>";
-    html+="<form class='form-group' data-formid='newStepResultFile'  method='post' enctype='multipart/form-data' style='width:100%;height:100%;'><input type='file' name='fileToUploadStep' id='fileUploadStepResult' multiple></form></div></div>";
+    html+="<div class='uploadContainer'><form class='form-group' data-formid='newStepActionFile'  method='post' enctype='multipart/form-data' id='fullSize'>";
+    html+="<input type='file' name='fileToUploadStep' id='fileUploadStepAction' multiple></form></div><div class='uploadContainer'>";
+    html+="<form class='form-group' data-formid='newStepResultFile'  method='post' enctype='multipart/form-data' id='fullSize'><input type='file' name='fileToUploadStep' id='fileUploadStepResult' multiple></form></div></div>";
 	return html;
 }
 
@@ -144,12 +144,12 @@ function caseHideShow(){
     if($(".caseHideShow").attr("data-mode")=="show"){
         $(".caseList").hide();
         $(".caseHideShow").attr("data-mode",'hide');
-        $(".caseHideShow").empty().append("<span class='glyphicon glyphicon-collapse-down'></span>");
+        $(".caseHideShow").empty().append("<i class='fa fa-chevron-down'></i>");
     }
     else{
         $(".caseList").show();
         $(".caseHideShow").attr("data-mode",'show');
-        $(".caseHideShow").empty().append("<span class='glyphicon glyphicon-collapse-up'></span>");
+        $(".caseHideShow").empty().append("<i class='fa fa-chevron-up'></i>");
     }
 }
 

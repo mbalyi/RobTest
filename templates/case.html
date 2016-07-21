@@ -1,31 +1,39 @@
 {% if cases %}
-<div class='casePageHeader' style="width:100%;">    
-    <table style="width:100%;">
-        <tr style="width:100%;">
-            <td style="width:15%;"><b>Cases</b></td>
-            <td style="width:60%;">
-                <input type="text" name="caseSearch" class="form-control" onchange="caseSearch()" style="height:25px;">
-            </td>
-            <td style="width:2%;">
-            </td>
-            <td style="width:20%;">
-                <a href="#" class="caseHideShow" onclick='caseHideShow()' data-mode="show"><span class='glyphicon glyphicon-collapse-up'></span></a>
-            </td>
-        </tr>
-    </table>
-</div>
-<div class='caseList' style="width:100%;height:100%;overflow-y: auto;">
-	{% for k in cases%}
-		<div class='elementOfCaseList' data-dbid='case{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
-			<a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='case'>{{k[1]}}</a>
-		</div>
-	{% endfor %}
+<div class="panel panel-default" id="fullHeight">
+    <div class="panel-heading">
+        Cases
+        <div class="btn-group pull-right">
+            <button type="button" class="caseHideShow btn btn-default btn-xs dropdown-toggle" onclick='caseHideShow()' data-mode="show">
+                <i class="fa fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="input-group pull-right">
+            <input type="text" name="caseSearch" class="form-control" onchange="caseSearch()" placeholder="Searching..." id="btn-input">
+        </div>
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body" id="elementBody">
+        <div class='caseList'>
+            {% for k in cases%}
+                <div class='elementOfCaseList' data-dbid='case{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+                    <a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='case'>{{k[1]}}</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- /.panel-body -->
+    <div class="panel-footer">
+        <div class="input-group">
+        </div>
+    </div>
+    <!-- /.panel-footer -->
 </div>
 {% endif %}
 
+
 {% if caseForm %}
 <div class='case_header'>
-    <table class='editablecase' data-dbid='newCase' style='width:100%'>
+    <table class='editablecase' data-dbid='newCase' id="fullWidth">
         <tr>
             <th>Name:</th>
             <th>
@@ -45,7 +53,7 @@
             </th>
         </tr>
     </table>
-    <div class='AreaField' style='wdith:100%;'>
+    <div class='AreaField' id="fullWidth">
         <h3>Areas: </h3>
         <table>
             {% for k in caseForm %}
@@ -63,10 +71,10 @@
             {% endfor %}
         </table>
     </div>
-    <div class="Files" style='widt:100%;'>
-        <div class="uploadHeader" style='widt:100%;'>
+    <div class="Files" id="fullWidth">
+        <div class="uploadHeader" id="fullWidth">
             <h3>
-                <a href="#" onclick="toggleCaseFileCont()" style="text-decoration: none;">
+                <a href="#" onclick="toggleCaseFileCont()" id="no-dec-link">
                     Files: 
                 </a>
             </h3>
@@ -74,13 +82,13 @@
         <div class="uploadContent" style='widt:100%;display: none;'>
             <div style="width:100%;min-height:75px">
                 <div style="width:50%; float:left;">
-                    <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                    <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data" id="fullWidth">
                         Select file to upload:
                         <input type="file" name="fileToUpload" id="fileUploadCase" multiple>
                     </form>
                 </div>
                 <div style="width:50%; float:left;">
-                    <table class="caseFiles" style="width:100%;">
+                    <table class="caseFiles" id="fullWidth">
                     </table>
                 </div>
             </div>
@@ -104,26 +112,26 @@
                 </td>
             </tr>
         </table>
-        <div class='case_table_no' style='width:100%'>
-            <table style='width:100%;'>
+        <div class='case_table_no' id="fullWidth">
+            <table id="fullWidth">
                 <tr>
                     <th>#</th>
-                    <th style='width:49%;'>Action</th>
-                    <th style='width:49%;'>Result</th>
+                    <th id='td-49'>Action</th>
+                    <th id='td-49'>Result</th>
                     <th></th>
                 </tr>
             </table>
-            <div class='newStepPlace' ondrop='drop(event)' ondragover='allowDrop(event)' style='border-radius: 5px;'>
+            <div class='newStepPlace' ondrop='drop(event)' ondragover='allowDrop(event)'>
                 <div class="stepDragg" draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
-                    <div style="width:100%;">
-                        <table style='width:100%;'>
+                    <div id="fullWidth">
+                        <table id="fullWidth">
                             <tr>
                                 <th><a href='#' data-dbid='' id='' class='step' onclick='selectStep(event)'>#</a><th>
                                 <th>
-                                    <textarea name='action[]' class="action form-control" rows="1" overflow="auto" disabled="disabled" onkeypress="reSizeTextarea(event)" style="resize:none;">Action description</textarea>
+                                    <textarea name='action[]' class="action form-control" rows="1" overflow="auto" disabled="disabled" onkeypress="reSizeTextarea(event)">Action description</textarea>
                                 </th>
                                 <th>
-                                    <textarea name='result[]' class="result form-control" rows="1" overflow="hidden" disabled="disabled" onkeypress="reSizeTextarea(event)" style="resize:none;">Result description</textarea>
+                                    <textarea name='result[]' class="result form-control" rows="1" overflow="hidden" disabled="disabled" onkeypress="reSizeTextarea(event)">Result description</textarea>
                                 </th>
                                 <th>
                                     <a href='#' data-dbid='' id='' class='step' onclick="removeStep(event)">
@@ -133,14 +141,14 @@
                             </tr>
                         </table>
                     </div>
-                    <div style='height:30px;width:50%;padding-top:2px;float:left;'>
-                        <form class="form-group" data-formid='newStepActionFile'  method="post" enctype="multipart/form-data" style="width:100%;height:100%;" onchange="loadFiles(event,'action')">
+                    <div class="uploadContainer">
+                        <form class="form-group" data-formid='newStepActionFile'  method="post" enctype="multipart/form-data" id="fullSize" onchange="loadFiles(event,'action')">
                             <input type="file" name="fileToUploadStepAction" id="fileUploadStepAction" multiple>
                         <ul></ul>
                         </form>
                     </div>
-                    <div style='height:30px;width:50%;padding-top:2px;float:left;'>
-                        <form class="form-group" data-formid='newStepResultFile'  method="post" enctype="multipart/form-data" style="width:100%;height:100%;" onchange="loadFiles(event,'result')">
+                    <div class="uploadContainer">
+                        <form class="form-group" data-formid='newStepResultFile'  method="post" enctype="multipart/form-data" id="fullSize" onchange="loadFiles(event,'result')">
                             <input type="file" name="fileToUploadStepResult" id="fileUploadStepResult" multiple>
                         <ul></ul>
                         </form>
@@ -156,8 +164,8 @@
 	<button name='edit_case' id='{{loadcase[0][0]}}' class='btn btn-default btn-sm'>Edit</button>
 	<a name='deleteCase' id='{{loadcase[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
 	<br>
-	<div style='width:100%'>
-		<table style='width:100%'>
+	<div id="fullWidth">
+		<table id="fullWidth">
 			<tr>
 				<td>Name:</td>
 				<td>
@@ -184,7 +192,7 @@
 			</tr>
 		</table>
 	</div>
-    <div class='AreaField' style='width:100%;'>
+    <div class='AreaField' id="fullWidth">
         <h3>Areas: </h3>
         <table>
             {% for k in areas %}
@@ -208,25 +216,25 @@
             {% endfor %}
         </table>
     </div>
-    <div class="Files" style='width:100%;'>
-        <div class="uploadHeader" style='width:100%;'>
+    <div class="Files" id="fullWidth">
+        <div class="uploadHeader" id="fullWidth">
             <h3>
-                <a href="#" onclick="toggleCaseFileCont()" style="text-decoration: none;">
+                <a href="#" onclick="toggleCaseFileCont()" id="no-dec-link">
                     Files: 
                 </a>
             </h3>
         </div>
-        <div class="uploadContent" style='width:100%; min-height:50px;'>
+        <div class="uploadContent">
             <div style="width:100%;min-height:70px;">
-                <div style="width:50%; float:left;">
-                    <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                <div id="cont-50-left">
+                    <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data"id="fullWidth">
                         Select file to upload:
                         <input type="file" name="fileToUpload" id="fileUploadCase" multiple>
-                        <button class="btn btn-default btn-xs" type="button" onclick="updateFilesToCase({{loadcase[0][0]}})" style="width:50%; float:left;">Upload</button>
+                        <button class="btn btn-default btn-xs" type="button" onclick="updateFilesToCase({{loadcase[0][0]}})" id="cont-50-left">Upload</button>
                     </form>
                 </div>
-                <div style="width:50%; float:left;">
-                    <table class="caseFiles" style="width:100%;">
+                <div id="cont-50-left">
+                    <table class="caseFiles" id="fullWidth">
                         {% if files != "empty" %}
                         {% for k in files %}
                             <tr data-fileid='{{k[0]}}'>
@@ -279,14 +287,14 @@
         </div>
     </div>
 	<div class='stepBtn'></div>
-	<div style='width:100%'>
-        <table class='case_table_no' style='width:100%;table-layout: fixed;'></table>
+	<div id="fullWidth">
+        <table class='case_table_no'></table>
     </div>
 {% endif %}
 
 {% if editablecase %}
 <div class='case_header'>
-	<table class='editablecase' data-dbid='{{editablecase[0][0]}}' style='width:100%'>
+	<table class='editablecase' data-dbid='{{editablecase[0][0]}}' id="fullWidth">
 		<tr>
 			<th>Title:</th>
 			<th><input type='text' name='title' value='{{editablecase[0][1]}}' class='form-control' id='{{editablecase[0][0]}}'></th>
@@ -300,7 +308,7 @@
 			<th><input type='text' name='data' value='{{editablecase[0][3]}}' class='form-control'></th>
 		</tr>
 	</table>
-    <div class='AreaField' style='width:100%;'>
+    <div class='AreaField' id="fullWidth">
         <h3>Areas: </h3>
         <table>
             {% for k in areas %}
@@ -324,24 +332,24 @@
             {% endfor %}
         </table>
     </div>
-    <div class="FileUpload" style='width:100%;'>
-        <div class="uploadHeader" style='width:100%;'>
+    <div class="FileUpload" id="fullWidth">
+        <div class="uploadHeader" id="fullWidth">
             <h3>
-                <a href="#" onclick="toggleCaseFileCont()" style="text-decoration: none;">
+                <a href="#" onclick="toggleCaseFileCont()" id="no-dec-link">
                     Files: 
                 </a>
             </h3>
         </div>
-        <div class="uploadContent" style='width:100%;min-height:50px;'>
+        <div class="uploadContent">
             <div style="width:100%;min-height:75px;">
-                <div style="width:100%;">
-                    <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                <div id="fullWidth">
+                    <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data" id="fullWidth">
                         Select file to upload:
                         <input type="file" name="fileToUpload" id="fileUploadCase" multiple>
                     </form>
                 </div>
-                <div style="width:50%; float:left;">
-                    <table class="caseFiles" style="width:100%;">
+                <div id="cont-50-left">
+                    <table class="caseFiles" id="fullWidth">
                         {% if files != "empty" %}
                         {% for k in files %}
                             <tr data-fileid='{{k[0]}}'>
@@ -373,7 +381,7 @@
                     </table>
                 </div>
             </div>
-            <div class="imgFiles" style="width:100%;">
+            <div class="imgFiles" id="fullWidth">
                 {% for k in files %}
                 {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
                     <div class="responsive" data-fileid='{{k[0]}}'>
@@ -393,7 +401,7 @@
             </div>
         </div>
     </div>
-	<div style='width:100%'>
+	<div id="fullWidth">
         <table>
             <tr>
                 <td>
@@ -410,8 +418,8 @@
                 </td>
             </tr>
         </table>
-        <div style='width:100%'>
-            <table class='case_table_no' style='width:100%'></table>
+        <div id="fullWidth">
+            <table class='case_table_no'></table>
         </div>
 	</div>
 </div>

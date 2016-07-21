@@ -141,7 +141,7 @@ function enableForm(){
 }
 
 function caseHideShow(){
-    if($(".caseHideShow").attr("data-mode")=="show"){
+    if($(".caseHideShow").attr("data-mode")=="show" && $(".setHideShow")[0] == undefined){
         $($(".panel-case")[0]).hide();
         $(".col-md-12-case")[0].style.height="62px";
         $(".caseHideShow").attr("data-mode",'hide');
@@ -149,7 +149,12 @@ function caseHideShow(){
     }
     else{
         $($(".panel-case")[0]).show();
-        $(".col-md-12-case")[0].style.height="50%";
+        if($(".setHideShow").attr("data-mode")=="hide")
+            $(".col-md-12-case")[0].style.height="calc(100% - 62px)";
+        if($(".setHideShow")[0] == undefined)
+            $(".col-md-12-case")[0].style.height="100%";
+        if($(".setHideShow").attr("data-mode")=="show")
+            $(".col-md-12-case")[0].style.height="50%";
         $(".caseHideShow").attr("data-mode",'show');
         $(".caseHideShow").empty().append("<i class='fa fa-chevron-up'></i>");
     }

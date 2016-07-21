@@ -105,18 +105,27 @@ function setHideShow(){
         if($(".caseHideShow").attr("data-mode")=="show"){
             $(".col-md-12-case")[0].style.height="calc(100% - 62px)";
         }
+        if($(".exeHideShow").attr("data-mode")=="show"){
+            $(".col-md-12-execution")[0].style.height="calc(100% - 62px)";
+        }
         
     }
     else{
         if($(".caseHideShow").attr("data-mode")=="show"){
             $(".col-md-12-set")[0].style.height="50%";
-            $($(".panel-set")[0]).show();
-            $(".setHideShow").attr("data-mode",'show');
-            $(".setHideShow").empty().append("<i class='fa fa-chevron-up'></i>");
+            $(".col-md-12-case")[0].style.height="50%";
         }
-        else{
+        if( $(".exeHideShow").attr("data-mode")=="show"){
+            $(".col-md-12-set")[0].style.height="50%";
+            $(".col-md-12-execution")[0].style.height="50%";
+        }
+        if($(".caseHideShow")[0]==undefined && $(".exeHideShow")[0]==undefined){
+            $(".col-md-12-set")[0].style.height="100%";
+        }
+        if($(".caseHideShow").attr("data-mode")=="hide" || $(".exeHideShow").attr("data-mode")=="hide"){
             $(".col-md-12-set")[0].style.height="calc(100% - 62px)";
         }
+        $($(".panel-set")[0]).show();
         $(".setHideShow").attr("data-mode",'show');
         $(".setHideShow").empty().append("<i class='fa fa-chevron-up'></i>");
     }

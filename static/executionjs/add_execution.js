@@ -106,13 +106,25 @@ function deleteExe(exeId){
 function exeHideShow(){
     if($(".exeHideShow").attr("data-mode")=="show"){
         $(".exeList").hide();
+        $(".col-md-12-execution")[0].style.height="62px";
         $(".exeHideShow").attr("data-mode",'hide');
-        $(".exeHideShow").empty().append("<span class='glyphicon glyphicon-collapse-down'></span>");
+        $(".exeHideShow").empty().append("<i class='fa fa-chevron-down'></i>");
+        if($(".setHideShow").attr("data-mode")=="show"){
+            $(".col-md-12-set")[0].style.height="calc(100% - 62px)";
+        }
     }
     else{
+        if($(".setHideShow").attr("data-mode")=="show"){
+            $(".col-md-12-execution")[0].style.height="50%";
+            $(".col-md-12-set")[0].style.height="50%";
+        }
+        else{
+            $(".col-md-12-execution")[0].style.height="calc(100% - 62px)";
+        }
+        $($(".panel-execution")[0]).show();
         $(".exeList").show();
         $(".exeHideShow").attr("data-mode",'show');
-        $(".exeHideShow").empty().append("<span class='glyphicon glyphicon-collapse-up'></span>");
+        $(".exeHideShow").empty().append("<i class='fa fa-chevron-up'></i>");
     }
 }
 

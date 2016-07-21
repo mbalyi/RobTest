@@ -95,7 +95,7 @@
             <div class="imgFiles" style="width:100%;"></div>
         </div>
     </div>
-    <div style='width:100%'>
+    <div id="stepContainer">
         <table>
             <tr>
                 <td>
@@ -164,7 +164,7 @@
 	<button name='edit_case' id='{{loadcase[0][0]}}' class='btn btn-default btn-sm'>Edit</button>
 	<a name='deleteCase' id='{{loadcase[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
 	<br>
-	<div id="fullWidth">
+	<div class='case_header'>
 		<table id="fullWidth">
 			<tr>
 				<td>Name:</td>
@@ -191,7 +191,6 @@
 				</td>
 			</tr>
 		</table>
-	</div>
     <div class='AreaField' id="fullWidth">
         <h3>Areas: </h3>
         <table>
@@ -287,9 +286,10 @@
         </div>
     </div>
 	<div class='stepBtn'></div>
-	<div id="fullWidth">
+	<div id="stepContainer">
         <table class='case_table_no'></table>
     </div>
+</div>
 {% endif %}
 
 {% if editablecase %}
@@ -401,7 +401,7 @@
             </div>
         </div>
     </div>
-	<div id="fullWidth">
+	<div id="stepContainer">
         <table>
             <tr>
                 <td>
@@ -418,8 +418,7 @@
                 </td>
             </tr>
         </table>
-        <div id="fullWidth">
-            <table class='case_table_no'></table>
+        <div class='case_table_no' id="fullWidth">
         </div>
 	</div>
 </div>

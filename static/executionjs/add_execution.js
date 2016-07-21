@@ -137,7 +137,7 @@ function exeSearch(){
 }
 
 function toggleExeFileCont(){
-    if($("#newExe").attr('disabled')=="disabled")
+    if($("#newExe").attr('class')=="btn btn-default btn-sm disabled" || $($(".exeHeader")[0]).attr("data-dbid") != "newExecution")
         $(".uploadContent").slideToggle();
 }
 

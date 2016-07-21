@@ -74,12 +74,16 @@ function navCase(){
 }
 
 function navExecution(){
-    $(".col-md-9").empty().append(DivForm);
-    $(".col-md-9").prepend(buttonSetup);
+    $("#nav-col-md-9").empty().append(designNavbar50);
+    $("#nav-design-col-md-9").empty().append(DivForm);
+    $("#nav-design-col-md-9").prepend(buttonSetup);
+    $(".col-md-12-set").empty().show();
+    $(".col-md-12-case").empty().hide();
+    $(".col-md-12-object").empty().hide();
+    $(".col-md-12-execution").empty().show();
     var boo="true";
     exeSetup(boo);
     requestSet();
-    requestCase();
     $(".setup").show();
 }
 

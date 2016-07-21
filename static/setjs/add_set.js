@@ -126,7 +126,7 @@ function setSearch(){
     for (i=0; i < $(".set").length;i++){
         var search=$("input[name=setSearch]").val();
         if($(".set")[i].innerHTML.toLowerCase().indexOf(search.toLowerCase()) >= 0){
-            var classFilt= $(".case")[i].id;
+            var classFilt= $(".set")[i].id;
             $("[data-dbid=set"+classFilt.toString()+"]").show();
         }
         else{
@@ -143,7 +143,7 @@ function setSearch(){
 }
 
 function toggleSetFileCont(){
-    if($("#newSet").attr('disabled')=="disabled")
+    if($("#newSet").attr('class')=="btn btn-default btn-sm disabled" || $($(".setForm")[0]).attr('data-dbid') != "newSet")
         $(".uploadContent").slideToggle();
 }
 

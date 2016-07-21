@@ -113,7 +113,7 @@
 {% if loadSet %}
 	<a name='editSet' id='{{loadSet[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
 	<a name='deleteset' id='{{loadSet[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
-	<div class='setForm' style="overflow-y:auto;">
+	<div class='setForm'>
 		<table style='width:100%' class='set_no'>
 			{% for k in loadSet%}
 			<tr>
@@ -252,9 +252,7 @@
 {% endif %}
 
 {% if loadEditableSet %}
-	<a name='editSet' id='{{loadEditableSet[0][0]}}' class='btn btn-default btn-sm'>Edit</a>
-	<a name='deleteset' id='{{loadEditableSet[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
-	<div style='width:100%' class='setForm' data-dbid='{{loadEditableSet[0][0]}}'>
+	<div class='setForm' data-dbid='{{loadEditableSet[0][0]}}'>
 		<table style='width:100%' class='set_no'>
 			{% for k in loadEditableSet%}
 			<tr>
@@ -367,16 +365,23 @@
             </div>
         </div>
     </div>
-		<p>Included Cases</p>
-		<div class='incCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
-		{% if editCase %}
-			{% for o in editCase %}
-				<div draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
-					<a href='#' data-dbid='{{o[0]}}' class='case'>{{o[1]}}</a>
-				</div>
-			{% endfor %}
-		{% endif %}
-		</div>
+        <div class="panel panel-default" id="exeCase">
+            <div class="panel-heading">
+            Included Cases
+            </div>
+            <!-- /.panel-heading -->
+            <div class="incCases panel-body" ondrop='drop(event)' ondragover='allowDrop(event)'>
+                {% if editCase %}
+                    <table>
+                        {% for o in editCase %}
+                            <div draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+                                <a href='#' data-dbid='{{o[0]}}' class='case'>{{o[1]}}</a>
+                            </div>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            </div>
+        </div>
 	</div>
 {% endif %}
 

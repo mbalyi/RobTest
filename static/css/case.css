@@ -10,6 +10,10 @@
     height:23px;
 }
 
+[name='exeSearch']{
+    height:23px;
+}
+
 #elementBody{
     overflow-y: auto;
     height: calc( 100% - 60px);
@@ -62,11 +66,23 @@
 .case_table_no{
     width:100%;
     table-layout: fixed;
+    height:100%;
+}
+
+.newStepPlace{
+    height: calc(100% - 30px);
+    overflow-y: auto;
+}
+
+#stepContainer{
+    min-height:400px;
+    height: 50%;
+    width: 100%;
 }
 
 #exeCase{
-    min-height: 450px;
-    height: 50%;
+    min-height: 400px;
+    height: calc(50% - 40px);
 }
 
 .incCases{
@@ -74,7 +90,25 @@
     overflow-y:auto;
 }
 
+.incExeCases{
+    height: calc(100% - 41px);
+    overflow-y:auto;
+}
+
+.case_header{
+    width:100%;
+    height:calc(100% - 50px);
+    overflow-y:auto;
+}
+
 .setForm{
     width:100%;
     height:calc(100% - 50px);
+    overflow-y:auto;
+}
+
+.exeHeader{
+    width:100%;
+    height:calc(100% - 50px);
+    overflow-y:auto;
 }

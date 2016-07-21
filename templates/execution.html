@@ -1,30 +1,37 @@
 {% if execution %}
-<div class='exePageHeader' style="width:100%;">    
-    <table style="width:100%;">
-        <tr style="width:100%;">
-            <td style="width:15%;"><b>Executions</b></td>
-            <td style="width:60%;">
-                <input type="text" name="exeSearch" class="form-control" onchange="exeSearch()" style="height:25px;">
-            </td>
-            <td style="width:2%;">
-            </td>
-            <td style="width:20%;">
-                <a href="#" class="exeHideShow" onclick='exeHideShow()' data-mode="show"><span class='glyphicon glyphicon-collapse-up'></span></a>
-            </td>
-        </tr>
-    </table>
-</div>
-<div class='exeList' style="width:100%;height:100%;overflow-y: auto;">
-	{% for k in execution %}
-    <div class='elementOfExeList' data-dbid='exe{{k[0]}}'>
-		<a href='#' class='execution' data-dbid='{{k[0]}}' id='{{k[0]}}'>{{k[1]}} ({{k[3]}})</a>
+<div class="panel panel-default" id="fullHeight">
+    <div class="panel-heading">
+        Executions
+        <div class="btn-group pull-right">
+            <button type="button" class="exeHideShow btn btn-default btn-xs dropdown-toggle" onclick='exeHideShow()' data-mode="show">
+                <i class="fa fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="input-group pull-right">
+            <input type="text" name="exeSearch" class="form-control" onchange="exeSearch()" placeholder="Search..." id="btn-input">
+        </div>
     </div>
-    {% endfor %}
+    <!-- /.panel-heading -->
+    <div class="panel-body panel-case" id="elementBody">
+        <div class='exeList'>
+            {% for k in execution %}
+            <div class='elementOfExeList' data-dbid='exe{{k[0]}}'>
+                <a href='#' class='execution' data-dbid='{{k[0]}}' id='{{k[0]}}'>{{k[1]}} ({{k[3]}})</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- /.panel-body -->
+    <div class="panel-footer">
+        <div class="input-group">
+        </div>
+    </div>
+    <!-- /.panel-footer -->
 </div>
 {% endif %}
 
 {% if newExe %}
-<div class='exeHeader'  data-dbid='newExecution'>
+<div class='exeHeader'  data-dbid='newExecution' id="fullHeight">
 	<table style='width:100%'>
 		<tr>
 			<th>Name:</th>
@@ -57,11 +64,11 @@
                         </td>
                         <td>{{k[1]}}</td>
                         <td style="width:5px;"></td>
-                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                {% if (loop.index%5 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
                 {% endif %}
-                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                {% if (loop.index%5 == 0) and (loop.index==count) %}
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -91,9 +98,15 @@
             <div class="imgFiles" style="width:100%;"></div>
         </div>
     </div>
-	<p>Included Cases</p>
-	<div class='incExeCases' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
-	</div>
+    <div class="panel panel-default" id="exeCase">
+        <div class="panel-heading">
+        Included Cases
+        </div>
+        <!-- /.panel-heading -->
+        <div class="incExeCases panel-body">
+        </div>
+        <!-- /.panel-body -->
+    </div>
 </div>
 {% endif %}
 
@@ -142,11 +155,11 @@
                         <td style="width:5px;"></td>
                             {% endif %}
                         </td>
-                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                {% if (loop.index%5 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
                 {% endif %}
-                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                {% if (loop.index%5 == 0) and (loop.index==count) %}
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -223,21 +236,26 @@
             </div>
         </div>
     </div>
-	<p>Included Cases</p>
-	<div class='incCases' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
-	{% if loadCase %}
-		<table>
-			<tr>
-				<th>Case</th><th>Result</th>
-			</tr>
-			{% for l in loadCase %}
-			<tr>
-				<th>{{l[1]}}</th><th>{{l[5]}}</th>
-			</tr>
-			{% endfor %}
-		</table>
-	{% endif %}
-	</div>
+    <div class="panel panel-default" id="exeCase">
+            <div class="panel-heading">
+            Included Cases
+            </div>
+            <!-- /.panel-heading -->
+            <div class="incCases panel-body" ondrop='drop(event)' ondragover='allowDrop(event)'>
+                {% if loadCase %}
+                    <table>
+                        {% for l in loadCase %}
+                        <tr>
+                            <th stye="border-right: 1px solid black; padding-right:5px;"> 
+                                {{loop.index}}
+                            </th>
+                            <th>{{l[1]}}</th>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% endif %}
+            </div>
+        </div>
 </div>
 {% endif %}
 
@@ -364,24 +382,29 @@
             </div>
         </div>
     </div>
-	<p>Included Cases</p>
-	<div class='incExeCases' ondrop='drop(event)' ondragover='allowDrop(event)' style='height: 300px; background-color: #777; border-radius: 10px; box-shadow: 0px 0px 5px #7f8c8d;'>
-	{% if loadEditableCase %}
-		<table>
-			<tr>
-				<th>Case</th><th>Result</th>
-			</tr>
-		</table>
-		{% for l in loadEditableCase %}
-			<div data-dbid='case{{l[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
-				<table>
-					<tr>
-						<td><a href="#" data-dbid='{{l[0]}}' class="case">{{l[1]}}</a></td><td>{{l[5]}}</td>
-					</tr>
-				</table>
-			</div>
-		{% endfor %}
-	{% endif %}
-	</div>
+    <div class="panel panel-default" id="exeCase">
+            <div class="panel-heading">
+            Included Cases
+            </div>
+            <!-- /.panel-heading -->
+            <div class="incCases panel-body" ondrop='drop(event)' ondragover='allowDrop(event)'>
+                {% if loadEditableCase %}
+                    <table>
+                        <tr>
+                            <th>Case</th><th>Result</th>
+                        </tr>
+                    </table>
+                    {% for l in loadEditableCase %}
+                        <div data-dbid='case{{l[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+                            <table>
+                                <tr>
+                                    <td><a href="#" data-dbid='{{l[0]}}' class="case">{{l[1]}}</a></td><td>{{l[5]}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
 </div>
 {% endif %}

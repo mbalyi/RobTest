@@ -1,31 +1,38 @@
 {% if object %}
-<div class='objectPageHeader' style="width:100%;">    
-    <table style="width:100%;">
-        <tr style="width:100%;">
-            <td style="width:15%;"><b>Objects</b></td>
-            <td style="width:60%;">
-                <input type="text" name="objectSearch" class="form-control" onchange="objectSearch()" style="height:25px;">
-            </td>
-            <td style="width:2%;">
-            </td>
-            <td style="width:20%;">
-                <a href="#" class="objectHideShow" onclick='objectHideShow()' data-mode="show"><span class='glyphicon glyphicon-collapse-up'></span></a>
-            </td>
-        </tr>
-    </table>
-</div>
-<div class='objectList' style="width:100%;height:100%;overflow-y: auto;">
-	{% for k in object %}
-    <div class='elementOfObjectList' data-dbid='object{{k[0]}}'>
-		<a href='#' id={{k[0]}} class='object'>{{k[1]}}</a>
+<div class="panel panel-default" id="fullHeight">
+    <div class="panel-heading">
+        Objects
+        <div class="btn-group pull-right">
+            <button type="button" class="objectHideShow btn btn-default btn-xs dropdown-toggle" onchange="objectHideShow()" data-mode="show">
+                <i class="fa fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="input-group pull-right">
+            <input type="text" name="objectSearch" class="form-control" onchange="objectSearch()" placeholder="Search..." id="btn-input">
+        </div>
     </div>
-	{% endfor %}
+    <!-- /.panel-heading -->
+    <div class="panel-body" id="elementBody">
+        <div class='objectList'>
+            {% for k in object %}
+            <div class='elementOfObjectList' data-dbid='object{{k[0]}}'>
+                <a href='#' id={{k[0]}} class='object'>{{k[1]}}</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- /.panel-body -->
+    <div class="panel-footer">
+        <div class="input-group">
+        </div>
+    </div>
+    <!-- /.panel-footer -->
 </div>
 {% endif %}
 
 {% if objectForm %}
-<div class='editableObject' data-dbid='newObject' style='width:100%'>
-    <table style='width:100%'>
+<div class='editableObject' data-dbid='newObject' id="fullWidth">
+    <table id="fullWidth">
         <tr>
             <td class='object_static_name'>Name:</td>
             <td class='object_static_input'>
@@ -57,7 +64,7 @@
             </td>
         </tr>
     </table>
-    <div class='AreaField' style='widt:100%;'>
+    <div class='AreaField' id="fullWidth">
         <h2>Areas: </h2>
         <table>
             {% for k in objectForm %}
@@ -75,28 +82,28 @@
             {% endfor %}
         </table>
     </div>
-    <div class="Files" style='widt:100%;'>
-        <div class="uploadHeader" style='widt:100%;'>
+    <div class="Files" id="fullWidth">
+        <div class="uploadHeader"id="fullWidth">
             <h3>
-                <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
+                <a href="#" onclick="toggleObjectFileCont()" id="no-dec-link">
                     Files: 
                 </a>
             </h3>
         </div>
-        <div class="uploadContent" style='widt:100%;display: none;'>
+        <div class="uploadContent">
             <div style="width:100%;min-height:75px">
-                <div style="width:50%; float:left;">
-                    <form class="form-group" data-formid='newObjectFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                <div id="cont-50-left">
+                    <form class="form-group" data-formid='newObjectFile'  method="post" enctype="multipart/form-data" id="fullWidth">
                         Select file to upload:
                         <input type="file" name="fileToUpload" id="fileUploadObject" multiple>
                     </form>
                 </div>
-                <div style="width:50%; float:left;">
-                    <table class="objectFiles" style="width:100%;">
+                <div id="cont-50-left">
+                    <table class="objectFiles" id="fullWidth">
                     </table>
                 </div>
             </div>
-            <div class="imgFiles" style="width:100%;"></div>
+            <div class="imgFiles" id="fullWidth"></div>
         </div>
     </div>
 </div>
@@ -105,8 +112,8 @@
 {% if loadObject %}
 	<a href='#' name='editObject' id='{{loadObject[0]}}' class='btn btn-default btn-sm'>Edit</a>
 	<a name='deleteObject' id='{{loadObject[0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
-	<div style='width:100%'>
-		<table style='width:100%'>
+	<div id="fullWidth">
+		<table id="fullWidth">
 				<tr>
 					<td class='object_staic_name'>Name:</td>
 					<td class='object_staic_input'><input type='text' name='name' value='{{loadObject[1]}}' class='object_input form-control' readonly></td>
@@ -128,7 +135,7 @@
 					<td class='object_staic_input'><input type='text' name='version' value='{{loadObject[6]}}' class='object_input form-control' readonly></td>
 				</tr>
 		</table>
-        <div class='AreaField' style='width:100%'>
+        <div class='AreaField' id="fullWidth">
             <h2>Areas: </h2>
         <table>
             {% for k in areas %}
@@ -152,25 +159,25 @@
             {% endfor %}
         </table>
     </div>
-    <div class="Files" style='width:100%;'>
-        <div class="uploadHeader" style='width:100%;'>
+    <div class="Files" id="fullWidth">
+        <div class="uploadHeader" id="fullWidth">
             <h3>
-                <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
+                <a href="#" onclick="toggleObjectFileCont()" id="no-dec-link">
                     Files: 
                 </a>
             </h3>
         </div>
-        <div class="uploadContent" style='width:100%; min-height:50px;'>
+        <div class="uploadContent">
             <div style="width:100%;min-height:70px;">
-                <div style="width:50%; float:left;">
-                    <form class="form-group" data-formid='newObjectFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                <div id="cont-50-left">
+                    <form class="form-group" data-formid='newObjectFile'  method="post" enctype="multipart/form-data" id="fullWidth">
                         Select file to upload:
                         <input type="file" name="fileToUpload" id="fileUploadObject" multiple>
-                        <button class="btn btn-default btn-xs" type="button" onclick="updateFilesToObject({{loadObject[0]}})" style="width:50%; float:left;">Upload</button>
+                        <button class="btn btn-default btn-xs" type="button" onclick="updateFilesToObject({{loadObject[0]}})" id="cont-50-left">Upload</button>
                     </form>
                 </div>
-                <div style="width:50%; float:left;">
-                    <table class="objectFiles" style="width:100%;">
+                <div id="cont-50-left">
+                    <table class="objectFiles" id="fullWidth">
                         {% if files != "empty" %}
                         {% for k in files %}
                             <tr data-fileid='{{k[0]}}'>
@@ -209,7 +216,7 @@
                     <div class="responsive" data-fileid='{{k[0]}}'>
                       <div class="img">
                         <a target="_blank" href="{{ url_for('uploads',filename='object/'+k[3]) }}" download>
-                          <img src="{{ url_for('uploads',filename='object/'+k[3]) }}" alt="Trolltunga Norway" width="300" height="200">
+                          <img src="{{ url_for('uploads',filename='object/'+k[3]) }}" width="300" height="200">
                         </a>
                         <div class="desc">{{k[3]}} 
                             <a href="#" onclick="deleteFileObject({{k[0]}})" style="color:red;">
@@ -228,8 +235,8 @@
 {%endif%}
 
 {% if editObject %}
-	<div class='editableObject' data-dbid='{{editObject[0]}}' style='width:100%'>
-		<table style='width:100%'>
+	<div class='editableObject' data-dbid='{{editObject[0]}}' id="fullWidth">
+		<table id="fullWidth">
 				<tr>
 					<td class='object_staic_name'>Name:</td>
 					<td class='object_staic_input'><input type='text' name='name' value='{{editObject[1]}}' class='object_input form-control'></td>
@@ -251,7 +258,7 @@
 					<td class='object_staic_input'><input type='text' name='version' value='{{editObject[6]}}' class='object_input form-control'></td>
 				</tr>
 		</table>
-        <div class='AreaField' style='width:100%;'>
+        <div class='AreaField' id="fullWidth">
             <h2>Areas: </h2>
             <table>
                 {% for k in areas %}
@@ -275,8 +282,8 @@
                 {% endfor %}
             </table>
         </div>
-        <div class="FileUpload" style='width:100%;'>
-        <div class="uploadHeader" style='width:100%;'>
+        <div class="FileUpload" id="fullWidth">
+        <div class="uploadHeader" id="fullWidth">
             <h3>
                 <a href="#" onclick="toggleObjectFileCont()" style="text-decoration: none;">
                     Files: 
@@ -285,14 +292,14 @@
         </div>
         <div class="uploadContent" style='width:100%;min-height:50px;'>
             <div style="width:100%;min-height:75px;">
-                <div style="width:100%;">
-                    <form class="form-group" data-formid='newObjectFile'  method="post" enctype="multipart/form-data" style="width:100%;">
+                <div id="fullWidth">
+                    <form class="form-group" data-formid='newObjectFile'  method="post" enctype="multipart/form-data" id="fullWidth">
                         Select file to upload:
                         <input type="file" name="fileToUpload" id="fileUploadObject" multiple>
                     </form>
                 </div>
-                <div style="width:50%; float:left;">
-                    <table class="objectFiles" style="width:100%;">
+                <div id="cont-50-left">
+                    <table class="objectFiles" id="fullWidth">
                         {% if files != "empty" %}
                         {% for k in files %}
                             <tr data-fileid='{{k[0]}}'>
@@ -325,7 +332,7 @@
                     </table>
                 </div>
             </div>
-            <div class="imgFiles" style="width:100%;">
+            <div class="imgFiles" id="fullWidth">
                 {% for k in files %}
                 {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
                     <div class="responsive" data-fileid='{{k[0]}}'>

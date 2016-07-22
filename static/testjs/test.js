@@ -2,21 +2,12 @@ var divId;
 var caseIdInExe;
 var caseIterator;
 
-function testSetup(){
-	$(".col-md-9").empty().append();
-	$(".col-md-12-case").empty();
-	$(".col-md-12-set").empty();
-	$(".col-md-12-object").empty();
-	$(".col-md-12-execution").empty();
-	$(".setup_buttons").empty();
-	requestTest();
-	$(".setup").show();
-}
 function requestTest(){
 	$.get("/testSetup",
 		function(data,status){
 			if(status){
-				$(".setup_buttons").empty().append(data);
+				$("#nav-test-col-md-9").empty().append(data);
+                loadTest($(".executionSelector").find(":selected").attr('data-dbid'));
 			};
 		}
 	)
@@ -26,7 +17,7 @@ function testPage(pageID){
 	$.get("/testPage/"+pageID+"/"+$(".executionSelector").find(":selected").attr('data-dbid'),
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data);
+				$("#test-col-md-9").empty().append(data);
 				divId=$($('.stepHolder').children()[0]).attr('data-stepMarkerId');
 				$("#"+divId+".stepMarker").empty().append(cursor);
 				caseIdInExe=pageID;
@@ -106,11 +97,12 @@ function updateIds(){
     });
 }
 
+function selectOtherExe(){
+    loadTest($(".executionSelector").find(":selected").attr('data-dbid'));
+}
+
 $(function(){
 	$("body").on("click","a",function(event) {
-		if( event.target.id == "selectExe"){
-			loadTest($(".executionSelector").find(":selected").attr('data-dbid'));
-		}
 		if( event.target.id == "RUN"){
 			saveStatus("RUN",divId);
 			$("#"+divId+".Result").empty().append(statusRun);

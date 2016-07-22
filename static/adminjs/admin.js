@@ -1,28 +1,16 @@
 var rowId;
-function userSetup(){
-    document.getElementById("col-md-9").style.width = '70%';
-    $(".setup_buttons").hide();
-    $(".col-md-12-set").empty();
-    $(".col-md-12-case").empty();
-    $(".col-md-12-execution").empty();
-    $(".col-md-12-object").empty();
-    $(".setup").show();
-    $(".col-md-9").empty().append(DivForm);
-    requestAdmin();
-}
 
 function requestAdmin(){
-    $("#mainHeader").css('margin-bottom','0px');
-    $(".setup").css('padding-left','0px');
+    $.get("/getAdminNav",
+         function(data,status){
+            $("#nav-col-md-9").empty().append(data);
+    });
     $.get("/getUsers",
          function(data,status){
             if(status){
-                $(".divContainer").empty().append(data);
+                $("#nav-test-col-md-9").empty().append(data);
+                $(".slideMoving").hide();
             } 
-    });
-    $.get("/getAdminNav",
-         function(data,status){
-            $(".col-md-12-set").empty().append(data);
     });
 }
 function requestAdminWNav(){
@@ -31,7 +19,7 @@ function requestAdminWNav(){
     $.get("/getUsers",
          function(data,status){
             if(status){
-                $(".col-md-9").empty().append(data);
+                $("#nav-design-col-md-9").empty().append(data);
             } 
     });
 }
@@ -40,19 +28,15 @@ function selectRow(){
     if(rowId == ""){
         rowId=$(event.target).attr('id');
         $("[data-row='editRow']#"+$(event.target).attr('id')).attr('class','info');
-        $(event.target).css("color","black");
     }
     else{
         if(rowId != $(event.target).attr('id')){
             $("[data-row='editRow']#"+rowId).removeAttr('class');
-            $("#"+rowId+".rowLink").css("color","#eee");
             $("[data-row='editRow']#"+$(event.target).attr('id')).attr('class','info');
-            $(event.target).css("color","black");
             rowId=$(event.target).attr('id');
         }
         else{
             $("[data-row='editRow']#"+rowId).removeAttr('class');
-            $("#"+rowId+".rowLink").css("color","#eee");
             rowId="";
         }
     }

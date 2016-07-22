@@ -15,8 +15,8 @@ html{
     min-height: 415px;
     height: calc(100% - 51px);
     width: calc(100% - 250px);
-    padding-left: 14px;
-    padding-right: 14px;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 #wrapper{
@@ -28,13 +28,34 @@ html{
     height:100%; 
     overflow-y:hidden;
     width:100%;
+    padding: 0px;
 }
 
 #nav-design-col-md-9{
+    height: 100%;
+    padding: 0px;
+}
+
+#nav-test-col-md-9{
+    height: 100%;
+    padding: 0px;
+    width: 100%;
+}
+
+#nav-admin-col-md-9{
+    height: 100%;
+    padding: 0px;
+    width: calc(100% - 250px);
+    float: right;
+}
+
+#test-col-md-9{
     height: 100%;
 }
 
 .row{
     height: 100%;
     width: 100%;
+    margin-right: 0px; 
+    margin-left: 0px;
 }

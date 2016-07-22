@@ -113,6 +113,17 @@ function navObject(){
     $(".setup").show();
 }
 
+function navTest(){
+    $("#nav-col-md-9").empty().append(testNavbar);
+    $(".setup_buttons").empty().show();
+	$(".col-md-12-case").empty().hide();
+	$(".col-md-12-set").empty().show();
+	$(".col-md-12-object").empty().hide();
+	$(".col-md-12-execution").empty().hide();
+	requestTest();
+	$(".setup").show();
+}
+
 $(function(){
     $( ".projectSelector" ).change(function() {
         alert( "Handler for .change() called." );
@@ -156,10 +167,6 @@ $(function(){
 					}
 				);
 				$(".setup").hide();
-		}
-		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "test"){
-            $(".setup_buttons").show();
-            testSetup();
 		}
 	});
 	$("#submenu").empty().append("<li><a href='#' id='report'>Report</a></li>")

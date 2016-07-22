@@ -375,7 +375,7 @@
                             <!-- /.nav-second-level -->
                         </li>
                         <li>
-                            <a class="header" id="test" href="#"><i class="fa fa-pencil-square-o fa-fw"></i> Test</a>
+                            <a class="header" href="#" onclick="navTest()"><i class="fa fa-pencil-square-o fa-fw"></i> Test</a>
                         </li>
                         <li>
                             <a href="#"><i class="fa fa-bookmark fa-fw"></i> Reporting<span class="fa arrow"></span></a>
@@ -399,7 +399,7 @@
                             <ul class="nav nav-second-level">
                               {% if user %}
                                 <li class="dropdown-header">Admin Settings</li>
-                                <li><a class='header' id="users" href="#" onclick="userSetup()">Manage Users</a></li>
+                                <li><a class='header' id="users" href="#" onclick="requestAdmin()">Manage Users</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li class="dropdown-header">Project Settings</li>
                                 <li><a class='header' id="settings" href="#" onclick="projectManagementSetup()">Manage Projects</a></li>

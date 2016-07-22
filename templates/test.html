@@ -1,20 +1,39 @@
 {% if Exe %}
-<table>
-	<tr style='width:100%;'>
-		<td style='width:85%;'>
-			<select class="executionSelector form-control" style='width:100%;'>
-			{% for k in Exe %}
-				<option data-dbid='{{k[0]}}'>{{k[1]}} ({{k[3]}})</option>
-			{% endfor %}
-			</select>
-		</td>
-		<td style='width:10px;'></td>
-		<td style='width: 50 px;'>
-			<a class='btn btn-info' href='#' role='button' id='selectExe'>Submit</a>
-			<!--<button class="btn btn-info" id='selectExe' type='button'>Submit!</button>-->
-		</td>
-	</tr>
-</table>
+<div class="navbar-default" role="navigation">
+    <div class="sidebar-nav navbar-collapse active" id="fullSize">
+        <ul class="nav in">
+            <li class="sidebar-search" id="padding-15">
+                <div class="custom-search-form">
+                    <table id="fullWidth">
+                        <tr>
+                            <th id="td-10">
+                                Test Execution:
+                            </th>
+                            <th id="td-60">
+                                <select class="executionSelector form-control" id="fullWidth" onchange="selectOtherExe()">
+                                {% for k in Exe %}
+                                    <option data-dbid='{{k[0]}}'>{{k[1]}} ({{k[3]}})</option>
+                                {% endfor %}
+                                </select>
+                            </th>
+                            <th id="td-30">
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="fullHeight">
+<!-- /.panel-heading -->
+<div class="panel-body panel-test" id="testBody">
+    <div class='setup col-md-3' id="fullHeight">
+        <div class='col-md-12-set' id='fullHeight'></div>
+    </div><div class='col-md-9' id='test-col-md-9'></div>
+</div>
+<!-- /.panel-body -->
+</div>
 {% endif %}
 
 {% if loadTest %}
@@ -91,7 +110,7 @@
             <th style='width:15%;'>Comment</th>
         </tr>
     </table>
-    <div class='stepHolder' style="width:100%;height:80%;overflow-y: auto;">
+    <div class='stepHolder' style="width:100%;height:calc(100% - 42px);overflow-y: auto;">
     {% for k in step %}
         <table data-stepMarkerId='{{k[0][0]}}' style='width:100%;'>
             <tr style='width:100%;'>

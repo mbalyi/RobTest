@@ -1,14 +1,12 @@
 var historyFormCount = 1;
 
 function histoyPage(){
-    document.getElementById("col-md-9").style.width = '70%';
-    $(".col-md-9").empty();
-    $("#mainHeader").css('margin-bottom','5px');
+    $("#nav-col-md-9").empty().append(designNavbar);
     $(".setup_buttons").hide();
-    $(".col-md-12-set").empty();
-    $(".col-md-12-case").empty();
-    $(".col-md-12-execution").empty();
-    $(".col-md-12-object").empty();
+    $(".col-md-12-set").empty().hide();
+    $(".col-md-12-case").empty().hide();
+    $(".col-md-12-execution").empty().show();
+    $(".col-md-12-object").empty().hide();
     $(".setup").show();
     executionHistLoad();
     historyForm("first");
@@ -17,7 +15,7 @@ function histoyPage(){
 function historyForm(loadingStatus){
     $.get("/HistoryForm",function(data,status){
         if(status){
-            $(".col-md-9").empty().append(data);
+            $("#nav-design-col-md-9").empty().append(data);
             if(loadingStatus=="first"){
                 loadHistoryExe(loadingStatus);
             }
@@ -35,7 +33,7 @@ function executionHistLoad(){
 
 function loadHistoryExe(exeStatus,executionId){
     if(exeStatus == "first")
-        exeId=$($(".historyNav").children().children()[1]).attr('id');
+        exeId=$($(".historyNav").children().children()[0]).attr('id');
     else
         exeId=executionId;
     $.get("/loadHistoryExe/"+exeId+"/"+exeStatus,function(data,status){
@@ -79,7 +77,7 @@ function closeHistoryForm(exeId){
     if (index > -1) {
         ids.splice(index, 1);
     }
-    $('#'+exeId+'.exeInHistory').css("background-color","#333");
+    $('#'+exeId+'.exeInHistory').css("background-color","transparent");
 }
 
 function toggleStatus(status){

@@ -4,7 +4,7 @@
         <div class="filters" style="float:left;width:50%;">
             <table class='historyFilter table'>
                 <tr>
-                    <th style="color:black;">Set: </th>
+                    <th>Set: </th>
                     <th>
                         <select class='setFilter form-control' data-selectorid='setnames' onchange="setHistReload()" style='width:100%;'>
                             {% for k in caseHistForm %}
@@ -21,6 +21,9 @@
                     </th>
                     <th>
                         <button type="button" class="btn btn-default btn-xs" id="showLegends" onclick="toggleHistLegends()">Show legends</button>
+                    </th>
+                    <th>
+                        <button type="button" class="btn btn-default btn-xs" id="showLegends" onclick="caseHistLoad('first')">Back</button>
                     </th>
                 </tr>
             </table>
@@ -122,13 +125,13 @@
                 {% for k in caseStatus %}
                 {% if k[2] == "RUN" %}
                 <td style="color:green;padding:2px;">
-                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="{{exes[loop.index-1][0][0]}} ({{exes[loop.index-1][0][1]}})" onmouseover="onMouseTooltip(event)" style="color:green;">
+                    <a href="#" data-toggle="tooltip" data-placement="right" title="{{exes[loop.index-1][0][0]}} ({{exes[loop.index-1][0][1]}})" onmouseover="onMouseTooltip(event)" style="color:green;">
                         <span class="glyphicon glyphicon-ok-sign"></span>
                     </a>
                 </td>
                 {% else %}
                 <td style="color:red;padding:2px;">
-                    <a href="#" data-toggle="tooltip" data-placement="bottom" title="{{exes[loop.index-1][0][0]}} ({{exes[loop.index-1][0][1]}})" onmouseover="onMouseTooltip(event)" style="color:red;">
+                    <a href="#" data-toggle="tooltip" data-placement="right" title="{{exes[loop.index-1][0][0]}} ({{exes[loop.index-1][0][1]}})" onmouseover="onMouseTooltip(event)" style="color:red;">
                         <span class="glyphicon glyphicon-remove-sign"></span>
                     </a>
                 </td>
@@ -141,7 +144,7 @@
         </table>
     </div>
     <div class="list">
-        <table class="table">
+        <table class="table table-hover">
             <tr>
                 <td>ID</td>
                 <td>Title</td>

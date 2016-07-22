@@ -56,28 +56,32 @@
         </tr>
         </table>
 </div>
-<div class="executionTable" style="height:calc(100%-100px);">
+<div class="executionTable" style="height:calc(100% - 121px);overflow-y:auto;">
 </div>
 {% endif %}
 
 {% if historyNav %}
-<div style="width:100%;height:100%;overflow-y: auto;">
-    <table class="historyNav">
+<div id="fullWidth" style="background-color:#f8f8f8;">
+    <table id="fullWidth">
         <tr style='width:100%;'>
             <th style='width:2%;'></th>
             <th style='width:2%;' style="padding-left:2px;">ID</th>
             <th style='width:50%;' style="padding-left:5px;">Title</th>
         </tr>
+    </table>
+</div>
+<div class="table-responsive" style="width:100%;height:calc(100% - 20px);overflow-y: auto;">
+    <table class="historyNav table table-hover">
         {% for k in historyNav %}
         <tr class='exeInHistory'  id='{{k[0]}}' data-index='{{loop.index}}' style='width:100%;'>
             <td class='exeMarker' id='{{k[0]}}' style='width:2%;color:red;'></td>
             <td style='width:2%;padding-left:2px;'>
-                <a href='#' class='exeIndex'  id='{{k[0]}}' data-dbid='{{k[0]}}' data-index='{{loop.index}}' onclick="selectMoreExe()">
+                <a href='#' class='exeIndex'  id='{{k[0]}}' data-dbid='{{k[0]}}' data-index='{{loop.index}}' onclick="selectMoreExe()" style="text-decoration: none;">
                     {{k[0]}}
                 </a>
             </td>
-            <td style='width:96%;padding-left:5px;'>
-                <a href='#' class='exeName' data-dbid='{{k[0]}}' data-index='{{loop.index}}' id='{{k[0]}}' onclick="selectMoreExe()">
+            <td style='width:96%;padding-left:5px;white-space: nowrap;'>
+                <a href='#' class='exeName' data-dbid='{{k[0]}}' data-index='{{loop.index}}' id='{{k[0]}}' onclick="selectMoreExe()" style="text-decoration: none;">
                     {{k[1]}} ({{k[3]}})
                 </a>
             </td>
@@ -88,8 +92,8 @@
 {% endif %}
 
 {% if loadHistory %}
-<div class="executionInHistory panel panel-default" data-dbid='{{exeName[0]}}' style="width:100%;color:black;overflow:active;float: left;">
-    <table class='exeHist table'>
+<div class="executionInHistory panel panel-default" data-dbid='{{exeName[0]}}' style="width:100%;height:100%;color:black;overflow:active;float: left;">
+    <table class='exeHist table table-hover'>
         <tr>
             <th>ID</th>
             <th>Title</th>

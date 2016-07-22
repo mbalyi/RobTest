@@ -1043,7 +1043,7 @@ class Database:
 				iterator=iterator+1
 		result=[]
 		it2=0
-		for j in temp[1]:
+		for j in temp[0]:
 			it3=0
 			result.append([])
 			for l in exeIds:

@@ -1,20 +1,12 @@
 function caseHistPage(){
-    document.getElementById("col-md-9").style.width = '100%';
-    $(".col-md-9").empty();
-    $("#mainHeader").css('margin-bottom','5px');
-    $(".setup_buttons").hide();
-    $(".col-md-12-set").empty();
-    $(".col-md-12-case").empty();
-    $(".col-md-12-execution").empty();
-    $(".col-md-12-object").empty();
-    $(".setup").hide();
+    $("#nav-col-md-9").empty().append(testNavbar);
     loadResultForm();
 }
 
 function loadResultForm(){
     $.get("/loadResultForm",function(data,status){
         if(status){
-           $(".col-md-9").empty().append(data); 
+           $("#nav-test-col-md-9").empty().append(data); 
             loadLastResult(3);
         }
     });

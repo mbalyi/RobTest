@@ -28,16 +28,16 @@ function requestAdminWNav(){
 function selectRow(){
     if(rowId == ""){
         rowId=$(event.target).attr('id');
-        $("[data-row='editRow']#"+$(event.target).attr('id')).attr('class','info');
+        $("[data-row='editRow'][data-dbid='"+$(event.target).attr('id')+"']").attr('class','info');
     }
     else{
         if(rowId != $(event.target).attr('id')){
-            $("[data-row='editRow']#"+rowId).removeAttr('class');
-            $("[data-row='editRow']#"+$(event.target).attr('id')).attr('class','info');
+            $("[data-row='editRow'][data-dbid='"+rowId).removeAttr('class');
+            $("[data-row='editRow'][data-dbid='"+$(event.target).attr('id')+"']").attr('class','info');
             rowId=$(event.target).attr('id');
         }
         else{
-            $("[data-row='editRow']#"+rowId).removeAttr('class');
+            $("[data-row='editRow'][data-dbid='"+rowId+"']").removeAttr('class');
             rowId="";
         }
     }

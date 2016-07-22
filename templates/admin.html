@@ -13,7 +13,7 @@
             </table>
         </div>
         <div style="width:100%;height:calc(100% - 46px);overflow:auto;">
-            <table id="fullSize" class="admin_form table table-condensed">
+            <table id="fullSize" class="admin_form table table-condensed table-hover">
                 <tr id="tr-100-30">
                     <th id="td-5">#</th>
                     <th id="td-40" class="admin_table">Username</th>
@@ -130,7 +130,7 @@
             </table>
         </div>
         <div style="width:100%;height:calc(100% - 46px);overflow:auto;">
-            <table style="width:100%" class="admin_form table table-condensed">
+            <table style="width:100%" class="admin_form table table-condensed table-hover">
                 <tr>
                     <th id="td-10">#</th>
                     <th id="td-30" class="admin_table">Projects</th>
@@ -191,7 +191,7 @@
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
-                    <table class="admin_form table table-condensed" id="fullSize">
+                    <table class="admin_form table table-condensed table-hover" id="fullSize">
                         <tr>
                             <th>#</th>
                             <th class="admin_table-0">Name</th>
@@ -223,7 +223,7 @@
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
-                    <table class="admin_form table table-condensed" id="fullSize">
+                    <table class="admin_form table table-condensed table-hover" id="fullSize">
                         <tr>
                             <th>#</th>
                             <th class="admin_table-0">Name</th>
@@ -258,7 +258,7 @@
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
-                    <table class="admin_form table table-condensed" id="fullSize">
+                    <table class="admin_form table table-condensed table-hover" id="fullSize">
                         <tr>
                             <th>#</th>
                             <th class="admin_table-0">Name</th>
@@ -293,7 +293,7 @@
                 </div>
                 <!-- /.panel-heading -->
                 <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
-                    <table class="admin_form table table-condensed" id="fullSize">
+                    <table class="admin_form table table-condensed table-hover" id="fullSize">
                         <tr>
                             <th>#</th>
                             <th class="admin_table-0">Name</th>
@@ -331,7 +331,7 @@
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
-        <table class="admin_form table table-condensed" id="fullSize">
+        <table class="admin_form table table-condensed table-hover" id="fullSize">
             <tr>
                 <th>#</th>
                 <th class="admin_table-0">Name</th>
@@ -366,7 +366,7 @@
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
-        <table class="admin_form table table-condensed" id="fullSize">
+        <table class="admin_form table table-condensed table-hover" id="fullSize">
             <tr>
                 <th>#</th>
                 <th class="admin_table-0">Name</th>
@@ -402,7 +402,7 @@
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
-        <table class="admin_form table table-condensed" id="fullSize">
+        <table class="admin_form table table-condensed table-hover" id="fullSize">
             <tr>
                 <th>#</th>
                 <th class="admin_table-0">Name</th>
@@ -429,64 +429,73 @@
 {% endif %}
 
 {% if emptyObMan %}
- <table>
-    <tr>
-        <td style="width:90%;">
-            <h3>Objects</h3>
-        </td>
-        <td>
-            <button type="button" class="btn btn-danger btn-sm" onclick="confirmObjectAllDel(event)" data-toggle="popover" data-trigger="focus" data-placement="bottom">Delete All</button>
-        </td>
-    </tr>
-</table>
-<table class="admin_form table table-condensed">
-    <tr>
-        <th>#</th>
-        <th class="admin_table-0">Name</th>
-        <th class="admin_table-0">Status</th>
-        <th class="admin_table-0">Delete</th>
-    </tr>
-</table>
+<div class="panel panel-default" id="fullSize">
+    <div class="panel-heading" style="height:41px;padding-top:0px;">
+        <div style="float:left;padding-top:10px;">Sets</div>
+        <div  style="float:right;padding-top:5px;">
+            <button type="button" class="btn btn-danger btn-sm" onclick="confirmSetAllDel(event)" data-toggle="popover" data-trigger="focus" data-placement="bottom">Delete All</button>
+        </div>
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+        <table class="admin_form table table-condensed table-hover" id="fullSize">
+            <tr>
+                <th>#</th>
+                <th class="admin_table-0">Name</th>
+                <th class="admin_table-0">Status</th>
+                <th class="admin_table-0">Delete</th>
+            </tr>
+        </table>
+    </div>
+    <!-- /.panel-body -->
+</div>
+<!-- /.panel -->
 {% endif %}
 
 {% if emptySetMan %}
- <table>
-    <tr>
-        <td style="width:90%;">
-            <h3>Sets</h3>
-        </td>
-        <td>
+ <div class="panel panel-default" id="fullSize">
+    <div class="panel-heading" style="height:41px;padding-top:0px;">
+        <div style="float:left;padding-top:10px;">Sets</div>
+        <div  style="float:right;padding-top:5px;">
             <button type="button" class="btn btn-danger btn-sm" onclick="confirmSetAllDel(event)" data-toggle="popover" data-trigger="focus" data-placement="bottom">Delete All</button>
-        </td>
-    </tr>
-</table>
-<table class="admin_form table table-condensed">
-    <tr>
-        <th>#</th>
-        <th class="admin_table-0">Name</th>
-        <th class="admin_table-0">Status</th>
-        <th class="admin_table-0">Delete</th>
-    </tr>
-</table>
+        </div>
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+        <table class="admin_form table table-condensed table-hover" id="fullSize">
+            <tr>
+                <th>#</th>
+                <th class="admin_table-0">Name</th>
+                <th class="admin_table-0">Status</th>
+                <th class="admin_table-0">Delete</th>
+            </tr>
+        </table>
+    </div>
+    <!-- /.panel-body -->
+</div>
+<!-- /.panel -->
 {% endif %}
 
 {% if emptyCaseMan %}
- <table>
-    <tr>
-        <td style="width:90%;">
-            <h3>Cases</h3>
-        </td>
-        <td>
+ <div class="panel panel-default" id="fullSize">
+    <div class="panel-heading" style="height:41px;padding-top:0px;">
+        <div style="float:left;padding-top:10px;">Cases</div>
+        <div  style="float:right;padding-top:5px;">
             <button type="button" class="btn btn-danger btn-sm" onclick="confirmCaseAllDel(event)" data-toggle="popover" data-trigger="focus" data-placement="bottom">Delete All</button>
-        </td>
-    </tr>
-</table>
-<table class="admin_form table table-condensed">
-    <tr>
-        <th>#</th>
-        <th class="admin_table-0">Name</th>
-        <th class="admin_table-0">Status</th>
-        <th class="admin_table-0">Delete</th>
-    </tr>
-</table>
+        </div>
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+        <table class="admin_form table table-condensed table-hover" id="fullSize">
+            <tr>
+                <th>#</th>
+                <th class="admin_table-0">Name</th>
+                <th class="admin_table-0">Status</th>
+                <th class="admin_table-0">Delete</th>
+            </tr>
+        </table>
+    </div>
+    <!-- /.panel-body -->
+</div>
+<!-- /.panel -->
 {% endif %}

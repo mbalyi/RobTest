@@ -1,35 +1,19 @@
-function databaseManagementSetup(){
-    document.getElementById("col-md-9").style.width = '70%';
-    $(".setup_buttons").hide();
-    $(".col-md-12-set").empty();
-    $(".col-md-12-case").empty();
-    $(".col-md-12-execution").empty();
-    $(".col-md-12-object").empty();
-    $(".setup").show();
-    $(".col-md-9").empty().append(DivForm);
-    requestDatabaseManaging();
-}
-
 function requestDatabaseManaging(){
-    $("#mainHeader").css('margin-bottom','0px');
-    $(".setup").css('padding-left','0px');
-    $.get("/getDatabaseManagement",function(data,status){
-        if(status){
-            $(".divContainer").empty().append(data);
-        }
-    });
     $.get("/getAdminNav",
          function(data,status){
-            $(".col-md-12-set").empty().append(data);
+            $("#nav-col-md-9").empty().append(data);
+    });
+    $.get("/getDatabaseManagement",function(data,status){
+        if(status){
+            $("#nav-test-col-md-9").empty().append(data);
+        }
     });
 }
 
 function requestDatManWNav(){
-    $("#mainHeader").css('margin-bottom','0px');
-    $(".setup").css('padding-left','0px');
     $.get("/getDatabaseManagement",function(data,status){
         if(status){
-            $(".col-md-9").empty().append(data);
+            $("#nav-test-col-md-9").empty().append(data);
         }
     });
 }

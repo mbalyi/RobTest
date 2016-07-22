@@ -19,7 +19,8 @@ function requestAdminWNav(){
     $.get("/getUsers",
          function(data,status){
             if(status){
-                $("#nav-design-col-md-9").empty().append(data);
+                $("#nav-test-col-md-9").empty().append(data);
+                $(".slideMoving").hide();
             } 
     });
 }

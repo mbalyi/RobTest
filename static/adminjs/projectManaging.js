@@ -1,37 +1,21 @@
 var rowProjectId;
 
-function projectManagementSetup(){
-    document.getElementById("col-md-9").style.width = '70%';
-    $(".setup_buttons").hide();
-    $(".col-md-12-set").empty();
-    $(".col-md-12-case").empty();
-    $(".col-md-12-execution").empty();
-    $(".col-md-12-object").empty();
-    $(".setup").show();
-    $(".col-md-9").empty().append(DivForm);
-    requestProjectManaging();
-}
-
 function requestProjectManaging(){
-    $("#mainHeader").css('margin-bottom','0px');
-    $(".setup").css('padding-left','0px');
-    $.get("/getProjectManagement",function(data,status){
-        if(status){
-            $(".divContainer").empty().append(data);
-        }
-    });
     $.get("/getAdminNav",
          function(data,status){
-            $(".col-md-12-set").empty().append(data);
+            $("#nav-col-md-9").empty().append(data);
+    });
+    $.get("/getProjectManagement",function(data,status){
+        if(status){
+            $("#nav-test-col-md-9").empty().append(data);
+        }
     });
 }
 
 function requestProManWNav(){
-    $("#mainHeader").css('margin-bottom','0px');
-    $(".setup").css('padding-left','0px');
     $.get("/getProjectManagement",function(data,status){
         if(status){
-            $(".col-md-9").empty().append(data);
+            $("#nav-test-col-md-9").empty().append(data);
         }
     });
 }
@@ -40,19 +24,15 @@ function selectRowProject(){
     if(rowProjectId == ""){
         rowProjectId=$(event.target).attr('id');
         $("[data-row='editRow']#"+$(event.target).attr('id')).attr('class','info');
-        $(event.target).css("color","black");
     }
     else{
         if(rowProjectId != $(event.target).attr('id')){
             $("[data-row='editRow']#"+rowProjectId).removeAttr('class');
-            $("#"+rowProjectId+".rowLink").css("color","#eee");
             $("[data-row='editRow']#"+$(event.target).attr('id')).attr('class','info');
-            $(event.target).css("color","black");
             rowProjectId=$(event.target).attr('id');
         }
         else{
             $("[data-row='editRow']#"+rowProjectId).removeAttr('class');
-            $("#"+rowProjectId+".rowLink").css("color","#eee");
             rowProjectId="";
         }
     }

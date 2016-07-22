@@ -2,7 +2,7 @@ function dashboardLoad(){
 	$.get("/dashboardLoad",
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data);
+				$("#nav-test-col-md-9").empty().append(data);
 				$(".setup").hide();
 			};
 		}
@@ -34,7 +34,7 @@ function dashboardMode(){
 }
 
 $(function(){
-    document.getElementsByClassName("col-md-9")[0].style.width = '100%';
+    $("#nav-col-md-9").empty().append(testNavbar);
 	dashboardLoad();
 	chartFilterBar("pie",".chartFilter#pie");
 	addChart("pie","pieChart","pie",10);

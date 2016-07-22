@@ -124,51 +124,47 @@ function navTest(){
 	$(".setup").show();
 }
 
+function navDashboard(){
+    $("#nav-col-md-9").empty().append(testNavbar);
+    dashboardLoad();
+    chartFilterBar("pie",".chartFilter#pie");
+    addChart("pie","pieChart","pie",10);
+    chartFilterBar("line",".chartFilter#line");
+    addChart("line","lineChart","line",10);
+    jenkinsFilter();
+    jenkinsRadiator(".jenkinsRad",30);
+    addChart("pie","allPie","allPie",10);
+    addChart("line","allLine","allLine",10);
+    jenkinsRadiator(".allJenkinsRad",10);
+    dashboardButtonPanel();
+    $('body').on('slid.bs.carousel','#carousel-example-generic', function (){
+        lineChart.render();
+    });
+}
+
+function navReportBlog(){
+    $("#nav-col-md-9").empty().append(reportNavbar);
+    $(".setup_buttons").show();
+    requestDashboard(
+            { active:true, filter:"" },
+            function(res){
+                //window.location.reload();
+                $("#nav-report-col-md-9").empty().append(newform);
+                $("#nav-report-col-md-9").append(res);
+                $(".text_area").hide();
+                $(".insert_jira_button").empty();
+                addButtons();
+            }
+        );
+        $(".setup").hide();
+}
+
 $(function(){
     $( ".projectSelector" ).change(function() {
         alert( "Handler for .change() called." );
         projectChanging();
         
     });
-    
-	$("body").on("click","a",function(event) {
-		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "dashboard"){
-            $(".text_area").hide();
-			$(".insert_jira_button").empty();
-			$(".setup_buttons").empty().show();
-			document.getElementsByClassName("col-md-9")[0].style.width = '100%';
-            dashboardLoad();
-            chartFilterBar("pie",".chartFilter#pie");
-            addChart("pie","pieChart","pie",10);
-            chartFilterBar("line",".chartFilter#line");
-            addChart("line","lineChart","line",10);
-            jenkinsFilter();
-            jenkinsRadiator(".jenkinsRad",30);
-            addChart("pie","allPie","allPie",10);
-            addChart("line","allLine","allLine",10);
-            jenkinsRadiator(".allJenkinsRad",10);
-            dashboardButtonPanel();
-            $('body').on('slid.bs.carousel','#carousel-example-generic', function (){
-                lineChart.render();
-            });
-        }
-		if( $(event.target).attr('class') == "header" && $(event.target).attr('id') == "reportBlog"){
-			document.getElementsByClassName("col-md-9")[0].style.width = '100%';
-            $(".setup_buttons").show();
-            requestDashboard(
-					{ active:true, filter:"" },
-					function(res){
-						//window.location.reload();
-						$(".col-md-9").empty().append(newform);
-						$(".col-md-9").append(res);
-						$(".text_area").hide();
-						$(".insert_jira_button").empty();
-						addButtons();
-					}
-				);
-				$(".setup").hide();
-		}
-	});
 	$("#submenu").empty().append("<li><a href='#' id='report'>Report</a></li>")
     requestHeader(
         { active:true, filter:"" },

@@ -42,7 +42,7 @@ function save_report(){
 	$.post("/save_report", $("input").serialize()+"&"+$("textarea").serialize(),
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data)
+				$("#nav-report-col-md-9").empty().append(data)
 			};
 		}
 	);
@@ -52,7 +52,7 @@ function saveEditedRecord(id){
 	$.post("/save_edited_record/"+id, $("input").serialize()+"&"+$("textarea").serialize(),
 		function(data,status){
 			if(status){
-				$(".col-md-9").empty().append(data)
+				$("#nav-report-col-md-9").empty().append(data)
 				$(".text_area").hide();
 				$("#"+id+".text_area").show();
 				$(".insert_cancel_button").empty().append(Cancelbtn);

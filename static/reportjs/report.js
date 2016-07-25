@@ -57,28 +57,24 @@ function saveEditedRecord(id){
 				$("#nav-report-col-md-9").empty().append(data)
 				$(".text_area").hide();
 				$("#"+id+".text_area").show();
-				$(".insert_cancel_button").empty().append(Cancelbtn);
-				$(".col-md-9").prepend(newform);
 			};
 		}
 	);
 }
 
-function getReporttoEdit(id){
+function getReporttoEdit(id,event){
 	$.get("/getReporttoEdit/"+id,
 		function(data,status){
-			$(".wrap"+"#"+id).empty().append(newReport+data[1]+newReport1+data[2]+newReport2+data[3]+newReport3+data[4]+newReport5+newReport6);
-			$(".insert_save_button").empty().append(SaveID+data[0]+SaveID2);
-			$(".insert_cancel_button").empty().append(CancelID+data[0]+CancelID2);
-		},
-		"json"
-	)
+			$(event.closest('.panel')).empty().append(data);
+			$("#save").removeAttr("disabled");
+            $("#new").attr("disabled","disabled");
+		});
 }
 
 function getReporttoLoad(id){
 	$.post("/getReporttoLoad",id,
 		function(data,status){
-			$(".col-md-9").empty().append(data);
+			$("#nav-report-col-md-9").empty().append(data);
 			$(".text_area").hide();
 		}
 	)
@@ -99,7 +95,6 @@ $(function(){
 	currentDate();
 	iterator=0;
 	jira_iterator=0;
-	var editable = "true";
 	
 	loadSearchForm();
 	
@@ -113,26 +108,36 @@ $(function(){
 			//$("#date").append(currentDate());
 		}
 		if($(event.target).attr('class')=="edit_report"){
-			if(editable=="true"){
-				editable="false";
-				getReporttoEdit(event.target.id);
-				return false;
-			}
+            getReporttoEdit(event.target.id,event.target);
 		}
 		if( event.target.id == "cancel"){
-			if($("#save").attr('disabled') == undefined){
-                $($(".timeline")[0]).children()[0].remove()
+            if($($("[data-saveid]")[0]).attr('data-reportblogid') != undefined){
+                if($("#save").attr('disabled') == undefined){
+                    $($(".timeline")[0]).children()[0].remove()
+                }
+                $("#new").removeAttr("disabled");
+                $("#save").attr("disabled","disabled");
+                $(".insert_jira_button").empty();
             }
-			$("#new").removeAttr("disabled");
-            $("#save").attr("disabled","disabled");
-			$(".insert_jira_button").empty();
-			$(".col-md-3").empty();
+            else{
+                recordid=$($("[data-saveid]")[0]).attr('data-reportblogid');
+                getReporttoLoad(recordid);
+            }
 		}
 		if( event.target.id == "save"){
-			save_report();
-			$("#new").removeAttr("disabled");
-            $("#save").attr("disabled","disabled");
-			$(".text_area").hide();
+            if($($("[data-saveid]")[0]).attr('data-reportblogid') != undefined){
+                save_report();
+                $("#new").removeAttr("disabled");
+                $("#save").attr("disabled","disabled");
+                $(".text_area").hide();
+            }
+            else{
+                recordid=$($("[data-saveid]")[0]).attr('data-reportblogid');
+                saveEditedRecord(recordid);
+                $("#new").removeAttr("disabled");
+                $("#save").attr("disabled","disabled");
+            }
+			
 		}
 		if( event.target.id == "showall"){
 			$(".text_area").show();
@@ -158,13 +163,11 @@ $(function(){
 			getReporttoLoad(recordid);
 			$(".insert_save_button").empty().append(SaveDis);
 			$(".col-md-3").empty();
-			editable="true";
 		}
 		if( event.target.id == "save_id"){
 			recordid=$(event.target).attr('name');
 			saveEditedRecord(recordid);
 			$(".insert_save_button").empty().append(SaveDis);
-			editable="true";
 		}
 		if($(event.target).attr('name')=="savePw"){
 			ID=event.target.id;

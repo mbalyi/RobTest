@@ -393,7 +393,7 @@ def save_report():
 @app.route('/getReporttoEdit/<int:id>', methods=['GET'])
 def getReporttoEdit(id):
 	query = Report.getRepPar(ID=id)
-	return json.dumps(query)
+	return render_template("dashboard.html", editableReport=query)
 
 @app.route('/getReporttoLoad', methods=['POST'])
 def getReporttoLoad():
@@ -1044,5 +1044,5 @@ app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 		
 if __name__ == "__main__":
 	app.debug = True
-	toolbar = DebugToolbarExtension(app)
+	#toolbar = DebugToolbarExtension(app)
 	app.run()

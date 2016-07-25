@@ -12,7 +12,7 @@ class ReportDatabase:
 	def getRecords(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT * FROM Records ORDER BY RecDate DESC")
+		c.execute("SELECT * FROM Records ORDER BY RecordId DESC")
 		result=c.fetchall()
 		return result;
 	

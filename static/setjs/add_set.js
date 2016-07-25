@@ -34,7 +34,8 @@ function saveSet(){
                 if(document.getElementById("fileUploadSet").files.length > 0){
                     updateFilesToSet(data);
                 }
-				requestSet()
+				requestSet();
+                loadSet(data,"loadSet");
 			};
 		}
 	);
@@ -46,8 +47,8 @@ function updateSet(setId){
 	$.post("/updateSet", sendData,
 		function(data,status){
 			if(status){
-                fileUpdateOnSet(setId);
-				requestSet()
+				requestSet();
+                loadSet(data,"loadSet");
 			};
 		}
 	);
@@ -160,6 +161,8 @@ $(function(){
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "set"){
 			loadSet($(event.target).attr('data-dbid'), "loadSet");
+            $(".newSet").empty().append(newSetDis);
+	        $(".saveSet").empty().append(saveSetEn);
 			//alert(event.target.id + $(event.target).attr('class'));
 		}
 		if( event.target.id == "saveSet"){

@@ -21,7 +21,6 @@ class ReportDatabase:
 		now=currentDate.year
 		now+=currentDate.month
 		now+=currentDate.day
-		print(now)
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		c.execute("INSERT INTO Records (Title,User,RecDate,Report) VALUES (?,?,?,?)",[kwargs['title'],kwargs['user'],kwargs['date'],kwargs['report']])
@@ -72,7 +71,6 @@ class ReportDatabase:
 		c.execute("SELECT UserPassword FROM Users WHERE UserId=?",[kwargs['ID']])
 		result=c.fetchone()
 		if (kwargs['oldPw'] == result[0]):
-			print("OK")
 			c.execute("UPDATE Users SET UserPassword=? WHERE UserId=?",[kwargs['newPw'],kwargs['ID']])
 			conn.commit()
 	

@@ -184,6 +184,7 @@ $(function(){
 			deleteExe($(event.target).attr('data-dbid'));
 		}
 		if( $(event.target).attr('name')=="editExe" ){
+            $("body").attr()
 			loadExecution($(event.target).attr('data-dbid'),"editExe");
             $("#newExe").attr('disabled', true);
             $(".saveExe").empty().append(saveExeEn);

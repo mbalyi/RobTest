@@ -4,6 +4,7 @@ from reportinterface import Report
 import json, os, base64
 from flask import Flask, render_template, session, redirect, url_for, escape, request, jsonify, Response, send_from_directory
 from werkzeug.utils import secure_filename
+from flask_debugtoolbar import DebugToolbarExtension
 
 UPLOAD_FOLDER = './uploads/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'csv','doc', 'docx', 'xlsx', 'xlt', 'xls'])
@@ -247,9 +248,9 @@ def setForm():
 
 @app.route('/save_set', methods=['POST'])	
 def save_set():
-	setId=DB.save_set(name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession(),area=request.form.getlist('areaBox'))
+	setId=DB.save_set(name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
 	DB.saveSetCase(ID=request.form.getlist('ID'),setID=setId)
-	return "OK"
+	return json.dumps(setId)
 
 #--- Fizikai update
 @app.route('/updateSetPhysical', methods=['POST'])	
@@ -264,7 +265,7 @@ def updateSet():
 	setId=DB.save_set(name=request.form["name"],date=request.form["date"],priority=request.form["priority"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
 	DB.setUpdateFlag(oldSetId=request.form['setId'],newSetId=setId)
 	DB.saveSetCase(ID=request.form.getlist('ID'),setID=setId)
-	return "OK"
+	return json.dumps(setId)
 	
 @app.route('/load_set/<int:ID>/<mode>', methods=['GET'])
 def load_set(ID,mode):
@@ -438,7 +439,6 @@ def saveStatus(stepId,caseExeId,status):
 @app.route('/saveCaseStatus/<int:exeId>/<int:caseId>', methods=['GET'])
 def saveCaseStatus(exeId,caseId):
 	status=DB.saveCaseStatus(exeId=exeId,caseId=caseId)
-	print(status)
 	return render_template("test.html", status=status)
 
 @app.route('/saveComment/<int:stepId>/<int:exeId>', methods=['POST'])
@@ -468,7 +468,7 @@ def projectSession():
 @app.route('/requestChart/<type>/<int:projectId>/<int:limit>', methods=['GET'])
 def requestChart(type,projectId,limit):
 	if type=="line":
-		return chartReload(type,"All",0,0,"All",limit)
+		return chartReload(type,"All",0,0,"All",limit,0)
 	else:
 		query = DB.getDataForCharts(projectId=projectId,interval=limit)
 		passed=0
@@ -492,17 +492,23 @@ def requestChart(type,projectId,limit):
 @app.route('/chartFilter/<type>/<int:projectId>', methods=['GET'])
 def chartFilter(type,projectId):
 	query = DB.getChartFilterData(projectId=projectId)
+	executions = DB.getExeOBTest(projectId=projectSession())
 	areas = DB.getAreas(projectId=projectId)
-	return render_template('chartFilter.html',type=type,data=query,areas=areas)
+	return render_template('chartFilter.html',type=type,data=query,areas=areas,executions=executions)
 
-@app.route('/chartReload/<type>/<interval>/<int:obId>/<int:areaId>/<status>/<int:limit>', methods=['GET'])
-def chartReload(type,interval,obId,areaId,status,limit):
+@app.route('/chartExeReload/<int:obId>', methods=['GET'])
+def chartExeReload(obId):
+	query = DB.reloadChartFilterData(obId=obId,projectId=projectSession())
+	return render_template('chartFilter.html',reloadExe=query)
+	
+@app.route('/chartReload/<type>/<interval>/<int:obId>/<int:areaId>/<status>/<int:limit>/<int:exeId>', methods=['GET'])
+def chartReload(type,interval,obId,areaId,status,limit,exeId):
 	passed=0
 	failed=0
 	skipped=0
 	notimp=0
 	all=0
-	result = DB.getFilteredPar(objectId=obId,areaId=areaId,status=status,interval=limit)
+	result = DB.getFilteredPar(objectId=obId,areaId=areaId,status=status,interval=limit,exeId=exeId)
 	render=""
 	if result:
 		if type == "pie":
@@ -638,46 +644,45 @@ def jenkinsRadiator(limit):
 	b=0
 	default1=[]
 	boolen = "false"
-	for j in sorting:
-		for k in sorting:
-			temp.append(k)
-			default=k[2][0]
-			for l in sorting:
-				if l[2][0] == default:
-					if l[2] != k[2]:
-						temp.append(l)
-						index=sorting.index(l)
-						sorting.pop(sorting.index(l))
-						sorting.insert(index,('default','default',('default','default')))
-						#default1=l
-						boolen="true"
-			passed=0
-			skipped=0
-			failed=0
-			all=0
-			for o in temp:
-				if o[0] != "default":
-					passed+=o[4][0]
-					skipped+=o[4][1]
-					failed+=o[4][2]
-					all+=o[4][3]
-			rate=[]
-			rate.append(passed)
-			rate.append(skipped)
-			rate.append(failed)
-			rate.append(all)
-			if boolen == "false":
-				index=sorting.index(k)
-				sorting.pop(sorting.index(k))
-				sorting.insert(index,('default','default',('default','default')))
-			else:
-				boolen = "false"
-			if temp[0][0] != "default":
-				rendered+=render_template('jenkinsRadiator.html', objectExe=temp, iterator=iterator, rate=rate)
-			sorting.pop(0)
-			sorting.insert(0,('default','default',('default','default')))
-			temp = []
-			iterator+=1
+	for k in sorting:
+		temp = []
+		temp.append(k)
+		default=k[2][0]
+		for l in sorting:
+			if l[2][0] == default:
+				if l[2] != k[2]:
+					temp.append(l)
+					index=sorting.index(l)
+					sorting.pop(index)
+					sorting.insert(index,('default','default',('default','default')))
+					#default1=l
+					boolen="true"
+		passed=0
+		skipped=0
+		failed=0
+		all=0
+		for o in temp:
+			if o[0] != "default":
+				passed+=o[4][0]
+				skipped+=o[4][1]
+				failed+=o[4][2]
+				all+=o[4][3]
+		rate=[]
+		rate.append(passed)
+		rate.append(skipped)
+		rate.append(failed)
+		rate.append(all)
+		if boolen == "false":
+			index=sorting.index(k)
+			sorting.pop(index)
+			sorting.insert(index,('default','default',('default','default')))
+		else:
+			boolen = "false"
+		if temp[0][0] != "default":
+			rendered+=render_template('jenkinsRadiator.html', objectExe=temp, iterator=iterator, rate=rate)
+		sorting.pop(0)
+		sorting.insert(0,('default','default',('default','default')))
+		iterator+=1
 	if len(sorting) == 1 and sorting[0][0] != "default":
 		passed=sorting[0][4][0]
 		skipped=sorting[0][4][1]
@@ -704,7 +709,6 @@ def dashboardLoad():
 #-----Admin----
 @app.route('/getUser', methods=['GET'])
 def getUser(active=None):
-	print(session['username'])
 	return json.dumps(session['username'])
 
 @app.route('/getUsers', methods=['GET'])
@@ -1040,4 +1044,5 @@ app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 		
 if __name__ == "__main__":
 	app.debug = True
+	toolbar = DebugToolbarExtension(app)
 	app.run()

@@ -122,6 +122,11 @@ $(function(){
 			$("#"+divId+".Result").empty().append(statusSkipped);
 			saveCaseStatus();
 		}
+        if( event.target.id == "NOTIMP"){
+			saveStatus("NOTIMP",divId);
+			$("#"+divId+".Result").empty().append(statusNotImp);
+			saveCaseStatus();
+		}
 		if( event.target.id == "FAILED"){
 			saveStatus("FAILED",divId);
 			$("#"+divId+".Result").empty().append(statusFailed);

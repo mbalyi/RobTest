@@ -20,7 +20,7 @@ class Database:
 	def get_case(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT CaseId,Title FROM Cases WHERE ProjectId=? AND Active=? AND CaseUpdated=?",[kwargs['projectId'],kwargs['active'],kwargs['update']])
+		c.execute("SELECT CaseId,Title FROM Cases WHERE ProjectId=? AND Active=? AND CaseUpdated=? ORDER BY Title ASC",[kwargs['projectId'],kwargs['active'],kwargs['update']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -158,7 +158,7 @@ class Database:
 	def caseUpdateFlag(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("UPDATE Cases SET (UpdateFromId) VALUES (?) WHERE CaseId=?",[kwargs['oldCaseId'],kwargs['newCaseId']])
+		c.execute("UPDATE Cases SET UpdateFromId=? WHERE CaseId=?",[kwargs['oldCaseId'],kwargs['newCaseId']])
 		conn.commit()
 		return
 	
@@ -176,7 +176,6 @@ class Database:
 		result=[]
 		if isinstance(kwargs['stepIds'], list):
 			for k in kwargs['stepIds']:
-				print(k)
 				c.execute("SELECT * FROM Uploads_Step WHERE StepId=?",[k])
 				result.append(c.fetchall())
 				conn.commit()
@@ -291,6 +290,7 @@ class Database:
 		conn.commit()
 		for k in kwargs['areas']:
 			c.execute("INSERT INTO Area_Set (AreaId,SetId) VALUES (?,?)",[k,setID[0]])
+			conn.commit()
 		return setID[0]
 	
 	def updateSet(self,**kwargs):
@@ -423,7 +423,7 @@ class Database:
 		#c.execute("INSERT INTO Execution (ExeName,ExeDate) VALUES (?,?)",[kwargs['name'],kwargs['date']])
 		c.execute("INSERT INTO Execution (ExeName,ProjectId) VALUES (?,?)",[kwargs['name'],kwargs['projectId']])
 		conn.commit()
-		c.execute("SELECT ExecutionId FROM Execution WHERE ExeName=? AND ProjectId=?",[kwargs['name'],kwargs['projectId']])
+		c.execute("SELECT ExecutionId FROM Execution WHERE ExeName=? AND ProjectId=? ORDER BY ExecutionId DESC",[kwargs['name'],kwargs['projectId']])
 		ExeID=c.fetchone()
 		conn.commit()
 		c.execute("INSERT INTO Exe_Object (ExecutionId,ObjectId) VALUES (?,?)",[ExeID[0],kwargs['testObject']])
@@ -516,7 +516,6 @@ class Database:
 		c.execute("SELECT ObjectId FROM Exe_Object WHERE ExecutionId=?",[kwargs['id']])
 		ObjectId=c.fetchone()
 		conn.commit()
-		print(ObjectId)
 		c.execute("SELECT * FROM Objects WHERE ObjectId=?",[ObjectId[0]])
 		Object=c.fetchone()
 		conn.commit()
@@ -683,7 +682,6 @@ class Database:
 		c.execute("SELECT Result FROM Step_Execution WHERE ExecutionId=? AND Case_ExecutionId=?",[kwargs['exeId'],caseExeId[0][0]])
 		Results=c.fetchall()
 		conn.commit()
-		print(Results)
 		for k in Results:
 			if k[0] == "FAILED":
 				c.execute("UPDATE Case_Execution SET Result=? WHERE ExecutionId=? AND CaseId=?",["FAILED",kwargs['exeId'],kwargs['caseId']])
@@ -728,9 +726,10 @@ class Database:
 	def getJenkinsData(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['limit'])+","+str(kwargs['limit'])
+		objectLimit="SELECT ObjectId FROM Objects WHERE Active=1 ORDER BY ObjectId DESC LIMIT "+str(kwargs['limit'])
 		c.execute(objectLimit)
-		objectId=c.fetchone()
+		objectId=c.fetchall()
+		objectId=objectId[-1]
 		conn.commit()
 		query="SELECT OB.ObjectId,OB.ObjectName,OB.ObjectVersion,Exe.ExecutionId,Exe.ExeName FROM Exe_Object AS EO LEFT JOIN Execution AS Exe ON EO.ExecutionId=Exe.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND Exe.ProjectId=? AND OB.ObjectId>=? ORDER BY OB.ObjectId DESC"
 		c.execute(query,[kwargs['projectId'],kwargs['projectId'],objectId[0]])
@@ -761,9 +760,10 @@ class Database:
 	def getDataForCharts(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['interval'])+","+str(kwargs['interval'])
+		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['interval'])
 		c.execute(objectLimit)
-		objectId=c.fetchone()
+		objectId=c.fetchall()
+		objectId=objectId[-1]
 		conn.commit()
 		query="SELECT CE.ExecutionId,CE.CaseId,CE.Result,CE.title,EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE EX.ProjectId=? AND OB.ObjectId>=? ORDER BY OB.ObjectId DESC"
 		c.execute(query,[kwargs['projectId'],objectId[0]])
@@ -774,7 +774,20 @@ class Database:
 	def getChartFilterData(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT * FROM Objects WHERE ProjectId=? ORDER BY ObjectId DESC LIMIT 20",[kwargs['projectId']])
+		c.execute("SELECT * FROM Objects WHERE ProjectId=? AND Active=1 ORDER BY ObjectId DESC LIMIT 20",[kwargs['projectId']])
+		#c.execute("SELECT EO.Id,EO.ExecutionId,EX.ExeName,EO.ObjectId,OB.ObjectName FROM Exe_Object AS EO LEFT JOIN Execution AS EX ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId ORDER BY OB.ObjectId WHERE OB.ProjectId=? AND OB.Active=1 DESC LIMIT 20",[kwargs['projectId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def reloadChartFilterData(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		#c.execute("SELECT * FROM Objects WHERE ProjectId=? AND Active=1 ORDER BY ObjectId DESC LIMIT 20",[kwargs['projectId']])
+		if kwargs['obId'] != 0:
+			c.execute("SELECT EO.Id,EO.ExecutionId,EX.ExeName,EO.ObjectId,OB.ObjectName FROM Exe_Object AS EO LEFT JOIN Execution AS EX ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND OB.Active=1 AND OB.ObjectId=? ORDER BY OB.ObjectId DESC",[kwargs['projectId'],kwargs['obId']])
+		else:
+			c.execute("SELECT EO.Id,EO.ExecutionId,EX.ExeName,EO.ObjectId,OB.ObjectName FROM Exe_Object AS EO LEFT JOIN Execution AS EX ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND OB.Active=1 AND OB.ObjectId IS NOT NULL ORDER BY OB.ObjectId DESC",[kwargs['projectId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -782,9 +795,10 @@ class Database:
 	def getFilteredPar(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['interval'])+","+str(kwargs['interval'])
+		objectLimit="SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT "+str(kwargs['interval'])
 		c.execute(objectLimit)
-		objectId=c.fetchone()
+		objectId=c.fetchall()
+		objectId=objectId[-1]
 		conn.commit()
 		if kwargs['areaId'] == 0:
 			query = "SELECT CE.Result,OB.ObjectName,OB.ObjectVersion,OB.ObjectId,CE.Id FROM Case_Execution AS CE LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE"
@@ -821,6 +835,9 @@ class Database:
 			query+=str(kwargs['areaId'])
 		query+=" AND OB.ObjectId>="
 		query+=str(objectId[0])
+		if kwargs['exeId'] != 0:
+			query+=" AND CE.ExecutionId="
+			query+=str(kwargs['exeId'])
 		query+=" ORDER BY OB.ObjectId DESC"
 		c.execute(query)
 		result=c.fetchall()
@@ -874,7 +891,6 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT UserPassword FROM Users WHERE UserId=?",[kwargs['id']])
 		username=c.fetchone()
-		print(username)
 		conn.commit()
 		if username[0] == kwargs['oldPw']:
 			c.execute("UPDATE Users SET UserPassword=? WHERE UserId=?",[kwargs['newPw'],kwargs['id']])
@@ -988,7 +1004,6 @@ class Database:
 		for k in result:
 			c.execute("UPDATE Step_Execution SET ExecutionId=? WHERE Case_ExecutionId=?",[k[0],k[1]])
 			conn.commit()
-			print(str(j/count*100)+"%")
 			j=j+1
 		return
 	

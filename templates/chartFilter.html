@@ -1,12 +1,12 @@
+{% if type %}
 <div class='panel panel-default' id="fullHeight">
   <!-- Default panel contents -->
   <div class='panel-heading'>Chart Filter</div>
   <div class='panel-body'>
-    <p>Dynamic chart generation for a fancy dashboard.</p>
+    <p>Dynamic chart generation for dashboard.</p>
   </div>
 
   <!-- Table -->
-    {% if type %}
   <table class='{{type}} table'>
     <tr>
 		<td>Interval: <td>
@@ -25,10 +25,21 @@
 	<tr>
 		<td>Version: <td>
 		<td>
-			<select class='form-control' data-selectorid='{{type}}Version' onchange="{{type}}Reload('{{type}}')" id="fullWidth">
+			<select class='form-control' data-selectorid='{{type}}Version' onchange="{{type}}ExeReload('{{type}}')" id="fullWidth">
 				<option data-dbid='0'>All</option>
                 {% for k in data %}
 				<option data-dbid='{{k[0]}}'>{{k[6]}} {{k[1]}}</option>
+                {% endfor %}
+			</select>
+		<td>
+	</tr>
+    <tr>
+		<td>Execution: <td>
+		<td>
+			<select class='form-control' data-selectorid='{{type}}Execution' onchange="{{type}}Reload('{{type}}')" id="fullWidth">
+				<option data-dbid='0'>All</option>
+                {% for k in executions %}
+				<option data-dbid='{{k[0]}}'>{{k[1]}} ({{k[3]}})</option>
                 {% endfor %}
 			</select>
 		<td>
@@ -57,5 +68,12 @@
 		<td>
 	</tr>
   </table>
-    {% endif %}
 </div>
+{% endif %}
+
+{% if reloadExe %}
+<option data-dbid='0'>All</option>
+{% for k in reloadExe %}
+<option data-dbid='{{k[1]}}'>{{k[2]}} ({{k[4]}})</option>
+{% endfor %}
+{% endif %}

@@ -64,7 +64,7 @@ function updateCase(caseId){
 			if(status){
                 fileUpdateOnCase(caseId);
                 uploadStep(data);
-				loadCase(caseId,"loadCase");
+				loadCase(data,"loadCase");
                 requestCase();
 			};
 		}

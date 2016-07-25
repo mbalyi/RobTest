@@ -49,6 +49,13 @@ html{
     float: right;
 }
 
+#nav-report-col-md-9{
+    height: calc(100% - 71px);
+    padding: 0px;
+    width: 100%;
+    float: right;
+}
+
 #test-col-md-9{
     height: 100%;
 }

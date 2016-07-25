@@ -1,9 +1,9 @@
-newReport="<table style='width:100%' class='table'>"
+var newReport="<table style='width:100%' class='table'>"
 newReport+="<tr><td><p>Title:</p></td><td><input form='text' name='title' class='form-control' value='"
 newReport1="'></td><td><p>User:</p></td><td><input form='text' name='user' class='form-control' value='"
 newReport2="' readonly></td></tr><tr><td><p>Date:</p></td><td><input form='text' name='date' class='form-control' value='"
 newReport3="' readonly></td></tr>"
-newReport3+="<tr><td colspan='4' style='width:100%'><textarea class='form-control' rows='5' name='desc' maxlength='10000' style='width:90%;background-color:#777;color:#eee;'>"
+newReport3+="<tr><td colspan='4' style='width:100%'><textarea class='form-control' rows='5' name='desc' style='width:90%;background-color:#777;color:#eee;'>"
 newReport4="Report</textarea></td></tr>"
 newReport5="</textarea></td></tr>";
 newReport6="</table>"
@@ -11,7 +11,7 @@ newReport6="</table>"
 newform="<div class='new_form'></div>"
 
 button="<table><tr><td style='width:50px'><a class='btn btn-default btn-sm' href='#' role='button' id='new'>New</a></td>"
-button+="<td class='insert_save_button' style='width:53px'><a class='btn btn-default btn-sm disabled' href='#' role='button' id='save'>Save</a></td>";
+button+="<td class='insert_save_button' style='width:53px'><a class='btn btn-default btn-sm' href='#' role='button' id='save'>Save</a></td>";
 button+="<td class='insert_cancel_button' style='width:50px'><a class='btn btn-default btn-sm' href='#' role='button' id='cancel'>Cancel</a></td><td style='width:50px'></td>";
 button+="<td style='width:73px'><a class='btn btn-default btn-sm' href='#' role='button' id='showall'>Show All</a></td>";
 button+="<td style='width:73px'><a class='btn btn-default btn-sm' href='#' role='button' id='hideall'>Hide All</a></td>";
@@ -61,3 +61,12 @@ newUser2="'></td><td class='admin_table'><input type='checkbox' name='user_bann[
 newUser3="'></td><td class='admin_table'><input type='text' name='user_password[]' class='form-control' value='Password'></td></tr>";
 
 SaveUserEn="<a class='btn btn-default btn-sm' href='#' role='button' id='save_user'>Save</a>";
+
+var newReportBlog1="<li class='timeline-inverted'><div class='timeline-badge info'><i></i></div><div class='timeline-panel' style='padding:0;'><div class='timeline-heading'>";
+newReportBlog1+="</div><div class='timeline-body'><div class='panel panel-default' style='margin-bottom: 0px;border: 0px;'><div class='panel-heading'><table style='width:100%;'><tr><th>Title:</th>";
+newReportBlog1+="<th><input form='text' name='title' class='form-control' value='Title'></th><th>User:</th><th><input form='text' name='user' class='form-control' value='";
+var newReportBlog2="' readonly></th>";
+newReportBlog2+="<th>Date:</th><th><input form='date' name='date' class='form-control' value='"+currentDate()+"' readonly></th></tr></table></div><div class='panel-body' id='fullWidth'>";
+newReportBlog2+="<table style='width:100%;'><tr><td>Description: </td></tr>";
+newReportBlog2+="<tr id={{k[0]}} class='text_area'><td colspan='4' style='width:100%'><textarea name='desc' class='text_area form-control' rows='5' style='width:100%;'>Report</textarea>";
+newReportBlog2+="</td></tr></table></div></div></div></div></li>";

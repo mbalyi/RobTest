@@ -77,65 +77,84 @@ var pieChart;
 var allPieChart;
 var allLineChart;
 
-function createLineChart(template,direction,chart){
-	Chart = new CanvasJS.Chart(direction,
-		{
-			theme: "theme3",
-                        animationEnabled: true,
-			title:{
-				text: "All Results",
-				fontSize: 30
-			},
-			toolTip: {
-				shared: true,
-                content: "{name}:{y}"
-			},			
-			axisY: {
-				title: "Count"
-			},
-			data: [ ],
-          legend:{
-            cursor:"pointer",
-            itemWrap: false,
-            itemclick: function(e){
-              if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-              	e.dataSeries.visible = false;
-              }
-              else {
-                e.dataSeries.visible = true;
-              }
-            	Chart.render();
+function createLineChart(template,direction,chartt){
+	var chart = {renderTo: direction,type: 'column'};
+    var title = {text: 'All Results'};
+    var xAxis = template[0].xAxis;
+    var yAxis = {
+            min: 0,
+            title: {
+                text: 'No. Cases'
             }
-          },
-        });
-		Chart.options.data=template;
-		Chart.render();
-        if(chart=="line")
-            lineChart=Chart;
-        else
-            allLineChart=Chart;
+        };
+    var tooltip = {
+            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        };
+    var plotOptions = {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        };
+    var series = template[1].series;
+    var Chart={};
+    Chart.chart=chart;
+    Chart.title=title;
+    Chart.xAxis=xAxis;
+    Chart.yAxis=yAxis;
+    Chart.tooltip=tooltip;
+    Chart.plotOptions=plotOptions;
+    Chart.series=series;
+    line= new Highcharts.Chart(Chart);
+    line.renderTo;
+    if(chartt=="line")
+        lineChart=line;
+    else
+        allLineChart=line;
 }
 
-function createPieChart(template,direction,chart){
-	Chart = new CanvasJS.Chart(direction,
-		{
-			title:{
-				text: "All Results"
-			},	
-            animationEnabled: true,
-			legend:{
-				verticalAlign: "bottom",
-				horizontalAlign: "center"
-			},
-			data: [ ], 
-        });
-		Chart.options.data=template;
-		Chart.render();
-        if(chart=="pie"){
-            pieChart=Chart;
+function createPieChart(template,direction,chartt){
+    var chart = {
+        plotBackgroundColor: null,
+        plotBorderWidth: null,
+        plotShadow: false,
+        renderTo: direction,
+        type: 'pie'
+    };
+    var title = {text: 'All Results'};
+    var tooltip = {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            };
+    var plotOptions = {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    size:'100%',
+                    dataLabels: {
+                        enabled: true
+                    },
+                    showInLegend: true
+                }
+            };
+    var series = template;
+    var Chart={};
+    Chart.chart=chart;
+    Chart.title=title;
+    Chart.tooltip=tooltip;
+    Chart.plotOptions=plotOptions;
+    Chart.series=series;
+    pie = new Highcharts.Chart(Chart);
+    pie.renderTo;
+        if(chartt=="pie"){
+            pieChart=pie;
         }
         else
-            allPieChart=Chart;
+            allPieChart=pie;
 }
 
 function pieReload(type){
@@ -143,10 +162,38 @@ function pieReload(type){
 		function(data,status){
 			if(status){
                 if(type=="pie"){
-                    pieChart.options.data=data;
-                    pieChart.options.animationEnabled=true;
-                    pieChart.options.title.text = $("select[data-selectorid=pieVersion]").find(":selected").val().toString();
-                    pieChart.render();
+                    var chart = {
+                        plotBackgroundColor: null,
+                        plotBorderWidth: null,
+                        plotShadow: false,
+                        renderTo: 'pieChart',
+                        type: 'pie'
+                    };
+                    var title = {text: $("select[data-selectorid=pieVersion]").find(":selected").val().toString()};
+                    var tooltip = {
+                                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                            };
+                    var plotOptions = {
+                                pie: {
+                                    allowPointSelect: true,
+                                    cursor: 'pointer',
+                                    size:'100%',
+                                    dataLabels: {
+                                        enabled: true
+                                    },
+                                    showInLegend: true
+                                }
+                            };
+                    var series = data;
+                    var Chart={};
+                    Chart.chart=chart;
+                    Chart.title=title;
+                    Chart.tooltip=tooltip;
+                    Chart.plotOptions=plotOptions;
+                    Chart.series=series;
+                    pieChart.destroy();
+                    pieChart = new Highcharts.Chart(Chart);
+                    pieChart.renderTo;
                 }
 			};
 		},
@@ -158,10 +205,41 @@ function lineReload(type){
 		function(data,status){
 			if(status){
                 if(type=="line"){
-                    lineChart.options.data=data;
-                    lineChart.options.animationEnabled=true;
-                    lineChart.options.title.text = $("select[data-selectorid=lineVersion]").find(":selected").val().toString();
-                    lineChart.render();
+                    var chart = {renderTo: 'lineChart',type: 'column'};
+                    var title = {text: $("select[data-selectorid=lineVersion]").find(":selected").val().toString()};
+                    var xAxis = data[0].xAxis;
+                    var yAxis = {
+                            min: 0,
+                            title: {
+                                text: 'No. Cases'
+                            }
+                        };
+                    var tooltip = {
+                            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        };
+                    var plotOptions = {
+                            column: {
+                                pointPadding: 0.2,
+                                borderWidth: 0
+                            }
+                        };
+                    var series = data[1].series;
+                    var Chart={};
+                    Chart.chart=chart;
+                    Chart.title=title;
+                    Chart.xAxis=xAxis;
+                    Chart.yAxis=yAxis;
+                    Chart.tooltip=tooltip;
+                    Chart.plotOptions=plotOptions;
+                    Chart.series=series;
+                    lineChart.destroy();
+                    lineChart= new Highcharts.Chart(Chart);
+                    lineChart.renderTo;
                 }
 			};
 		},

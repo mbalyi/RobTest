@@ -1,45 +1,69 @@
 
 {% if dashboard %}
-{% for k in dashboard %}
-<div class="panel panel-default">
+<div class="panel panel-default" id="fullHeight">
     <div class="panel-heading">
-        <table style="width:100%;">
-			<tr>
-                <th>Title:</th>
-                <th>{{k[1]}}</th>
-                <th>User:</th>
-                <th>{{k[2]}}</th>
-                <th>Date:</th>
-                <th>{{k[3]}}</th>
-            </tr>
-        </table>
+        <i class="fa fa-clock-o fa-fw"></i> Report Blog
     </div>
-    <div class="panel-body" id="fullWidth">
-        <table style="width:100%;">
-            <tr>
-                {% if user == "admin" %}
-                <td style='width:10px'>
-                    <a href='#' id={{k[0]}} class="edit_report" style='width:5px'>Edit</a>
-                </td>
-                {% endif %}
-			     <td style='width:10px'>
-                     <a href='#' id={{k[0]}} class="open_jira" style='width:5px'>Jira</a>
-                </td>
-            </tr>
-        </table>
-        <table style="width:100%;">
-			<tr>
-                <td>Description: <a href='#' id={{k[0]}} class="glyphicon glyphicon-chevron-down" style='width:15px'></a>
-                    <a href='#' id={{k[0]}} class="glyphicon glyphicon-chevron-up" style='width:15px'></a>
-                </td>
-            </tr>
-			<tr id={{k[0]}} class="text_area">
-                <td colspan="4" style="width:100%">
-                    <textarea id={{k[0]}} class="text_area form_control" rows="5" maxlength="10000" style="width:90%;" readonly>{{k[4]}}</textarea>
-                </td>
-            </tr>
-		</table>
+    <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;">
+        <ul class="timeline">
+        {% for k in dashboard %}
+        {% if loop.index%2 == 1 %}
+        <li>
+        {% else %}
+        <li class="timeline-inverted">
+        {% endif %}
+            <div class="timeline-badge info">
+                <i ></i>
+            </div>
+            <div class="timeline-panel" style="padding:0;">
+                <div class="timeline-heading">
+                </div>
+                <div class="timeline-body">
+                    <div class="panel panel-default" style="margin-bottom: 0px;border: 0px;">
+                        <div class="panel-heading">
+                            <table style="width:100%;">
+                                <tr>
+                                    <th>Title:</th>
+                                    <th>{{k[1]}}</th>
+                                    <th>User:</th>
+                                    <th>{{k[2]}}</th>
+                                    <th>Date:</th>
+                                    <th>{{k[3]}}</th>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="panel-body" id="fullWidth">
+                            <table style="width:100%;">
+                                <tr>
+                                    {% if user == "admin" %}
+                                    <td style='width:10px'>
+                                        <a href='#' id={{k[0]}} class="edit_report" style='width:5px'>Edit</a>
+                                    </td>
+                                    {% endif %}
+                                     <td style='width:10px'>
+                                         <a href='#' id={{k[0]}} class="open_jira" style='width:5px'>Jira</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <table style="width:100%;">
+                                <tr>
+                                    <td>Description: <a href='#' id={{k[0]}} class="glyphicon glyphicon-chevron-down" style='width:15px'></a>
+                                        <a href='#' id={{k[0]}} class="glyphicon glyphicon-chevron-up" style='width:15px'></a>
+                                    </td>
+                                </tr>
+                                <tr id={{k[0]}} class="text_area">
+                                    <td colspan="4" style="width:100%">
+                                        <textarea id={{k[0]}} class="text_area form-control" rows="5" style="width:100%;" readonly>{{k[4]}}</textarea>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+        </ul>
     </div>
 </div>
-{% endfor %}
 {% endif %}

@@ -55,13 +55,21 @@ $(function(){
 		}
 	});
     $('body').on('slid.bs.carousel','#carousel-example-generic', function (){
-        if($("#idPieChart").attr('class')=="item chart active")
-            pieChart.render();
-        if($("#idLineChart").attr('class')=="item chart active")
-            lineChart.render();
+        if($("#idPieChart").attr('class')=="item chart active"){
+            var height = $("#pieChart").height();
+            var width = $("#pieChart").width();
+            pieChart.setSize(width, height, doAnimation = true);
+            pieChart.renderTo;
+        }
+        if($("#idLineChart").attr('class')=="item chart active"){
+            var height = $("#lineChart").height();
+            var width = $("#lineChart").width();
+            lineChart.setSize(width, height, doAnimation = true);
+            lineChart.renderTo;
+        }
         if($("#idAllChart").attr('class')=="item active"){
-            allPieChart.render();
-            allLineChart.render();
+            allPieChart.renderTo;
+            allLineChart.renderTo;
         }
         //addChart("line","lineChart");
     });

@@ -45,100 +45,104 @@
 {% endif %}
 
 {% if type == "line" %}
-[
-	{
-		"type": "column",	
-		"name": "Run",
-		"legendText": "Run",
-		"color": "#2ECC71",
-		"showInLegend": true, 
-		"dataPoints":[
+[{"xAxis": {
+    "categories": [
         {% for k in data[:-1] %}
-        {"label": "{{k[0][0][1]}}", "y": {{k[1][0]}}},
+        "{{k[0][0][1]}}",
         {% endfor %}
-        {"label": "{{data[-1][0][0][1]}}", "y": {{data[-1][1][0]}}}
-		]
-	},
-	{
-		"type": "column",	
-		"name": "Failed",
-		"color": "#C0392B",
-		"legendText": "Failed",
-		"showInLegend": true,
-		"dataPoints":[
-		{% for k in data[:-1] %}
-        {"label": "{{k[0][0][1]}}", "y": {{k[1][1]}}},
-        {% endfor %}
-        {"label": "{{data[-1][0][0][1]}}", "y": {{data[-1][1][1]}}}
-		]
-	},
-	{
-		"type": "column",	
-		"name": "Not Run",
-		"legendText": "Not Run",
-		"color": "#7F8C8D",
-		"showInLegend": true,
-		"dataPoints":[
-		{% for k in data[:-1] %}
-        {"label": "{{k[0][0][1]}}", "y": {{k[1][2]}}},
-        {% endfor %}
-        {"label": "{{data[-1][0][0][1]}}", "y": {{data[-1][1][2]}}}
-		]
-	},
-	{
-		"type": "column",	
-		"name": "Not Implemented",
-		"legendText": "Not Implemented",
-		"color": "#3498DB",
-		"showInLegend": true,
-		"dataPoints":[
-		{% for k in data[:-1] %}
-        {"label": "{{k[0][0][1]}}", "y": {{k[1][3]}}},
-        {% endfor %}
-        {"label": "{{data[-1][0][0][1]}}", "y": {{data[-1][1][3]}}}
-		]
-	}
-			
-]
+        "{{data[-1][0][0][1]}}"
+    ],
+            "crosshair": true
+}},{
+"series": [{
+    "name": "Passed",
+    "color": "rgb(144, 237, 125)",
+    "data": [
+            {% for k in data[:-1] %}
+            {{k[1][0]}},
+            {% endfor %}
+            {{data[-1][1][0]}}
+            ]
+
+}, {
+    "name": "Failed",
+    "color": "rgba(186,60,61,.9)",
+    "data": [
+            {% for k in data[:-1] %}
+            {{k[1][1]}},
+            {% endfor %}
+            {{data[-1][1][1]}}
+            ]
+
+}, {
+    "name": "Skipped or Not Run",
+    "color": "rgb(247, 163, 92)",
+    "data": [
+            {% for k in data[:-1] %}
+            {{k[1][2]}},
+            {% endfor %}
+            {{data[-1][1][2]}}
+            ]
+
+}, {
+    "name": "Not Implemented",
+    "color": "rgb(124, 181, 236)",
+    "data": [
+            {% for k in data[:-1] %}
+            {{k[1][3]}},
+            {% endfor %}
+            {{data[-1][1][3]}}
+            ]
+
+}]}]
 {% endif %}
 
 {% if type == "pie" %}
-[
-	{        
-		"indexLabelFontSize": 20,
-		"indexLabelFontFamily": "Monospace",       
-		"indexLabelFontColor": "darkgrey", 
-		"indexLabelLineColor": "darkgrey",        
-		"indexLabelPlacement": "outside",
-		"type": "pie",       
-		"showInLegend": true,
-		"toolTipContent": "{legendText}: {y}%",
-		"dataPoints": 
-		[
-            {% if rate[0] > 0 %}
-			{  "y":  {{(rate[0]/rate[4]*100)|int}}, "legendText":"PASSED", "indexLabel": "Passed" }
-            {% endif %}
-            {% if ((rate[1] > 0) or (rate[2]>0) or (rate[3]>0)) and (rate[0]!=0)  %}
-            ,
-            {% endif %}
-            {% if rate[1] > 0 %}
-			{  "y": {{(rate[1]/rate[4]*100)|int}}, "legendText":"FAILED","exploded": true, "indexLabel": "Failed" }
-            {% endif %}
-            {% if ((rate[2]>0) or (rate[3]>0)) and (rate[1]!=0) %}
-            ,
-            {% endif %}
-            {% if rate[2] > 0 %}
-			{  "y": {{(rate[2]/rate[4]*100)|int}}, "legendText":"NOTRUN", "indexLabel": "Not Run" }
-            {% endif %}
-            {% if (rate[3]>0) and (rate[2]!=0) %}
-            ,
-            {% endif %}
-            {% if rate[3] > 0 %}
-			{  "y": {{(rate[3]/rate[4]*100)|int}}, "legendText":"NOTIMP" , "indexLabel": "Not Implemented"}
-            {% endif %}
-		]
-	}
-]
+[{
+    "name": "Percent",
+    "colorByPoint": true,
+    "data": [
+    {% if rate[0] > 0 %}
+    {
+        "name": "Passed",
+        "color": "rgb(144, 237, 125)",
+        "y": {{(rate[0]/rate[4]*100)|int}}
+    }
+    {% endif %}
+    {% if ((rate[1] > 0) or (rate[2]>0) or (rate[3]>0)) and (rate[0]!=0)  %}
+    ,
+    {% endif %}
+    {% if rate[1] > 0 %}
+    {
+        "name": "Failed",
+        "color": "rgba(186,60,61,.9)",
+        "y": {{(rate[1]/rate[4]*100)|int}},
+        "sliced": true,
+        "selected": true
+    }
+    {% endif %}
+    {% if ((rate[2]>0) or (rate[3]>0)) and (rate[1]!=0) %}
+    ,
+    {% endif %}
+    {% if rate[2] > 0 %}
+    {
+        "name": "Skipped or Not Run",
+        "color": "rgb(247, 163, 92)",
+        "y": {{(rate[2]/rate[4]*100)|int}}
+    }
+    {% endif %}
+    {% if (rate[3]>0) and (rate[2]!=0) %}
+    ,
+    {% endif %}
+    {% if rate[3] > 0 %}
+    {
+        "name": "Not Implemented",
+        "color": "rgb(124, 181, 236)",
+        "y": {{(rate[3]/rate[4]*100)|int}}
+    }
+    {% endif %}
+    ]
+}]
 {% endif %}
 
 {% if result == "pie" %}

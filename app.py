@@ -564,7 +564,7 @@ def chartReload(type,interval,obId,areaId,status,limit):
 				result.insert(0,('default','default','default','default','default'))
 				temp = []
 			render = render_template('test2.html',type=type,data=container)
-		return render.replace('\n','')
+		return render
 	else:
 		if type=="pie":
 			return render_template('test2.html',result="pie")
@@ -704,6 +704,7 @@ def dashboardLoad():
 #-----Admin----
 @app.route('/getUser', methods=['GET'])
 def getUser(active=None):
+	print(session['username'])
 	return json.dumps(session['username'])
 
 @app.route('/getUsers', methods=['GET'])

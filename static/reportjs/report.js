@@ -5,7 +5,7 @@ function requestDashboard(options, callback){
         success: callback
     });
 }
-
+var user;
 function getUser(){
 	$.get("/getUser",
 		function(data){
@@ -18,6 +18,7 @@ function getUser(){
 
 function addButtons(){
 	$(".setup_buttons").empty().append(button);
+    $("#save").attr("disabled","disabled");
 }
 
 function addAdminButtons(){
@@ -42,7 +43,8 @@ function save_report(){
 	$.post("/save_report", $("input").serialize()+"&"+$("textarea").serialize(),
 		function(data,status){
 			if(status){
-				$("#nav-report-col-md-9").empty().append(data)
+				$("#nav-report-col-md-9").empty().append(data);
+                $(".text_area").hide();
 			};
 		}
 	);
@@ -103,8 +105,9 @@ $(function(){
 	
 	$("body").on("click","a",function(event){
 		if( event.target.id == "new"){
-			$(".new_form").empty().append(newReport+newReport1+user+newReport2+currentDate()+newReport3+newReport4+newReport6);
-			$(".insert_save_button").empty().append(SaveEn);
+			$(".timeline").prepend(newReportBlog1+user+newReportBlog2);
+			$("#save").removeAttr("disabled");
+            $("#new").attr("disabled","disabled");
 			$(".insert_jira_button").empty().append(Jira);
 			//$("#user").append(getUser());
 			//$("#date").append(currentDate());
@@ -117,15 +120,19 @@ $(function(){
 			}
 		}
 		if( event.target.id == "cancel"){
-			$(".new_form").empty()
-			$(".insert_save_button").empty().append(SaveDis);
-			$(".insert_jira_button").empty()
+			if($("#save").attr('disabled') == undefined){
+                $($(".timeline")[0]).children()[0].remove()
+            }
+			$("#new").removeAttr("disabled");
+            $("#save").attr("disabled","disabled");
+			$(".insert_jira_button").empty();
 			$(".col-md-3").empty();
 		}
 		if( event.target.id == "save"){
 			save_report();
-			$(".insert_save_button").empty().append(SaveDis);
-			$(".text_area").hide()
+			$("#new").removeAttr("disabled");
+            $("#save").attr("disabled","disabled");
+			$(".text_area").hide();
 		}
 		if( event.target.id == "showall"){
 			$(".text_area").show();

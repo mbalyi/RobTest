@@ -139,7 +139,7 @@
                 <a href="#" class="commentPop" data-dbid='{{k[0]}}' onclick="seeComment({{k[0]}})" data-container="body" data-toggle="popover" data-placement="bottom" data-content="
                 <table>
                 {% for j in comments %}
-                {% if j[3] == k[0] and j[1] != 'NULL' %}
+                {% if j[3] == k[0] and j[1] != 'NULL' and j[1] != None %}
                 <tr><td>{{j[1]}}<td></tr>
                 {% endif %}
                 {% endfor %}

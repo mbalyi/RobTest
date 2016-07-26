@@ -84,7 +84,7 @@
         </div>
         <div class="uploadContent" style='widt:100%;display: none;'>
             <div style="width:100%;min-height:75px">
-                <div style="width:50%; float:left;">
+                <div style="width:50%; float:left;" class="fileContainer">
                     <form class="form-group" data-formid='newExeFile'  method="post" enctype="multipart/form-data" style="width:100%;">
                         Select file to upload:
                         <input type="file" name="fileToUpload" id="fileUploadExe" multiple>
@@ -182,7 +182,7 @@
                         <button class="btn btn-default btn-xs" type="button" onclick="updateFilesToExe({{loadExe[0][0]}})" style="width:50%; float:left;">Upload</button>
                     </form>
                 </div>
-                <div style="width:50%; float:left;">
+                <div style="width:50%; float:left;" class="fileContainer">
                     <table class="exeFiles" style="width:100%;">
                         {% if files != "empty" %}
                         {% for k in files %}
@@ -216,10 +216,10 @@
                     </table>
                 </div>
             </div>
-            <div class="imgFiles" style="min-height:50px;">
+            <div class="imgFiles" id="fullWidth">
                 {% for k in files %}
                 {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
-                    <div class="responsive" data-fileid='{{k[0]}}'>
+                    <div class="responsive" data-fileid='{{k[0]}}' id="img">
                       <div class="img">
                         <a target="_blank" href="{{ url_for('uploads',filename='execution/'+k[3]) }}" download>
                           <img src="{{ url_for('uploads',filename='execution/'+k[3]) }}" alt="Trolltunga Norway" width="300" height="200">
@@ -328,7 +328,7 @@
                         <input type="file" name="fileToUpload" id="fileUploadExe" multiple>
                     </form>
                 </div>
-                <div style="width:50%; float:left;">
+                <div style="width:50%; float:left;" class="fileContainer">
                     <table class="exeFiles" style="width:100%;">
                         {% if files != "empty" %}
                         {% for k in files %}
@@ -365,7 +365,7 @@
             <div class="imgFiles" style="width:100%;">
                 {% for k in files %}
                 {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
-                    <div class="responsive" data-fileid='{{k[0]}}'>
+                    <div class="responsive" data-fileid='{{k[0]}}' id="img">
                       <div class="img">
                         <a target="_blank" href="{{ url_for('uploads',filename='execution/'+k[3]) }}" download>
                           <img src="{{ url_for('uploads',filename='execution/'+k[3]) }}" width="300" height="200">

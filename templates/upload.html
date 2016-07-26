@@ -1,9 +1,9 @@
 {% if testUpload %}
-<div style="color:black;" style="width:100%;">
+<div style="width:100%;">
     <table class="fileStep" data-stepexeid='{{stepexeId}}' style="width:100%;">
     {% if testUpload != "empty" %}
     {% for k in testUpload %}
-        <tr data-fileid='{{k[0]}}'>
+        <tr data-fileid='{{k[0]}}' id="fullWidth">
             <td>
                 <a href="{{k[1]}}">
                     {% if k[3] == "txt" or k[3] == "pdf" or k[3] == "log" %}
@@ -17,7 +17,7 @@
                     {% endif %}
                 </a>
             </td>
-            <td>
+            <td id="popoverFileName">
                 {{k[2]}}
             </td>
             <td>
@@ -90,7 +90,7 @@
     </td>
 </tr>
 {% else %}
-    <div class="responsive" data-fileid='{{objectFile[0]}}'>
+    <div class="responsive" data-fileid='{{objectFile[0]}}' id="img">
       <div class="img">
         <a target="_blank" href="{{ url_for('uploads',filename='object/'+objectFile[3]) }}" download>
           <img src="{{ url_for('uploads',filename='object/'+objectFile[3]) }}" alt="Trolltunga Norway" width="300" height="200">
@@ -131,7 +131,7 @@
     </td>
 </tr>
 {% else %}
-    <div class="responsive" data-fileid='{{setFile[0]}}'>
+    <div class="responsive" data-fileid='{{setFile[0]}}' id="img">
       <div class="img">
         <a target="_blank" href="{{ url_for('uploads',filename='set/'+setFile[3]) }}" download>
           <img src="{{ url_for('uploads',filename='set/'+setFile[3]) }}"width="300" height="200">
@@ -172,7 +172,7 @@
     </td>
 </tr>
 {% else %}
-    <div class="responsive" data-fileid='{{exeFile[0]}}'>
+    <div class="responsive" data-fileid='{{exeFile[0]}}' id="img">
       <div class="img">
         <a target="_blank" href="{{ url_for('uploads',filename='execution/'+exeFile[3]) }}" download>
           <img src="{{ url_for('uploads',filename='execution/'+exeFile[3]) }}"width="300" height="200">
@@ -213,7 +213,7 @@
     </td>
 </tr>
 {% else %}
-    <div class="responsive" data-fileid='{{caseFile[0]}}'>
+    <div class="responsive" data-fileid='{{caseFile[0]}}' id="img">
       <div class="img">
         <a target="_blank" href="{{ url_for('uploads',filename='case/'+caseFile[3]) }}" download>
           <img src="{{ url_for('uploads',filename='case/'+caseFile[3]) }}"width="300" height="200">

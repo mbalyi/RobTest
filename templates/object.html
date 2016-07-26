@@ -98,7 +98,7 @@
                         <input type="file" name="fileToUpload" id="fileUploadObject" multiple>
                     </form>
                 </div>
-                <div id="cont-50-left">
+                <div id="cont-50-left" class="fileContainer">
                     <table class="objectFiles" id="fullWidth">
                     </table>
                 </div>
@@ -176,7 +176,7 @@
                         <button class="btn btn-default btn-xs" type="button" onclick="updateFilesToObject({{loadObject[0]}})" id="cont-50-left">Upload</button>
                     </form>
                 </div>
-                <div id="cont-50-left">
+                <div id="cont-50-left" class="fileContainer">
                     <table class="objectFiles" id="fullWidth">
                         {% if files != "empty" %}
                         {% for k in files %}
@@ -213,7 +213,7 @@
             <div class="imgFiles" style="min-height:50px;">
                 {% for k in files %}
                 {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
-                    <div class="responsive" data-fileid='{{k[0]}}'>
+                    <div class="responsive" data-fileid='{{k[0]}}' id="img">
                       <div class="img">
                         <a target="_blank" href="{{ url_for('uploads',filename='object/'+k[3]) }}" download>
                           <img src="{{ url_for('uploads',filename='object/'+k[3]) }}" width="300" height="200">
@@ -298,7 +298,7 @@
                         <input type="file" name="fileToUpload" id="fileUploadObject" multiple>
                     </form>
                 </div>
-                <div id="cont-50-left">
+                <div id="cont-50-left" class="fileContainer">
                     <table class="objectFiles" id="fullWidth">
                         {% if files != "empty" %}
                         {% for k in files %}
@@ -335,7 +335,7 @@
             <div class="imgFiles" id="fullWidth">
                 {% for k in files %}
                 {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
-                    <div class="responsive" data-fileid='{{k[0]}}'>
+                    <div class="responsive" data-fileid='{{k[0]}}' id="img">
                       <div class="img">
                         <a target="_blank" href="{{ url_for('uploads',filename='object/'+k[3]) }}" download>
                           <img src="{{ url_for('uploads',filename='object/'+k[3]) }}" alt="Trolltunga Norway" width="300" height="200">

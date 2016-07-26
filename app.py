@@ -5,6 +5,7 @@ import json, os, base64
 from flask import Flask, render_template, session, redirect, url_for, escape, request, jsonify, Response, send_from_directory
 from werkzeug.utils import secure_filename
 from flask_debugtoolbar import DebugToolbarExtension
+from docx import Document
 
 UPLOAD_FOLDER = './uploads/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'csv','doc', 'docx', 'xlsx', 'xlt', 'xls'])

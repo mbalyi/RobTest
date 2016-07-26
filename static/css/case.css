@@ -127,3 +127,28 @@
     margin-top: 0px;
     margin-bottom: 0px;
 }
+
+#img{
+    max-width:300px;
+    max-height:220px;
+    float:left;
+}
+.imgFiles{
+    min-height:50px;
+    max-height:310px;
+    overflow-y:auto;
+}
+.fileContainer{
+    max-height:64px;
+    overflow-y:auto;
+}
+[name='fileToUpload']{
+    width:100%;
+}
+.popover-content{
+    width:100%;
+}
+#popoverFileName{
+    max-width: 200px;
+    overflow: hidden;
+}

@@ -90,7 +90,7 @@
                         <input type="file" name="fileToUpload" id="fileUploadSet" multiple>
                     </form>
                 </div>
-                <div id="cont-50-left">
+                <div id="cont-50-left" class="fileContainer">
                     <table class="setFiles" id="fullWidth">
                     </table>
                 </div>
@@ -174,7 +174,7 @@
                         <button class="btn btn-default btn-xs" type="button" onclick="updateFilesToSet({{loadSet[0][0]}})" style="width:50%; float:left;">Upload</button>
                     </form>
                 </div>
-                <div style="width:50%; float:left;">
+                <div style="width:50%; float:left;" class="fileContainer">
                     <table class="setFiles" style="width:100%;">
                         {% if files != "empty" %}
                         {% for k in files %}
@@ -210,7 +210,7 @@
             <div class="imgFiles" style="min-height:50px;">
                 {% for k in files %}
                 {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
-                    <div class="responsive" data-fileid='{{k[0]}}'>
+                    <div class="responsive" data-fileid='{{k[0]}}' id="img">
                       <div class="img">
                         <a target="_blank" href="{{ url_for('uploads',filename='set/'+k[3]) }}" download>
                           <img src="{{ url_for('uploads',filename='set/'+k[3]) }}" alt="Trolltunga Norway" width="300" height="200">
@@ -312,7 +312,7 @@
                         <input type="file" name="fileToUpload" id="fileUploadSet" multiple>
                     </form>
                 </div>
-                <div style="width:50%; float:left;">
+                <div style="width:50%; float:left;" class="fileContainer">
                     <table class="setFiles" style="width:100%;">
                         {% if files != "empty" %}
                         {% for k in files %}
@@ -348,7 +348,7 @@
             <div class="imgFiles" style="width:100%;">
                 {% for k in files %}
                 {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
-                    <div class="responsive" data-fileid='{{k[0]}}'>
+                    <div class="responsive" data-fileid='{{k[0]}}' id="img">
                       <div class="img">
                         <a target="_blank" href="{{ url_for('uploads',filename='set/'+k[3]) }}" download>
                           <img src="{{ url_for('uploads',filename='set/'+k[3]) }}" alt="Trolltunga Norway" width="300" height="200">

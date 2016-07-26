@@ -125,7 +125,7 @@ $(function(){
             }
 		}
 		if( event.target.id == "save"){
-            if($($("[data-saveid]")[0]).attr('data-reportblogid') != undefined){
+            if($($("[data-saveid]")[0]).attr('data-reportblogid') == undefined){
                 save_report();
                 $("#new").removeAttr("disabled");
                 $("#save").attr("disabled","disabled");

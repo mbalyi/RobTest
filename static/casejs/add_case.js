@@ -64,8 +64,8 @@ function updateCase(caseId){
 			if(status){
                 fileUpdateOnCase(caseId);
                 uploadStep(data);
-				loadCase(data,"loadCase");
                 requestCase();
+                loadCase(data,"loadCase");
 			};
 		}
 	);
@@ -96,7 +96,7 @@ function getStep(caseId,mode){
 	$.get("/get_step/"+caseId+"/"+mode,
 		function(data,status){
 			if(status){
-				$(".case_table_no").empty().append(data);
+				$("#stepContainer").empty().append(data);
                 //testareaDesign();
             }
         }	

@@ -64,14 +64,16 @@
 {% endif %}
 
 {% if step %}
+<table class='case_table_no table table-hover'>
 	<tr>
 		<th style="word-wrap:break-word;white-space:pre;">Action</th>
         <th style="word-wrap:break-word;white-space:pre;">Result</th>
     </tr>
 		{% for k in step%}
 		<tr>
-			<th style="word-wrap:break-word;white-space:pre;">{{k[1]|safe}}</th>
-			<th style="word-wrap:break-word;white-space:pre;">{{k[2]|safe}}</th>
+			<td style="word-wrap:break-word;white-space:pre-line;">{{k[1]|safe}}</td>
+			<td style="word-wrap:break-word;white-space:pre-line;">{{k[2]|safe}}</td>
         </tr>
 		{% endfor %}
+</table>
 {% endif %}

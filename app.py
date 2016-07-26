@@ -4,11 +4,11 @@ from reportinterface import Report
 import json, os, base64
 from flask import Flask, render_template, session, redirect, url_for, escape, request, jsonify, Response, send_from_directory
 from werkzeug.utils import secure_filename
-from flask_debugtoolbar import DebugToolbarExtension
-from docx import Document
+#from flask_debugtoolbar import DebugToolbarExtension
+#from docx import Document
 
 UPLOAD_FOLDER = './uploads/'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'csv','doc', 'docx', 'xlsx', 'xlt', 'xls'])
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'csv','doc', 'docx', 'xlsx', 'xlt', 'xls', 'PNG', 'JPG', 'JPEG'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -844,7 +844,7 @@ def loadCaseHistory(caseId):
 	return render_template('caseHistory.html', caseStatus=cases,exes=exes)
 
 #----File Upload----
-PIC_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+PIC_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif','PNG','JPG','JPEG','GIF'])
 DOC_EXTENSIONS = set(['doc', 'docx', 'csv', 'xlsx', 'xlt', 'xls'])
 	
 def allowed_file(filename):
@@ -904,10 +904,12 @@ def upload_step_files(Id,mode,replaceTag):
 		UPLOAD_FOLDER = './uploads/step/result/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
+		print(request.form['name'])
 		if request.form['name'] == '':
 			return "No selected file"
 		if allowed_file(request.form['name']):
 			name=UP.nameExists(path=os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),mode=mode,name=request.form['name'],folder=app.config['UPLOAD_FOLDER'])
+			print(name)
 			if request.form['name'].rsplit('.', 1)[1] in PIC_EXTENSIONS:
 				file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'wb')
 				file.write(base64.b64decode(request.form['context'].split(',')[1]))

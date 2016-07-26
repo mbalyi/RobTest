@@ -35,6 +35,7 @@ function updateObject(objectId){
 			if(status){
                 fileUpdateOnObject(objectId);
 				loadObject(data,"loadObject");
+                requestObject();
 			}
 		},
 		"json"

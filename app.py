@@ -211,7 +211,7 @@ def loadObjectModal(id):
 	files=DB.getObjectFiles(obId=id)
 	return render_template("object.html", modalFiles=files)
 
-@app.route('/updateObject', methods=['GET'])	
+@app.route('/updateObject', methods=['POST'])	
 def updateObject():
 	DB.updateObject(objectId=request.form["objectId"],name=request.form["name"],hardware=request.form["hardware"],desc=request.form["desc"],version=request.form["version"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'))
 	return json.dumps(request.form["objectId"])

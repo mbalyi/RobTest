@@ -1,5 +1,5 @@
 import sqlite3
-
+	
 class Database:	
 	def login_querry(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
@@ -751,7 +751,16 @@ class Database:
 	def getExeOBTest(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT EX.ExecutionId,EX.ExeName,OB.ObjectId,OB.ObjectName FROM Execution AS EX LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.Active=1 AND EX.ProjectId=? ORDER BY EX.ExecutionId DESC",[kwargs['projectId']])
+		c.execute("""
+			SELECT EX.ExecutionId, EX.ExeName, OB.ObjectId, OB.ObjectName
+			FROM Execution AS EX
+			LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId
+			LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId
+			WHERE OB.Active=1 AND EX.ProjectId=?
+			ORDER BY EX.ExecutionId DESC
+			""",
+			[kwargs['projectId']]
+		)
 		result=c.fetchall()
 		conn.commit()
 		return result

@@ -98,6 +98,7 @@ function getStep(caseId,mode){
 			if(status){
 				$("#stepContainer").empty().append(data);
                 //testareaDesign();
+                textEditorEnabler();
             }
         }	
 	);
@@ -123,6 +124,50 @@ function deleteCase(caseId){
 	);
 }
 
+function textEditorEnabler(){
+    $(".action").froalaEditor({
+        imageUploadParam: 'upload',
+        imageUploadURL: '/upload_file_area',
+        imageUploadParams: {id: 'action'},
+        imageUploadMethod: 'POST',
+        imageAllowedTypes: ['jpeg', 'jpg', 'png'],
+        imageManagerPageSize: 20,
+        imageManagerScrollOffset: 10,
+        imageManagerLoadURL: "/uploads/step",
+        imageManagerLoadMethod: "GET",
+        fileAllowedTypes: ['/\|\<']
+
+      }).on('froalaEditor.image.error', function (e, editor, error, response) {
+        if (error.code == 1) { alert("Bad link."); }
+        else if (error.code == 2) { alert("No link in upload response."); }
+        else if (error.code == 3) { alert("Error during image upload."); }
+        else if (error.code == 4) { alert("Parsing response failed "+error); }
+        else if (error.code == 5) { alert("Image too text-large."); }
+        else if (error.code == 6) { alert("Invalid image type"); }
+        else if (error.code == 7) { alert("Image can be uploaded only to same domain in IE 8 and IE 9."); }
+      });
+    $(".result").froalaEditor({
+        imageUploadParam: 'upload',
+        imageUploadURL: '/upload_file_area',
+        imageUploadParams: {id: 'action'},
+        imageUploadMethod: 'POST',
+        imageAllowedTypes: ['jpeg', 'jpg', 'png'],
+        imageManagerPageSize: 20,
+        imageManagerScrollOffset: 10,
+        imageManagerLoadURL: "/uploads/step",
+        imageManagerLoadMethod: "GET",
+        fileAllowedTypes: ['/\|\<']
+        }).on('froalaEditor.image.error', function (e, editor, error, response) {
+        if (error.code == 1) { alert("Bad link."); }
+        else if (error.code == 2) { alert("No link in upload response."); }
+        else if (error.code == 3) { alert("Error during image upload."); }
+        else if (error.code == 4) { alert("Parsing response failed "+error); }
+        else if (error.code == 5) { alert("Image too text-large."); }
+        else if (error.code == 6) { alert("Invalid image type"); }
+        else if (error.code == 7) { alert("Image can be uploaded only to same domain in IE 8 and IE 9."); }
+      });
+}
+
 function enableForm(){  
     $("input[type=checkBox]").removeAttr("disabled");
     $("input[type=text][name=title]").removeAttr('readonly');
@@ -137,7 +182,9 @@ function enableForm(){
     //document.getElementById('down_step').disabled=false;
     $("#newCase").attr('disabled', true);
     $(".saveCase").empty().append(saveCaseEn1+"newCase"+saveCaseEn2);
+    $("#stepContainer").css('height','65%');
     //testareaDesign();
+    textEditorEnabler();
 }
 
 function caseHideShow(){
@@ -189,7 +236,7 @@ function reSizeTextarea(ev){
 }
 
 function toggleCaseFileCont(){
-    if($("#newCase").attr('disabled')=="disabled")
+    if($("#newCase").attr('disabled')=="disabled" || $("[name='edit_case']") != [])
         $(".uploadContent").slideToggle();
 }
 
@@ -230,6 +277,9 @@ $(function(){
 	$("body").on("click","#add_step",function(){
         $(".newStepPlace").append(add_step());
         //testareaDesign();
+        $(".action").froalaEditor();
+        $(".result").froalaEditor();
+        return;
 	});
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "case"){

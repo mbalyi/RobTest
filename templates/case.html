@@ -54,7 +54,7 @@
         </tr>
     </table>
     <div class='AreaField' id="fullWidth">
-        <h3>Areas: </h3>
+        <h3>Tags: </h3>
         <table>
             {% for k in caseForm %}
                 {% if loop.index == 1 %}
@@ -126,21 +126,22 @@
                     <div id="fullWidth">
                         <table id="fullWidth">
                             <tr>
-                                <th><a href='#' data-dbid='' id='' class='step' onclick='selectStep(event)'>#</a><th>
-                                <th>
-                                    <textarea name='action[]' class="action form-control" rows="1" overflow="auto" disabled="disabled" onkeypress="reSizeTextarea(event)">Action description</textarea>
-                                </th>
-                                <th>
-                                    <textarea name='result[]' class="result form-control" rows="1" overflow="hidden" disabled="disabled" onkeypress="reSizeTextarea(event)">Result description</textarea>
-                                </th>
-                                <th>
+                                <td><a href='#' data-dbid='' id='' class='step' onclick='selectStep(event)'>#</a><td>
+                                <td>
+                                    <textarea name='action[]' class="action form-control" rows="1" overflow="auto" disabled="disabled">Action description</textarea>
+                                </td>
+                                <td>
+                                    <textarea name='result[]' class="result form-control" rows="1" overflow="hidden" disabled="disabled">Result description</textarea>
+                                </td>
+                                <td>
                                     <a href='#' data-dbid='' id='' class='step' onclick="removeStep(event)">
                                         <span class="glyphicon glyphicon-remove" style="color:red;"></span>
                                     </a>
-                                </th>
+                                </td>
                             </tr>
                         </table>
                     </div>
+                    <!--
                     <div class="uploadContainer">
                         <form class="form-group" data-formid='newStepActionFile'  method="post" enctype="multipart/form-data" id="fullSize" onchange="loadFiles(event,'action')">
                             <input type="file" name="fileToUploadStepAction" id="fileUploadStepAction" multiple>
@@ -153,6 +154,7 @@
                         <ul></ul>
                         </form>
                     </div>
+                    -->
                 </div>
             </div>
         </div>
@@ -192,7 +194,7 @@
 			</tr>
 		</table>
     <div class='AreaField' id="fullWidth">
-        <h3>Areas: </h3>
+        <h3>Tags: </h3>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
@@ -224,7 +226,7 @@
             </h3>
         </div>
         <div class="uploadContent">
-            <div style="width:100%;min-height:70px;">
+            <div style="min-height:70px;" id="fullWidth">
                 <div id="cont-50-left">
                     <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data"id="fullWidth">
                         Select file to upload:
@@ -232,7 +234,7 @@
                         <button class="btn btn-default btn-xs" type="button" onclick="updateFilesToCase({{loadcase[0][0]}})" id="cont-50-left">Upload</button>
                     </form>
                 </div>
-                <div id="cont-50-left" class="fileContainer">
+                <div id="cont-50-right" class="fileContainer">
                     <table class="caseFiles" id="fullWidth">
                         {% if files != "empty" %}
                         {% for k in files %}
@@ -241,7 +243,7 @@
                                     <a href="{{ url_for('uploads',filename='case/'+k[3]) }}" download>
                                         {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" or k[4] == "doc" or k[4] == "docx" or k[4] == "xls" or k[4] == "xlsx" or k[4] == "csv" or k[4] == "xlt" %}
                                         <span class="glyphicon glyphicon-file"></span>
-                                        {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                                        {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" or k[4] == "JPG" or k[4] == "JPEG" or k[4] == "PNG" %}
                                         <span class="glyphicon glyphicon-picture"></span>
                                         {% elif k[4] == "avi" or k[4] == "mp4" %}
                                         <span class="glyphicon glyphicon-film"></span>
@@ -267,7 +269,7 @@
             </div>
             <div class="imgFiles">
                 {% for k in files %}
-                {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" or k[4] == "JPG" or k[4] == "JPEG" or k[4] == "PNG" %}
                     <div class="responsive" data-fileid='{{k[0]}}' id="img">
                       <div class="img">
                         <a target="_blank" href="{{ url_for('uploads',filename='case/'+k[3]) }}" download>
@@ -309,7 +311,7 @@
 		</tr>
 	</table>
     <div class='AreaField' id="fullWidth">
-        <h3>Areas: </h3>
+        <h3>Tags: </h3>
         <table>
             {% for k in areas %}
                 {% if loop.index == 1 %}
@@ -341,7 +343,7 @@
             </h3>
         </div>
         <div class="uploadContent">
-            <div style="width:100%;min-height:75px;">
+            <div style="width:100%;min-height:75px;float:left;">
                 <div id="fullWidth">
                     <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data" id="fullWidth">
                         Select file to upload:

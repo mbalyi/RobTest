@@ -1,28 +1,0 @@
-Test runs	Were these files already processed?	Original Number of files in the database	Number of threads	Number of files	Time to load for processing	AVG time / file	Events Detected	Flights Detected	Total Elasped Time to process logged on database	Elasped time on UI
-1	no	0	8	55		22			1216	3:59
-2			16			42	60	82	2363	3:53
-3			24			74			4104	3:54
-4			32			79	60	82	4357	3:25
-5			8			24	60	82	1336	4:21
-6			16			44	60	82	2456	4:01
-7			24			70	60	82	3866	3:48
-8			32			76	60	82	4207	3:23
-9			8			20	60	82	1126	3:52
-10			16			44	52	82	2883	4:13
-11			24			67	60	82	3713	3:39
-12			32			96	60	82	5305	3:52
-13			8			22	60	82	1213	4:08
-14			16			51	52	82	2859	4:23
-15			24			61	60	82	3370	3:11
-16			32			76	60	82	4207	3:12
-
-
-Test runs	Were these files already processed?	Original Number of files in the database	Number of threads	Number of files	Time to load for processing	AVG time / file	Events Detected	Flights Detected	Total Elasped Time to process logged on database	Elasped time on UI
-1	yes	7000 8	55	62	60	82	3450	7:51							
-2			16		63	60	82	3477	5:59
-3			24		105	60	82	5808	6:35
-4			32		145	59	81	7837	10:52
-1			8		47	60	82	2607	8:39							
-2			16		81	60	82	4455	7:42
-3			24		126	60	82	6975	7:07
-4			32		134	59	81	7422	6:04

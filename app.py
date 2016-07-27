@@ -19,9 +19,11 @@ def login(active=None):
 
 @app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
 def uploads(filename):
-	return send_from_directory("./uploads/", filename)
-	
-
+	if os.path.isdir(filename):
+		return "dir"
+	else:
+		print("wacap?")
+		return send_from_directory("./uploads/", filename)
 	
 @app.route('/home', methods=['GET', 'POST'])
 def login_form():
@@ -99,28 +101,28 @@ def get_step(ID,mode):
 	stepIds=[]
 	for k in query:
 		stepIds=k[0]
-	pics=DB.getStepPics(stepIds=stepIds)
-	pics=list(pics)
+	#pics=DB.getStepPics(stepIds=stepIds)
+	#pics=list(pics)
 	query=list(query)
 	iterator=0
 	if mode == "get_step":
-		for k in query:
-			k=list(k)
-			for l in pics:
-				for j in l:
-					if j[5] in k[1]:
-						string = "<img src='"+j[2]+"' alt='"+j[3]+"' class='img-rounded' style='max-height:140px;max-width:140px;'>"
-						k[1]=k[1].replace(j[5], string)
-						j=['<-default->','<-default->','<-default->','<-default->','<-default->','<-default->']
-					if j[5] in k[2]:
-						string = "<img src='"+j[2]+"' alt='"+j[3]+"' class='img-rounded' style='max-height:140px;max-width:140px;'>"
-						k[2]=k[2].replace(j[5], string)
-						j=['<-default->','<-default->','<-default->','<-default->','<-default->','<-default->']
-			query[iterator]=k
-			iterator=iterator+1
+		#for k in query:
+		#	k=list(k)
+		#	for l in pics:
+		#		for j in l:
+		#			if j[5] in k[1]:
+		#				string = "<img src='"+j[2]+"' alt='"+j[3]+"' class='img-rounded' style='max-height:140px;max-width:140px;'>"
+		#				k[1]=k[1].replace(j[5], string)
+		#				j=['<-default->','<-default->','<-default->','<-default->','<-default->','<-default->']
+		#			if j[5] in k[2]:
+		#				string = "<img src='"+j[2]+"' alt='"+j[3]+"' class='img-rounded' style='max-height:140px;max-width:140px;'>"
+		#				k[2]=k[2].replace(j[5], string)
+		#				j=['<-default->','<-default->','<-default->','<-default->','<-default->','<-default->']
+		#	query[iterator]=k
+		#	iterator=iterator+1
 		return render_template('step.html', step=query)
 	elif mode == "editStep":
-		return render_template('step.html', editablestep=query, pics=pics[0])
+		return render_template('step.html', editablestep=query) #, pics=pics[0])
 		
 @app.route('/getStep/<int:caseId>', methods=['GET'])
 def getStep(caseId):
@@ -904,12 +906,10 @@ def upload_step_files(Id,mode,replaceTag):
 		UPLOAD_FOLDER = './uploads/step/result/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
-		print(request.form['name'])
 		if request.form['name'] == '':
 			return "No selected file"
 		if allowed_file(request.form['name']):
 			name=UP.nameExists(path=os.path.join(app.config['UPLOAD_FOLDER'], request.form['name']),mode=mode,name=request.form['name'],folder=app.config['UPLOAD_FOLDER'])
-			print(name)
 			if request.form['name'].rsplit('.', 1)[1] in PIC_EXTENSIONS:
 				file = open(os.path.join(app.config['UPLOAD_FOLDER'], name),'wb')
 				file.write(base64.b64decode(request.form['context'].split(',')[1]))
@@ -923,6 +923,23 @@ def upload_step_files(Id,mode,replaceTag):
 			if mode == "action" or mode == "result":
 				result=UP.saveStepFile(stepId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1],replaceTag=replaceTag,status=mode)
 				return "OK"
+
+@app.route('/upload_file_area', methods=['POST'])
+def upload_file_area():
+	UPLOAD_FOLDER = './uploads/step/'
+	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+	if request.method == 'POST':
+		f=request.files.getlist("upload")[0]
+		if f.filename == '':
+			return "No selected file"
+		if allowed_file(f.filename):
+			name=UP.nameExists(path=os.path.join(app.config['UPLOAD_FOLDER'], f.filename),mode="step",name=f.filename,folder=app.config['UPLOAD_FOLDER'])
+			f.save(os.path.join(app.config['UPLOAD_FOLDER'], name))
+			result=UP.saveStepFile(url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=f.filename.rsplit('.', 1)[1],status="step")
+			link=result[1].split('/')[1]+"/"+result[1].split('/')[2]+"/"+result[1].split('/')[3]
+			return jsonify(link=link)
+		return None
+	return None
 				
 @app.route('/fileProperty/<int:exeId>/<int:stepId>', methods=['GET'])	
 def fileProperty(exeId,stepId):

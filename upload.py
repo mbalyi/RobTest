@@ -1,5 +1,14 @@
 import sqlite3, json, os, base64
 
+class DBConnection:
+	def __entry__(self):
+		self.conn = sqlite3.connect("ROB_2016.s3db")
+		return conn.cursor()
+		
+	def __exit__(self):
+		self.conn.commit()
+		self.conn.close()
+
 class Upload:
 	def getTestFiles(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -116,6 +125,15 @@ class Upload:
 			else:
 				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
 				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
+		if kwargs['mode'] == "step":
+			c.execute("SELECT * FROM Uploads_Step WHERE File_URL=?",[kwargs['path']])
+			result=c.fetchone()
+			conn.commit()
+			if result == None:
+				return kwargs['name']
+			else:
+				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
+				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
 	
 	def saveSetFile(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -161,10 +179,8 @@ class Upload:
 		return name[0]
 		
 	def deleteFileExe(self,**kwargs):
-		conn= sqlite3.connect("ROB_2016.s3db")
-		c = conn.cursor()
-		c.execute("DELETE FROM Uploads_Execution WHERE UploadExeId=?",[kwargs['fileId']])
-		conn.commit()
+		with DBConnection as cursor:
+			cursor.execute("DELETE FROM Uploads_Execution WHERE UploadExeId=?",[kwargs['fileId']])
 		return "success"
 	
 	def saveCaseFile(self,**kwargs):
@@ -195,9 +211,9 @@ class Upload:
 	def saveStepFile(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Uploads_Step (StepId,File_URL,FileName,Extension,ReplaceTag,Status) VALUES (?,?,?,?,?,?)",[kwargs['stepId'],kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['replaceTag'],kwargs['status']])
+		c.execute("INSERT INTO Uploads_Step (File_URL,FileName,Extension,Status) VALUES (?,?,?,?)",[kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['status']])
 		conn.commit()
-		c.execute("SELECT * FROM Uploads_Step WHERE StepId=? AND File_URL=? AND FileName=? AND Extension=? AND ReplaceTag=? AND Status=?",[kwargs['stepId'],kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['replaceTag'],kwargs['status']])
+		c.execute("SELECT * FROM Uploads_Step WHERE File_URL=? AND FileName=? AND Extension=? AND Status=?",[kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['status']])
 		result = c.fetchone()
 		conn.commit()
 		return result

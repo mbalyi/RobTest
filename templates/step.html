@@ -10,12 +10,12 @@
     <div class="stepDragg" draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
         <div style="width:100%;">
             <table style='width:100%'>
-                <tr>
+                <tr id="fullWidth">
                     <td><a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='step' onclick='selectStep(event)'>#</a><td>
-                    <td>
+                    <td id="halfWidth-1">
                         <textarea name='action[]' class="action form-control" id='{{k[0]}}' rows="2" overflow="auto" onkeypress="reSizeTextarea(event)">{{k[1]}}</textarea>
                     </td>
-                    <td>
+                    <td id="halfWidth-1">
                         <textarea name='result[]' class="result form-control" rows="2" id='{{k[0]}}' overflow="hidden" onkeypress="reSizeTextarea(event)">{{k[2]}}</textarea>
                     </td>
                     <td>

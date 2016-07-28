@@ -18,6 +18,9 @@
 #halfWidth{
     width:50%;
 }
+#halfWidth-1{
+    max-width:49%;
+}
 
 #fullHeight{
     height:100%;

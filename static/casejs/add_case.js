@@ -29,14 +29,14 @@ function add_step(){
     <div class='stepDragg' draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'>
         <div id='fullWidth'>
             <table id='fullWidth'>
-                <tr>
+                <tr id='fullWidth'>
                     <td>
                         <a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='step' onclick='selectStep(event)'>#</a>
                     </td>
-                    <td>
+                    <td id='halfWidth-1'>
                         <textarea name='action[]' class='action form-control' rows='1' overflow='auto' onkeypress='reSizeTextarea(event)' style='resize:none;'>Action description</textarea>
                     </td>
-                    <td>
+                    <td id='halfWidth-1'>
                         <textarea name='result[]' class='result form-control' rows='1' overflow='hidden' onkeypress='reSizeTextarea(event)' style='resize:none;'>Result description</textarea>
                     </td>
                     <td>

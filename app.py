@@ -6,6 +6,7 @@ from flask import Flask, render_template, session, redirect, url_for, escape, re
 from werkzeug.utils import secure_filename
 #from flask_debugtoolbar import DebugToolbarExtension
 #from docx import Document
+#from PIL import Image
 
 UPLOAD_FOLDER = './uploads/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'csv','doc', 'docx', 'xlsx', 'xlt', 'xls', 'PNG', 'JPG', 'JPEG'])
@@ -69,6 +70,7 @@ def caseForm(projectId):
 	
 @app.route('/save_case', methods=['POST'])
 def save_case():
+	print(request.form.getlist('action[]'))
 	ID=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],area=request.form.getlist('areaBox'),projectId=projectSession())
 	DB.save_steps(id=ID,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'),projectId=projectSession())
 	return json.dumps(ID)
@@ -98,31 +100,34 @@ def load_case(ID,mode):
 @app.route('/get_step/<int:ID>/<mode>', methods=['GET'])
 def get_step(ID,mode):
 	query=DB.get_step_parameters(id=ID,projectId=projectSession())
-	stepIds=[]
-	for k in query:
-		stepIds=k[0]
-	#pics=DB.getStepPics(stepIds=stepIds)
-	#pics=list(pics)
-	query=list(query)
-	iterator=0
-	if mode == "get_step":
-		#for k in query:
-		#	k=list(k)
-		#	for l in pics:
-		#		for j in l:
-		#			if j[5] in k[1]:
-		#				string = "<img src='"+j[2]+"' alt='"+j[3]+"' class='img-rounded' style='max-height:140px;max-width:140px;'>"
-		#				k[1]=k[1].replace(j[5], string)
-		#				j=['<-default->','<-default->','<-default->','<-default->','<-default->','<-default->']
-		#			if j[5] in k[2]:
-		#				string = "<img src='"+j[2]+"' alt='"+j[3]+"' class='img-rounded' style='max-height:140px;max-width:140px;'>"
-		#				k[2]=k[2].replace(j[5], string)
-		#				j=['<-default->','<-default->','<-default->','<-default->','<-default->','<-default->']
-		#	query[iterator]=k
-		#	iterator=iterator+1
-		return render_template('step.html', step=query)
-	elif mode == "editStep":
-		return render_template('step.html', editablestep=query) #, pics=pics[0])
+	if query == False:
+		return False
+	else:
+		stepIds=[]
+		for k in query:
+			stepIds=k[0]
+		#pics=DB.getStepPics(stepIds=stepIds)
+		#pics=list(pics)
+		query=list(query)
+		iterator=0
+		if mode == "get_step":
+			#for k in query:
+			#	k=list(k)
+			#	for l in pics:
+			#		for j in l:
+			#			if j[5] in k[1]:
+			#				string = "<img src='"+j[2]+"' alt='"+j[3]+"' class='img-rounded' style='max-height:140px;max-width:140px;'>"
+			#				k[1]=k[1].replace(j[5], string)
+			#				j=['<-default->','<-default->','<-default->','<-default->','<-default->','<-default->']
+			#			if j[5] in k[2]:
+			#				string = "<img src='"+j[2]+"' alt='"+j[3]+"' class='img-rounded' style='max-height:140px;max-width:140px;'>"
+			#				k[2]=k[2].replace(j[5], string)
+			#				j=['<-default->','<-default->','<-default->','<-default->','<-default->','<-default->']
+			#	query[iterator]=k
+			#	iterator=iterator+1
+			return render_template('step.html', step=query)
+		elif mode == "editStep":
+			return render_template('step.html', editablestep=query) #, pics=pics[0])
 		
 @app.route('/getStep/<int:caseId>', methods=['GET'])
 def getStep(caseId):
@@ -929,7 +934,8 @@ def upload_file_area():
 	UPLOAD_FOLDER = './uploads/step/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
-		f=request.files.getlist("upload")[0]
+		print(request.files.getlist("image"))
+		f=request.files.getlist("image")[0]
 		if f.filename == '':
 			return "No selected file"
 		if allowed_file(f.filename):
@@ -937,7 +943,9 @@ def upload_file_area():
 			f.save(os.path.join(app.config['UPLOAD_FOLDER'], name))
 			result=UP.saveStepFile(url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=f.filename.rsplit('.', 1)[1],status="step")
 			link=result[1].split('/')[1]+"/"+result[1].split('/')[2]+"/"+result[1].split('/')[3]
-			return jsonify(link=link)
+			data="{'type': 'image\\/"+result[3].rsplit('.')[0]+"','name:'"+name+"','link': '"+link+"'"
+			print(data)
+			return jsonify(data=data)
 		return None
 	return None
 				

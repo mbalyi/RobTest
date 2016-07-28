@@ -44,6 +44,17 @@
 .result{
     resize:none;
 }
+.trumbowyg-box{
+    min-height: 100px !important;
+}
+
+.trumbowyg-editor{
+    min-height: 100px !important;
+}
+
+.trumbowyg-textarea{
+    min-height: 100px !important;
+}
 
 .uploadContainer{
     height:30px;

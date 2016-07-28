@@ -39,11 +39,19 @@
     <!-- <script type='text/javascript' src="../bower_components/jquery/dist/jquery.min.js"></script> -->
 
     <!-- Bootstrap Core JavaScript -->
-    <script type='text/javascript' src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}/"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
 
     <!-- Metis Menu Plugin JavaScript -->
-    <script type='text/javascript' src="{{ url_for('static', filename='bower_components/metisMenu/dist/metisMenu.min.js') }}/"></script>
-
+    <script type='text/javascript' src="{{ url_for('static', filename='bower_components/metisMenu/dist/metisMenu.min.js') }}"></script>
+    
+    <!-- Trumbowyg -->
+    <script type='text/javascript' src="{{ url_for('static', filename='dist/trumbowyg.min.js') }}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='dist/trumbowyg.js') }}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='dist/plugins/base64/trumbowyg.base64.js') }}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='dist/plugins/upload/trumbowyg.upload.js') }}"></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/ui/trumbowyg.min.css') }}">
+    
     <!-- Morris Charts JavaScript -->
     <!-- <script type='text/javascript' src="{{ url_for('static', filename='bower_components/raphael/raphael-min.js') }}/"></script>
     <script type='text/javascript' src="{{ url_for('static', filename='bower_components/morrisjs/morris.min.js') }}/"></script>

@@ -38,7 +38,17 @@ class Database:
 		c = conn.cursor()
 		c.execute("INSERT INTO Cases (Title,Priority,Data,ProjectId,CaseUpdated,Active) VALUES (?,?,?,?,?,?)",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId'],0,1])
 		conn.commit()
-		c.execute("SELECT CaseId FROM Cases WHERE Title=? AND Priority=? AND Data=? AND ProjectId=? AND Active=? AND CaseUpdated=?",[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId'],1,0])
+		c.execute("""
+			SELECT CaseId 
+			FROM Cases 
+			WHERE Title=? 
+			AND Priority=? 
+			AND Data=? 
+			AND ProjectId=? 
+			AND Active=? 
+			AND CaseUpdated=? 
+			ORDER BY CaseId DESC""",
+			[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId'],1,0])
 		CaseID=c.fetchone()
 		conn.commit()
 		for k in kwargs['area']:
@@ -55,7 +65,7 @@ class Database:
 		for k,l in zip(actions,results):
 			c.execute("INSERT INTO Steps (Action,Result,ProjectId) VALUES (?,?,?)",[k,l,kwargs['projectId']])
 			conn.commit()
-			c.execute("SELECT StepId FROM Steps WHERE Action=? AND Result=? AND ProjectId=?",[k,l,kwargs['projectId']])
+			c.execute("SELECT StepId FROM Steps WHERE Action=? AND Result=? AND ProjectId=? ORDER BY StepId DESC",[k,l,kwargs['projectId']])
 			stepID=c.fetchone()
 			step.append(stepID[0])
 		for k in step:
@@ -77,16 +87,20 @@ class Database:
 		result=c.fetchall()
 		conn.commit()
 		case_parameter = []
-		for k in result:
-			c.execute("SELECT * FROM Steps WHERE StepId=? AND ProjectId=?",[k[0],kwargs['projectId']])
-			tupleList=c.fetchone()
-			strList=list(tupleList)
-			strList[1]=strList[1].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
-			strList[2]=strList[2].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
-			tupleList=tuple(strList)
-			case_parameter.append(tupleList)
-			conn.commit()
-		return case_parameter
+		if result != None:
+			for k in result:
+				c.execute("SELECT * FROM Steps WHERE StepId=? AND ProjectId=?",[k[0],kwargs['projectId']])
+				tupleList=c.fetchone()
+				print(tupleList)
+				strList=list(tupleList)
+				strList[1]=strList[1].encode('ascii', 'replace').decode("utf-8", "replace")
+				strList[2]=strList[2].encode('ascii', 'replace').decode("utf-8", "replace")
+				tupleList=tuple(strList)
+				case_parameter.append(tupleList)
+				conn.commit()
+			return case_parameter
+		else:
+			return False
 	
 	def deleteCase(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -104,8 +118,6 @@ class Database:
 		conn.commit()
 		for k in result:
 			c.execute("DELETE FROM Steps WHERE StepId=? AND ProjectId=?",[k[0],kwargs['projectId']])
-			conn.commit()
-			c.execute("DELETE FROM Uploads_Step WHERE StepId=?",[k[0]])
 			conn.commit()
 	
 	def deleteCaseLogic(self, **kwargs):
@@ -197,9 +209,23 @@ class Database:
 	def save_object(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Objects (ObjectName,ObjectHardware,ObjectDesc,ProjectId,ObjectVersion,Active) VALUES (?,?,?,?,?,?)",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version'],1])
+		c.execute("""
+			INSERT INTO Objects 
+			(ObjectName,ObjectHardware,ObjectDesc,ProjectId,ObjectVersion,Active) 
+			VALUES (?,?,?,?,?,?)""",
+			[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version'],1])
 		conn.commit()
-		c.execute("SELECT ObjectId FROM Objects WHERE ObjectName=? AND ObjectHardware=? AND ObjectDesc=? AND ProjectId=? AND ObjectVersion=? AND Active=?",[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version'],1])
+		c.execute("""
+			SELECT ObjectId 
+			FROM Objects 
+			WHERE ObjectName=? 
+			AND ObjectHardware=? 
+			AND ObjectDesc=? 
+			AND ProjectId=? 
+			AND ObjectVersion=? 
+			AND Active=?
+			ORDER BY ObjectId DESC""",
+			[kwargs['name'],kwargs['hardware'],kwargs['desc'],kwargs['projectId'],kwargs['version'],1])
 		ObjectID=c.fetchone()
 		conn.commit()
 		for k in kwargs['areas']:
@@ -420,7 +446,6 @@ class Database:
 	def saveExe(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		#c.execute("INSERT INTO Execution (ExeName,ExeDate) VALUES (?,?)",[kwargs['name'],kwargs['date']])
 		c.execute("INSERT INTO Execution (ExeName,ProjectId) VALUES (?,?)",[kwargs['name'],kwargs['projectId']])
 		conn.commit()
 		c.execute("SELECT ExecutionId FROM Execution WHERE ExeName=? AND ProjectId=? ORDER BY ExecutionId DESC",[kwargs['name'],kwargs['projectId']])
@@ -588,7 +613,15 @@ class Database:
 	def getExeOBHist(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT EX.ExecutionId,EX.ExeName,OB.ObjectName FROM Execution AS EX LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.Active=1 AND EX.ProjectId=? AND EX.ExecutionId=?",[kwargs['projectId'],kwargs['exeId']])
+		c.execute("""
+			SELECT EX.ExecutionId,EX.ExeName,OB.ObjectName 
+			FROM Execution AS EX 
+			LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId 
+			LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId 
+			WHERE OB.Active=1 
+			AND EX.ProjectId=? 
+			AND EX.ExecutionId=?""",
+			[kwargs['projectId'],kwargs['exeId']])
 		result=c.fetchone()
 		conn.commit()
 		return result
@@ -596,7 +629,17 @@ class Database:
 	def getExeOBLimit(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		query="SELECT EX.ExecutionId,EX.ExeName,OB.ObjectName FROM Execution AS EX LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId LEFT JOIN Case_Execution AS CE ON CE.ExecutionId=EX.ExecutionId WHERE OB.Active=1 AND EX.ProjectId=? AND CE.CaseId=? ORDER BY OB.ObjectId LIMIT "+str(kwargs['limit'])
+		query="""
+			SELECT EX.ExecutionId,EX.ExeName,OB.ObjectName 
+			FROM Execution AS EX 
+			LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId 
+			LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId 
+			LEFT JOIN Case_Execution AS CE ON CE.ExecutionId=EX.ExecutionId 
+			WHERE OB.Active=1 
+			AND EX.ProjectId=? 
+			AND CE.CaseId=? 
+			ORDER BY OB.ObjectId 
+			LIMIT """+str(kwargs['limit'])
 		c.execute(query,[kwargs['projectId'],kwargs['caseIds'][0][0]])
 		result=c.fetchall()
 		conn.commit()
@@ -629,7 +672,12 @@ class Database:
 	def getExeComments(self,**kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT SE.ExecutionId,SE.Comment,CE.CaseId,CE.Id FROM Step_Execution AS SE LEFT JOIN Case_Execution AS CE ON CE.Id=SE.Case_ExecutionId WHERE SE.ExecutionId=?",[kwargs['exeId']])
+		c.execute("""
+			SELECT SE.ExecutionId,SE.Comment,CE.CaseId,CE.Id 
+			FROM Step_Execution AS SE 
+			LEFT JOIN Case_Execution AS CE ON CE.Id=SE.Case_ExecutionId 
+			WHERE SE.ExecutionId=?""",
+			[kwargs['exeId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -637,7 +685,13 @@ class Database:
 	def getExeStepFiles(self,**kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT UT.UploadTestId,UT.File_URL,UT.FileName,CE.CaseId,CE.Id FROM Uploads_Test AS UT LEFT JOIN Step_Execution AS SE ON UT.Step_ExecutionId=SE.Id LEFT JOIN Case_Execution AS CE ON CE.Id=SE.Case_ExecutionId WHERE SE.ExecutionId=?",[kwargs['exeId']])
+		c.execute("""
+			SELECT UT.UploadTestId,UT.File_URL,UT.FileName,CE.CaseId,CE.Id 
+			FROM Uploads_Test AS UT 
+			LEFT JOIN Step_Execution AS SE ON UT.Step_ExecutionId=SE.Id 
+			LEFT JOIN Case_Execution AS CE ON CE.Id=SE.Case_ExecutionId 
+			WHERE SE.ExecutionId=?""",
+			[kwargs['exeId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -731,7 +785,15 @@ class Database:
 		objectId=c.fetchall()
 		objectId=objectId[-1]
 		conn.commit()
-		query="SELECT OB.ObjectId,OB.ObjectName,OB.ObjectVersion,Exe.ExecutionId,Exe.ExeName FROM Exe_Object AS EO LEFT JOIN Execution AS Exe ON EO.ExecutionId=Exe.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND Exe.ProjectId=? AND OB.ObjectId>=? ORDER BY OB.ObjectId DESC"
+		query="""
+			SELECT OB.ObjectId,OB.ObjectName,OB.ObjectVersion,Exe.ExecutionId,Exe.ExeName 
+			FROM Exe_Object AS EO 
+			LEFT JOIN Execution AS Exe ON EO.ExecutionId=Exe.ExecutionId 
+			LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId 
+			WHERE OB.ProjectId=? 
+			AND Exe.ProjectId=? 
+			AND OB.ObjectId>=? 
+			ORDER BY OB.ObjectId DESC"""
 		c.execute(query,[kwargs['projectId'],kwargs['projectId'],objectId[0]])
 		ExeObjectIds = c.fetchall()
 		conn.commit()
@@ -742,8 +804,14 @@ class Database:
 		c = conn.cursor()
 		request=[]
 		for k in kwargs['data']:
-			#c.execute("SELECT CE.ExecutionId,CE.Result,CE.CaseId,CA.Title,SE.StepId,SE.Result FROM Case_Execution AS CE LEFT JOIN Cases AS CA ON CE.CaseId=CA.CaseId LEFT JOIN Step_Execution AS SE ON CE.Id=SE.Case_executionId WHERE CA.ProjectId=? AND CE.ExecutionId=?",[kwargs['projectId'],k[3]])
-			c.execute("SELECT CE.ExecutionId,CE.Result,CE.CaseId,CA.Title FROM Case_Execution AS CE LEFT JOIN Cases AS CA ON CE.CaseId=CA.CaseId WHERE CA.ProjectId=? AND CE.ExecutionId=? ORDER BY CE.Id DESC",[kwargs['projectId'],k[3]])
+			c.execute("""
+				SELECT CE.ExecutionId,CE.Result,CE.CaseId,CA.Title 
+				FROM Case_Execution AS CE 
+				LEFT JOIN Cases AS CA ON CE.CaseId=CA.CaseId 
+				WHERE CA.ProjectId=? 
+				AND CE.ExecutionId=? 
+				ORDER BY CE.Id DESC""",
+				[kwargs['projectId'],k[3]])
 			request+=c.fetchall()
 			conn.commit()
 		return request
@@ -774,7 +842,16 @@ class Database:
 		objectId=c.fetchall()
 		objectId=objectId[-1]
 		conn.commit()
-		query="SELECT CE.ExecutionId,CE.CaseId,CE.Result,CE.title,EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE EX.ProjectId=? AND OB.ObjectId>=? ORDER BY OB.ObjectId DESC"
+		query="""
+			SELECT CE.ExecutionId,CE.CaseId,CE.Result,CE.title,
+			EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion 
+			FROM Case_Execution AS CE 
+			LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId 
+			LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId 
+			LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId 
+			WHERE EX.ProjectId=? 
+			AND OB.ObjectId>=? 
+			ORDER BY OB.ObjectId DESC"""
 		c.execute(query,[kwargs['projectId'],objectId[0]])
 		result=c.fetchall()
 		conn.commit()
@@ -784,7 +861,6 @@ class Database:
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		c.execute("SELECT * FROM Objects WHERE ProjectId=? AND Active=1 ORDER BY ObjectId DESC LIMIT 20",[kwargs['projectId']])
-		#c.execute("SELECT EO.Id,EO.ExecutionId,EX.ExeName,EO.ObjectId,OB.ObjectName FROM Exe_Object AS EO LEFT JOIN Execution AS EX ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId ORDER BY OB.ObjectId WHERE OB.ProjectId=? AND OB.Active=1 DESC LIMIT 20",[kwargs['projectId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -792,11 +868,28 @@ class Database:
 	def reloadChartFilterData(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		#c.execute("SELECT * FROM Objects WHERE ProjectId=? AND Active=1 ORDER BY ObjectId DESC LIMIT 20",[kwargs['projectId']])
 		if kwargs['obId'] != 0:
-			c.execute("SELECT EO.Id,EO.ExecutionId,EX.ExeName,EO.ObjectId,OB.ObjectName FROM Exe_Object AS EO LEFT JOIN Execution AS EX ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND OB.Active=1 AND OB.ObjectId=? ORDER BY OB.ObjectId DESC",[kwargs['projectId'],kwargs['obId']])
+			c.execute("""
+				SELECT EO.Id,EO.ExecutionId,EX.ExeName,EO.ObjectId,OB.ObjectName 
+				FROM Exe_Object AS EO 
+				LEFT JOIN Execution AS EX ON EX.ExecutionId=EO.ExecutionId 
+				LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId 
+				WHERE OB.ProjectId=? 
+				AND OB.Active=1 
+				AND OB.ObjectId=? 
+				ORDER BY OB.ObjectId DESC""",
+				[kwargs['projectId'],kwargs['obId']])
 		else:
-			c.execute("SELECT EO.Id,EO.ExecutionId,EX.ExeName,EO.ObjectId,OB.ObjectName FROM Exe_Object AS EO LEFT JOIN Execution AS EX ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE OB.ProjectId=? AND OB.Active=1 AND OB.ObjectId IS NOT NULL ORDER BY OB.ObjectId DESC",[kwargs['projectId']])
+			c.execute("""
+				SELECT EO.Id,EO.ExecutionId,EX.ExeName,EO.ObjectId,OB.ObjectName 
+				FROM Exe_Object AS EO 
+				LEFT JOIN Execution AS EX ON EX.ExecutionId=EO.ExecutionId 
+				LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId 
+				WHERE OB.ProjectId=? 
+				AND OB.Active=1 
+				AND OB.ObjectId IS NOT NULL 
+				ORDER BY OB.ObjectId DESC""",
+				[kwargs['projectId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -810,7 +903,11 @@ class Database:
 		objectId=objectId[-1]
 		conn.commit()
 		if kwargs['areaId'] == 0:
-			query = "SELECT CE.Result,OB.ObjectName,OB.ObjectVersion,OB.ObjectId,CE.Id FROM Case_Execution AS CE LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId WHERE"
+			query = """
+				SELECT CE.Result,OB.ObjectName,OB.ObjectVersion,OB.ObjectId,CE.Id FROM Case_Execution AS CE 
+				LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId 
+				LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId 
+				WHERE"""
 			if kwargs['objectId'] != 0:
 				query+=" EO.ObjectId="
 				query+=str(kwargs['objectId'])
@@ -825,8 +922,13 @@ class Database:
 				query+=" CE.Result IS NOT NULL"
 				kwargs['status']="NOT NULL"
 		else:
-			query = "SELECT CE.Result,OB.ObjectName,OB.ObjectVersion,OB.ObjectId,CE.Id FROM Case_Execution AS CE LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId"
-			query+= " LEFT JOIN Area_Object AS AO ON OB.ObjectId=AO.ObjectId WHERE"
+			query = """
+				SELECT CE.Result,OB.ObjectName,OB.ObjectVersion,OB.ObjectId,CE.Id 
+				FROM Case_Execution AS CE 
+				LEFT JOIN Exe_Object AS EO ON CE.ExecutionId=EO.ExecutionId 
+				LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId
+				LEFT JOIN Area_Object AS AO ON OB.ObjectId=AO.ObjectId 
+				WHERE"""
 			if kwargs['objectId'] != 0:
 				query+=" EO.ObjectId="
 				query+=str(kwargs['objectId'])
@@ -865,7 +967,11 @@ class Database:
 	def getCaseArea(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT AR.AreaId,AR.AreaTitle FROM Area_Case AS AC LEFT JOIN Areas AS AR ON AC.AreaId=AR.AreaId WHERE AC.CaseId=?",[kwargs['caseId']])
+		c.execute("""
+			SELECT AR.AreaId,AR.AreaTitle FROM Area_Case AS AC 
+			LEFT JOIN Areas AS AR ON AC.AreaId=AR.AreaId 
+			WHERE AC.CaseId=?""",
+			[kwargs['caseId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -873,7 +979,12 @@ class Database:
 	def getExeArea(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT AR.AreaId,AR.AreaTitle FROM Area_Execution AS AE LEFT JOIN Areas AS AR ON AE.AreaId=AR.AreaId WHERE AE.ExecutionId=?",[kwargs['exeId']])
+		c.execute("""
+			SELECT AR.AreaId,AR.AreaTitle 
+			FROM Area_Execution AS AE 
+			LEFT JOIN Areas AS AR ON AE.AreaId=AR.AreaId 
+			WHERE AE.ExecutionId=?""",
+			[kwargs['exeId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -881,7 +992,12 @@ class Database:
 	def getSetArea(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT AR.AreaId,AR.AreaTitle FROM Area_Set AS ASE LEFT JOIN Areas AS AR ON ASE.AreaId=AR.AreaId WHERE ASE.SetId=?",[kwargs['setId']])
+		c.execute("""
+			SELECT AR.AreaId,AR.AreaTitle 
+			FROM Area_Set AS ASE 
+			LEFT JOIN Areas AS AR ON ASE.AreaId=AR.AreaId 
+			WHERE ASE.SetId=?""",
+			[kwargs['setId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -889,7 +1005,12 @@ class Database:
 	def getObjectArea(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT AR.AreaId,AR.AreaTitle FROM Area_Object AS AO LEFT JOIN Areas AS AR ON AO.AreaId=AR.AreaId WHERE AO.ObjectId=?",[kwargs['objectId']])
+		c.execute("""
+			SELECT AR.AreaId,AR.AreaTitle 
+			FROM Area_Object AS AO 
+			LEFT JOIN Areas AS AR ON AO.AreaId=AR.AreaId 
+			WHERE AO.ObjectId=?""",
+			[kwargs['objectId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -918,7 +1039,11 @@ class Database:
 	def getUsers(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT US.UserId,US.UserName,US.Active,Us.ProjectId,US.RoleId,RO.RoleName FROM Users AS US LEFT JOIN Roles AS RO ON US.RoleId=RO.RoleId")
+		c.execute("""
+			SELECT US.UserId,US.UserName,US.Active,Us.ProjectId,US.RoleId,RO.RoleName 
+			FROM Users AS US 
+			LEFT JOIN Roles AS RO ON US.RoleId=RO.RoleId
+			""")
 		result=c.fetchall()
 		conn.commit()
 		return result;
@@ -1025,7 +1150,12 @@ class Database:
 		conn.commit()
 		exes=[]
 		for k in exeIds:
-			query="SELECT EO.ExecutionId,EX.ExeName,OB.ObjectName FROM Exe_Object AS EO LEFT JOIN Execution AS EX ON EO.ExecutionId=EX.ExecutionId LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId WHERE EX.ExecutionId=?"
+			query="""
+				SELECT EO.ExecutionId,EX.ExeName,OB.ObjectName 
+				FROM Exe_Object AS EO 
+				LEFT JOIN Execution AS EX ON EO.ExecutionId=EX.ExecutionId 
+				LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId 
+				WHERE EX.ExecutionId=?"""
 			c.execute(query,[k[0]])
 			exes.append(c.fetchall())
 			conn.commit()
@@ -1110,7 +1240,13 @@ class Database:
 		temp=[]
 		for j in kwargs['exeIds']:
 			for k in j:
-				c.execute("SELECT ST.Action FROM Steps AS ST LEFT JOIN Case_Step AS CS ON ST.StepId=CS.StepId LEFT JOIN Case_Execution AS CE ON CE.CaseId=CS.CaseId WHERE CE.ExecutionId=?",[k[0]])
+				c.execute("""
+					SELECT ST.Action 
+					FROM Steps AS ST 
+					LEFT JOIN Case_Step AS CS ON ST.StepId=CS.StepId 
+					LEFT JOIN Case_Execution AS CE ON CE.CaseId=CS.CaseId 
+					WHERE CE.ExecutionId=?""",
+					[k[0]])
 				temp.append(c.fetchall())
 				conn.commit()
 		temp2=[]
@@ -1152,7 +1288,12 @@ class Database:
 	def getCaseResHist(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT ExecutionId,CaseId,Result,title FROM Case_Execution WHERE CaseId=? ORDER BY ExecutionId DESC",[kwargs['caseId']])
+		c.execute("""
+			SELECT ExecutionId,CaseId,Result,title 
+			FROM Case_Execution 
+			WHERE CaseId=? 
+			ORDER BY ExecutionId DESC""",
+			[kwargs['caseId']])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -1162,7 +1303,15 @@ class Database:
 		c = conn.cursor()
 		result=[]
 		for k in kwargs['cases']:
-			c.execute("SELECT EX.ExeName,OB.ObjectName FROM Case_Execution AS CE LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId WHERE CE.CaseId=? AND CE.ExecutionId=?",[k[1],k[0]])
+			c.execute("""
+				SELECT EX.ExeName,OB.ObjectName 
+				FROM Case_Execution AS CE 
+				LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId 
+				LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId 
+				LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId 
+				WHERE CE.CaseId=? 
+				AND CE.ExecutionId=?""",
+				[k[1],k[0]])
 			result.append(c.fetchall())
 			conn.commit()
 		return result

@@ -94,7 +94,7 @@ function cancelObjectAll(event){
 function deleteAllOb(){
     $.get("/deleteAllObject",function(data,status){
         if(status){
-            $(".objectManage").append(data);
+            $(".objectManage").empty().append(data);
         }
     });
 }
@@ -108,7 +108,7 @@ function cancelSetAll(event){
 function deleteAllSet(){
     $.get("/deleteAllSet",function(data,status){
         if(status){
-            $(".setManage").append(data);
+            $(".setManage").empty().append(data);
         }
     });
 }
@@ -122,7 +122,7 @@ function cancelCaseAll(event){
 function deleteAllCase(){
     $.get("/deleteAllCase",function(data,status){
         if(status){
-            $(".caseManage").append(data);
+            $(".caseManage").empty().append(data);
         }
     });
 }

@@ -25,27 +25,56 @@ function caseForm(checker){
 }
 
 function add_step(){
-    var html="<div class='stepDragg' draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'><div id='fullWidth'><table id='fullWidth'><tr><th><a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='step' onclick='selectStep(event)'>#</a></th>";
-    html+="<th><textarea name='action[]' class='action form-control' rows='1' overflow='auto' onkeypress='reSizeTextarea(event)' style='resize:none;'>Action description</textarea></th><th>";
-    html+="<textarea name='result[]' class='result form-control' rows='1' overflow='hidden' onkeypress='reSizeTextarea(event)' style='resize:none;'>Result description</textarea></th>"
-    html+="<th><a href='#' data-dbid='' id='' class='step' onclick='removeStep(event)'><span class='glyphicon glyphicon-remove' style='color:red;'></span></a></th></tr></table></div>";
-    html+="<div class='uploadContainer'><form class='form-group' data-formid='newStepActionFile'  method='post' enctype='multipart/form-data' id='fullSize'>";
-    html+="<input type='file' name='fileToUploadStep' id='fileUploadStepAction' multiple></form></div><div class='uploadContainer'>";
-    html+="<form class='form-group' data-formid='newStepResultFile'  method='post' enctype='multipart/form-data' id='fullSize'><input type='file' name='fileToUploadStep' id='fileUploadStepResult' multiple></form></div></div>";
+    var html=`
+    <div class='stepDragg' draggable='true' ondragstart='drag(event)' ondragover='dragHover(event)'>
+        <div id='fullWidth'>
+            <table id='fullWidth'>
+                <tr>
+                    <td>
+                        <a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='step' onclick='selectStep(event)'>#</a>
+                    </td>
+                    <td>
+                        <textarea name='action[]' class='action form-control' rows='1' overflow='auto' onkeypress='reSizeTextarea(event)' style='resize:none;'>Action description</textarea>
+                    </td>
+                    <td>
+                        <textarea name='result[]' class='result form-control' rows='1' overflow='hidden' onkeypress='reSizeTextarea(event)' style='resize:none;'>Result description</textarea>
+                    </td>
+                    <td>
+                        <a href='#' data-dbid='' id='' class='step' onclick='removeStep(event)'><span class='glyphicon glyphicon-remove' style='color:red;'></span></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class='uploadContainer'>
+            <form class='form-group' data-formid='newStepActionFile'  method='post' enctype='multipart/form-data' id='fullSize'>
+                <input type='file' name='fileToUploadStep' id='fileUploadStepAction' multiple></form></div><div class='uploadContainer'>
+                <form class='form-group' data-formid='newStepResultFile'  method='post' enctype='multipart/form-data' id='fullSize'>
+                <input type='file' name='fileToUploadStep' id='fileUploadStepResult' multiple>
+            </form>
+        </div>
+    </div>`;
 	return html;
 }
 
 function saveCase(){
     var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=number]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
     sendData = sendData+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&");
-    sendData = sendData+"&"+$("textarea").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
+    sendData = sendData+"&"+$("textarea").map(function(i,o){return o.name+"="+encodeURIComponent(o.value.replace(/"/g, "\'"))}).toArray().join("&");
+    console.log($("textarea").map(function(i,o){return o.name+"="+o.value.replace(/"/g, "\'")}).toArray().join("&"))
+    /*var fd = new FormData();
+    for(i=0; i<$("textarea").length;i++){
+        fd.append($($("textarea")[0]).attr('name'), $($("textarea")[0]).val());
+    }
+    fd.append('title', $("input[name=title]").val());
+    fd.append('data', $("input[name=data]").val());
+    fd.append('priority', $("input[name=priority]").val());*/
 	$.post("/save_case", sendData,
 	//$.post("/save_case", $("input").serialize()+"&"+$("textarea").serialize(),
 		function(data,status){
 			if(status){
-                if(document.getElementById("fileUploadCase").files.length > 0){
+                /*if(document.getElementById("fileUploadCase").files.length > 0){
                     updateFilesToCase(data);
-                }
+                }*/
                 uploadStep(data);
 				requestCase();
 				loadCase(data,"loadCase");
@@ -125,47 +154,116 @@ function deleteCase(caseId){
 }
 
 function textEditorEnabler(){
-    $(".action").froalaEditor({
-        imageUploadParam: 'upload',
-        imageUploadURL: '/upload_file_area',
-        imageUploadParams: {id: 'action'},
-        imageUploadMethod: 'POST',
-        imageAllowedTypes: ['jpeg', 'jpg', 'png'],
-        imageManagerPageSize: 20,
-        imageManagerScrollOffset: 10,
-        imageManagerLoadURL: "/uploads/step",
-        imageManagerLoadMethod: "GET",
-        fileAllowedTypes: ['/\|\<']
-
-      }).on('froalaEditor.image.error', function (e, editor, error, response) {
-        if (error.code == 1) { alert("Bad link."); }
-        else if (error.code == 2) { alert("No link in upload response."); }
-        else if (error.code == 3) { alert("Error during image upload."); }
-        else if (error.code == 4) { alert("Parsing response failed "+error); }
-        else if (error.code == 5) { alert("Image too text-large."); }
-        else if (error.code == 6) { alert("Invalid image type"); }
-        else if (error.code == 7) { alert("Image can be uploaded only to same domain in IE 8 and IE 9."); }
-      });
-    $(".result").froalaEditor({
-        imageUploadParam: 'upload',
-        imageUploadURL: '/upload_file_area',
-        imageUploadParams: {id: 'action'},
-        imageUploadMethod: 'POST',
-        imageAllowedTypes: ['jpeg', 'jpg', 'png'],
-        imageManagerPageSize: 20,
-        imageManagerScrollOffset: 10,
-        imageManagerLoadURL: "/uploads/step",
-        imageManagerLoadMethod: "GET",
-        fileAllowedTypes: ['/\|\<']
-        }).on('froalaEditor.image.error', function (e, editor, error, response) {
-        if (error.code == 1) { alert("Bad link."); }
-        else if (error.code == 2) { alert("No link in upload response."); }
-        else if (error.code == 3) { alert("Error during image upload."); }
-        else if (error.code == 4) { alert("Parsing response failed "+error); }
-        else if (error.code == 5) { alert("Image too text-large."); }
-        else if (error.code == 6) { alert("Invalid image type"); }
-        else if (error.code == 7) { alert("Image can be uploaded only to same domain in IE 8 and IE 9."); }
-      });
+    $(".action").trumbowyg({
+    btnsAdd: ['base64'],
+    btnsAdd: ['upload'],
+    btnsDef: {
+        align: {
+            dropdown: ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+            ico: 'justifyLeft'
+        },
+        image: {
+            dropdown: ['base64', 'upload', 'insertImage'],
+            ico: 'insertImage'
+        },
+        format: {
+            dropdown: ['bold', 'italic', 'underline', 'strikethrough'],
+            ico: 'bold'
+        },
+        list: {
+            dropdown: ['unorderedList', 'orderedList'],
+            ico: 'unorderedList'
+        },
+        script: {
+            dropdown: ['superscript', 'subscript'],
+            ico: 'superscript'
+        }
+    },
+    btns: [
+        ['viewHTML'],
+        ['formatting'],
+        ['format'],
+        ['script'],
+        ['link'],
+        ['image'],
+        ['align'],
+        ['list'],
+        ['horizontalRule'],
+        ['removeformat'],
+        ['fullscreen']
+    ],
+    plugins: {
+        // Add imagur parameters to upload plugin
+        upload: {
+            serverPath: '/upload_file_area',
+            fileFieldName: 'image',
+            headers: {
+                'Authorization': 'Client-ID 9e57cb1c4791cea'
+            },
+            urlPropertyName: 'href',
+            error: function (data){
+                console.log(data);
+                console.log(data.type);
+                console.log(data.name);
+            },
+            success: function (data){
+                console.log(data);
+                console.log(data.type);
+                console.log(data.name);
+            }
+        }
+    }
+});
+    $(".result").trumbowyg({
+    btnsAdd: ['base64'],
+    btnsAdd: ['upload'],
+    btnsDef: {
+        align: {
+            dropdown: ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+            ico: 'justifyLeft'
+        },
+        image: {
+            dropdown: ['base64', 'upload', 'insertImage'],
+            ico: 'insertImage'
+        },
+        format: {
+            dropdown: ['bold', 'italic', 'underline', 'strikethrough'],
+            ico: 'bold'
+        },
+        list: {
+            dropdown: ['unorderedList', 'orderedList'],
+            ico: 'unorderedList'
+        },
+        script: {
+            dropdown: ['superscript', 'subscript'],
+            ico: 'superscript'
+        }
+    },
+    btns: [
+        ['viewHTML'],
+        ['formatting'],
+        ['format'],
+        ['script'],
+        ['link'],
+        ['image'],
+        ['align'],
+        ['list'],
+        ['horizontalRule'],
+        ['removeformat'],
+        ['fullscreen']
+    ],
+    plugins: {
+        // Add imagur parameters to upload plugin
+        upload: {
+            serverPath: '/upload_file_area',
+            fileFieldName: 'image',
+            headers: {
+                'Authorization': 'Client-ID 9e57cb1c4791cea'
+            },
+            urlPropertyName: 'data.link'
+        }
+    }
+});
 }
 
 function enableForm(){  
@@ -276,9 +374,7 @@ function deleteStep(){
 $(function(){
 	$("body").on("click","#add_step",function(){
         $(".newStepPlace").append(add_step());
-        //testareaDesign();
-        $(".action").froalaEditor();
-        $(".result").froalaEditor();
+        textEditorEnabler();
         return;
 	});
 	$("body").on("click","a",function(event) {

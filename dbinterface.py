@@ -91,7 +91,6 @@ class Database:
 			for k in result:
 				c.execute("SELECT * FROM Steps WHERE StepId=? AND ProjectId=?",[k[0],kwargs['projectId']])
 				tupleList=c.fetchone()
-				print(tupleList)
 				strList=list(tupleList)
 				strList[1]=strList[1].encode('ascii', 'replace').decode("utf-8", "replace")
 				strList[2]=strList[2].encode('ascii', 'replace').decode("utf-8", "replace")
@@ -101,6 +100,23 @@ class Database:
 			return case_parameter
 		else:
 			return False
+	
+	def get_case_step(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT CA.Title,CA.Priority,CA.Data,ST.Action,ST.Result
+			FROM Cases AS CA
+			LEFT JOIN Case_Step AS CS ON CA.CaseId=CS.CaseId
+			LEFT JOIN Steps AS ST ON ST.StepId=CS.StepId
+			WHERE CA.CaseId=? 
+			AND CA.ProjectId=?
+			ORDER BY CA.CaseId ASC
+			""",
+			[kwargs['caseId'],kwargs['projectId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
 	
 	def deleteCase(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")

@@ -1,12 +1,34 @@
 from upload import UP
 from dbinterface import DB
 from reportinterface import Report
-import json, os, base64
+import json, os, base64, sys
 from flask import Flask, render_template, session, redirect, url_for, escape, request, jsonify, Response, send_from_directory
 from werkzeug.utils import secure_filename
 #from flask_debugtoolbar import DebugToolbarExtension
-#from docx import Document
+from docx import Document
+from docx.shared import Inches
+import pdfkit
+import xlsxwriter
 #from PIL import Image
+
+""" 
+Necessary packages: 
+	- nodejs
+	- flask:		pip install flask
+	- python-docx: 	pip install python-docx
+	- pdfkit: 	pip install pdfkit
+				pip install wkhtmltopdf
+		Differencies between windows and linux. See details on:
+		https://pypi.python.org/pypi/pdfkit/0.4.1
+		On windows: 
+					1.Downloads latest wkhtmltopdf installer.
+					2.Copy the folder to the Tool folder.
+					3.Set the absolute path in the functions
+		Have to give difference absolute file path!
+	- xlsxwriter:	pip install xlsxwriter
+Client side:
+	All js and css files attached! 
+"""
 
 UPLOAD_FOLDER = './uploads/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'csv','doc', 'docx', 'xlsx', 'xlt', 'xls', 'PNG', 'JPG', 'JPEG'])
@@ -172,6 +194,94 @@ def updateCase(ID):
 	DB.caseUpdateFlag(oldCaseId=ID,newCaseId=newCaseId)
 	DB.save_steps(id=newCaseId,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'),projectId=projectSession())
 	return json.dumps(newCaseId)
+
+#---Export
+@app.route('/exportCaseToWord/<int:ID>', methods=['GET'])
+def exportCaseToWord(ID):
+	try:
+		case=DB.get_case_parameters(id=ID,projectId=projectSession())
+		steps=DB.get_case_step(caseId=ID,projectId=projectSession())
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToWord method
+			""")
+		return False
+	try:
+		document = Document()
+		document.add_heading(case[0][1], 0)
+		p = document.add_paragraph(case[0][3])
+
+		document.add_heading('Steps:', level=1)
+
+		table = document.add_table(rows=1, cols=2)
+		hdr_cells = table.rows[0].cells
+		hdr_cells[0].text = 'Action'
+		hdr_cells[1].text = 'Result'
+		for item in steps:
+			row_cells = table.add_row().cells
+			row_cells[0].text = render_template("caseToDoc.html", caseDoc=item[3])
+			row_cells[1].text = render_template("caseToDoc.html", caseDoc=item[4])
+		
+		name=case[0][1].replace(".","_").replace("/","-")+".docx"
+		document.save(name)
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the docx writing method in exportCaseToWord
+			""")
+		return False
+	return "OK"	
+
+@app.route('/exportCaseToPDF/<int:ID>', methods=['GET'])
+def exportCaseToPDF(ID):
+	try:
+		case=DB.get_case_parameters(id=ID,projectId=projectSession())
+		steps=DB.get_case_step(caseId=ID,projectId=projectSession())
+		html=render_template('caseToPDF.html',casePDF=case,steps=steps)
+		filename=case[0][1].replace(".","_").replace("/","-")+".pdf"
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToPDF method
+			""")
+		return False
+	try:
+		path=bytes(r'D:\ManagementTool\RobTest\wkhtmltopdf\bin\wkhtmltopdf.exe','utf-8')
+		config = pdfkit.configuration(wkhtmltopdf=path)
+		pdfkit.from_string(html, filename, configuration=config)
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the pdf writing method in exportCaseToPDF
+			""")
+		return False
+	return "OK"	
+
+@app.route('/exportCaseToXLSX/<int:ID>', methods=['GET'])
+def exportCaseToXLSX(ID):
+	try:
+		case=DB.get_case_parameters(id=ID,projectId=projectSession())
+		steps=DB.get_case_step(caseId=ID,projectId=projectSession())
+		filename=case[0][1].replace(".","_").replace("/","-")+".xlsx"
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToXLSX method
+			""")
+	try:
+		workbook = xlsxwriter.Workbook(filename)
+		worksheet = workbook.add_worksheet()
+		bold = workbook.add_format({'bold': True})
+		worksheet.set_column('A:D', len(steps)+4)
+		worksheet.write('A1', 'Title:', bold)
+		worksheet.write('A2', 'Description:', bold)
+		worksheet.write('B1', case[0][1])
+		worksheet.write('B2', case[0][3])
+		worksheet.write('A4', 'Action', bold)
+		worksheet.write('B4', 'Result', bold)
+		for id,item in enumerate(steps):
+			worksheet.write(id+4, 0, item[3])
+			worksheet.write(id+4, 1, item[4])
+		workbook.close()
+	except:
+		print("Unexpected error: Unexcepted error occured during the worksheet method in exportCaseToXLSX")
+	return "OK"		
 	
 #-----object page-----	
 @app.route('/object_page', methods=['GET'])
@@ -321,7 +431,34 @@ def deleteAllSet():
 def deleteSet(ID):
 	DB.deleteSetLogical(id=ID)
 	return "OK"
-	
+
+#---Export
+@app.route('/exportSetToWord/<int:ID>', methods=['GET'])
+def exportSetToWord(ID):
+	set=DB.get_set_parameters(id=ID)
+	cases=DB.getSetCases(id=set[0][0])
+	document = Document()
+	document.add_heading(set[0][1], 0)
+	document.add_paragraph("")
+	#document.add_page_break()
+	for i,k in enumerate(cases):
+		document.add_heading(k[1], level=1)
+		description=document.add_paragraph("")
+		description.add_run(k[3]).italic=True
+		table = document.add_table(rows=1, cols=2)
+		hdr_cells = table.rows[0].cells
+		hdr_cells[0].text = 'Action'
+		hdr_cells[1].text = 'Result'
+		steps=DB.get_case_step(caseId=k[0],projectId=projectSession())
+		for item in steps:
+			row_cells = table.add_row().cells
+			row_cells[0].text = item[3]
+			row_cells[1].text = item[4]
+		if i < len(cases)-1:
+			document.add_page_break()
+	name=set[0][1].replace(".","_").replace("/","-")+".docx"
+	document.save(name)
+	return "OK"	
 	
 #-----execution-----	
 @app.route('/execution_page', methods=['GET'])

@@ -917,6 +917,15 @@ def getDatabaseManagement():
 	objects = DB.get_object(projectId=projectSession(),active=0)
 	temp = [cases,sets,executions,objects]
 	return render_template('admin.html', databaseManagement=temp)
+	
+@app.route('/getExportImport', methods=['GET'])	
+def getExportImport():
+	cases = DB.get_case(projectId = projectSession(),active=1,update=0)
+	sets = DB.get_set(projectId=projectSession(),active=1,update=0)
+	executions = DB.getExecution(projectId=projectSession())
+	objects = DB.get_object(projectId=projectSession(),active=1)
+	temp = [cases,sets,executions,objects]
+	return render_template('exportimport.html', exportimport=True,cases=cases,sets=sets,exes=executions,objects=objects)
 
 #----History----
 @app.route('/HistoryForm', methods=['GET'])	

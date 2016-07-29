@@ -1,0 +1,160 @@
+{% if exportimport %}
+	<div class="form-group" id="fullSize">
+        <ul class="nav nav-tabs" id="exportImportTab" role="tablist" style="margin-top: 10px;margin-left:15px;">
+          <li role="presentation" class="active">
+              <a href="#caseSet" role="tab" data-toggle="tab" onclick="exportImportTab()">Case/Set</a>
+            </li>
+          <li role="presentation">
+              <a href="#testResult" role="tab" data-toggle="tab" onclick="exportImportTab()">Test Results</a>
+            </li>
+          <li role="presentation">
+              <a href="#database" role="tab" data-toggle="tab" onclick="exportImportTab()">Database</a>
+            </li>
+        </ul>
+        
+        <div class="tab-content" style="width:100%;height: calc(100% - 42px);">
+            <div role="tabpanel" class="tab-pane active" id="caseSet" style="width:100%;height:100%;">
+                <div class="col-lg-6" style="height:100%;">
+                    <div class="setManage col-lg-12" style="height:47%;margin-bottom:10px;margin-top:20px;padding-left: 8px;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Sets</div>
+                                <div  style="float:right;padding-top:3px;">
+                                    <input type="text" name="setSearchExport" class="form-control" onchange="setSearchExport()" placeholder="Search..." id="btn-input">
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <table class="admin_form table table-condensed table-hover" id="fullSize">
+                                    <tr>
+                                        <th>#</th>
+                                        <th class="admin_table-0">Title</th>
+                                    </tr>
+                                    {% for k in  sets %}
+                                    <tr>
+                                        <td>{{loop.index}}</td>
+                                        <td class="admin_table-0">
+                                            <a href="#" data-setid='{{k[0]}}' onclick="exportSetOpen(event)">{{k[1]}}</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                    <div class="caseManage col-lg-12" style="height:47%;margin-bottom:10px;padding-left: 8px;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Cases</div>
+                                <div  style="float:right;padding-top:3px;">
+                                    <input type="text" name="caseSearchExport" class="form-control" onchange="caseSearchExport()" placeholder="Search..." id="btn-input">
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <table class="admin_form table table-condensed table-hover" id="fullSize">
+                                    <tr>
+                                        <th>#</th>
+                                        <th class="admin_table-0">Title</th>
+                                    </tr>
+                                    {% for k in  cases %}
+                                    <tr>
+                                        <td>{{loop.index}}</td>
+                                        <td class="admin_table-0">
+                                            <a href="#" data-caseid='{{k[0]}}' onclick="exportCaseOpen(event);return false;">{{k[1]}}</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                </div>
+                <div class="col-lg-6" style="height:calc(94% + 10px);margin-bottom:20px;margin-top:20px;">
+                    <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Export To</div>
+                                <div  style="float:right;padding-top:5px;padding-right:2px;">
+                                    <a class="btn btn-success btn-sm" role="button" href="#" onclick="exportToXlsx(event)">.Xlsx</a>
+                                </div>
+                                <div  style="float:right;padding-top:5px;padding-right:2px;">
+                                    <a class="btn btn-danger btn-sm" role="button" href="#" onclick="exportToPDF(event)">.PDF</a>
+                                </div>
+                                <div  style="float:right;padding-top:5px;padding-right:2px;">
+                                    <a class="btn btn-info btn-sm" role="button" href="#" onclick="exportToDocx(event)">.Docx</a>
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="testResult" style="width:100%;height: calc(100% - 40px);">
+                <div class="col-lg-6" style="height:100%;">
+                    <div class="testManage col-lg-12" style="height:95%;margin-bottom:10px;margin-top:20px;padding-left: 8px;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Executions</div>
+                                <div  style="float:right;padding-top:3px;">
+                                    <input type="text" name="setSearchExport" class="form-control" onchange="exeSearchExport()" placeholder="Search..." id="btn-input">
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <table class="admin_form table table-condensed table-hover" id="fullSize">
+                                    <tr>
+                                        <th>#</th>
+                                        <th class="admin_table-0">Title</th>
+                                    </tr>
+                                    {% for k in  exes %}
+                                    <tr>
+                                        <td>{{loop.index}}</td>
+                                        <td class="admin_table-0">
+                                            <a href="#" data-setid='{{k[0]}}' onclick="exportExeOpen(event)">{{k[1]}}</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                </div>
+                <div class="col-lg-6" style="height:95%;margin-bottom:20px;margin-top:20px;">
+                    <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Export to </div>
+                                <div  style="float:right;padding-top:5px;padding-right:2px;">
+                                    <a class="btn btn-success btn-sm" role="button" href="#" onclick="exportToXlsx(event)">.Xlsx</a>
+                                </div>
+                                <div  style="float:right;padding-top:5px;padding-right:2px;">
+                                    <a class="btn btn-danger btn-sm" role="button" href="#" onclick="exportToPDF(event)">.PDF</a>
+                                </div>
+                                <div  style="float:right;padding-top:5px;padding-right:2px;">
+                                    <a class="btn btn-info btn-sm" role="button" href="#" onclick="exportToDocx(event)">.Docx</a>
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="database" style="width:100%;height: calc(100% - 40px);">
+                
+            </div>
+        </div>
+	</div>
+{% endif %}

@@ -89,35 +89,35 @@ function caseDownloadXlsx(id){
 }
 
 function exeDownloadDoc(event){
-    $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    $("#insertcircleExe").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
     id=$(event.target).attr("data-exeid");
     $.get("/exportResultToWord/"+id,function(data,status){
         $("#downloadExe[data-exeid='"+id+"']").removeAttr("disabled");
         $("#downloadExe[data-exeid='"+id+"']").attr("href",data);
         $("#downloadExe[data-exeid='"+id+"']").attr("download","");
-        $("#insertcircle").empty();
+        $("#insertcircleExe").empty();
     });
 }
 
 function exeDownloadPDF(id){
-    $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    $("#insertcircleExe").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
     id=$(event.target).attr("data-exeid");
     $.get("/exportResultToPDF/"+id,function(data,status){
         $("#downloadExe[data-exeid='"+id+"']").removeAttr("disabled");
         $("#downloadExe[data-exeid='"+id+"']").attr("href",data);
         $("#downloadExe[data-exeid='"+id+"']").attr("download","");
-        $("#insertcircle").empty();
+        $("#insertcircleExe").empty();
     });
 }
 
 function exeDownloadXlsx(id){
-    $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    $("#insertcircleExe").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
     id=$(event.target).attr("data-exeid");
     $.get("/exportResultToXLSX/"+id,function(data,status){
         $("#downloadExe[data-exeid='"+id+"']").removeAttr("disabled");
         $("#downloadExe[data-exeid='"+id+"']").attr("href",data);
         $("#downloadExe[data-exeid='"+id+"']").attr("download","");
-        $("#insertcircle").empty();
+        $("#insertcircleExe").empty();
     });
 }
 
@@ -182,34 +182,42 @@ function caseSearchExport(){
 }
 
 function selectTable(){
+    $("#insertcircleDB").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
     $.get("/tableData/"+$(".tableSelector").find(":selected").attr("data-tablename"),function(data,status){
        if(status){
            $("#tableData").attr("download","");
            $("#tableData").attr("href",data);
-           $("#tableData")..empty()append("Download link for "+ $(".tableSelector").find(":selected").attr("data-tablename")+" values.");
+           $("#tableData").empty().append("Download link for "+ $(".tableSelector").find(":selected").attr("data-tablename")+" values.");
+           $("#insertcircleDB").empty();
        } 
     });
 }
 
 function selectSchema(){
+    $("#insertcircleDB").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
     $.get("/tableSchema/"+$(".tableSelector").find(":selected").attr("data-tablename"),function(data,status){
        if(status){
            $("#tableSchema").attr("download","");
            $("#tableSchema").attr("href",data);
            $("#tableSchema").empty().append("Download link for "+ $(".tableSelector").find(":selected").attr("data-tablename") +" schema.");
+           $("#insertcircleDB").empty();
        } 
     });
 }
 
 function deleteFileDownload(event){
+    $("#insertcircleDB").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
     id=$(event.target).parent().attr("data-dbid");
     $.get("/deleteFileDownload/"+id,function(data,status){
        $("#deleteFileDownload").empty().append(data); 
+        $("#insertcircleDB").empty();
     });
 }
 
 function deleteAllFiles(){
+    $("#insertcircleDB").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
     $.get("/deleteAllFilesDownload",function(data,status){
         $("#deleteFileDownload").empty().append(data); 
+        $("#insertcircleDB").empty();
     });
 }

@@ -159,7 +159,7 @@ $(function(){
 			loadExecution($(event.target).attr('data-dbid'), "loadExe");
 		}
 		if( event.target.id == "saveExe"){
-            $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>")
+            $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
             if($(".exeHeader").attr('data-dbid')=="newExecution"){
                 saveExe();
                 $(".buttonSetup").empty().append(exeBtn);

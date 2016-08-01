@@ -1,0 +1,60 @@
+{% if setPDF %}
+<html lang="en">
+    <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Balyi">
+
+    <title>Test Management Tool</title>
+    
+    
+</head>
+    <body>
+        <div id="wrapper">
+            <h1>{{setPDF[0][1]}}</h1>
+            {% for l in cases %}
+            <div class="header" style="padding-left:15px;padding-top:10px;padding-bottom:10px;">
+                <h1 style="color:#337ab7;width: 70%; display: table;">
+                    <span style="display: table-cell; border-bottom: 1px solid #337ab7;">
+                        {{l[1]}}
+                    </span>
+                </h1>
+                <h3 style="padding-left:10px;font-size: 20px;font-weight:100;">
+                    <i>
+                        {{l[3]}}
+                    </i>
+                </h3>
+                </div>
+                <div class="steps" style="padding-left:15px;width:70%;">
+                    <table class="table table-hover" style="width:100%;border: 1px solid #ddd;border-spacing: 0;">
+                        <tr>
+                            <th>
+                                Action
+                            </th>
+                            <th style="border-left: 1px solid #ddd;">
+                                Result
+                            </th>
+                        </tr>
+                        <tr>
+                        </tr>
+                        {% for k in steps[loop.index-1] %}
+                        <tr style="width:100%;">
+                            <td style="white-space:pre-line;border-top: 1px solid #ddd;width:50%;">
+                                {{k[3]|safe}}
+                            </td>
+                            <td style="white-space:pre-line;border-top: 1px solid #ddd;border-left: 1px solid #ddd;width:50%;">
+                                {{k[4]|safe}}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- /#wrapper -->
+    </body>
+</html>
+{% endif %}

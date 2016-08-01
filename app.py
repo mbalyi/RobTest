@@ -45,8 +45,11 @@ def uploads(filename):
 	if os.path.isdir(filename):
 		return "dir"
 	else:
-		print("wacap?")
 		return send_from_directory("./uploads/", filename)
+		
+@app.route('/downloads/<path:filename>', methods=['GET', 'POST'])
+def downloads(filename):
+	return send_from_directory("./downloads/", filename)
 	
 @app.route('/home', methods=['GET', 'POST'])
 def login_form():
@@ -222,14 +225,14 @@ def exportCaseToWord(ID):
 			row_cells[0].text = render_template("caseToDoc.html", caseDoc=item[3])
 			row_cells[1].text = render_template("caseToDoc.html", caseDoc=item[4])
 		
-		name=case[0][1].replace(".","_").replace("/","-")+".docx"
+		name="./downloads/"+case[0][1].replace(".","_").replace("/","-")+".docx"
 		document.save(name)
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the docx writing method in exportCaseToWord
 			""")
 		return False
-	return "OK"	
+	return name	
 
 @app.route('/exportCaseToPDF/<int:ID>', methods=['GET'])
 def exportCaseToPDF(ID):
@@ -237,7 +240,7 @@ def exportCaseToPDF(ID):
 		case=DB.get_case_parameters(id=ID,projectId=projectSession())
 		steps=DB.get_case_step(caseId=ID,projectId=projectSession())
 		html=render_template('caseToPDF.html',casePDF=case,steps=steps)
-		filename=case[0][1].replace(".","_").replace("/","-")+".pdf"
+		filename="./downloads/"+case[0][1].replace(".","_").replace("/","-")+".pdf"
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToPDF method
@@ -252,14 +255,14 @@ def exportCaseToPDF(ID):
 			Unexpected error: Unexcepted error occured during the pdf writing method in exportCaseToPDF
 			""")
 		return False
-	return "OK"	
+	return filename
 
 @app.route('/exportCaseToXLSX/<int:ID>', methods=['GET'])
 def exportCaseToXLSX(ID):
 	try:
 		case=DB.get_case_parameters(id=ID,projectId=projectSession())
 		steps=DB.get_case_step(caseId=ID,projectId=projectSession())
-		filename=case[0][1].replace(".","_").replace("/","-")+".xlsx"
+		filename="./downloads/"+case[0][1].replace(".","_").replace("/","-")+".xlsx"
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToXLSX method
@@ -276,12 +279,12 @@ def exportCaseToXLSX(ID):
 		worksheet.write('A4', 'Action', bold)
 		worksheet.write('B4', 'Result', bold)
 		for id,item in enumerate(steps):
-			worksheet.write(id+4, 0, item[3])
-			worksheet.write(id+4, 1, item[4])
+			worksheet.write(id+4, 0, render_template("caseToDoc.html", caseDoc=item[3])
+			worksheet.write(id+4, 1, render_template("caseToDoc.html", caseDoc=item[4])
 		workbook.close()
 	except:
 		print("Unexpected error: Unexcepted error occured during the worksheet method in exportCaseToXLSX")
-	return "OK"		
+	return filename	
 	
 #-----object page-----	
 @app.route('/object_page', methods=['GET'])
@@ -452,13 +455,39 @@ def exportSetToWord(ID):
 		steps=DB.get_case_step(caseId=k[0],projectId=projectSession())
 		for item in steps:
 			row_cells = table.add_row().cells
-			row_cells[0].text = item[3]
-			row_cells[1].text = item[4]
+			row_cells[0].text = render_template("caseToDoc.html", caseDoc=item[3])
+			row_cells[1].text = render_template("caseToDoc.html", caseDoc=item[4])
 		if i < len(cases)-1:
 			document.add_page_break()
-	name=set[0][1].replace(".","_").replace("/","-")+".docx"
-	document.save(name)
-	return "OK"	
+	filename="./downloads/"+set[0][1].replace(".","_").replace("/","-")+".docx"
+	document.save(filename)
+	return filename
+
+@app.route('/exportSetToPDF/<int:ID>', methods=['GET'])
+def exportSetToPDF(ID):
+	try:
+		set=DB.get_set_parameters(id=ID)
+		cases=DB.getSetCases(id=set[0][0])
+		steps=[]
+		for k in cases:
+			steps.append(DB.get_case_step(caseId=k[0],projectId=projectSession()))
+		html=render_template('setToPDF.html',setPDF=set,cases=cases,steps=steps)
+		filename="./downloads/"+set[0][1].replace(".","_").replace("/","-")+".pdf"
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToPDF method
+			""")
+		return False
+	try:
+		path=bytes(r'D:\ManagementTool\RobTest\wkhtmltopdf\bin\wkhtmltopdf.exe','utf-8')
+		config = pdfkit.configuration(wkhtmltopdf=path)
+		pdfkit.from_string(html, filename, configuration=config)
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the pdf writing method in exportCaseToPDF
+			""")
+		return False
+	return filename		
 	
 #-----execution-----	
 @app.route('/execution_page', methods=['GET'])
@@ -1080,7 +1109,6 @@ def upload_file_area():
 	UPLOAD_FOLDER = './uploads/step/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
-		print(request.files.getlist("image"))
 		f=request.files.getlist("image")[0]
 		if f.filename == '':
 			return "No selected file"
@@ -1212,6 +1240,16 @@ def deleteStepFile(url,mode):
 	if mode == "step":
 		os.remove(url)
 		return UP.deleteFileStepUrl(url=url)
+
+#---- Export/Import ----
+@app.route('/loadExportForm/<mode>/<int:id>', methods=['GET'])	
+def loadExportForm(mode,id):
+	if mode == "set":
+		set=DB.get_set_parameters(id=id)
+		return render_template("exportimport.html", setid=id,setname=set[0][1])
+	if mode == "case":
+		case=DB.get_case_parameters(id=id,projectId=projectSession())
+		return render_template("exportimport.html", caseid=id, casename=case[0][1])
 		
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

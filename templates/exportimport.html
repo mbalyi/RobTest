@@ -10,6 +10,9 @@
           <li role="presentation">
               <a href="#database" role="tab" data-toggle="tab" onclick="exportImportTab()">Database</a>
             </li>
+          <li role="presentation">
+              <a href="#templates" role="tab" data-toggle="tab" onclick="exportImportTab()">Templates</a>
+            </li>
         </ul>
         
         <div class="tab-content" style="width:100%;height: calc(100% - 42px);">
@@ -76,20 +79,46 @@
                 </div>
                 <div class="col-lg-6" style="height:calc(94% + 10px);margin-bottom:20px;margin-top:20px;">
                     <div class="panel panel-default" id="fullSize">
-                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;" id="caseSetExportHeader">
                                 <div style="float:left;padding-top:10px;">Export To</div>
                                 <div  style="float:right;padding-top:5px;padding-right:2px;">
-                                    <a class="btn btn-success btn-sm" role="button" href="#" onclick="exportToXlsx(event)">.Xlsx</a>
+                                    <a class="btn btn-success btn-sm" role="button" href="#">.Xlsx</a>
                                 </div>
                                 <div  style="float:right;padding-top:5px;padding-right:2px;">
-                                    <a class="btn btn-danger btn-sm" role="button" href="#" onclick="exportToPDF(event)">.PDF</a>
+                                    <a class="btn btn-danger btn-sm" role="button" href="#">.PDF</a>
                                 </div>
                                 <div  style="float:right;padding-top:5px;padding-right:2px;">
-                                    <a class="btn btn-info btn-sm" role="button" href="#" onclick="exportToDocx(event)">.Docx</a>
+                                    <a class="btn btn-info btn-sm" role="button" href="#">.Docx</a>
+                                </div>
+                                <div  style="float:right;padding-top:10px;padding-right:2px;">
+                                    <a href="#" disabled="disabled">Download ...</a>
+                                </div>
+                                <div  style="float:right;padding-top:10px;padding-right:2px;" id="insertcircle">
                                 </div>
                             </div>
                             <!-- /.panel-heading -->
                             <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <p>Export possibilities:</p>
+                                    <li>Export to .docx Microsoft Office Word format:</li>
+                                <p style="padding-left:20px;margin: 0px;"> The exported Word document won't include html style formattings and images.</p>
+                                <p style="padding-left:20px;"> One default template is available and nothing else.</p>
+                                    <li>Export to .pdf Portable Document Format format:</li>
+                                <p style="padding-left:20px;margin: 0px;"> The exported PDF will include all html style formattings and images.</p>
+                                <p style="padding-left:20px;margin: 0px;"> It's templatable. You can upload a formatted html file to use it to the export formatting.</p>
+                                <p style="padding-left:20px;"> You can upload and control the templates in the <a href="#templates" role="tab" data-toggle="tab" onclick="exportImportTab()">Templates</a> menu.</p>
+                                    <li>Export to .xlsx Microsoft Office Excel format:</li>
+                                <p style="padding-left:20px;margin: 0px;"> The exported Excel table sheet won't include html style formattings and images.</p>
+                                <p style="padding-left:20px;"> In the first instance it's for result exporting and chart exporting.</p>
+                                
+                                <p>User's Guide:</p>
+                                <ol>
+                                    <li>Select a case or set.</li>
+                                    <li>If you want to export it to PDF you can select a html template to format the document. Otherwise skipp this step.</li>
+                                    <li>Click on the selected export button.</li>
+                                    <li>Server generates a download link and when it finished download link will be enabled.</li>
+                                    <li>If you click on it the download will start.</li>
+                                </ol>
+                                <p>Export will start in a few second. Don't go to an other menu before the download started!</p>
                                 
                             </div>
                             <!-- /.panel-body -->
@@ -155,6 +184,45 @@
             <div role="tabpanel" class="tab-pane" id="database" style="width:100%;height: calc(100% - 40px);">
                 
             </div>
+            <div role="tabpanel" class="tab-pane" id="templates" style="width:100%;height: calc(100% - 40px);">
+                
+            </div>
         </div>
 	</div>
+{% endif %}
+
+{% if setid %}
+<div style="float:left;padding-top:10px;">Export To</div>
+<div  style="float:right;padding-top:5px;padding-right:2px;">
+    <a class="btn btn-success btn-sm" role="button" href="#" disabled="disabled">.Xlsx</a>
+</div>
+<div  style="float:right;padding-top:5px;padding-right:2px;">
+    <a class="btn btn-danger btn-sm" role="button" href="#" data-setid="{{setid}}" id="downloadPDF" onclick="setDownloadPDF(event)">.PDF</a>
+</div>
+<div  style="float:right;padding-top:5px;padding-right:2px;">
+    <a class="btn btn-info btn-sm" role="button" href="#" data-setid="{{setid}}" id="downloadDoc" onclick="setDownloadDoc(event)">.Docx</a>
+</div>
+<div  style="float:right;padding-top:10px;padding-right:2px;">
+    <a href="#" data-setid="{{setid}}" id="downloadSet" disabled="disabled">Download {{setname}}</a>
+</div>
+<div  style="float:right;padding-top:10px;padding-right:2px;" id="insertcircle">
+</div>
+{% endif %}
+
+{% if caseid %}
+<div style="float:left;padding-top:10px;">Export To</div>
+<div  style="float:right;padding-top:5px;padding-right:2px;">
+    <a class="btn btn-success btn-sm" role="button" href="#" data-caseid="{{caseid}}" onclick="caseDownloadXlsx(event)">.Xlsx</a>
+</div>
+<div  style="float:right;padding-top:5px;padding-right:2px;">
+    <a class="btn btn-danger btn-sm" role="button" href="#" data-caseid="{{caseid}}" id="downloadPDF" onclick="caseDownloadPDF(event)">.PDF</a>
+</div>
+<div  style="float:right;padding-top:5px;padding-right:2px;">
+    <a class="btn btn-info btn-sm" role="button" href="#" data-caseid="{{caseid}}" id="downloadDoc" onclick="caseDownloadDoc(event)">.Docx</a>
+</div>
+<div  style="float:right;padding-top:10px;padding-right:2px;">
+    <a href="#" data-caseid="{{caseid}}" id="downloadCase" disabled="disabled">Download {{casename}}</a>
+</div>
+<div  style="float:right;padding-top:10px;padding-right:2px;" id="insertcircle">
+</div>
 {% endif %}

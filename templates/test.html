@@ -112,17 +112,17 @@
     </table>
     <div class='stepHolder' style="width:100%;height:calc(100% - 42px);overflow-y: auto;">
     {% for k in step %}
-        <table data-stepMarkerId='{{k[0][0]}}' style='width:100%;'>
+        <table data-stepMarkerId='{{k[0][0]}}' style='width:100%;' class="table table-hover">
             <tr style='width:100%;'>
                 <td id='{{k[0][0]}}' class='stepMarker' data-dbid='{{k[0][0]}}' style='color:red;width:2%;'></td>
                 <td class='Step' data-dbid='{{k[0][0]}}' style='width:2%;'>
                     <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{loop.index}}</a>
                 </td>
                 <td class='Step' data-dbid='{{k[0][0]}}' style='width:40%;'>
-                    <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][1]}}</a>
+                    <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][1]|safe}}</a>
                 </td>
                 <td class='Step' data-dbid='{{k[0][0]}}' style='width:31%;'>
-                    <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][2]}}</a>
+                    <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][2]|safe}}</a>
                 </td>
                 <td data-dbid='{{k[0][0]}}' id='{{k[0][0]}}' style='width:5%;'>
                     <a href='#' class='Result' data-dbid='{{k[0][0]}}' id='{{k[0][0]}}'>

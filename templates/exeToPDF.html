@@ -1,0 +1,87 @@
+{% if exePDF %}
+<html lang="en">
+    <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Balyi">
+
+    <title>Test Management Tool</title>
+    
+    <style>
+        .success{
+            background-color: #d0e9c6;
+        }
+        .danger{
+            background-color: #f2dede;
+        }
+        .warning{
+            background-color: #faf2cc;
+        }
+        .info{
+            background-color: #c4e3f3;
+        }
+    </style>
+
+</head>
+    <body>
+        <div id="wrapper">
+            <div class="header" style="padding-left:15px;padding-top:10px;padding-bottom:10px;">
+                <h1 style="color:#337ab7;width: 70%; display: table;">
+                    <span style="display: table-cell; border-bottom: 1px solid #337ab7;">
+                        {{exeOb[1]}} ({{exeOb[2]}}) Report
+                    </span>
+                </h1>
+                
+                </div>
+                <div class="steps" style="padding-left:15px;width:70%;">
+                    <table class="table table-hover" style="width:100%;border: 1px solid #ddd;border-spacing: 0;">
+                        <tr>
+                            <th>
+                                Case name
+                            </th>
+                            <th style="border-left: 1px solid #ddd;">
+                                Result
+                            </th>
+                            <th style="border-left: 1px solid #ddd;">
+                                Assigned to
+                            </th>
+                            <th style="border-left: 1px solid #ddd;">
+                                Duration
+                            </th>
+                        </tr>
+                        <tr>
+                        </tr>
+                        {% for k in exePDF %}
+                        <tr style="width:100%;">
+                            <td style="white-space:pre-line;border-top: 1px solid #ddd;width:50%;">
+                                {{k[1]|safe}}
+                            </td>
+                            {% if k[2] == "FAILED" %}
+                            <td class="danger" style="white-space:pre-line;border-top: 1px solid #ddd;border-left: 1px solid #ddd;width:50%;">
+                            {% elif k[2] == "RUN" %}
+                            <td class="success" style="white-space:pre-line;border-top: 1px solid #ddd;border-left: 1px solid #ddd;width:50%;">
+                            {% elif k[2] == "NOTRUN" or k[2] == "SKIPPED" %}
+                            <td class="warning" style="white-space:pre-line;border-top: 1px solid #ddd;border-left: 1px solid #ddd;width:50%;">
+                            {% elif k[2] == "NOTIMP" %}
+                            <td class="info" style="white-space:pre-line;border-top: 1px solid #ddd;border-left: 1px solid #ddd;width:50%;">
+                            {% endif %}
+                                {{k[2]|safe}}
+                            </td>
+                            <td style="white-space:pre-line;border-top: 1px solid #ddd;border-left: 1px solid #ddd;width:50%;">
+                                
+                            </td>
+                            <td style="white-space:pre-line;border-top: 1px solid #ddd;border-left: 1px solid #ddd;width:50%;">
+                                
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+        </div>
+        <!-- /#wrapper -->
+    </body>
+</html>
+{% endif %}

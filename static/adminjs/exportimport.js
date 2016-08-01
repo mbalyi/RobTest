@@ -28,6 +28,11 @@ function exportCaseOpen(event){
     });
     
 }
+function exportExeOpen(event){
+    $.get("/loadExportForm/exe/"+$(event.target).attr('data-exeid'),function(data,status){
+       $("#exeExportHeader").empty().append(data); 
+    });
+}
 
 function setDownloadPDF(id){
     $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
@@ -79,6 +84,39 @@ function caseDownloadXlsx(id){
         $("#downloadCase[data-caseid='"+id+"']").removeAttr("disabled");
         $("#downloadCase[data-caseid='"+id+"']").attr("href",data);
         $("#downloadCase[data-caseid='"+id+"']").attr("download","");
+        $("#insertcircle").empty();
+    });
+}
+
+function exeDownloadDoc(event){
+    $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    id=$(event.target).attr("data-exeid");
+    $.get("/exportResultToWord/"+id,function(data,status){
+        $("#downloadExe[data-exeid='"+id+"']").removeAttr("disabled");
+        $("#downloadExe[data-exeid='"+id+"']").attr("href",data);
+        $("#downloadExe[data-exeid='"+id+"']").attr("download","");
+        $("#insertcircle").empty();
+    });
+}
+
+function exeDownloadPDF(id){
+    $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    id=$(event.target).attr("data-exeid");
+    $.get("/exportResultToPDF/"+id,function(data,status){
+        $("#downloadExe[data-exeid='"+id+"']").removeAttr("disabled");
+        $("#downloadExe[data-exeid='"+id+"']").attr("href",data);
+        $("#downloadExe[data-exeid='"+id+"']").attr("download","");
+        $("#insertcircle").empty();
+    });
+}
+
+function exeDownloadXlsx(id){
+    $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    id=$(event.target).attr("data-exeid");
+    $.get("/exportResultToXLSX/"+id,function(data,status){
+        $("#downloadExe[data-exeid='"+id+"']").removeAttr("disabled");
+        $("#downloadExe[data-exeid='"+id+"']").attr("href",data);
+        $("#downloadExe[data-exeid='"+id+"']").attr("download","");
         $("#insertcircle").empty();
     });
 }

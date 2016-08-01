@@ -279,8 +279,8 @@ def exportCaseToXLSX(ID):
 		worksheet.write('A4', 'Action', bold)
 		worksheet.write('B4', 'Result', bold)
 		for id,item in enumerate(steps):
-			worksheet.write(id+4, 0, render_template("caseToDoc.html", caseDoc=item[3])
-			worksheet.write(id+4, 1, render_template("caseToDoc.html", caseDoc=item[4])
+			worksheet.write(id+4, 0, render_template("caseToDoc.html", caseDoc=item[3]))
+			worksheet.write(id+4, 1, render_template("caseToDoc.html", caseDoc=item[4]))
 		workbook.close()
 	except:
 		print("Unexpected error: Unexcepted error occured during the worksheet method in exportCaseToXLSX")
@@ -951,7 +951,7 @@ def getDatabaseManagement():
 def getExportImport():
 	cases = DB.get_case(projectId = projectSession(),active=1,update=0)
 	sets = DB.get_set(projectId=projectSession(),active=1,update=0)
-	executions = DB.getExecution(projectId=projectSession())
+	executions = DB.getExeOBTest(projectId=projectSession())
 	objects = DB.get_object(projectId=projectSession(),active=1)
 	temp = [cases,sets,executions,objects]
 	return render_template('exportimport.html', exportimport=True,cases=cases,sets=sets,exes=executions,objects=objects)
@@ -1250,7 +1250,136 @@ def loadExportForm(mode,id):
 	if mode == "case":
 		case=DB.get_case_parameters(id=id,projectId=projectSession())
 		return render_template("exportimport.html", caseid=id, casename=case[0][1])
+	if mode == "exe":
+		exe=DB.getExeParameters(id=id)
+		ob=DB.getExeObject(id=id)
+		return render_template("exportimport.html", exeid=id, exename=exe[0][1], objectname=ob[1])
+
+@app.route('/exportResultToWord/<int:id>', methods=['GET'])
+def exportResultToWord(id):
+	try:
+		exeResult=DB.getExeResult(exeId=id)
+		exeOb=DB.getExeOBHist(projectId=projectSession(),exeId=id)
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the dataQuery in exportResultToWord method
+			""")
+		return False
+	try:
+		document = Document()
+		header = exeOb[1] + " (" + exeOb[2] + ") Report"
+		document.add_heading(header, 0)
+		table = document.add_table(rows=1, cols=4)
+		hdr_cells = table.rows[0].cells
+		hdr_cells[0].text = 'Case name'
+		hdr_cells[1].text = 'Result'
+		hdr_cells[2].text = 'Assigned to'
+		hdr_cells[3].text = 'Duration'
+		for item in exeResult:
+			row_cells = table.add_row().cells
+			row_cells[0].text = item[1]
+			row_cells[1].text = item[2]
+			row_cells[2].text = ""
+			row_cells[3].text = ""
+		name=exeOb[1] + " (" + exeOb[2] + ")"
+		filename="./downloads/"+name.replace(".","_").replace("/","-")+".docx"
+		document.save(filename)
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the docx writing method in exportResultToWord
+			""")
+		return False
+	return filename
+	
+@app.route('/exportResultToPDF/<int:id>', methods=['GET'])
+def exportResultToPDF(id):
+	try:
+		exeResult=DB.getExeResult(exeId=id)
+		exeOb=DB.getExeOBHist(projectId=projectSession(),exeId=id)
+		name=exeOb[1] + " (" + exeOb[2] + ")"
+		html=render_template('exeToPDF.html',exePDF=exeResult,exeOb=exeOb)
+		filename="./downloads/"+name.replace(".","_").replace("/","-")+".pdf"
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print("""
+			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToPDF method in
+			""")
+		print(exc_type, fname, exc_tb.tb_lineno)
+		return False
+	try:
+		path=bytes(r'D:\ManagementTool\RobTest\wkhtmltopdf\bin\wkhtmltopdf.exe','utf-8')
+		config = pdfkit.configuration(wkhtmltopdf=path)
+		pdfkit.from_string(html, filename, configuration=config)
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the pdf writing method in exportCaseToPDF
+			""")
+		return False
+	return filename
+
+@app.route('/exportResultToXLSX/<int:id>', methods=['GET'])
+def exportResultToXLSX(id):
+	try:
+		exeResult=DB.getExeResult(exeId=id)
+		exeOb=DB.getExeOBHist(projectId=projectSession(),exeId=id)
+		name=exeOb[1] + " (" + exeOb[2] + ")"
+		filename="./downloads/"+name.replace(".","_").replace("/","-")+".xlsx"
+	except:
+		print("""
+			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToXLSX method
+			""")
+	try:
+		workbook = xlsxwriter.Workbook(filename)
 		
+		green_bg = workbook.add_format()
+		green_bg.set_pattern(1)  # This is optional when using a solid fill.
+		green_bg.set_bg_color('#d0e9c6')
+		
+		blue_bg = workbook.add_format()
+		blue_bg.set_pattern(1)  # This is optional when using a solid fill.
+		blue_bg.set_bg_color('#c4e3f3')
+		
+		red_bg = workbook.add_format()
+		red_bg.set_pattern(1)  # This is optional when using a solid fill.
+		red_bg.set_bg_color('#f2dede')
+		
+		yellow_bg = workbook.add_format()
+		yellow_bg.set_pattern(1)  # This is optional when using a solid fill.
+		yellow_bg.set_bg_color('#faf2cc')
+		
+		worksheet = workbook.add_worksheet()
+		bold = workbook.add_format({'bold': True})
+		worksheet.set_column('A:D', len(exeResult)+4)
+		worksheet.write('A1', 'Title:', bold)
+		worksheet.write('A2', 'Description:', bold)
+		worksheet.write('B1', name)
+		worksheet.write('B2', "")
+		worksheet.write('A4', 'Case Name', bold)
+		worksheet.write('B4', 'Result', bold)
+		worksheet.write('C4', 'Assigned To', bold)
+		worksheet.write('D4', 'Duration', bold)
+		for id,item in enumerate(exeResult):
+			if item[2] == "RUN":
+				style = green_bg
+			if item[2] == "FAILED":
+				style = red_bg
+			if item[2] == "NOTRUN" or item[2] == "SKIPPED":
+				style = yellow_bg
+			if item[2] == "NOTIMP":
+				style = blue_bg
+			worksheet.write(id+4, 0, render_template("caseToDoc.html", caseDoc=item[1]), style)
+			worksheet.write(id+4, 1, render_template("caseToDoc.html", caseDoc=item[2]), style)
+			worksheet.write(id+4, 2, "", style)
+			worksheet.write(id+4, 3, "", style)
+		workbook.close()
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print("Unexpected error: Unexcepted error occured during the worksheet method in exportCaseToXLSX")
+		print(exc_type, fname, exc_tb.tb_lineno)
+	return filename	
+	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 		

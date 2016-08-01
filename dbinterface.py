@@ -1332,4 +1332,90 @@ class Database:
 			conn.commit()
 		return result
 	
+	def getTablesFromDB(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT name 
+			FROM sqlite_master
+			WHERE type='table'
+			""",)
+		result=c.fetchall()
+		conn.commit()
+		return result
+		
+	def getDataFromTable(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM" +[kwargs['name']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def getDBSchema(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT sql 
+			FROM sqlite_master
+			WHERE type='table'
+			""",)
+		result=c.fetchall()
+		conn.commit()
+		return result
+		
+	def getSchema(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT sql 
+			FROM sqlite_master
+			WHERE type='table' AND 
+			name=?
+			""",[kwargs['name']])
+		result=c.fetchone()
+		conn.commit()
+		return result
+	
+	def insertFile(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT * 
+			FROM Download_File
+			WHERE DownloadURL=?
+			AND ProjectId=?
+			""",[kwargs['name'],kwargs['projectId']])
+		result=c.fetchone()
+		conn.commit()
+		if result == None:
+			c.execute("INSERT INTO Download_File (DownloadURL,ProjectId) VALUES (?,?)",[kwargs['name'],kwargs['projectId']])
+			conn.commit()
+		return result
+		
+	def getDownloadFiles(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT * 
+			FROM Download_File
+			WHERE ProjectId=?
+			""",[kwargs['projectId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def deleteFile(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Download_File WHERE DownloadId=?",[kwargs['id']])
+		result=c.fetchone()
+		conn.commit()
+		c.execute("""
+			DELETE FROM Download_File
+			WHERE DownloadId=?
+			""",[kwargs['id']])
+		conn.commit()
+		return result[1]
+	
 DB = Database()

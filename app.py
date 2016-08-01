@@ -51,6 +51,10 @@ def uploads(filename):
 def downloads(filename):
 	return send_from_directory("./downloads/", filename)
 	
+@app.route('/ROB_2016.s3db', methods=['GET', 'POST'])
+def downloadBackup():
+	return send_from_directory("./", "ROB_2016.s3db")
+	
 @app.route('/home', methods=['GET', 'POST'])
 def login_form():
 	if request.method == 'POST':
@@ -204,6 +208,8 @@ def exportCaseToWord(ID):
 	try:
 		case=DB.get_case_parameters(id=ID,projectId=projectSession())
 		steps=DB.get_case_step(caseId=ID,projectId=projectSession())
+		name="./downloads/"+case[0][1].replace(".","_").replace("/","-")+".docx"
+		DB.insertFile(name=name,projectId=projectSession())
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToWord method
@@ -224,8 +230,6 @@ def exportCaseToWord(ID):
 			row_cells = table.add_row().cells
 			row_cells[0].text = render_template("caseToDoc.html", caseDoc=item[3])
 			row_cells[1].text = render_template("caseToDoc.html", caseDoc=item[4])
-		
-		name="./downloads/"+case[0][1].replace(".","_").replace("/","-")+".docx"
 		document.save(name)
 	except:
 		print("""
@@ -241,6 +245,7 @@ def exportCaseToPDF(ID):
 		steps=DB.get_case_step(caseId=ID,projectId=projectSession())
 		html=render_template('caseToPDF.html',casePDF=case,steps=steps)
 		filename="./downloads/"+case[0][1].replace(".","_").replace("/","-")+".pdf"
+		DB.insertFile(name=filename,projectId=projectSession())
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToPDF method
@@ -263,6 +268,7 @@ def exportCaseToXLSX(ID):
 		case=DB.get_case_parameters(id=ID,projectId=projectSession())
 		steps=DB.get_case_step(caseId=ID,projectId=projectSession())
 		filename="./downloads/"+case[0][1].replace(".","_").replace("/","-")+".xlsx"
+		DB.insertFile(name=filename,projectId=projectSession())
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToXLSX method
@@ -460,6 +466,7 @@ def exportSetToWord(ID):
 		if i < len(cases)-1:
 			document.add_page_break()
 	filename="./downloads/"+set[0][1].replace(".","_").replace("/","-")+".docx"
+	DB.insertFile(name=filename,projectId=projectSession())
 	document.save(filename)
 	return filename
 
@@ -473,6 +480,7 @@ def exportSetToPDF(ID):
 			steps.append(DB.get_case_step(caseId=k[0],projectId=projectSession()))
 		html=render_template('setToPDF.html',setPDF=set,cases=cases,steps=steps)
 		filename="./downloads/"+set[0][1].replace(".","_").replace("/","-")+".pdf"
+		DB.insertFile(name=filename,projectId=projectSession())
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToPDF method
@@ -954,7 +962,9 @@ def getExportImport():
 	executions = DB.getExeOBTest(projectId=projectSession())
 	objects = DB.get_object(projectId=projectSession(),active=1)
 	temp = [cases,sets,executions,objects]
-	return render_template('exportimport.html', exportimport=True,cases=cases,sets=sets,exes=executions,objects=objects)
+	dbtables=DB.getTablesFromDB()
+	files=DB.getDownloadFiles(projectId=projectSession())
+	return render_template('exportimport.html', exportimport=True,cases=cases,sets=sets,exes=executions,objects=objects,tables=dbtables,files=files)
 
 #----History----
 @app.route('/HistoryForm', methods=['GET'])	
@@ -1260,6 +1270,9 @@ def exportResultToWord(id):
 	try:
 		exeResult=DB.getExeResult(exeId=id)
 		exeOb=DB.getExeOBHist(projectId=projectSession(),exeId=id)
+		name=exeOb[1] + " (" + exeOb[2] + ")"
+		filename="./downloads/"+name.replace(".","_").replace("/","-")+".docx"
+		DB.insertFile(name=filename,projectId=projectSession())
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the dataQuery in exportResultToWord method
@@ -1281,8 +1294,6 @@ def exportResultToWord(id):
 			row_cells[1].text = item[2]
 			row_cells[2].text = ""
 			row_cells[3].text = ""
-		name=exeOb[1] + " (" + exeOb[2] + ")"
-		filename="./downloads/"+name.replace(".","_").replace("/","-")+".docx"
 		document.save(filename)
 	except:
 		print("""
@@ -1299,6 +1310,7 @@ def exportResultToPDF(id):
 		name=exeOb[1] + " (" + exeOb[2] + ")"
 		html=render_template('exeToPDF.html',exePDF=exeResult,exeOb=exeOb)
 		filename="./downloads/"+name.replace(".","_").replace("/","-")+".pdf"
+		DB.insertFile(name=filename,projectId=projectSession())
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
@@ -1325,6 +1337,7 @@ def exportResultToXLSX(id):
 		exeOb=DB.getExeOBHist(projectId=projectSession(),exeId=id)
 		name=exeOb[1] + " (" + exeOb[2] + ")"
 		filename="./downloads/"+name.replace(".","_").replace("/","-")+".xlsx"
+		DB.insertFile(name=filename,projectId=projectSession())
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToXLSX method
@@ -1379,6 +1392,48 @@ def exportResultToXLSX(id):
 		print("Unexpected error: Unexcepted error occured during the worksheet method in exportCaseToXLSX")
 		print(exc_type, fname, exc_tb.tb_lineno)
 	return filename	
+	
+@app.route('/tableSchema/<name>', methods=['GET'])
+def tableSchema(name):
+	schema=DB.getSchema(name=name);
+	filename="./downloads/"+name+".txt"
+	DB.insertFile(name=filename,projectId=projectSession())
+	text_file = open(filename, "w")
+	text_file.write(schema[0])
+	text_file.close()
+	return filename
+	
+@app.route('/tableData/<name>', methods=['GET'])
+def tableData(name):
+	data=DB.getDataFromTable(name=name);
+	filename="./downloads/"+name.replace(".","_").replace("/","-")+".xlsx"
+	DB.insertFile(name=filename,projectId=projectSession())
+	workbook = xlsxwriter.Workbook(filename)
+	worksheet = workbook.add_worksheet()
+	for id,item in enumerate(data):
+		for l,k in enumerate(item):
+			worksheet.write(id, l-1, k)
+		workbook.close()
+	return filename
+	
+@app.route('/deleteFileDownload/<int:id>', methods=['GET'])
+def deleteFileDownload(id):
+	path=DB.deleteFile(id=id)
+	os.remove(path)
+	files=DB.getDownloadFiles(projectId=projectSession())
+	return render_template("exportimport.html", newfiles="true",filesNew=files)
+	
+@app.route('/deleteAllFilesDownload', methods=['GET'])
+def deleteAllFilesDownload():
+	files=DB.getDownloadFiles(projectId=projectSession())
+	for k in files:
+		newfile=deleteFileDownload(k[0])
+	return render_template("exportimport.html", newfiles="true",filesNew=newfile)
+
+@app.route('/refreshDownloadFiles', methods=['GET'])
+def refreshDownloadFiles():
+	files=DB.getDownloadFiles(projectId=projectSession())
+	return render_template("exportimport.html", newfiles="true",filesNew=file)
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

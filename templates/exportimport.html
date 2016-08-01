@@ -8,7 +8,7 @@
               <a href="#testResult" role="tab" data-toggle="tab" onclick="exportImportTab()">Test Results</a>
             </li>
           <li role="presentation">
-              <a href="#database" role="tab" data-toggle="tab" onclick="exportImportTab()">Database</a>
+              <a href="#databases" role="tab" data-toggle="tab" onclick="exportImportTab()">Database</a>
             </li>
           <li role="presentation">
               <a href="#templates" role="tab" data-toggle="tab" onclick="exportImportTab()">Templates</a>
@@ -37,7 +37,7 @@
                                     <tr>
                                         <td>{{loop.index}}</td>
                                         <td class="admin_table-0">
-                                            <a href="#" data-setid='{{k[0]}}' onclick="exportSetOpen(event)">{{k[1]}}</a>
+                                            <a href="#" data-setid='{{k[0]}}' onclick="exportSetOpen(event)" class="setExport">{{k[1]}}</a>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -66,7 +66,7 @@
                                     <tr>
                                         <td>{{loop.index}}</td>
                                         <td class="admin_table-0">
-                                            <a href="#" data-caseid='{{k[0]}}' onclick="exportCaseOpen(event);return false;">{{k[1]}}</a>
+                                            <a href="#" data-caseid='{{k[0]}}' onclick="exportCaseOpen(event);return false;" class="caseExport">{{k[1]}}</a>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -133,7 +133,7 @@
                             <div class="panel-heading" style="height:41px;padding-top:0px;">
                                 <div style="float:left;padding-top:10px;">Executions</div>
                                 <div  style="float:right;padding-top:3px;">
-                                    <input type="text" name="setSearchExport" class="form-control" onchange="exeSearchExport()" placeholder="Search..." id="btn-input">
+                                    <input type="search" name="exeSearchExport" class="form-control" onchange="exeSearchExport()" placeholder="Search..." id="btn-input">
                                 </div>
                             </div>
                             <!-- /.panel-heading -->
@@ -147,7 +147,7 @@
                                     <tr>
                                         <td>{{loop.index}}</td>
                                         <td class="admin_table-0">
-                                            <a href="#" data-exeid='{{k[0]}}' onclick="exportExeOpen(event)">{{k[1]}} ({{k[3]}})</a>
+                                            <a href="#" data-exeid='{{k[0]}}' onclick="exportExeOpen(event)" class="exeResult">{{k[1]}} ({{k[3]}})</a>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -206,11 +206,152 @@
                         <!-- /.panel -->
                 </div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="database" style="width:100%;height: calc(100% - 40px);">
-                
+            <div role="tabpanel" class="tab-pane" id="databases" style="width:100%;height: calc(100% - 40px);">
+                <div class="col-lg-6" style="height:100%;">
+                    <div class="col-lg-12" style="height:47%;margin-bottom:10px;margin-top:20px;padding-left: 8px;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Database Export</div>
+                                <div  style="float:right;padding-top:3px;">
+                                   
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                    <div id="fullWidth">
+                                        Download database backup: 
+                                        <a class="btn btn-sm btn-default" role="button" href="/ROB_2016.s3db" download>Download</a>
+                                    </div>
+                                    <div style="height: calc(100% - 30px);width:50%;float:left;">
+                                        {% for k in tables %}
+                                        <li>{{k[0]}}</li>
+                                        {% endfor %}
+                                    </div>
+                                    <div style="height: calc(100% - 30px);width:50%;float:right;">
+                                        <select class="tableSelector form-control">
+                                            {% for k in tables %}
+                                            <option data-tablename='{{k[0]}}'>{{k[0]}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <p>
+                                            Download .xlsx sql script from the selected table: 
+                                            <a class="btn btn-success btn-sm" role="button" href="#" onclick="selectTable()">Table Data</a> 
+                                            <a id="tableData"></a>
+                                        </p>
+                                        <p>
+                                            Download in .txt the selected sql table schema: 
+                                            <a class="btn btn-default btn-sm" role="button" href="#" onclick="selectSchema()">Table Schema</a> 
+                                            <a id="tableSchema"></a>
+                                        </p>
+                                    </div>
+                                </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                    <div class="col-lg-12" style="height:47%;margin-bottom:10px;padding-left: 8px;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Delete downloaded files</div>
+                                <div  style="float:right;padding-top:5px;">
+                                    <a href="#" role="button" class="btn btn-danger btn-sm" onclick="deleteAllFiles()">Delete All</a>
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <table class="admin_form table table-condensed table-hover" id="deleteFileDownload" style="width:100%;height:100%;">
+                                    <tr>
+                                        <th>#</th>
+                                        <th class="admin_table-0">Name</th>
+                                        <th class="admin_table-0">Path</th>
+                                        <th class="admin_table-0">Download</th>
+                                        <th class="admin_table-0">Delete</th>
+                                    </tr>
+                                    {% for k in files %}
+                                    <tr>
+                                        <td>{{loop.index}}</td>
+                                        <td>{% set list = k[1].split('/') %}{{list[2]}}</td>
+                                        <td>
+                                            {{k[1]}}
+                                        </td>
+                                        <td>
+                                            <a href="{{k[1]}}" download>Download</a>
+                                        </td>
+                                        <td>
+                                            <a href="#" data-dbid="{{k[0]}}" style="color:#d9534f; text-decoration: none;" onclick="deleteFileDownload(event)">
+                                                <span class="glyphicon glyphicon-remove" id="1"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                </table>
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                </div>
+                <div class="col-lg-6" style="height:calc(94% + 10px);margin-bottom:20px;margin-top:20px;">
+                    <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;" id="caseSetExportHeader">
+                                <div style="float:left;padding-top:10px;">Database/Template Managing</div>
+                                
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <p>Database possibilities:</p>
+                                    <li>Download the whole database as .s3db sqlite format.</li>
+                                <p style="padding-left:20px;margin: 0px;"> This file is perfect for database backup. You can open it with SQLite Admin. Easy to carry anywhere.</p>
+                                    <li>Download tables.</li>
+                                <p style="padding-left:20px;margin: 0px;"> Table schema is listed in the other side.</p>
+                                <p style="padding-left:20px;margin: 0px;"> You can select tables (one at the same time/not multiple) and export to .xlsx Microsoft Excel format.</p>
+                                <p style="padding-left:20px;"> It includes the insert script too.</p>
+                                
+                                <p>Template Managing:</p>
+                                    <li>Download the uploaded templates.</li>
+                                <p style="padding-left:20px;margin: 0px;"> There's the list of the uploaded templates. You can download them to check or configurate them.</p>
+                                    <li>Delete uploaded templates.</li>
+                                    <li>Upload new template.</li>
+                                <p style="padding-left:20px;margin-top: 10px;"> Of course you can upload your personal pdf template in .html format.</p>
+                                
+                                <p> Necessary conditions to work your template:</p>
+                                
+                                <p style="margin: 0px;"> Template for cases:</p>
+                                {% raw %}
+                                    <li>The {% if casePDF %} and {% endif %} have to encompass the html!</li>
+                                    <li>Case title: {{casePDF[0][1]}}</li>
+                                    <li>Case description: {{casePDF[0][2]}}</li>
+                                    <li>The steps are in a loop: {% for k in steps %} and {% endfor %}.</li>
+                                    <li>The Action and result in it are: {{k[3]|safe}},{{k[4]|safe}}</li>
+                                {% endraw %}
+                                <p style="margin: 0px;"> Template for sets:</p>
+                                {% raw %}
+                                    <li>The {% if setPDF %} and {% endif %} have to encompass the html!</li>
+                                    <li>Set title: {{setPDF[0][1]}}</li>
+                                    <li>The cases what the set is included are in a loop: {% for l in cases %}{% endfor %}</li>
+                                    <li>The cases name and description: {{l[1]}} and {{l[3]}}</li>
+                                    <li>The steps are in a loop again: {% for k in steps[loop.index-1] %} and {% endfor %}.</li>
+                                    <li>The Action and result in it are: {{k[3]|safe}},{{k[4]|safe}}</li>
+                                {% endraw %}
+                                <p> Template for results:</p>
+                                {% raw %}
+                                    <li>The {% if exePDF %} and {% endif %} have to encompass the html!</li>
+                                    <li>Execution title: {{exeOb[1]}}</li>
+                                    <li>Object title: {{exeOb[2]}}</li>
+                                    <li>The results and cases are in a loop: {% for k in exePDF %} and {% endfor %}.</li>
+                                    <li>The name of case and result in it are: {{k[1]|safe}},{{k[2]|safe}}</li>
+                                {% endraw %}
+                                
+                                <p style="margin-top: 10px;"> For all templates! The .css style formatting works only if you use inline css or css in the header. Stylesheet import isn't usable. Download the default templates to see the template structures.</p>
+                                
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                </div>
             </div>
-            <div role="tabpanel" class="tab-pane" id="templates" style="width:100%;height: calc(100% - 40px);">
-                
+            <div role="tabpanel" class="tab-pane" id="templates" style="width:100%;height:100%;">
             </div>
         </div>
 	</div>
@@ -268,4 +409,33 @@
 </div>
 <div  style="float:right;padding-top:10px;padding-right:2px;" id="insertcircle">
 </div>
+{% endif %}
+
+{% if newfiles %}
+<tr>
+    <th>#</th>
+    <th class="admin_table-0">Name</th>
+    <th class="admin_table-0">Path</th>
+    <th class="admin_table-0">Download</th>
+    <th class="admin_table-0">Delete</th>
+</tr>
+{% if filesNew %}
+    {% for k in filesNew %}
+    <tr>
+        <td>{{loop.index}}</td>
+        <td>{% set list = k[1].split('/') %}{{list[2]}}</td>
+        <td>
+            {{k[1]}}
+        </td>
+        <td>
+            <a href="{{k[1]}}" download>Download</a>
+        </td>
+        <td>
+            <a href="#" data-dbid="{{k[0]}}" style="color:#d9534f; text-decoration: none;" onclick="deleteFileDownload(event)">
+                <span class="glyphicon glyphicon-remove" id="1"></span>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+{% endif %}
 {% endif %}

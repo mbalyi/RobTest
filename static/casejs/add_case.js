@@ -60,7 +60,7 @@ function saveCase(){
     var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=number]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
     sendData = sendData+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&");
     sendData = sendData+"&"+$("textarea").map(function(i,o){return o.name+"="+encodeURIComponent(o.value.replace(/"/g, "\'"))}).toArray().join("&");
-    console.log($("textarea").map(function(i,o){return o.name+"="+o.value.replace(/"/g, "\'")}).toArray().join("&"))
+    //console.log($("textarea").map(function(i,o){return o.name+"="+o.value.replace(/"/g, "\'")}).toArray().join("&"))
     /*var fd = new FormData();
     for(i=0; i<$("textarea").length;i++){
         fd.append($($("textarea")[0]).attr('name'), $($("textarea")[0]).val());
@@ -281,6 +281,7 @@ function enableForm(){
     $("#newCase").attr('disabled', true);
     $(".saveCase").empty().append(saveCaseEn1+"newCase"+saveCaseEn2);
     $("#stepContainer").css('height','65%');
+    $("input[name=dynamicArea]").removeAttr('disabled')
     //testareaDesign();
     textEditorEnabler();
 }

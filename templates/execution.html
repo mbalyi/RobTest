@@ -51,6 +51,20 @@
 				</select>
 			</th>
 		</tr>
+        <tr>
+			<th>Assigned to:</th>
+			<th class='objectDD'>
+				<select class='userSelector form-control' disabled="true">
+					{% for k in users %}
+                        {% if k[1] == username %}
+                        <option data-dbid='{{k[0]}}' selected>{{k[1]}}</option>
+                        {% else %}
+						<option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+                        {% endif %}
+					{% endfor %}
+				</select>
+			</th>
+		</tr>
 	</table>
     <div class='AreaField' style='width:100%;'>
         <h2>Tags: </h2>
@@ -132,7 +146,21 @@
 						<input type='text' name='object' value='{{loadObject[1]}}' class='object form-control' data-dbid='{{loadObject[0]}}' readonly>
 					{% endif %}
 				</td>
-		</tr>
+		    </tr>
+            <tr>
+                <td>Assigned to:</td>
+                <td class='objectDD'>
+                    <select class='userSelector form-control' disabled="true">
+                        {% for k in users %}
+                            {% if k[0] == loadExe[0][5] %}
+                            <option data-dbid='{{k[0]}}' selected>{{k[1]}}</option>
+                            {% else %}
+                            <option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </td>
+		    </tr>
 		</table>
 	</div>
 	<div class='AreaField' style='widt:100%;'>
@@ -281,6 +309,20 @@
 				</select>
 			</th>
 		</tr>
+        <tr>
+            <td>Assigned to:</td>
+            <td class='objectDD'>
+                <select class='userSelector form-control'>
+                    {% for k in users %}
+                        {% if k[0] == loadEditableExe[0][5] %}
+                        <option data-dbid='{{k[0]}}' selected>{{k[1]}}</option>
+                        {% else %}
+                        <option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
 	</table>
     <div class='AreaField' style='width:100%;'>
         <h2>Tags: </h2>

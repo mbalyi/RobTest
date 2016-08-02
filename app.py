@@ -98,13 +98,12 @@ def case_page():
 
 @app.route('/caseForm/<int:projectId>', methods=['GET'])
 def caseForm(projectId):
-	query = DB.getAreas(projectId=projectId)
+	query = DB.getAreasWithProject(projectId=projectId)
 	return render_template('case.html', caseForm=query,count=len(query))
 	
 @app.route('/save_case', methods=['POST'])
 def save_case():
-	print(request.form.getlist('action[]'))
-	ID=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],area=request.form.getlist('areaBox'),projectId=projectSession())
+	ID=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],area=request.form.getlist('areaBox'),projectId=projectSession(),dynamic=request.form.getlist('dynamicArea'))
 	DB.save_steps(id=ID,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'),projectId=projectSession())
 	return json.dumps(ID)
 
@@ -113,6 +112,7 @@ def load_case(ID,mode):
 	query = DB.get_case_parameters(id=ID, projectId=projectSession())
 	areaInCase = DB.getCaseArea(caseId=query[0][0])
 	areas = DB.getAreas(projectId=projectSession())
+	dynArea=DB.getDynamicAreas(projectId=projectSession())
 	files = DB.getCaseFiles(caseId=ID)
 	temp=[]
 	boolen='false'
@@ -120,15 +120,16 @@ def load_case(ID,mode):
 		for j in areaInCase:
 			if j[0] == k[0]:
 				boolen='true'
+				casearea=j[2]
 		if boolen=='false':
-			temp.append([k,'notchecked'])
+			temp.append([k,'notchecked',""])
 		else:
-			temp.append([k,'checked'])
+			temp.append([k,'checked',casearea])
 			boolen='false'
 	if mode == "loadCase":
 		return render_template('case.html', loadcase=query, areaInCase=areaInCase,areas=temp,count=len(areas),files=files)
 	elif mode == "editCase":
-		return render_template('case.html', editablecase=query, areaInCase=areaInCase,areas=temp,count=len(areas),files=files)	
+		return render_template('case.html', editablecase=query, areaInCase=areaInCase,areas=temp,count=len(areas),files=files,dynArea=dynArea)	
 
 @app.route('/get_step/<int:ID>/<mode>', methods=['GET'])
 def get_step(ID,mode):
@@ -201,7 +202,7 @@ def updateCasePhysical(ID):
 @app.route('/updateCase/<int:ID>', methods=['POST'])
 def updateCase(ID):
 	DB.updateCaseLogic(caseId=ID)
-	newCaseId=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],area=request.form.getlist('areaBox'),projectId=projectSession())
+	newCaseId=DB.save_case(title=request.form["title"],priority=request.form["priority"],data=request.form["data"],area=request.form.getlist('areaBox'),projectId=projectSession(),dynamic=request.form.getlist('dynamicArea'))
 	DB.caseUpdateFlag(oldCaseId=ID,newCaseId=newCaseId)
 	DB.save_steps(id=newCaseId,action = request.form.getlist('action[]'),result = request.form.getlist('result[]'),projectId=projectSession())
 	return json.dumps(newCaseId)
@@ -518,17 +519,18 @@ def execution_page():
 def newExecution():
 	query=DB.get_object(projectId=projectSession(),active=1)
 	areas=DB.getAreas(projectId=projectSession())
-	return render_template('execution.html', newExe=query,areas=areas,count=len(areas))	
+	users=DB.getUsers()
+	return render_template('execution.html', newExe=query,areas=areas,count=len(areas),users=users,username=session['username'])	
 
 @app.route('/saveExe', methods=['GET', 'POST'])
 def SaveExecution():
-	exeId=DB.saveExe(name=request.form["title"],testObject=request.form["TO"],projectId=projectSession(),areas=request.form.getlist('areaBox'))
+	exeId=DB.saveExe(name=request.form["title"],testObject=request.form["TO"],projectId=projectSession(),areas=request.form.getlist('areaBox'),userId=request.form["userId"])
 	DB.saveCaseExe(ID=request.form.getlist('ID'),exeID=exeId)
 	return json.dumps(exeId)
 
 @app.route('/updateExe', methods=['POST'])
 def UpdateExecution():
-	DB.updateExecution(exeId=request.form['exeId'],name=request.form["title"],testObject=request.form["TO"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'))
+	DB.updateExecution(exeId=request.form['exeId'],name=request.form["title"],testObject=request.form["TO"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'),userId=request.form["userId"])
 	DB.updateCaseExe(ID=request.form.getlist('ID'),exeID=exeId)
 	return json.dumps(request.form['exeId'])
 	
@@ -536,10 +538,11 @@ def UpdateExecution():
 def loadExecution(ID,mode):
 	query=DB.getExeParameters(id=ID)
 	object=DB.getExeObject(id=ID)
+	users=DB.getUsers()
 	cases=DB.getExeCases(id=ID)
 	objects=DB.get_object(projectId=projectSession(), notRes=object[0],active=1)
 	areaInExe = DB.getExeArea(exeId=ID)
-	areas = DB.getAreas(projectId=projectSession())
+	areas = DB.getAreasWithProject(projectId=projectSession())
 	files = DB.getExeFiles(exeId=ID)
 	temp=[]
 	boolen='false'
@@ -553,9 +556,9 @@ def loadExecution(ID,mode):
 			temp.append([k,'checked'])
 			boolen='false'
 	if mode == "loadExe":
-		return render_template('execution.html', loadExe=query, loadCase=cases, loadObject=object,areas=temp,count=len(areas),exeId=ID,files=files)
+		return render_template('execution.html', loadExe=query, loadCase=cases, loadObject=object,areas=temp,count=len(areas),exeId=ID,files=files,users=users)
 	if mode == "editExe":
-		return render_template('execution.html', loadEditableExe=query, loadEditableCase=cases, loadEditableObject=object, loadObjects=objects,areas=temp,count=len(areas),exeId=ID,files=files)
+		return render_template('execution.html', loadEditableExe=query, loadEditableCase=cases, loadEditableObject=object, loadObjects=objects,areas=temp,count=len(areas),exeId=ID,files=files,users=users)
 	#else:
 	#	return render_template('execution.html', loadEditableSet=query, editCase=cases)
 
@@ -985,7 +988,7 @@ def deleteTag():
 
 @app.route('/saveTag', methods=['POST'])	
 def saveTag():
-	result=DB.saveTag(tagName=request.form['tagName'],projectId=request.form['projectId'])
+	result=DB.saveTag(tagName=request.form['tagName'],dynamic=request.form['dynamic'],projectId=request.form['projectId'])
 	tags=DB.getAreasWithProject(projectId=request.form['projectId'])
 	if result == "false":
 		return result

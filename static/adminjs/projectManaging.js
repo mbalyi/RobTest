@@ -136,11 +136,17 @@ function saveTag(){
     }
     else{
         $(".tagErrorMessage").tooltip('hide');
-        var sendData="tagName="+$("input[type='text'][data-newtag='tagName']").val()+"&projectId="+$(".projectSelector").find(":selected").attr("data-dbid");
+        if($("input[name=dynamic]:checked")[0] == undefined){
+            var dynamic=0;
+        }
+        else{
+            var dynamic=1;
+        }
+        var sendData="tagName="+$("input[type='text'][data-newtag='tagName']").val()+"&projectId="+$(".projectSelector").find(":selected").attr("data-dbid")+"&dynamic="+dynamic;
         $.post("/saveTag",sendData,function(data,status){
             if(status){
                 if(data != "failed"){
-                    $("#tagTable").append(data);
+                    $("#tagTable").empty().append(data);
                 }
                 else{
                     $(".tagErrorMessage").tooltip({title: "Tag still exists!"});

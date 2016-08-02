@@ -51,9 +51,16 @@ class Database:
 			[kwargs['title'],kwargs['priority'],kwargs['data'],kwargs['projectId'],1,0])
 		CaseID=c.fetchone()
 		conn.commit()
+		c.execute("SELECT * FROM Areas WHERE IsDynamic=1")
+		dAreas=c.fetchall()
+		conn.commit()
 		for k in kwargs['area']:
 			c.execute("INSERT INTO Area_Case (AreaId,CaseId) VALUES (?,?)",[k,CaseID[0]])
 			conn.commit()
+			for i,l in enumerate(dAreas):
+				if int(k) == int(l[0]):
+					c.execute("UPDATE Area_Case SET Dynamic=? WHERE AreaId=? AND CaseId=?",[kwargs['dynamic'][i],k,CaseID[0]])
+					conn.commit()
 		return CaseID[0]
 		
 	def save_steps(self, **kwargs):
@@ -462,9 +469,9 @@ class Database:
 	def saveExe(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("INSERT INTO Execution (ExeName,ProjectId) VALUES (?,?)",[kwargs['name'],kwargs['projectId']])
+		c.execute("INSERT INTO Execution (ExeName,ProjectId,UserId) VALUES (?,?,?)",[kwargs['name'],kwargs['projectId'],kwargs['userId']])
 		conn.commit()
-		c.execute("SELECT ExecutionId FROM Execution WHERE ExeName=? AND ProjectId=? ORDER BY ExecutionId DESC",[kwargs['name'],kwargs['projectId']])
+		c.execute("SELECT ExecutionId FROM Execution WHERE ExeName=? AND ProjectId=? AND UserId=? ORDER BY ExecutionId DESC",[kwargs['name'],kwargs['projectId'],kwargs['userId']])
 		ExeID=c.fetchone()
 		conn.commit()
 		c.execute("INSERT INTO Exe_Object (ExecutionId,ObjectId) VALUES (?,?)",[ExeID[0],kwargs['testObject']])
@@ -477,7 +484,7 @@ class Database:
 	def updateExecution(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("UPDATE Execution SET ExeName=?,ProjectId=? WHERE ExecutionId=?",[kwargs['name'],kwargs['projectId'],kwargs['exeId']])
+		c.execute("UPDATE Execution SET ExeName=?,ProjectId=?,UserId=? WHERE ExecutionId=?",[kwargs['name'],kwargs['projectId'],kwargs['exeId'],kwargs['userId']])
 		conn.commit()
 		c.execute("UPDATE Exe_Object SET ObjectId=? WHERE ExecutionId=?",[kwargs['testObject'],kwargs['exeId']])
 		conn.commit()
@@ -975,11 +982,19 @@ class Database:
 	def getAreas(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT AreaId,AreaTitle FROM Areas WHERE ProjectId=?",[kwargs['projectId']])
+		c.execute("SELECT * FROM Areas WHERE ProjectId=?",[kwargs['projectId']])
 		result = c.fetchall()
 		conn.commit()
 		return result
-		
+	
+	def getDynamicAreas(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Areas WHERE ProjectId=? AND IsDynamic=1",[kwargs['projectId']])
+		result = c.fetchall()
+		conn.commit()
+		return result
+	
 	def deleteArea(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -991,7 +1006,7 @@ class Database:
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		c.execute("""
-			SELECT AR.AreaId,AR.AreaTitle,PR.Name 
+			SELECT AR.AreaId,AR.AreaTitle,PR.Name,AR.IsDynamic 
 			FROM Areas AS AR 
 			LEFT JOIN Projects AS PR
 			ON PR.ProjectId=AR.ProjectId
@@ -1005,7 +1020,7 @@ class Database:
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		c.execute("""
-			SELECT AR.AreaId,AR.AreaTitle FROM Area_Case AS AC 
+			SELECT AR.AreaId,AR.AreaTitle,AC.Dynamic FROM Area_Case AS AC 
 			LEFT JOIN Areas AS AR ON AC.AreaId=AR.AreaId 
 			WHERE AC.CaseId=?""",
 			[kwargs['caseId']])
@@ -1170,9 +1185,9 @@ class Database:
 		result=c.fetchone()
 		conn.commit()
 		if result == None:
-			c.execute("INSERT INTO Areas (AreaTitle,ProjectId) VALUES (?,?)",[kwargs['tagName'],kwargs['projectId']])
+			c.execute("INSERT INTO Areas (AreaTitle,ProjectId,IsDynamic) VALUES (?,?,?)",[kwargs['tagName'],kwargs['projectId'],kwargs['dynamic']])
 			conn.commit()
-			c.execute("SELECT * FROM Areas WHERE AreaTitle=? AND ProjectId=? ORDEr BY AreaId DESC",[kwargs['tagName'],kwargs['projectId']])
+			c.execute("SELECT * FROM Areas WHERE AreaTitle=? AND ProjectId=? AND IsDynamic=? ORDER BY AreaId DESC",[kwargs['tagName'],kwargs['projectId'],kwargs['dynamic']])
 			result=c.fetchone()
 			conn.commit()
 			return result

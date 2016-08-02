@@ -195,11 +195,13 @@
                             <th id="td-10">#</th>
                             <th id="td-30" class="admin_table">Tags</th>
                             <th id="td-30" class="admin_table">Project</th>
-                            <th id="td-30" class="admin_table">Delete</th></tr>
+                            <th id="td-10" class="admin_table">Is dynamic?</th>
+                            <th id="td-20" class="admin_table">Delete</th></tr>
                         <tr class="newProjectForm" style="display: none;">
                             <th id="td-10">#</th>
-                            <th id="td-30" class="admin_table">Tag: <input type='text' class="form-control" data-newtag='tagName' placeholder="Tagname" style='width:100%;height:25px;padding-bottom:1px;padding-top:1px;'></th>
-                            <th id="td-30" class="admin_table" style='padding-top: 20px;'>
+                            <th id="td-30" class="admin_table">Tag: <input type='text' class="form-control" data-newtag='tagName' placeholder="Tagname" style='width:100%);height:25px;padding-bottom:1px;padding-top:1px;'></th>
+                            <th id="th-10" style="padding-top:18px;">Is Dynamic: <input type="checkbox" name="dynamic"></th>
+                            <th id="td-20" class="admin_table" style='padding-top: 20px;'>
                                 <a href="#" class="tagErrorMessage" onclick="saveTag()" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-ok"></span></a>
                             </th>
                             <th id="td-30"></th>
@@ -209,7 +211,14 @@
                                     <td id="td-10">#</td>
                                     <td id="td-30" class="admin_table"><a href="#" class="rowLink" data-tagid={{elements[0]}} style="text-decoration: none;">{{elements[1]}}</a></td>
                                     <td  id="td-30" class="admin_table">{{elements[2]}}</td>
-                                    <td id="td-30" class="admin_table">
+                                    <td id="td-10">
+                                        {% if elements[3] == 0 %}
+                                        <span class="glyphicon glyphicon-minus"></span>
+                                        {% else %}
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                        {% endif %}
+                                    </td>
+                                    <td id="td-20" class="admin_table">
                                         <a href="#" class='tagDeletion' onclick="confirmTagDeletion()" data-tagid={{elements[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
                                             <span class="glyphicon glyphicon-remove" data-tagid={{elements[0]}}></span>
                                         </a>
@@ -555,31 +564,40 @@
 {% endif %}
 
 {% if newTag %}
- <table style="width:100%" class="admin_form table table-condensed table-hover" >
-<tr>
-    <th id="td-10">#</th>
-    <th id="td-30" class="admin_table">Tags</th>
-    <th id="td-30" class="admin_table">Project</th>
-    <th id="td-30" class="admin_table">Delete</th></tr>
-<tr class="newProjectForm" style="display: none;">
-    <th id="td-10">#</th>
-    <th id="td-30" class="admin_table">Tag: <input type='text' class="form-control" data-newtag='tagName' placeholder="Tagname" style='width:100%;height:25px;padding-bottom:1px;padding-top:1px;'></th>
-    <th id="td-30" class="admin_table" style='padding-top: 20px;'>
-        <a href="#" class="tagErrorMessage" onclick="saveTag()" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-ok"></span></a>
-    </th>
-    <th id="td-30"></th>
-</tr>
-{% for elements in newTag %}
-        <tr data-row="editRow" id={{elements[0]}}>
-            <td id="td-10">#</td>
-            <td id="td-30" class="admin_table"><a href="#" class="rowLink" data-tagid={{elements[0]}} style="text-decoration: none;">{{elements[1]}}</a></td>
-            <td  id="td-30" class="admin_table">{{elements[2]}}</td>
-            <td id="td-30" class="admin_table">
-                <a href="#" class='tagDeletion' onclick="confirmTagDeletion()" data-tagid={{elements[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
-                    <span class="glyphicon glyphicon-remove" data-tagid={{elements[0]}}></span>
-                </a>
-            </td>
-        </tr>
-{% endfor %}
+<table style="width:100%" class="admin_form table table-condensed table-hover" >
+    <tr>
+        <th id="td-10">#</th>
+        <th id="td-30" class="admin_table">Tags</th>
+        <th id="td-30" class="admin_table">Project</th>
+        <th id="td-10" class="admin_table">Is dynamic?</th>
+        <th id="td-20" class="admin_table">Delete</th></tr>
+    <tr class="newProjectForm" style="display: none;">
+        <th id="td-10">#</th>
+        <th id="td-30" class="admin_table">Tag: <input type='text' class="form-control" data-newtag='tagName' placeholder="Tagname" style='width:100%);height:25px;padding-bottom:1px;padding-top:1px;'></th>
+        <th id="th-10" style="padding-top:18px;">Is Dynamic: <input type="checkbox" name="dynamic"></th>
+        <th id="td-20" class="admin_table" style='padding-top: 20px;'>
+            <a href="#" class="tagErrorMessage" onclick="saveTag()" data-toggle="tooltip" data-placement="right"><span class="glyphicon glyphicon-ok"></span></a>
+        </th>
+        <th id="td-30"></th>
+    </tr>
+    {% for elements in newTag %}
+            <tr data-row="editRow" id={{elements[0]}}>
+                <td id="td-10">#</td>
+                <td id="td-30" class="admin_table"><a href="#" class="rowLink" data-tagid={{elements[0]}} style="text-decoration: none;">{{elements[1]}}</a></td>
+                <td  id="td-30" class="admin_table">{{elements[2]}}</td>
+                <td id="td-10">
+                    {% if elements[3] == 0 %}
+                    <span class="glyphicon glyphicon-minus"></span>
+                    {% else %}
+                    <span class="glyphicon glyphicon-ok"></span>
+                    {% endif %}
+                </td>
+                <td id="td-20" class="admin_table">
+                    <a href="#" class='tagDeletion' onclick="confirmTagDeletion()" data-tagid={{elements[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
+                        <span class="glyphicon glyphicon-remove" data-tagid={{elements[0]}}></span>
+                    </a>
+                </td>
+            </tr>
+    {% endfor %}
 </table>
 {% endif %}

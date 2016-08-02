@@ -37,7 +37,7 @@ function exportExeOpen(event){
 function setDownloadPDF(id){
     $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
     id=$(event.target).attr("data-setid");
-    $.get("/exportSetToPDF/"+id,function(data,status){
+    $.get("/exportSetToPDF/"+id+"/"+$(event.target).attr("data-templateid"),function(data,status){
         $("#downloadSet[data-setid='"+id+"']").removeAttr("disabled");
         $("#downloadSet[data-setid='"+id+"']").attr("href",data);
         $("#downloadSet[data-setid='"+id+"']").attr("download","");
@@ -69,7 +69,7 @@ function caseDownloadDoc(event){
 function caseDownloadPDF(id){
     $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
     id=$(event.target).attr("data-caseid");
-    $.get("/exportCaseToPDF/"+id,function(data,status){
+    $.get("/exportCaseToPDF/"+id+"/"+$(event.target).attr("data-templateid"),function(data,status){
         $("#downloadCase[data-caseid='"+id+"']").removeAttr("disabled");
         $("#downloadCase[data-caseid='"+id+"']").attr("href",data);
         $("#downloadCase[data-caseid='"+id+"']").attr("download","");
@@ -102,7 +102,7 @@ function exeDownloadDoc(event){
 function exeDownloadPDF(id){
     $("#insertcircleExe").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
     id=$(event.target).attr("data-exeid");
-    $.get("/exportResultToPDF/"+id,function(data,status){
+    $.get("/exportResultToPDF/"+id+"/"+$(event.target).attr("data-templateid"),function(data,status){
         $("#downloadExe[data-exeid='"+id+"']").removeAttr("disabled");
         $("#downloadExe[data-exeid='"+id+"']").attr("href",data);
         $("#downloadExe[data-exeid='"+id+"']").attr("download","");
@@ -265,5 +265,13 @@ function deleteAllTemplates(){
     $.get("/deleteAllTemplates",function(data,status){
         $(".pdfTemplates").empty().append(data); 
         $("#insertcircleTemplates").empty();
+    });
+}
+
+function refreshAllFiles(){
+    $(".glyphicon.glyphicon-refresh").attr("id","circlebar");
+    $.get("/downloadFiles",function(data,status){
+        $("#downloadFiles").empty().append(data);
+        $(".glyphicon.glyphicon-refresh").removeAttr("id");
     });
 }

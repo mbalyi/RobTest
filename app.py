@@ -242,12 +242,14 @@ def exportCaseToWord(ID):
 		return False
 	return name	
 
-@app.route('/exportCaseToPDF/<int:ID>', methods=['GET'])
-def exportCaseToPDF(ID):
+@app.route('/exportCaseToPDF/<int:ID>/<int:templateid>', methods=['GET'])
+def exportCaseToPDF(ID,templateid):
 	try:
 		case=DB.get_case_parameters(id=ID,projectId=projectSession())
 		steps=DB.get_case_step(caseId=ID,projectId=projectSession())
-		html=render_template('caseToPDF.html',casePDF=case,steps=steps)
+		template=UP.getTemplateFile(fileId=templateid)
+		path='pdfTemplates/'+str(template[2])
+		html=render_template(path,casePDF=case,steps=steps)
 		filename="./downloads/"+case[0][1].replace(".","_").replace("/","-")+".pdf"
 		DB.insertFile(name=filename,projectId=projectSession())
 	except:
@@ -474,21 +476,26 @@ def exportSetToWord(ID):
 	document.save(filename)
 	return filename
 
-@app.route('/exportSetToPDF/<int:ID>', methods=['GET'])
-def exportSetToPDF(ID):
+@app.route('/exportSetToPDF/<int:ID>/<int:templateid>', methods=['GET'])
+def exportSetToPDF(ID,templateid):
 	try:
 		set=DB.get_set_parameters(id=ID)
 		cases=DB.getSetCases(id=set[0][0])
+		template=UP.getTemplateFile(fileId=templateid)
 		steps=[]
 		for k in cases:
 			steps.append(DB.get_case_step(caseId=k[0],projectId=projectSession()))
-		html=render_template('setToPDF.html',setPDF=set,cases=cases,steps=steps)
+		path='pdfTemplates/'+str(template[2])
+		html=render_template(path,setPDF=set,cases=cases,steps=steps)
 		filename="./downloads/"+set[0][1].replace(".","_").replace("/","-")+".pdf"
 		DB.insertFile(name=filename,projectId=projectSession())
-	except:
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 		print("""
-			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToPDF method
+			Unexpected error: Unexcepted error occured during the dataQuery in exportSetToPDF method in
 			""")
+		print(exc_type, fname, exc_tb.tb_lineno)
 		return False
 	try:
 		path=bytes(r'D:\ManagementTool\RobTest\wkhtmltopdf\bin\wkhtmltopdf.exe','utf-8')
@@ -496,7 +503,7 @@ def exportSetToPDF(ID):
 		pdfkit.from_string(html, filename, configuration=config)
 	except:
 		print("""
-			Unexpected error: Unexcepted error occured during the pdf writing method in exportCaseToPDF
+			Unexpected error: Unexcepted error occured during the pdf writing method in exportSetToPDF
 			""")
 		return False
 	return filename		
@@ -985,6 +992,11 @@ def saveTag():
 	else:
 		return render_template("admin.html", newTag=tags)
 	
+@app.route('/downloadFiles', methods=['GET'])	
+def downloadFiles():
+	files=DB.getDownloadFiles(projectId=projectSession())
+	return render_template("exportimport.html",downloadableFiles=files)
+
 #----History----
 @app.route('/HistoryForm', methods=['GET'])	
 def HistoryForm():
@@ -1283,16 +1295,17 @@ def deleteStepFile(url,mode):
 #---- Export/Import ----
 @app.route('/loadExportForm/<mode>/<int:id>', methods=['GET'])	
 def loadExportForm(mode,id):
+	templates=UP.getTemplates()
 	if mode == "set":
 		set=DB.get_set_parameters(id=id)
-		return render_template("exportimport.html", setid=id,setname=set[0][1])
+		return render_template("exportimport.html", setid=id,setname=set[0][1],templates=templates)
 	if mode == "case":
 		case=DB.get_case_parameters(id=id,projectId=projectSession())
-		return render_template("exportimport.html", caseid=id, casename=case[0][1])
+		return render_template("exportimport.html", caseid=id, casename=case[0][1],templates=templates)
 	if mode == "exe":
 		exe=DB.getExeParameters(id=id)
 		ob=DB.getExeObject(id=id)
-		return render_template("exportimport.html", exeid=id, exename=exe[0][1], objectname=ob[1])
+		return render_template("exportimport.html", exeid=id, exename=exe[0][1], objectname=ob[1],templates=templates)
 
 @app.route('/exportResultToWord/<int:id>', methods=['GET'])
 def exportResultToWord(id):
@@ -1331,20 +1344,22 @@ def exportResultToWord(id):
 		return False
 	return filename
 	
-@app.route('/exportResultToPDF/<int:id>', methods=['GET'])
-def exportResultToPDF(id):
+@app.route('/exportResultToPDF/<int:id>/<int:templateid>', methods=['GET'])
+def exportResultToPDF(id,templateid):
 	try:
 		exeResult=DB.getExeResult(exeId=id)
 		exeOb=DB.getExeOBHist(projectId=projectSession(),exeId=id)
 		name=exeOb[1] + " (" + exeOb[2] + ")"
-		html=render_template('exeToPDF.html',exePDF=exeResult,exeOb=exeOb)
+		template=UP.getTemplateFile(fileId=templateid)
+		path='pdfTemplates/'+str(template[2])
+		html=render_template(path,exePDF=exeResult,exeOb=exeOb)
 		filename="./downloads/"+name.replace(".","_").replace("/","-")+".pdf"
 		DB.insertFile(name=filename,projectId=projectSession())
 	except Exception as e:
 		exc_type, exc_obj, exc_tb = sys.exc_info()
 		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
 		print("""
-			Unexpected error: Unexcepted error occured during the dataQuery in exportCaseToPDF method in
+			Unexpected error: Unexcepted error occured during the dataQuery in exportResultToPDF method in
 			""")
 		print(exc_type, fname, exc_tb.tb_lineno)
 		return False
@@ -1354,7 +1369,7 @@ def exportResultToPDF(id):
 		pdfkit.from_string(html, filename, configuration=config)
 	except:
 		print("""
-			Unexpected error: Unexcepted error occured during the pdf writing method in exportCaseToPDF
+			Unexpected error: Unexcepted error occured during the pdf writing method in exportResultToPDF
 			""")
 		return False
 	return filename

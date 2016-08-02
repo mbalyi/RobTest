@@ -85,7 +85,17 @@
                                     <a class="btn btn-success btn-sm" role="button" href="#">.Xlsx</a>
                                 </div>
                                 <div  style="float:right;padding-top:5px;padding-right:2px;">
-                                    <a class="btn btn-danger btn-sm" role="button" href="#">.PDF</a>
+                                    <div class="dropdown">
+                                      <button class="btn btn-danger btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        .PDF
+                                        <span class="caret"></span>
+                                      </button>
+                                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                        {% for k in templates %}
+                                        <li><a href="#">{{k[2]}}</a></li>
+                                        {% endfor %}
+                                      </ul>
+                                    </div>
                                 </div>
                                 <div  style="float:right;padding-top:5px;padding-right:2px;">
                                     <a class="btn btn-info btn-sm" role="button" href="#">.Docx</a>
@@ -166,7 +176,17 @@
                                     <a class="btn btn-success btn-sm" role="button" href="#">.Xlsx</a>
                                 </div>
                                 <div  style="float:right;padding-top:5px;padding-right:2px;">
-                                    <a class="btn btn-danger btn-sm" role="button" href="#">.PDF</a>
+                                    <div class="dropdown">
+                                      <button class="btn btn-danger btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        .PDF
+                                        <span class="caret"></span>
+                                      </button>
+                                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                        {% for k in templates %}
+                                        <li><a href="#">{{k[2]}}</a></li>
+                                        {% endfor %}
+                                      </ul>
+                                    </div>
                                 </div>
                                 <div  style="float:right;padding-top:5px;padding-right:2px;">
                                     <a class="btn btn-info btn-sm" role="button" href="#">.Docx</a>
@@ -255,9 +275,14 @@
                                 <div  style="float:right;padding-top:5px;">
                                     <a href="#" role="button" class="btn btn-danger btn-sm" onclick="deleteAllFiles()">Delete All</a>
                                 </div>
+                                <div  style="float:right;padding-top:5px;padding-right:2px;">
+                                    <a href="#" role="button" class="btn btn-success btn-circle" onclick="refreshAllFiles()">
+                                        <span class="glyphicon glyphicon-refresh"></span>
+                                    </a>
+                                </div>
                             </div>
                             <!-- /.panel-heading -->
-                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;width:100%;" id="downloadFiles">
                                 <table class="admin_form table table-condensed table-hover" id="deleteFileDownload" style="width:100%;height:100%;">
                                     <tr>
                                         <th>#</th>
@@ -441,7 +466,17 @@
     <a class="btn btn-success btn-sm" role="button" href="#" disabled="disabled">.Xlsx</a>
 </div>
 <div  style="float:right;padding-top:5px;padding-right:2px;">
-    <a class="btn btn-danger btn-sm" role="button" href="#" data-setid="{{setid}}" id="downloadPDF" onclick="setDownloadPDF(event)">.PDF</a>
+    <div class="dropdown">
+      <button class="btn btn-danger btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        .PDF
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        {% for k in templates %}
+        <li><a href="#" data-setid="{{setid}}" data-templateid={{k[0]}} id="downloadPDF" onclick="setDownloadPDF(event)">{{k[2]}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
 </div>
 <div  style="float:right;padding-top:5px;padding-right:2px;">
     <a class="btn btn-info btn-sm" role="button" href="#" data-setid="{{setid}}" id="downloadDoc" onclick="setDownloadDoc(event)">.Docx</a>
@@ -459,7 +494,17 @@
     <a class="btn btn-success btn-sm" role="button" href="#" data-caseid="{{caseid}}" onclick="caseDownloadXlsx(event)">.Xlsx</a>
 </div>
 <div  style="float:right;padding-top:5px;padding-right:2px;">
-    <a class="btn btn-danger btn-sm" role="button" href="#" data-caseid="{{caseid}}" id="downloadPDF" onclick="caseDownloadPDF(event)">.PDF</a>
+    <div class="dropdown">
+      <button class="btn btn-danger btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        .PDF
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        {% for k in templates %}
+        <li><a href="#" data-caseid="{{caseid}}" data-templateid={{k[0]}} id="downloadPDF" onclick="caseDownloadPDF(event)">{{k[2]}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
 </div>
 <div  style="float:right;padding-top:5px;padding-right:2px;">
     <a class="btn btn-info btn-sm" role="button" href="#" data-caseid="{{caseid}}" id="downloadDoc" onclick="caseDownloadDoc(event)">.Docx</a>
@@ -477,7 +522,17 @@
     <a class="btn btn-success btn-sm" role="button" href="#" data-exeid="{{exeid}}" onclick="exeDownloadXlsx(event)">.Xlsx</a>
 </div>
 <div  style="float:right;padding-top:5px;padding-right:2px;">
-    <a class="btn btn-danger btn-sm" role="button" href="#" data-exeid="{{exeid}}" id="downloadPDF" onclick="exeDownloadPDF(event)">.PDF</a>
+    <div class="dropdown">
+      <button class="btn btn-danger btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        .PDF
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        {% for k in templates %}
+        <li><a href="#" data-exeid="{{exeid}}" data-templateid={{k[0]}} id="downloadPDF" onclick="exeDownloadPDF(event)">{{k[2]}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
 </div>
 <div  style="float:right;padding-top:5px;padding-right:2px;">
     <a class="btn btn-info btn-sm" role="button" href="#" data-exeid="{{exeid}}" id="downloadDoc" onclick="exeDownloadDoc(event)">.Docx</a>
@@ -556,5 +611,35 @@
         <th>Download</th>
         <th>Delete</th>
     </tr>
+</table>
+{% endif %}
+
+{% if downloadableFiles %}
+<table class="admin_form table table-condensed table-hover" id="deleteFileDownload" style="width:100%;height:100%;">
+    <tr>
+        <th>#</th>
+        <th class="admin_table-0">Name</th>
+        <th class="admin_table-0">Path</th>
+        <th class="admin_table-0">Download</th>
+        <th class="admin_table-0">Delete</th>
+    </tr>
+    {% for k in downloadableFiles %}
+    <tr>
+        <td>{{loop.index}}</td>
+        <td>{% set list = k[1].split('/') %}{{list[2]}}</td>
+        <td>
+            {{k[1]}}
+        </td>
+        <td>
+            <a href="{{k[1]}}" download>Download</a>
+        </td>
+        <td>
+            <a href="#" data-dbid="{{k[0]}}" style="color:#d9534f; text-decoration: none;" onclick="deleteFileDownload(event)">
+                <span class="glyphicon glyphicon-remove" id="1"></span>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+
 </table>
 {% endif %}

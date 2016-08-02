@@ -282,6 +282,14 @@ class Upload:
 		name=c.fetchone()
 		conn.commit()
 		return name[0]
+		
+	def getTemplateFile(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Uploads_Template WHERE UploadTemplateId=?",[kwargs['fileId']])
+		name=c.fetchone()
+		conn.commit()
+		return name
 	
 	def getTemplates(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")

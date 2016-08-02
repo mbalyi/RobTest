@@ -150,6 +150,15 @@ class Upload:
 			else:
 				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
 				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
+		if kwargs['mode'] == "templates":
+			c.execute("SELECT * FROM Uploads_Template WHERE File_URL=?",[kwargs['path']])
+			result=c.fetchone()
+			conn.commit()
+			if result == None:
+				return kwargs['name']
+			else:
+				name=kwargs['name'].rsplit('.', 1)[0]+"-Copy."+kwargs['name'].rsplit('.', 1)[1]
+				return UP.nameExists(path=os.path.join(kwargs['folder'], name),mode=kwargs['mode'],name=name,folder=kwargs['folder'])
 	
 	def saveSetFile(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -255,5 +264,56 @@ class Upload:
 		c.execute("DELETE FROM Uploads_Step WHERE File_URL=?",[kwargs['url']])
 		conn.commit()
 		return "success"
+		
+	def saveTemplatesFile(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("INSERT INTO Uploads_Template (File_URL,FileName,Extension,Status) VALUES (?,?,?,?)",[kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['status']])
+		conn.commit()
+		c.execute("SELECT * FROM Uploads_Template WHERE File_URL=? AND FileName=? AND Extension=? AND Status=?",[kwargs['url'],kwargs['filename'],kwargs['extension'],kwargs['status']])
+		result = c.fetchone()
+		conn.commit()
+		return result
+	
+	def getTemplateFileURL(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT File_URL FROM Uploads_Template WHERE UploadTemplateId=?",[kwargs['fileId']])
+		name=c.fetchone()
+		conn.commit()
+		return name[0]
+	
+	def getTemplates(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Uploads_Template")
+		name=c.fetchall()
+		conn.commit()
+		return name
+	
+	def deleteFileTemplate(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Uploads_Template WHERE UploadTemplateId=?",[kwargs['fileId']])
+		conn.commit()
+		return "success"
+	
+	def deleteFileTemplateUrl(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Uploads_Template WHERE File_URL=?",[kwargs['url']])
+		conn.commit()
+		return "success"
+		
+	def deleteAllTemplates(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Uploads_Template WHERE Status!=0")
+		result=c.fetchall()
+		conn.commit()
+		for k in result:
+			c.execute("DELETE FROM Uploads_Template WHERE UploadTemplateId=?",[k[0]])
+			conn.commit()
+		return result
 	
 UP = Upload()

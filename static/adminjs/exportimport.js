@@ -221,3 +221,49 @@ function deleteAllFiles(){
         $("#insertcircleDB").empty();
     });
 }
+
+var webType=['html','htm', 'HTML', 'HTM'];
+function uploadTemplate(){
+    $("#insertcircleTemplatesUpload").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    for(i=0;i<document.getElementById("templateToUpload").files.length;i++){
+        var fileName = document.getElementById("templateToUpload").files[i].name;
+        var extension = fileName.split('.').pop().toLowerCase();
+        var isSuccess = webType.indexOf(extension) > -1;
+        var file = document.getElementById("templateToUpload").files[i];
+        var reader = new FileReader();
+        if(isSuccess)
+            reader.readAsText(file, 'UTF-8');
+        data=[document.getElementById("templateToUpload").files[i].name]
+        reader.onload = shipOffTemplate.bind(null,data);
+    }
+}
+
+function shipOffTemplate(data,event){
+    var result=event.target.result;
+    var fileName = data[0];
+    $.post("/upload_file_test/1/templates",{ name: fileName, context: result },function(datas,status){
+        $(".pdfTemplates").empty().append(datas);
+        $("#insertcircleTemplatesUpload").empty();
+    }).fail(function() {
+    alert( "error" );
+    $("#insertcircleTemplatesUpload").empty();
+  });
+}
+
+function deleteTemplateDownload(id){
+    $("#insertcircleTemplates").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    $.get("/deleteFiles/"+id+"/templates",function(data,status){
+        if(status){
+            $("[data-templateid="+id+"]").remove();
+            $("#insertcircleTemplates").empty();
+        }
+    });
+}
+
+function deleteAllTemplates(){
+    $("#insertcircleTemplates").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    $.get("/deleteAllTemplates",function(data,status){
+        $(".pdfTemplates").empty().append(data); 
+        $("#insertcircleTemplates").empty();
+    });
+}

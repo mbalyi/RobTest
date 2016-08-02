@@ -31,7 +31,7 @@ Client side:
 """
 
 UPLOAD_FOLDER = './uploads/'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'csv','doc', 'docx', 'xlsx', 'xlt', 'xls', 'PNG', 'JPG', 'JPEG'])
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'doc', 'docx', 'csv','doc', 'docx', 'xlsx', 'xlt', 'xls', 'PNG', 'JPG', 'JPEG','html','htm','HTML','HTM'])
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -50,6 +50,10 @@ def uploads(filename):
 @app.route('/downloads/<path:filename>', methods=['GET', 'POST'])
 def downloads(filename):
 	return send_from_directory("./downloads/", filename)
+
+@app.route('/templates/pdfTemplates/<path:filename>', methods=['GET', 'POST'])
+def pdfTemplates(filename):
+	return send_from_directory("./templates/pdfTemplates/", filename)
 	
 @app.route('/ROB_2016.s3db', methods=['GET', 'POST'])
 def downloadBackup():
@@ -928,7 +932,8 @@ def deleteUser():
 @app.route('/getProjectManagement', methods=['GET'])	
 def getProjectManagement():
 	projects = DB.getProjects()
-	return render_template('admin.html', projectManagement=projects)
+	tags = DB.getAreasWithProject(projectId = projectSession())
+	return render_template('admin.html', projectManagement=projects, tags=tags)
 	
 @app.route('/projectActive', methods=['POST'])
 def projectActive():
@@ -961,11 +966,25 @@ def getExportImport():
 	sets = DB.get_set(projectId=projectSession(),active=1,update=0)
 	executions = DB.getExeOBTest(projectId=projectSession())
 	objects = DB.get_object(projectId=projectSession(),active=1)
-	temp = [cases,sets,executions,objects]
+	templates=UP.getTemplates()
 	dbtables=DB.getTablesFromDB()
 	files=DB.getDownloadFiles(projectId=projectSession())
-	return render_template('exportimport.html', exportimport=True,cases=cases,sets=sets,exes=executions,objects=objects,tables=dbtables,files=files)
+	return render_template('exportimport.html', exportimport=True,cases=cases,sets=sets,exes=executions,objects=objects,tables=dbtables,files=files,templates=templates)
 
+@app.route('/deleteTag', methods=['POST'])	
+def deleteTag():
+	DB.deleteArea(id=request.form['tagId'])
+	return "OK"
+
+@app.route('/saveTag', methods=['POST'])	
+def saveTag():
+	result=DB.saveTag(tagName=request.form['tagName'],projectId=request.form['projectId'])
+	tags=DB.getAreasWithProject(projectId=request.form['projectId'])
+	if result == "false":
+		return result
+	else:
+		return render_template("admin.html", newTag=tags)
+	
 #----History----
 @app.route('/HistoryForm', methods=['GET'])	
 def HistoryForm():
@@ -1055,6 +1074,8 @@ def upload_file_test(Id,mode):
 		UPLOAD_FOLDER = './uploads/execution/'
 	if mode == "case":
 		UPLOAD_FOLDER = './uploads/case/'
+	if mode == "templates":
+		UPLOAD_FOLDER = './templates/pdfTemplates/'
 	app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 	if request.method == 'POST':
 		if request.form['name'] == '':
@@ -1086,6 +1107,10 @@ def upload_file_test(Id,mode):
 			if mode == "case":
 				result=UP.saveCaseFile(caseId=Id,url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1])
 				return render_template("upload.html", caseFile=result)
+			if mode == "templates":
+				result=UP.saveTemplatesFile(url=os.path.join(app.config['UPLOAD_FOLDER'], name),filename=name,extension=request.form['name'].rsplit('.', 1)[1],status=1)
+				temps=UP.getTemplates()
+				return render_template("exportimport.html", templatesFile=temps)
 	return "error"
 
 @app.route('/upload_step_files/<int:Id>/<mode>/<replaceTag>', methods=['GET', 'POST'])
@@ -1244,6 +1269,10 @@ def deleteFiles(fileId,mode):
 		file=UP.getStepFileURL(fileId=fileId)
 		os.remove(file)
 		return UP.deleteFileStep(fileId=fileId)
+	if mode == "templates":
+		file=UP.getTemplateFileURL(fileId=fileId)
+		os.remove(file)
+		return UP.deleteFileTemplate(fileId=fileId)
 	
 @app.route('/deleteStepFile/<url>/<mode>', methods=['GET'])	
 def deleteStepFile(url,mode):
@@ -1434,6 +1463,14 @@ def deleteAllFilesDownload():
 def refreshDownloadFiles():
 	files=DB.getDownloadFiles(projectId=projectSession())
 	return render_template("exportimport.html", newfiles="true",filesNew=file)
+	
+@app.route('/deleteAllTemplates', methods=['GET'])
+def deleteAllTemplates():
+	files=UP.deleteAllTemplates()
+	for k in files:
+		os.remove(k[1])
+	temps=UP.getTemplates()
+	return render_template("exportimport.html", templatesFile=temps)
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'

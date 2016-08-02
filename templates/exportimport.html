@@ -307,7 +307,89 @@
                                 <p style="padding-left:20px;margin: 0px;"> You can select tables (one at the same time/not multiple) and export to .xlsx Microsoft Excel format.</p>
                                 <p style="padding-left:20px;"> It includes the insert script too.</p>
                                 
-                                <p>Template Managing:</p>
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="templates" style="width:100%;height:100%;">
+                <div class="col-lg-6" style="height:100%;">
+                    <div class="setManage col-lg-12" style="height:47%;margin-bottom:10px;margin-top:20px;padding-left: 8px;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Templates</div>
+                                <div  style="float:right;padding-top:5px;">
+                                    <a href="#" role="button" class="btn btn-danger btn-sm" onclick="deleteAllTemplates()">Delete All</a>
+                                </div>
+                                <div  style="float:right;padding-top:3px;">
+                                    <div  style="float:right;padding-top:10px;padding-right:2px;" id="insertcircleTemplates">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="pdfTemplates panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <table class="table table-hover" id="templatesTable">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Download</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                {% for k in templates %}
+                                    <tr data-templateid="{{k[0]}}">
+                                        <td>{{loop.index}}</td>
+                                        <td>{{k[2]}}</td>
+                                        <td>
+                                            <a href="{{k[1]}}" download>Download</a>
+                                        </td>
+                                        <td>
+                                            {% if k[4] != 0 %}
+                                            <a href="#" data-dbid="{{k[0]}}" style="color:#d9534f; text-decoration: none;" onclick="deleteTemplateDownload({{k[0]}})">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </a>
+                                            {% else %}
+                                            Default Template.
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </table>
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                    <div class="caseManage col-lg-12" style="height:47%;margin-bottom:10px;padding-left: 8px;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Upload Form</div>
+                                <div  style="float:right;padding-top:3px;">
+                                    <div  style="float:right;padding-top:10px;padding-right:2px;" id="insertcircleTemplatesUpload">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <form class="form-group"  method="post" enctype="multipart/form-data" style="width:100%;">
+                                    Select file to upload:
+                                    <input type="file" name="templateToUpload" id="templateToUpload" multiple>
+                                    <button class="btn btn-default btn-xs" type="button" onclick="uploadTemplate()" style="width:50%; float:left;">Upload</button>
+                                </form>
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                </div>
+                <div class="col-lg-6" style="height:95%;margin-bottom:20px;margin-top:20px;">
+                    <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;" id="exeExportHeader">
+                                <div style="float:left;padding-top:10px;">Template Managing</div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <p>Options:</p>
                                     <li>Download the uploaded templates.</li>
                                 <p style="padding-left:20px;margin: 0px;"> There's the list of the uploaded templates. You can download them to check or configurate them.</p>
                                     <li>Delete uploaded templates.</li>
@@ -343,14 +425,11 @@
                                 {% endraw %}
                                 
                                 <p style="margin-top: 10px;"> For all templates! The .css style formatting works only if you use inline css or css in the header. Stylesheet import isn't usable. Download the default templates to see the template structures.</p>
-                                
                             </div>
                             <!-- /.panel-body -->
                         </div>
                         <!-- /.panel -->
                 </div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="templates" style="width:100%;height:100%;">
             </div>
         </div>
 	</div>
@@ -437,4 +516,45 @@
     </tr>
     {% endfor %}
 {% endif %}
+{% endif %}
+
+{% if templatesFile %}
+<table class="table table-hover" id="templatesTable">
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Download</th>
+        <th>Delete</th>
+    </tr>
+{% for k in templatesFile %}
+    <tr data-templateid="{{k[0]}}">
+        <td>{{loop.index}}</td>
+        <td>{{k[2]}}</td>
+        <td>
+            <a href="{{k[1]}}" download>Download</a>
+        </td>
+        <td>
+            {% if k[4] != 0 %}
+            <a href="#" data-dbid="{{k[0]}}" style="color:#d9534f; text-decoration: none;" onclick="deleteTemplateDownload({{k[0]}})">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+            {% else %}
+            Default Template.
+            {% endif %}
+        </td>
+    </tr>
+{% endfor %}
+</table>
+{% endif %}
+
+
+{% if templatesClear %}
+<table class="table table-hover" id="templatesTable">
+    <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Download</th>
+        <th>Delete</th>
+    </tr>
+</table>
 {% endif %}

@@ -106,3 +106,47 @@ function saveProject(){
         });
     }
 }
+
+function projectTagTab(){
+    $(this).tab('show');
+}
+
+function confirmTagDeletion(){
+    id=$(event.target).attr('data-tagid');
+	$("[data-tagid='"+id+"'].tagDeletion").popover({content: "<p style='color:black;'>Are you sure to delete this tag?</p><button type='button' class='btn btn-danger btn-xs' data-dbid='"+id+"' onclick='deleteTag()' style='width:50%;'>Delete</button><button type='button' class='btn btn-default btn-xs' onclick='cancelTag("+id+")' style='width:50%;'>Cancel</button>",html:true});
+    $("[data-tagid='"+id+"'].tagDeletion").popover('show');
+}
+function cancelTag(id){
+    $("[data-tagid='"+id+"'].tagDeletion").popover('hide');
+}
+function deleteTag(){
+    var sendData="tagId="+$(event.target).attr('data-dbid');
+    $.post("/deleteTag",sendData,function(data,status){
+       if(status){
+           $("[data-tagid="+id+"].tagDeletion").popover('hide');
+           $("[data-tagid="+id+"].rowLink").closest("tr").remove();
+       } 
+    });
+}
+
+function saveTag(){
+	if($("input[type='text'][data-newtag='tagName']").val()==""){
+        $(".tagErrorMessage").tooltip({title: "Name is missing!"});
+        $(".tagErrorMessage").tooltip('show');
+    }
+    else{
+        $(".tagErrorMessage").tooltip('hide');
+        var sendData="tagName="+$("input[type='text'][data-newtag='tagName']").val()+"&projectId="+$(".projectSelector").find(":selected").attr("data-dbid");
+        $.post("/saveTag",sendData,function(data,status){
+            if(status){
+                if(data != "failed"){
+                    $("#tagTable").append(data);
+                }
+                else{
+                    $(".tagErrorMessage").tooltip({title: "Tag still exists!"});
+                    $(".tagErrorMessage").tooltip('show');
+                }
+            }
+        });
+    }
+}

@@ -979,6 +979,27 @@ class Database:
 		result = c.fetchall()
 		conn.commit()
 		return result
+		
+	def deleteArea(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Areas WHERE AreaId=?",[kwargs['id']])
+		conn.commit()
+		return
+		
+	def getAreasWithProject(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT AR.AreaId,AR.AreaTitle,PR.Name 
+			FROM Areas AS AR 
+			LEFT JOIN Projects AS PR
+			ON PR.ProjectId=AR.ProjectId
+			WHERE AR.ProjectId=?
+		""",[kwargs['projectId']])
+		result = c.fetchall()
+		conn.commit()
+		return result
 	
 	def getCaseArea(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -1140,6 +1161,21 @@ class Database:
 			id=c.fetchone()
 			conn.commit()
 			return id[0]
+		return "failed"
+	
+	def saveTag(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT AreaId FROM Areas WHERE AreaTitle=?",[kwargs['tagName']])
+		result=c.fetchone()
+		conn.commit()
+		if result == None:
+			c.execute("INSERT INTO Areas (AreaTitle,ProjectId) VALUES (?,?)",[kwargs['tagName'],kwargs['projectId']])
+			conn.commit()
+			c.execute("SELECT * FROM Areas WHERE AreaTitle=? AND ProjectId=? ORDEr BY AreaId DESC",[kwargs['tagName'],kwargs['projectId']])
+			result=c.fetchone()
+			conn.commit()
+			return result
 		return "failed"
 	
 	

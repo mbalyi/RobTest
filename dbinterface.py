@@ -620,6 +620,8 @@ class Database:
 		conn.commit()
 		c.execute("DELETE FROM Uploads_Execution WHERE ExecutionId=?",[kwargs['id']])
 		conn.commit()
+		c.execute("DELETE FROM Variable_ExeStep WHERE ExecutionId=?",[kwargs['id']])
+		conn.commit()
 	
 	def getStepExeParam(self,**kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
@@ -1108,6 +1110,7 @@ class Database:
 		LEFT JOIN Projects AS PR 
 		ON PR.ProjectId=VA.ProjectId 
 		WHERE VA.ProjectId=?""",
+		[kwargs['projectId']])
 		[kwargs['projectId']])
 		result=c.fetchall()
 		conn.commit()

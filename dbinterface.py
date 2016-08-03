@@ -1111,7 +1111,6 @@ class Database:
 		ON PR.ProjectId=VA.ProjectId 
 		WHERE VA.ProjectId=?""",
 		[kwargs['projectId']])
-		[kwargs['projectId']])
 		result=c.fetchall()
 		conn.commit()
 		return result

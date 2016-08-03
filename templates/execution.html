@@ -73,11 +73,12 @@
                 {% if loop.index == 1 %}
                     <tr>
                 {% endif %}
-                        <td>
-                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>
+                        <td id="td-20">
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0]}}'>{{k[1]}}
+                            {% if k[3] == 1 %}
+                            <input type="text" disabled="disabled" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="..">
+                            {% endif %}
                         </td>
-                        <td>{{k[1]}}</td>
-                        <td style="width:5px;"></td>
                 {% if (loop.index%5 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
@@ -170,17 +171,17 @@
                 {% if loop.index == 1 %}
                     <tr>
                 {% endif %}
-                        <td>
+                        <td id="td-20">
                             {% if k[1] == "checked" %}
-                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>
-                        </td>
-                        <td>{{k[0][1]}}</td>
-                        <td style="width:5px;"></td>
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}} 
+                                {% if k[2] != None %}
+                                <u>{{k[2]}}</u>
+                                {% endif %}
                             {% else %}
-                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>
-                        </td>
-                        <td>{{k[0][1]}}</td>
-                        <td style="width:5px;"></td>
+                            <input type="checkbox" disabled="disabled" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                                {% if k[2] != None %}
+                                <u>{{k[2]}}</u>
+                                {% endif %}
                             {% endif %}
                         </td>
                 {% if (loop.index%5 == 0) and (loop.index!=count) %}
@@ -331,24 +332,36 @@
                 {% if loop.index == 1 %}
                     <tr>
                 {% endif %}
-                        <td>
+                        <td id="td-20">
                             {% if k[1] == "checked" %}
-                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>
-                        </td>
-                        <td>{{k[0][1]}}</td>
-                        <td style="width:5px;"></td>
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                                {% for l in dynArea %}
+                                    {% if l[0]==k[0][0] %}
+                                        {% if k[2] != None %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="{{k[2]}}">
+                                        {% else %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="...">
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
                             {% else %}
-                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>
-                        </td>
-                        <td>{{k[0][1]}}</td>
-                        <td style="width:5px;"></td>
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                                {% for l in dynArea %}
+                                    {% if l[0]==k[0][0] %}
+                                        {% if k[2] != None %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="{{k[2]}}">
+                                        {% else %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="...">
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
                             {% endif %}
                         </td>
-                {% if (loop.index%3 == 0) and (loop.index!=count) %}
+                {% if (loop.index%5 == 0) and (loop.index!=count) %}
                     </tr>
                     <tr>
                 {% endif %}
-                {% if (loop.index%3 == 0) and (loop.index==count) %}
+                {% if (loop.index%5 == 0) and (loop.index==count) %}
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -429,7 +442,7 @@
             Included Cases
             </div>
             <!-- /.panel-heading -->
-            <div class="incCases panel-body" ondrop='drop(event)' ondragover='allowDrop(event)'>
+            <div class="incExeCases panel-body" ondrop='drop(event)' ondragover='allowDrop(event)'>
                 {% if loadEditableCase %}
                     <table>
                         <tr>
@@ -440,7 +453,8 @@
                         <div data-dbid='case{{l[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
                             <table>
                                 <tr>
-                                    <td><a href="#" data-dbid='{{l[0]}}' class="case">{{l[1]}}</a></td><td>{{l[5]}}</td>
+                                    <td style="padding-left:3px;">{{loop.index}}</td>
+                                    <td><a href="#" data-dbid='{{l[0]}}' class="case">{{l[1]}}</a>
                                 </tr>
                             </table>
                         </div>

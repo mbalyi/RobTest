@@ -281,7 +281,7 @@ function enableForm(){
     $("#newCase").attr('disabled', true);
     $(".saveCase").empty().append(saveCaseEn1+"newCase"+saveCaseEn2);
     $("#stepContainer").css('height','65%');
-    $("input[name=dynamicArea]").removeAttr('disabled')
+    $("input[name=dynamicArea]").removeAttr('disabled');
     //testareaDesign();
     textEditorEnabler();
 }

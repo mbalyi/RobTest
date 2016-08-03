@@ -524,14 +524,14 @@ def newExecution():
 
 @app.route('/saveExe', methods=['GET', 'POST'])
 def SaveExecution():
-	exeId=DB.saveExe(name=request.form["title"],testObject=request.form["TO"],projectId=projectSession(),areas=request.form.getlist('areaBox'),userId=request.form["userId"])
+	exeId=DB.saveExe(name=request.form["title"],testObject=request.form["TO"],projectId=projectSession(),areas=request.form.getlist('areaBox'),userId=request.form["userId"],dynamic=request.form.getlist('dynamicArea'))
 	DB.saveCaseExe(ID=request.form.getlist('ID'),exeID=exeId)
 	return json.dumps(exeId)
 
 @app.route('/updateExe', methods=['POST'])
 def UpdateExecution():
-	DB.updateExecution(exeId=request.form['exeId'],name=request.form["title"],testObject=request.form["TO"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'),userId=request.form["userId"])
-	DB.updateCaseExe(ID=request.form.getlist('ID'),exeID=exeId)
+	DB.updateExecution(exeId=request.form['exeId'],name=request.form["title"],testObject=request.form["TO"],projectId=request.form["projectId"],areas=request.form.getlist('areaBox'),userId=request.form["userId"],dynamic=request.form.getlist('dynamicArea'))
+	DB.updateCaseExe(ID=request.form.getlist('ID'),exeId=request.form['exeId'])
 	return json.dumps(request.form['exeId'])
 	
 @app.route('/loadExecution/<int:ID>/<mode>', methods=['GET'])
@@ -543,6 +543,7 @@ def loadExecution(ID,mode):
 	objects=DB.get_object(projectId=projectSession(), notRes=object[0],active=1)
 	areaInExe = DB.getExeArea(exeId=ID)
 	areas = DB.getAreasWithProject(projectId=projectSession())
+	dynArea=DB.getDynamicAreas(projectId=projectSession())
 	files = DB.getExeFiles(exeId=ID)
 	temp=[]
 	boolen='false'
@@ -550,15 +551,16 @@ def loadExecution(ID,mode):
 		for j in areaInExe:
 			if j[0] == k[0]:
 				boolen='true'
+				exearea=j[2]
 		if boolen=='false':
-			temp.append([k,'notchecked'])
+			temp.append([k,'notchecked',""])
 		else:
-			temp.append([k,'checked'])
+			temp.append([k,'checked',exearea])
 			boolen='false'
 	if mode == "loadExe":
 		return render_template('execution.html', loadExe=query, loadCase=cases, loadObject=object,areas=temp,count=len(areas),exeId=ID,files=files,users=users)
 	if mode == "editExe":
-		return render_template('execution.html', loadEditableExe=query, loadEditableCase=cases, loadEditableObject=object, loadObjects=objects,areas=temp,count=len(areas),exeId=ID,files=files,users=users)
+		return render_template('execution.html', loadEditableExe=query, loadEditableCase=cases, loadEditableObject=object, loadObjects=objects,areas=temp,count=len(areas),exeId=ID,files=files,users=users,dynArea=dynArea)
 	#else:
 	#	return render_template('execution.html', loadEditableSet=query, editCase=cases)
 

@@ -333,14 +333,22 @@
                             <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
                                 {% for l in dynArea %}
                                     {% if l[0]==k[0][0] %}
-                            <input type="text" disabled="disabled" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="{{k[2]}}">
+                                        {% if k[2] != None %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="{{k[2]}}">
+                                        {% else %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="...">
+                                        {% endif %}
                                     {% endif %}
                                 {% endfor %}
                             {% else %}
                             <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
                                 {% for l in dynArea %}
                                     {% if l[0]==k[0][0] %}
-                            <input type="text" disabled="disabled" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="{{k[2]}}">
+                                        {% if k[2] != None %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="{{k[2]}}">
+                                        {% else %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="...">
+                                        {% endif %}
                                     {% endif %}
                                 {% endfor %}
                             {% endif %}

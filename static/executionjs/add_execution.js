@@ -36,17 +36,24 @@ function exeSetup(request,checker){
 function saveExe(){
     var sendData = $("input[type=text]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&") + "&"+$("input[type=date]").map(function(i,o){return o.name+"="+o.value}).toArray().join("&");
     sendData = sendData+"&"+$("input:checkbox:checked").map(function(){return "areaBox="+$(this).attr('data-dbid')}).toArray().join("&")+"&ID="+$(".incExeCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID=")+"&TO="+$(".objectSeletor").find(":selected").attr('data-dbid')+"&userId="+$(".userSelector").find(":selected").attr("data-dbid");
-	$.post("/saveExe", sendData,
-		function(data,status){
-			if(status){
-                if(document.getElementById("fileUploadExe").files.length > 0){
-                    updateFilesToExe(data);
+    if($(".incExeCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID=") != ""){
+        $.post("/saveExe", sendData,
+            function(data,status){
+                if(status){
+                    $(".buttonSetup").empty().append(exeBtn);
+                    if(document.getElementById("fileUploadExe").files.length > 0){
+                        updateFilesToExe(data);
+                    }
+                    requestExe();
+                    loadExecution(data,"loadExe")
                 }
-				requestExe();
-				loadExecution(data,"loadExe")
-			}
-		},"json"
-	);
+            },"json"
+        );
+    }
+    else{
+         $("#insertcircle").empty();
+        alert("Add a set to the execution!");
+    }
 }
 
 function updateExecution(exeId){
@@ -56,15 +63,22 @@ function updateExecution(exeId){
     sendData+=exeId;
     sendData+="&projectId=";
     sendData+=$(".projectSelector").find(":selected").attr('data-dbid');
-	$.post("/updateExe", sendData,
-		function(data,status){
-			if(status){
-                fileUpdateOnExe(exeId);
-				requestExe();
-				loadExecution(data,"loadExe")
-			}
-		},"json"
-	);
+    if($(".incExeCases a").map(function(index,node){return node.dataset.dbid;}).toArray().join("&ID=") != ""){
+        $.post("/updateExe", sendData,
+            function(data,status){
+                if(status){
+                    $(".buttonSetup").empty().append(exeBtn);
+                    fileUpdateOnExe(exeId);
+                    requestExe();
+                    loadExecution(data,"loadExe");
+                }
+            },"json"
+        );
+    }
+     else{
+         $("#insertcircle").empty();
+        alert("Add a set to the execution!");
+    }
 }
 
 function newExe(){
@@ -81,6 +95,7 @@ function newExe(){
     $(".elementOfCaseList").removeAttr("ondragover");
     $(".elementOfCaseList").removeAttr("ondragstart");
     $(".elementOfCaseList").removeAttr("draggable");
+    $("input[name=dynamicArea]").removeAttr('disabled');
 }
 
 function loadExecution(exeID,mode){
@@ -163,11 +178,9 @@ $(function(){
             $("#insertcircle").empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
             if($(".exeHeader").attr('data-dbid')=="newExecution"){
                 saveExe();
-                $(".buttonSetup").empty().append(exeBtn);
             }
             else{
                 updateExecution($(".exeHeader").attr('data-dbid'));
-                 $(".buttonSetup").empty().append(exeBtn);
             }
 		}
 		if( event.target.id == "newExe"){

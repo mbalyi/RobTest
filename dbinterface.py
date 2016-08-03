@@ -476,9 +476,16 @@ class Database:
 		conn.commit()
 		c.execute("INSERT INTO Exe_Object (ExecutionId,ObjectId) VALUES (?,?)",[ExeID[0],kwargs['testObject']])
 		conn.commit()
+		c.execute("SELECT * FROM Areas WHERE IsDynamic=1")
+		dAreas=c.fetchall()
+		conn.commit()
 		for k in kwargs['areas']:
-			c.execute("INSERT INTO Area_Execution (AreaId,ExecutionId) VALUES(?,?)",[k,ExeID[0]])
+			c.execute("INSERT INTO Area_Execution (AreaId,ExecutionId) VALUES (?,?)",[k,ExeID[0]])
 			conn.commit()
+			for i,l in enumerate(dAreas):
+				if int(k) == int(l[0]):
+					c.execute("UPDATE Area_Execution SET Dynamic=? WHERE AreaId=? AND ExecutionId=?",[kwargs['dynamic'][i],k,ExeID[0]])
+					conn.commit()
 		return ExeID[0]
 	
 	def updateExecution(self,**kwargs):
@@ -497,6 +504,9 @@ class Database:
 		allArea=[]
 		for k in kwargs['areas']:
 			allArea.append(int(k))
+		c.execute("SELECT * FROM Areas WHERE IsDynamic=1")
+		dAreas=c.fetchall()
+		conn.commit()
 		for k in allArea:
 			if temp.count(k) == 0:
 				c.execute("INSERT INTO Area_Execution (AreaId,ExecutionId) VALUES (?,?)",[k,kwargs['exeId']])
@@ -505,6 +515,11 @@ class Database:
 			if allArea.count(j) == 0:
 				c.execute("DELETE FROM Area_Execution WHERE AreaId=? AND ExecutionId=?",[j,kwargs['exeId']])
 				conn.commit()
+		for k in kwargs['areas']:
+			for i,l in enumerate(dAreas):
+				if int(k) == int(l[0]):
+					c.execute("UPDATE Area_Execution SET Dynamic=? WHERE AreaId=? AND ExecutionId=?",[kwargs['dynamic'][i],k,kwargs['exeId']])
+					conn.commit()
 		return
 	
 	def updateCaseExe(self,**kwargs):
@@ -514,7 +529,7 @@ class Database:
 		caseIds=c.fetchall()
 		conn.commit()
 		temp=[]
-		for k in caseId:
+		for k in caseIds:
 			temp.append(k[0])
 		allCases=[]
 		for k in kwargs['ID']:
@@ -527,7 +542,7 @@ class Database:
 				c.execute("INSERT INTO Case_Execution (ExecutionId,CaseId,Result,title,) VALUES (?,?)",[k,kwargs['exeId'],"NOTRUN",title[0]])
 				conn.commit()
 		for j in temp:
-			if allArea.count(j) == 0:
+			if allCases.count(j) == 0:
 				c.execute("DELETE FROM Case_Execution WHERE CaseId=? AND ExecutionId=?",[j,kwargs['exeId']])
 				conn.commit()
 	
@@ -1032,7 +1047,7 @@ class Database:
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		c.execute("""
-			SELECT AR.AreaId,AR.AreaTitle 
+			SELECT AR.AreaId,AR.AreaTitle,AE.Dynamic 
 			FROM Area_Execution AS AE 
 			LEFT JOIN Areas AS AR ON AE.AreaId=AR.AreaId 
 			WHERE AE.ExecutionId=?""",

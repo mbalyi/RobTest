@@ -27,6 +27,7 @@ var testNavbar=`
 <div class='row'>
     <div class='col-md-9' id='nav-test-col-md-9'>
     </div>
+    <div id="modalContainer"></div>
 </div>`;
 
 var reportNavbar=`

@@ -163,7 +163,7 @@ function textEditorEnabler(){
             ico: 'justifyLeft'
         },
         image: {
-            dropdown: ['base64', 'upload', 'insertImage'],
+            dropdown: ['base64'],
             ico: 'insertImage'
         },
         format: {
@@ -223,7 +223,7 @@ function textEditorEnabler(){
             ico: 'justifyLeft'
         },
         image: {
-            dropdown: ['base64', 'upload', 'insertImage'],
+            dropdown: ['base64'],
             ico: 'insertImage'
         },
         format: {

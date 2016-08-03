@@ -103,11 +103,12 @@
         <tr style='width:100%;'>
             <th style='width:2%;'></th>
             <th style='width:2%;'>ID</th>
-            <th style='width:40%;'>Description</th>
+            <th style='width:35%;'>Description</th>
             <th style='width:31%;'>Result</th>
             <th style='width:5%;'>Result</th>
             <th style='width:5%;'>File</th>
-            <th style='width:15%;'>Comment</th>
+            <th style='width:10%;'>Comment</th>
+            <th style='width:10%;'>Variables</th>
         </tr>
     </table>
     <div class='stepHolder' style="width:100%;height:calc(100% - 42px);overflow-y: auto;">
@@ -118,13 +119,13 @@
                 <td class='Step' data-dbid='{{k[0][0]}}' style='width:2%;'>
                     <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{loop.index}}</a>
                 </td>
-                <td class='Step' data-dbid='{{k[0][0]}}' style='width:40%;'>
+                <td class='Step' data-dbid='{{k[0][0]}}' style='width:35%;'>
                     <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][1]|safe}}</a>
                 </td>
                 <td class='Step' data-dbid='{{k[0][0]}}' style='width:31%;'>
                     <a href='#' class='Step' data-dbid='{{k[0][0]}}' >{{k[0][2]|safe}}</a>
                 </td>
-                <td data-dbid='{{k[0][0]}}' id='{{k[0][0]}}' style='width:5%;'>
+                <td data-dbid='{{k[0][0]}}' id='{{k[0][0]}}' style='width:5%;padding-left: 12px;'>
                     <a href='#' class='Result' data-dbid='{{k[0][0]}}' id='{{k[0][0]}}'>
                         {% if k[1][0] == "RUN" %}
                             <span class='glyphicon glyphicon-ok-circle' style='color:#5cb85c;'></span>
@@ -143,13 +144,16 @@
                         {% endif %}
                     </a>
                 </td>
-                <td class="Step" data-dbid='{{k[0][0]}}' style='width:5%;'>
+                <td class="Step" data-dbid='{{k[0][0]}}' style='width:5%;padding-left: 12px;'>
                     <button type="button" class="btn btn-default btn-xs" onclick="fileUploadTest({{k[0][0]}})" data-popname="uploadPop" data-dbid='{{k[0][0]}}' data-toggle="popover" data-placement="bottom" data-title='Upload: '>
                         <span class="glyphicon glyphicon-cloud-upload"></span>
                     </button>
                 </td>
-                <td class='Step' data-dbid='{{k[0][0]}}' style='width:15%;'>
+                <td class='Step' data-dbid='{{k[0][0]}}' style='width:10%;padding-left: 15px;'>
                     <a href='#' class='Step' data-comment='comment' data-dbid='{{k[0][0]}}' data-popname="stepPop" data-toggle="popover" data-placement="bottom" data-title='Comment: ' onclick="addComment({{k[0][0]}})">{{k[1][1]}}</a>
+                </td>
+                <td class='Step' data-dbid='{{k[0][0]}}' style='width:10%;padding-left: 15px;'>
+                    <a href='#' class='Step' data-var='variable' data-dbid='{{k[0][0]}}' data-toggle="modal" data-target="#resultModal{{exeId}}-{{k[0][0]}}">Variable</a>
                 </td>
             </tr>
         </table>
@@ -211,4 +215,67 @@
     {% if status == "NOTIMP" %}
         <span class='glyphicon glyphicon-ban-circle' style='color:#5bc0de;'></span>
     {% endif %}
+{% endif %}
+
+{% if modalSteps %}
+<div class="modal fade bs-example-modal-lg" id="resultModal{{modalSteps[1]}}-{{modalSteps[0]}}" data-exeid='{{modalSteps[1]}}' data-stepid='{{modalSteps[0]}}' tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="gridSystemModalLabel" style="float:left;">Variables for ({{modalSteps[0]}}) this step..</h4>
+            
+            <button type="button" class="btn btn-warning btn-sm" onclick="clearAllValue({{modalSteps[1]}},{{modalSteps[0]}})" style="float:right;margin-right: 5px;">Clear All</button>
+            <button type="button" class="btn btn-info btn-sm" onclick="sendAllValue({{modalSteps[1]}},{{modalSteps[0]}})" style="float:right;margin-right: 2px;">Send All</button>
+            <div style="float:right;" id="insertcirclemodal-{{modalSteps[1]}}-{{modalSteps[0]}}"></div>
+        </div>
+        <div class="modal-body">
+            <table class="table table-hover">
+                <tr>
+                    <th>#</th>
+                    <th>Variable</th>
+                    <th>Active</th>
+                    <th>Value</th>
+                    <th>Send</th>
+                    <th>Clear</th>
+                </tr>
+                {% for var in variables %}
+                <tr>
+                    <td>
+                        {{loop.index}}
+                    </td>
+                    <td>
+                        {{var[0][1]}}
+                    </td>
+                    <td>
+                        {% if var[0][2] == 1 %}
+                        <p class="userStatus" data-dbid="{{var[0][0]}}" style="color:#5cb85c;margin:0px;"><span class="slideIcon" style="background-color:#5cb85c;"></span> Active</p>
+                        {% else %}
+                        <p class="userStatus" data-dbid="{{var[0][0]}}" style="color:#d9534f;margin:0px;"><span class="slideIcon" style="background-color:#d9534f;"></span> Inactive</p>
+                        {% endif %}
+                    </td>
+                    <td class="valueInput" data-varid='{{var[0][0]}}' data-exeid='{{modalSteps[1]}}' data-stepid='{{modalSteps[0]}}'>
+                        {% if var[1] == None %}
+                        <input type='text' name='variable' placeholder='Value..' class='form-control' data-varid='{{var[0][0]}}' data-exeid='{{modalSteps[1]}}' data-stepid='{{modalSteps[0]}}'>
+                        {% else %}
+                        <input type='text' name='variable' value='{{var[1][4]}}' placeholder='Value..' class='form-control' data-varid='{{var[0][0]}}' data-exeid='{{modalSteps[1]}}' data-stepid='{{modalSteps[0]}}'>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="#" onclick="sendValue({{modalSteps[1]}},{{modalSteps[0]}},{{var[0][0]}})">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="#" onclick="clearValue({{modalSteps[1]}},{{modalSteps[0]}},{{var[0][0]}})">
+                            <span class="glyphicon glyphicon-minus"></span>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+  </div>
+</div>
 {% endif %}

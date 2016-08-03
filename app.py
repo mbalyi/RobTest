@@ -627,7 +627,7 @@ def testPage(id,exeId):
 	query = DB.get_step_parameters(id=id,projectId=projectSession())
 	res = DB.getStatusFromStepExe(exeId=exeId, caseId=id)
 	query=zip(query,res)
-	return render_template('test.html', step=query, status=res)
+	return render_template('test.html', step=query, status=res,exeId=exeId)
 
 @app.route('/saveStatus/<int:stepId>/<int:caseExeId>/<status>', methods=['GET'])
 def saveStatus(stepId,caseExeId,status):
@@ -652,6 +652,39 @@ def saveComment(stepId,exeId):
 def updateStepExeCorrectWay():
 	DB.updateStepExeCorrectWay()
 	return "ok"
+	
+@app.route('/loadModal/<int:stepId>/<int:exeId>', methods=['GET'])
+def loadModal(stepId,exeId):
+	#step=DB.getStepExeParam(stepId=stepId,exeId=exeId)
+	var=DB.getVariables(projectId=projectSession())
+	stepVar=DB.getExeStepVar(stepId=stepId,exeId=exeId)
+	temp=[]
+	steps=""
+	for k in var:
+		if stepVar == None:
+			temp.append([k,None])
+		else:
+			boolen=False
+			for l in stepVar:
+				if int(l[1])==int(k[0]):
+					boolen=True
+					steps=l
+			if boolen==False:
+				temp.append([k,None])
+			else:
+				temp.append([k,steps])
+	modalSteps=[stepId,exeId]
+	return render_template("test.html",modalSteps=modalSteps,variables=temp)
+
+@app.route('/sendVarTest/<int:exeId>/<int:stepId>/<int:varId>', methods=['POST'])
+def sendVarTest(exeId,stepId,varId):
+	DB.saveVarTest(stepId=stepId,exeId=exeId,varId=varId,value=request.form['value'])
+	return "OK"
+
+@app.route('/clearValue/<int:exeId>/<int:stepId>/<int:varId>', methods=['GET'])
+def clearValue(exeId,stepId,varId):
+	DB.clearValue(stepId=stepId,exeId=exeId,varId=varId)
+	return "OK"
 	
 #-----Project-----
 @app.route('/projectChanging/<int:id>', methods=['GET'])
@@ -945,7 +978,9 @@ def deleteUser():
 def getProjectManagement():
 	projects = DB.getProjects()
 	tags = DB.getAreasWithProject(projectId = projectSession())
-	return render_template('admin.html', projectManagement=projects, tags=tags)
+	vars = DB.getVariables(projectId = projectSession())
+	projects=DB.getProjects()
+	return render_template('admin.html', projectManagement=projects, tags=tags, vars=vars, projects=projects)
 	
 @app.route('/projectActive', methods=['POST'])
 def projectActive():
@@ -956,11 +991,26 @@ def projectActive():
 def deleteProject():
 	DB.deleteProject(projectId=request.form['projectId'])
 	return "OK"
-
+	
 @app.route('/saveProject', methods=['POST'])	
 def saveProject():
 	return str(DB.saveProject(projectName=request.form['projectName']))
 
+@app.route('/saveVariable', methods=['POST'])	
+def saveVariable():
+	newvar=DB.saveVariable(variable=request.form['variable'],projectId=request.form['projectId'])
+	if newvar == "false":
+		return "false"
+	else:
+		vars = DB.getVariables(projectId = projectSession())
+		projects=DB.getProjects()
+		return render_template("admin.html",newvar=vars,projects=projects)
+
+@app.route('/deleteVar', methods=['POST'])	
+def deleteVar():
+	DB.deleteVariable(variableId=request.form['varId'])
+	return "OK"
+		
 @app.route('/getDatabaseManagement', methods=['GET'])	
 def getDatabaseManagement():
 	cases = DB.get_case(projectId = projectSession(),active=1,update=1)

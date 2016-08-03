@@ -21,6 +21,10 @@ function testPage(pageID){
 				divId=$($('.stepHolder').children()[0]).attr('data-stepMarkerId');
 				$("#"+divId+".stepMarker").empty().append(cursor);
 				caseIdInExe=pageID;
+                $("#modalContainer").empty();
+                for(i=0;i<$(".stepMarker").length;i++){
+                    loadModal($($(".stepMarker")[i]).attr("data-dbid"));
+                }
 			};
 		}
 	)
@@ -180,3 +184,45 @@ $(function(){
 		}
 	});
 });
+
+function loadModal(id){
+    $.get("/loadModal/"+id+"/"+$(".executionSelector").find(":selected").attr("data-dbid"),
+		function(data,status){
+			if(status){
+				$("#modalContainer").append(data);
+			};
+		}
+	);
+}
+
+function sendValue(exeId,stepId,varId){
+    $("#insertcirclemodal"+exeId+"-"+stepId).empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    if($("[name=variable][data-varid="+varId+"][data-exeid="+exeId+"][data-stepid="+stepId+"]").val() == undefined){
+        var sendData="value="
+    }
+    else{
+        var sendData="value="+$("[name=variable][data-varid="+varId+"][data-exeid="+exeId+"][data-stepid="+stepId+"]").val();
+    }
+    $.post("/sendVarTest/"+exeId+"/"+stepId+"/"+varId,sendData,function(data,status){
+        if(status){
+            $("#insertcirclemodal"+exeId+"-"+stepId).empty();
+        }
+    });
+}
+function clearValue(exeId,stepId,varId){
+    $("#insertcirclemodal"+exeId+"-"+stepId).empty().append("<span id='circlebar' class='glyphicon glyphicon-repeat'></span>");
+    $.get("/clearValue/"+exeId+"/"+stepId+"/"+varId,function(data,status){
+        if(status){
+            $("#insertcirclemodal"+exeId+"-"+stepId).empty();
+            $(".valueInput[data-varid="+varId+"][data-exeid="+exeId+"][data-stepid="+stepId+"]").empty().append("<input type='text' name='variable' placeholder='Value..' class='form-control' data-varid='"+varId+"' data-exeid='"+exeId+"' data-stepid='"+stepId+"'>");
+        }
+    });
+}
+function sendAllValue(exeId,stepId){
+    for(i=0;i<$("input[name=variable]").length/$(".stepMarker").length;i++)
+        sendValue(exeId,stepId,$($("input[name=variable]")[i]).attr("data-varid"));
+}
+function clearAllValue(exeId,stepId){
+    for(i=0;i<$("input[name=variable]").length/$(".stepMarker").length;i++)
+        clearValue(exeId,stepId,$($("input[name=variable]")[i]).attr("data-varid"));
+}

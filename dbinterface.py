@@ -621,6 +621,20 @@ class Database:
 		c.execute("DELETE FROM Uploads_Execution WHERE ExecutionId=?",[kwargs['id']])
 		conn.commit()
 	
+	def getStepExeParam(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT SE.Id,SE.StepId,SE.ExecutionId,SE.Result,ST.Action,ST.Result 
+			FROM Step_Execution AS SE 
+			LEFT JOIN Steps AS ST ON ST.StepId=SE.StepId
+			WHERE ST.ExecutionId=? AND ST.StepId=?
+			ORDER BY SE.Id DESC
+		""",[kwargs['exeId'],kwargs['stepId']])
+		step=c.fetchone()
+		conn.commit()
+		return step
+	
 	def getStatusFromStepExe(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -758,6 +772,8 @@ class Database:
 		conn.commit()
 		return
     
+	
+	
 	#-----test-----
 	def saveSetStatus(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -1081,7 +1097,57 @@ class Database:
 		result=c.fetchall()
 		conn.commit()
 		return result
-		
+	
+	#------Variables------
+	def getVariables(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+		SELECT VA.VariableId,VA.VariableName,VA.Active,PR.Name 
+		FROM Variables AS VA 
+		LEFT JOIN Projects AS PR 
+		ON PR.ProjectId=VA.ProjectId 
+		WHERE VA.ProjectId=?""",
+		[kwargs['projectId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def getExeStepVar(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Variable_ExeStep WHERE ExecutionId=? AND StepId=?",[kwargs['exeId'],kwargs['stepId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def saveVarTest(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Variable_ExeStep WHERE ExecutionId=? AND StepId=? AND VariableId=?",[kwargs['exeId'],kwargs['stepId'],kwargs['varId']])
+		result=c.fetchone()
+		conn.commit()
+		print(kwargs['value'])
+		if result == None and kwargs['value'] != "":
+			c.execute("INSERT INTO Variable_ExeStep (VariableId,ExecutionId,StepId,Value) VALUES (?,?,?,?)",[kwargs['varId'],kwargs['exeId'],kwargs['stepId'],kwargs['value']])
+		if result != None and kwargs['value'] != "":
+			c.execute("UPDATE Variable_ExeStep SET Value=? WHERE VariableId=? AND ExecutionId=? AND StepId=?",[kwargs['value'],kwargs['varId'],kwargs['exeId'],kwargs['stepId']])
+		if result != None and kwargs['value'] == "":
+			c.execute("DELETE FROM Variable_ExeStep WHERE VariableId=? AND ExecutionId=? AND StepId=?",[kwargs['varId'],kwargs['exeId'],kwargs['stepId']])
+		conn.commit()
+		return
+	
+	def clearValue(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Variable_ExeStep WHERE ExecutionId=? AND StepId=? AND VariableId=?",[kwargs['exeId'],kwargs['stepId'],kwargs['varId']])
+		result=c.fetchone()
+		conn.commit()
+		if result != None:
+			c.execute("DELETE FROM Variable_ExeStep WHERE VariableId=? AND ExecutionId=? AND StepId=?",[kwargs['varId'],kwargs['exeId'],kwargs['stepId']])
+		conn.commit()
+		return
+	
 	#------Admin------
 	def updatePw(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -1208,6 +1274,37 @@ class Database:
 			return result
 		return "failed"
 	
+	def saveVariable(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT VariableId FROM Variables WHERE VariableName=?",[kwargs['variable']])
+		result=c.fetchone()
+		conn.commit()
+		if result == None:
+			c.execute("INSERT INTO Variables (ProjectId,VariableName,Active) VALUES (?,?,?)",[kwargs['projectId'],kwargs['variable'],1])
+			conn.commit()
+			c.execute("""
+			SELECT VA.VariableId,VA.VariableName,VA.Active,PR.Name 
+			FROM Variables AS VA 
+			LEFT JOIN Projects AS PR ON PR.ProjectId=VA.ProjectId
+			WHERE VA.ProjectId=? 
+			AND VA.VariableName=? 
+			AND VA.Active=? 
+			ORDER BY VA.VariableId DESC""",[kwargs['projectId'],kwargs['variable'],1])
+			var=c.fetchone()
+			conn.commit()
+			return var
+		return "failed"
+	
+	def deleteVariable(self,**kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("DELETE FROM Variables WHERE VariableId=?",[kwargs['variableId']])
+		conn.commit()
+		c.execute("DELETE FROM Variable_ExeStep WHERE VariableId=?",[kwargs['variableId']])
+		conn.commit()
+		return
+		
 	
 	def updateStepExeCorrectWay(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")

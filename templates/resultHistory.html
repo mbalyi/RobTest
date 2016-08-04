@@ -122,7 +122,7 @@
         {% for k in loadLastResStepHist %}
         <tr>
             <td>{{loop.index}}</td>
-            <td>{{title[loop.index-1]}}</td>
+            <td>{{title[loop.index-1]|safe}}</td>
             {% for j in k %}
                 {% if j == "RUN" %}
                     <td style="color:#2ECC71;">{{j}}</td>

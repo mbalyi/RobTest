@@ -88,6 +88,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='reportjs/add_case_history.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='reportjs/add_step_history.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='reportjs/add_case_status_history.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='reportjs/reportGenerator.js') }}"></script>
     
     <script type="text/javascript" src="{{ url_for('static', filename='backlogjs/fileUpload.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='backlogjs/updateFileToObjects.js') }}"></script>
@@ -393,7 +394,7 @@
                             <a href="#"><i class="fa fa-bookmark fa-fw"></i> Reporting<span class="fa arrow"></span></a>
                             <ul class="nav nav-second-level">
                                 {% if user %}
-                                <li><a class='header' id="reportGenerator" href="#">Report Generator</a></li>
+                                <li><a class='header' id="reportGenerator" href="#" onclick="reportGeneratorPage()">Report Generator</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a class='header' id="caseStatusHis" href="#" onclick="caseStatusHistory()">Set List/Case Status</a></li>
                                 <li role="separator" class="divider"></li>

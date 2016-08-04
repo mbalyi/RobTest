@@ -1,0 +1,79 @@
+{% if type %}
+<div class='panel panel-default' id="fullHeight">
+  <!-- Default panel contents -->
+  <div class='panel-heading'>Chart Filter</div>
+  <div class='panel-body'>
+    <p>Dynamic chart generation for dashboard.</p>
+  </div>
+
+  <!-- Table -->
+  <table class='{{type}} table'>
+    <tr>
+		<td>Interval: <td>
+		<td>
+			<select class='{{type}} form-control' data-selectorid='{{type}}Interval' onchange="{{type}}Reload('{{type}}')" id="fullWidth">
+				<option data-interval='100'>All</option>
+				<option data-interval='5'>Last 5 Result</option>
+				<option data-interval='10' selected>Last 10 Result</option>
+                <option data-interval='20'>Last 20 Result</option>
+                <option data-interval='30'>Last 30 Result</option>
+                <option data-interval='40'>Last 40 Result</option>
+                <option data-interval='50'>Last 50 Result</option>
+			</select>
+		<td>
+	</tr>
+	<tr>
+		<td>Version: <td>
+		<td>
+			<select class='form-control' data-selectorid='{{type}}Version' onchange="{{type}}ExeReload('{{type}}')" id="fullWidth">
+				<option data-dbid='0'>All</option>
+                {% for k in data %}
+				<option data-dbid='{{k[0]}}'>{{k[6]}} {{k[1]}}</option>
+                {% endfor %}
+			</select>
+		<td>
+	</tr>
+    <tr>
+		<td>Execution: <td>
+		<td>
+			<select class='form-control' data-selectorid='{{type}}Execution' onchange="{{type}}Reload('{{type}}')" id="fullWidth">
+				<option data-dbid='0'>All</option>
+                {% for k in executions %}
+				<option data-dbid='{{k[0]}}'>{{k[1]}} ({{k[3]}})</option>
+                {% endfor %}
+			</select>
+		<td>
+	</tr>
+    <tr>
+		<td>Area: <td>
+		<td>
+			<select class='form-control' data-selectorid='{{type}}Area' onchange="{{type}}Reload('{{type}}')" id="fullWidth">
+				<option data-dbid='0'>All</option>
+                {% for k in areas %}
+				<option data-dbid='{{k[0]}}'>{{k[1]}}</option>
+                {% endfor %}
+			</select>
+		<td>
+	</tr>
+	<tr>
+		<td>Status: <td>
+		<td>
+			<select class='form-control' data-selectorid='{{type}}Status' onchange="{{type}}Reload('{{type}}')" id="fullWidth">
+				<option data-status='All'>All</option>
+				<option data-status='RUN'>Passed</option>
+				<option data-status='FAILED'>Failed</option>
+				<option data-status='NOTRUN'>Not Run</option>
+				<option data-status='NOTIMP'>Not Implemented</option>
+			</select>
+		<td>
+	</tr>
+  </table>
+</div>
+{% endif %}
+
+{% if reloadExe %}
+<option data-dbid='0'>All</option>
+{% for k in reloadExe %}
+<option data-dbid='{{k[1]}}'>{{k[2]}} ({{k[4]}})</option>
+{% endfor %}
+{% endif %}

@@ -245,8 +245,8 @@
                         </tr>
                     </table>
                 </div>
-                <div style="width:100%;height:calc(100% - 46px);overflow:auto;" id="varTable">
-                    <table style="width:100%" class="admin_form table table-condensed table-hover">
+                <div style="width:100%;height:calc(100% - 46px);overflow:auto;" id="variableTable">
+                    <table style="width:100%" class="admin_form table table-condensed table-hover" >
                         <tr>
                             <th id="td-10">#</th>
                             <th id="td-30" class="admin_table">Variable</th>
@@ -271,7 +271,7 @@
                         {% for elements in vars %}
                                 <tr data-row="editRow" id={{elements[0]}}>
                                     <td id="td-10">#</td>
-                                    <td id="td-30" class="admin_table"><a href="#" class="rowLink" data-tagid={{elements[0]}} style="text-decoration: none;">{{elements[1]}}</a></td>
+                                    <td id="td-30" class="admin_table"><a href="#" class="rowLink" data-varid={{elements[0]}} style="text-decoration: none;">{{elements[1]}}</a></td>
                                     <td  id="td-30" class="admin_table">{{elements[3]}}</td>
                                     <td id="td-10">
                                         {% if elements[2] == 1 %}
@@ -282,7 +282,7 @@
                                     </td>
                                     <td id="td-20" class="admin_table">
                                         <a href="#" class='varDeletion' onclick="confirmVarDeletion()" data-varid={{elements[0]}} data-toggle="popover" data-trigger="focus" data-placement="bottom" style="color:#d9534f; text-decoration: none;">
-                                            <span class="glyphicon glyphicon-remove" data-tagid={{elements[0]}}></span>
+                                            <span class="glyphicon glyphicon-remove" data-varid={{elements[0]}}></span>
                                         </a>
                                     </td>
                                 </tr>

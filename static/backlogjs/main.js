@@ -30,6 +30,7 @@ var testNavbar=`
     <div id="modalContainer"></div>
 </div>`;
 
+
 var reportNavbar=`
 <div class='row'>
     <div class='setup_buttons col-md-12' style='margin-top:15px;'></div>

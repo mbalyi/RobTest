@@ -173,7 +173,7 @@ function saveVariable(){
         $.post("/saveVariable",sendData,function(data,status){
             if(status){
                 if(data != "false"){
-                    $("#variableTable").append(data);
+                    $("#variableTable").empty().append(data);
                     $(".newVariableForm").slideToggle();
                 }
                 else{
@@ -188,7 +188,7 @@ function saveVariable(){
 function confirmVarDeletion(){
     id=$(event.target).attr('data-varid');
 	$("[data-varid='"+id+"'].varDeletion").popover({content: "<p style='color:black;'>Are you sure to delete this variable?</p><button type='button' class='btn btn-danger btn-xs' data-dbid='"+id+"' onclick='deleteVar()' style='width:50%;'>Delete</button><button type='button' class='btn btn-default btn-xs' onclick='cancelVar("+id+")' style='width:50%;'>Cancel</button>",html:true});
-    $("[data-tagid='"+id+"'].tagDeletion").popover('show');
+    $("[data-varid='"+id+"'].varDeletion").popover('show');
 }
 function cancelVar(id){
     $("[data-varid='"+id+"'].varDeletion").popover('hide');

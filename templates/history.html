@@ -62,19 +62,29 @@
 
 {% if historyNav %}
 <div id="fullWidth" style="background-color:#f8f8f8;">
-    <table id="fullWidth">
-        <tr style='width:100%;'>
-            <th style='width:2%;'></th>
-            <th style='width:2%;' style="padding-left:2px;">ID</th>
-            <th style='width:50%;' style="padding-left:5px;">Title</th>
-        </tr>
-    </table>
+    <div style="float:left;max-width:50%;margin-top:8px;">
+        <table>
+            <tr style='max-width:50%;'>
+                <th style='width:2%;'></th>
+                <th style='width:2%;' style="padding-left:2px;">ID</th>
+                <th style='width:50%;' style="padding-left:5px;">Title</th>
+            </tr>
+        </table>
+    </div>
+    <div  style="float:right;">
+        {% if mode == "report" %}
+        <input type="text" name="searchReportResult" class="form-control" onchange="searchReportResult()" placeholder="Search..." id="btn-input">
+        {% elif mode == "history" %}
+        <input type="text" name="searchCaseExe" class="form-control" onchange="searchCaseExe()" placeholder="Search..." id="btn-input">
+        {% endif %}
+    </div>
 </div>
 <div class="table-responsive" style="width:100%;height:calc(100% - 20px);overflow-y: auto;">
     <table class="historyNav table table-hover">
         {% for k in historyNav %}
         <tr class='exeInHistory'  id='{{k[0]}}' data-index='{{loop.index}}' style='width:100%;'>
             <td class='exeMarker' id='{{k[0]}}' style='width:2%;color:red;'></td>
+            {% if mode == "history" %}
             <td style='width:2%;padding-left:2px;'>
                 <a href='#' class='exeIndex'  id='{{k[0]}}' data-dbid='{{k[0]}}' data-index='{{loop.index}}' onclick="selectMoreExe()" style="text-decoration: none;">
                     {{k[0]}}
@@ -85,6 +95,18 @@
                     {{k[1]}} ({{k[3]}})
                 </a>
             </td>
+            {% elif mode == "report" %}
+            <td style='width:2%;padding-left:2px;'>
+                <a href='#' class='exeIndex'  id='{{k[0]}}' data-dbid='{{k[0]}}' data-index='{{loop.index}}' onclick="selectMoreExeToReport()" style="text-decoration: none;">
+                    {{k[0]}}
+                </a>
+            </td>
+            <td style='width:96%;padding-left:5px;white-space: nowrap;'>
+                <a href='#' class='exeName' data-dbid='{{k[0]}}' data-index='{{loop.index}}' id='{{k[0]}}' onclick="selectMoreExeToReport()" style="text-decoration: none;">
+                    {{k[1]}} ({{k[3]}})
+                </a>
+            </td>
+            {% endif %}
         </tr>
         {% endfor %}	
     </table>

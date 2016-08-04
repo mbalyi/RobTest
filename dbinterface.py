@@ -1019,6 +1019,14 @@ class Database:
 		result = c.fetchall()
 		conn.commit()
 		return result
+		
+	def getArea(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Areas WHERE AreaId=?",[kwargs['areaId']])
+		result = c.fetchone()
+		conn.commit()
+		return result
 	
 	def getDynamicAreas(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -1060,6 +1068,18 @@ class Database:
 		result=c.fetchall()
 		conn.commit()
 		return result
+		
+	def getCaseAreaWithArea(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT AR.AreaId,AR.AreaTitle,AC.Dynamic FROM Area_Case AS AC 
+			LEFT JOIN Areas AS AR ON AC.AreaId=AR.AreaId 
+			WHERE AC.CaseId=? AND AC.AreaId=?""",
+			[kwargs['caseId'],kwargs['areaId']])
+		result=c.fetchone()
+		conn.commit()
+		return result
 	
 	def getExeArea(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -1071,6 +1091,19 @@ class Database:
 			WHERE AE.ExecutionId=?""",
 			[kwargs['exeId']])
 		result=c.fetchall()
+		conn.commit()
+		return result
+		
+	def getExeArea2(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT AR.AreaId,AR.AreaTitle,AE.Dynamic 
+			FROM Area_Execution AS AE 
+			LEFT JOIN Areas AS AR ON AE.AreaId=AR.AreaId 
+			WHERE AE.ExecutionId=? AND AE.AreaId=?""",
+			[kwargs['exeId'],kwargs['areaId']])
+		result=c.fetchone()
 		conn.commit()
 		return result
 		
@@ -1115,11 +1148,54 @@ class Database:
 		conn.commit()
 		return result
 	
+	def getVariable(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT * FROM Variables WHERE VariableId=?",[kwargs['varId']])
+		result=c.fetchone()
+		conn.commit()
+		return result
+	
 	def getExeStepVar(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
 		c.execute("SELECT * FROM Variable_ExeStep WHERE ExecutionId=? AND StepId=?",[kwargs['exeId'],kwargs['stepId']])
 		result=c.fetchall()
+		conn.commit()
+		return result
+		
+	def getReportGenRes(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT EX.ExecutionId,Ex.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion,CE.CaseId,CE.Result,CE.title,SE.StepId,SE.Result,SE.Comment,ST.Action
+			FROM Execution AS EX
+			LEFT JOIN Exe_Object AS EO ON EO.ExecutionId=EX.ExecutionId
+			LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId
+			LEFT JOIN Case_Execution AS CE ON CE.ExecutionId=EX.ExecutionId
+			LEFT JOIN Step_Execution AS SE ON SE.Case_ExecutionId=CE.Id
+			LEFT JOIN Steps AS ST ON ST.StepId=SE.StepId
+			WHERE EX.ExecutionId=?
+			ORDER BY EX.ExecutionId DESC
+			"""
+			,[kwargs['exeId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def getGenResVar(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+		SELECT VA.VariableId,VA.VariableName,VE.Value
+		FROM Variables AS VA 
+		LEFT JOIN Variable_ExeStep AS VE 
+		ON VA.VariableId=VE.VariableId
+		WHERE VA.VariableId=? 
+		AND VE.StepId=?
+		AND VE.ExecutionId=?""",
+		[kwargs['varId'],kwargs['stepId'],kwargs['exeId']])
+		result=c.fetchone()
 		conn.commit()
 		return result
 	
@@ -1129,7 +1205,6 @@ class Database:
 		c.execute("SELECT * FROM Variable_ExeStep WHERE ExecutionId=? AND StepId=? AND VariableId=?",[kwargs['exeId'],kwargs['stepId'],kwargs['varId']])
 		result=c.fetchone()
 		conn.commit()
-		print(kwargs['value'])
 		if result == None and kwargs['value'] != "":
 			c.execute("INSERT INTO Variable_ExeStep (VariableId,ExecutionId,StepId,Value) VALUES (?,?,?,?)",[kwargs['varId'],kwargs['exeId'],kwargs['stepId'],kwargs['value']])
 		if result != None and kwargs['value'] != "":
@@ -1495,6 +1570,36 @@ class Database:
 				[k[1],k[0]])
 			result.append(c.fetchall())
 			conn.commit()
+		return result
+	
+	def getExeResultOb(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+				SELECT EX.ExecutionId,EX.ExeName,OB.ObjectId,OB.ObjectName,CE.CaseId,CE.Result,CE.title 
+				FROM Case_Execution AS CE 
+				LEFT JOIN Execution AS EX ON CE.ExecutionId=EX.ExecutionId 
+				LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId 
+				LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId
+				LEFT JOIN Case_Execution AS CE ON CE.ExecutionId=EX.ExecutionId
+				WHERE CE.ExecutionId=?""",
+				[kwargs['exeId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+		
+	def getExeOb(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+				SELECT EX.ExecutionId,EX.ExeName,OB.ObjectId,OB.ObjectName,OB.ObjectVersion
+				FROM Execution AS EX 
+				LEFT JOIN Exe_Object AS EO ON EX.ExecutionId=EO.ExecutionId 
+				LEFT JOIN Objects AS OB ON OB.ObjectId=EO.ObjectId
+				WHERE EX.ExecutionId=?""",
+				[kwargs['exeId']])
+		result=c.fetchone()
+		conn.commit()
 		return result
 	
 	def getTablesFromDB(self,**kwargs):

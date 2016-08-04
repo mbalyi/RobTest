@@ -1058,10 +1058,10 @@ def HistoryForm():
 	historyForm=DB.getExeOBTest(projectId=projectSession())
 	return render_template('history.html', historyForm=historyForm)
 	
-@app.route('/historyExe', methods=['GET'])	
-def historyExe():
+@app.route('/historyExe/<mode>', methods=['GET'])	
+def historyExe(mode):
 	historyNav=DB.getExeOBTest(projectId=projectSession())
-	return render_template('history.html', historyNav=historyNav)
+	return render_template('history.html', historyNav=historyNav,mode=mode)
 	
 @app.route('/loadHistoryExe/<int:exeId>/<exeStatus>', methods=['GET'])	
 def loadHistoryExe(exeId,exeStatus):
@@ -1121,6 +1121,18 @@ def loadCaseHistory(caseId):
 	exes=DB.getExesForCases(cases=cases)
 	return render_template('caseHistory.html', caseStatus=cases,exes=exes)
 
+@app.route('/generatorForm', methods=['GET'])	
+def generatorForm():
+	tags=DB.getAreas(projectId=projectSession())
+	vars=DB.getVariables(projectId=projectSession())
+	return render_template("reportGenerator.html", generatorForm="true",tags=tags,vars=vars)	
+
+@app.route('/getExeResultToGen/<int:id>', methods=['GET'])	
+def getExeResultToGen(id):
+	#all=DB.getExeResultOb(exeId=id)
+	result=DB.getExeOb(exeId=id)
+	return render_template("reportGenerator.html", newSelectedAdvanced=result)
+	
 #----File Upload----
 PIC_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif','PNG','JPG','JPEG','GIF'])
 DOC_EXTENSIONS = set(['doc', 'docx', 'csv', 'xlsx', 'xlt', 'xls'])
@@ -1491,6 +1503,98 @@ def exportResultToXLSX(id):
 		print("Unexpected error: Unexcepted error occured during the worksheet method in exportCaseToXLSX")
 		print(exc_type, fname, exc_tb.tb_lineno)
 	return filename	
+
+@app.route('/advancedReportExportXLSX', methods=['POST'])
+def advancedReportExportXLSX():
+	try:
+		request.form['filename']
+		exes=[]
+		for k in request.form.getlist('exeIds[]'):
+			exes.append(list(DB.getReportGenRes(exeId=k)))
+		temp=[]
+		for exe in exes:
+			tempExe=[]
+			for step in exe:
+				vars=[]
+				for var in request.form.getlist('variableBox'):
+					v=DB.getGenResVar(varId=var,exeId=step[0],stepId=step[8])
+					if v != None:
+						vars.append(v)
+					else:
+						vars.append("")
+				tags=[]
+				for area in request.form.getlist('areaBox'):
+					a=DB.getCaseAreaWithArea(caseId=step[5],areaId=area)
+					if a != None:
+						tags.append(a)
+					else:
+						tags.append("")
+				#Tstep=[step,tags,vars]
+				tempExe.append([step,tags,vars])
+			temp.append(tempExe)
+		header = ['Object', 'Version', 'Execution', 'Case', 'Case Result', 'Step Action', 'Step Result']
+		for area in request.form.getlist('areaBox'):
+			header.append(DB.getArea(areaId=area)[1])
+		for var in request.form.getlist('variableBox'):
+			header.append(DB.getVariable(varId=var)[2])
+		filename="./downloads/"+request.form['filename'].replace(".","_").replace("/","-")+".xlsx"
+		DB.insertFile(name=filename,projectId=projectSession())
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print("""
+			Unexpected error: Unexcepted error occured during the dataQuery in advancedReportExportXLSX method in
+			""")
+		print(exc_type, fname, exc_tb.tb_lineno)
+		return False
+	try:
+		workbook = xlsxwriter.Workbook(filename)
+		worksheet = workbook.add_worksheet()
+		for it,element in enumerate(header):
+			worksheet.write(0, it, element)
+		it1=0
+		for exe in temp:
+			for steps in exe:
+				it2=0
+				worksheet.write(it1+1,it2,steps[0][3])
+				worksheet.write(it1+1,it2+1,steps[0][4])
+				worksheet.write(it1+1,it2+2,steps[0][1])
+				worksheet.write(it1+1,it2+3,steps[0][7])
+				worksheet.write(it1+1,it2+4,steps[0][6])
+				worksheet.write(it1+1,it2+5,render_template("caseToDoc.html", caseDoc=steps[0][11]))
+				worksheet.write(it1+1,it2+6,steps[0][9])
+				print(it2)
+				it2=7
+				for t in steps[1]:
+					if t != "":
+						if t[2] != None:
+							worksheet.write(it1+1,it2,t[2])
+						else:
+							worksheet.write(it1+1,it2,"")
+					else:
+						worksheet.write(it1+1,it2,"")
+					it2=it2+1
+				for v in steps[2]:
+					if v != "":
+						if v[2] != None:
+							worksheet.write(it1+1,it2,v[2])
+						else:
+							worksheet.write(it1+1,it2,"")
+					else:
+						worksheet.write(it1+1,it2,"")
+					it2=it2+1
+				it1=it1+1
+		workbook.close()
+		return filename
+	except Exception as e:
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		print("""
+			Unexpected error: Unexcepted error occured during the worksheet method in advancedReportExportXLSX
+			""")
+		print(exc_type, fname, exc_tb.tb_lineno)
+		return False
+	return "error"
 	
 @app.route('/tableSchema/<name>', methods=['GET'])
 def tableSchema(name):

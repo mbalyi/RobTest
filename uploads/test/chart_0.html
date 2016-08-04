@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<script type="text/javascript">
+window.onload = function () {
+	var chart = new CanvasJS.Chart("chartContainer",
+	{
+		animationEnabled: true,
+		title:{
+			text: "Chart with Labels on X Axis"
+		},
+		data: [
+		{
+			type: "column", //change type to bar, line, area, pie, etc
+			dataPoints: [
+				{ label: "banana", y: 18 },
+				{ label: "orange", y: 29 },
+				{ label: "apple",  y: 40 },                                    
+				{ label: "mango",  y: 34 },
+				{ label: "grape",  y: 24 }
+			]
+		},
+          {
+			type: "column", //change type to bar, line, area, pie, etc
+			dataPoints: [
+				{ label: "banana", y: 10 },
+				{ label: "orange", y: 9 },
+				{ label: "apple",  y: 87 },                                    
+				{ label: "mango",  y: 34 },
+				{ label: "grape",  y: 24 }
+			]
+		}
+		]
+		});
+
+	chart.render();
+}
+</script>
+<script type="text/javascript" src="/assets/script/canvasjs.min.js"></script>
+</head>
+<body>
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+</body>
+
+</html>

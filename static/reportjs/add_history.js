@@ -1,4 +1,5 @@
 var historyFormCount = 1;
+var ids=[];
 
 function histoyPage(){
     $("#nav-col-md-9").empty().append(designNavbar);
@@ -8,8 +9,9 @@ function histoyPage(){
     $(".col-md-12-execution").empty().show();
     $(".col-md-12-object").empty().hide();
     $(".setup").show();
-    executionHistLoad();
+    executionHistLoad("history");
     historyForm("first");
+    ids=[];
 }
 
 function historyForm(loadingStatus){
@@ -23,8 +25,8 @@ function historyForm(loadingStatus){
     });
 }
 
-function executionHistLoad(){
-    $.get("/historyExe",function(data,status){
+function executionHistLoad(mode){
+    $.get("/historyExe/"+mode,function(data,status){
         if(status){
             $(".col-md-12-execution").empty().append(data);
         }
@@ -55,7 +57,7 @@ function loadHistoryExe(exeStatus,executionId){
         }
     });
 }
-var ids=[];
+
 function selectMoreExe(){
     if (historyFormCount != 3 || ids.indexOf($(event.target).attr('data-dbid')) > -1){
         historyFormCount++;

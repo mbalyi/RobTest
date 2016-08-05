@@ -186,6 +186,9 @@ $(function(){
 		}
 		if( $(event.target).attr('name')=="editSet" ){
 			loadSet($(event.target).attr('id'),"editSet");
+            $("body").on('drop',dropRemove);
+            //$("body").on('dragstart',drag);
+            $("body").on('dragover',allowDrop);
 		}
 	});
 });

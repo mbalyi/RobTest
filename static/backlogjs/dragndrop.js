@@ -57,17 +57,32 @@ function dropRemove(ev){
     if ($(ev.target).parents('.incCases').andSelf('.incCases').length == 0){
         var child;
         var iterator;
-        for (i =0; i< 
- $(".incCases").children().length;i++){
-            if("case"+draggedElement.childNodes[1].dataset.dbid.toString() == $(".incCases").children()[i].dataset.dbid.toString()){
-                child=$(".incCases").children()[i].children[0];
+        for (i =0; i< $(".incCases").children().length;i++){
+            if(draggedElement.dataset.dbid == $(".incCases").children()[i].dataset.dbid){
+                child=$(".incCases").children()[i];
                 iterator=i;
             }
         }
-        $(".incCases").children()[iterator].removeChild(child);
+        $(".incCases").children()[iterator].remove();
         console.log('Remove IT');
         return;
     } /*else {
         //console.log('Skip it');
     }*/
+}
+
+function dropRemoveExe(ev){
+     if ($(ev.target).parents('.incExeCases').andSelf('.incExeCases').length == 0){
+        var child;
+        var iterator;
+       for (i =0; i< $(".incExeCases").children().length;i++){
+            if(draggedElement.dataset.dbid == $(".incExeCases").children()[i].dataset.dbid){
+                child=$(".incExeCases").children()[i];
+                iterator=i;
+            }
+        }
+        $(".incExeCases").children()[iterator].remove();
+        console.log('Remove IT');
+        return;
+    }
 }

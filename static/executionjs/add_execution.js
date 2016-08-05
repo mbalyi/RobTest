@@ -96,6 +96,8 @@ function newExe(){
     $(".elementOfCaseList").removeAttr("ondragstart");
     $(".elementOfCaseList").removeAttr("draggable");
     $("input[name=dynamicArea]").removeAttr('disabled');
+    $("body").on('drop',dropRemoveExe);
+    $("body").on('dragover',allowDrop);
 }
 
 function loadExecution(exeID,mode){
@@ -202,6 +204,8 @@ $(function(){
 			loadExecution($(event.target).attr('data-dbid'),"editExe");
             $("#newExe").attr('disabled', true);
             $(".saveExe").empty().append(saveExeEn);
+            $("body").on('drop',dropRemoveExe);
+            $("body").on('dragover',allowDrop);
 		}
 	});
 });

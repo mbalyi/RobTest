@@ -72,3 +72,23 @@ function generateReportXLSX(){
         $("#filenameError").attr("class","form-group has-error");
     }
 }
+
+function searchReportResult(){
+    for (i=0; i < $(".exeName").length;i++){
+        var search=$("input[name=searchReportResult]").val();
+        if($(".exeName")[i].innerHTML.toLowerCase().indexOf(search.toLowerCase()) >= 0){
+            var classFilt= $(".exeName")[i].id;
+            $("#"+classFilt.toString()+".exeInHistory").show();
+        }
+        else{
+           var classFilt= $(".exeName")[i].id;
+            $("#"+classFilt.toString()+".exeInHistory").hide();
+        }
+        if (search == ""){
+            for (i=0; i < $(".exeName").length;i++){
+                var classFilt= $(".exeName")[i].id;
+                $("#"+classFilt.toString()+".exeInHistory").show();
+            }
+        }
+    }
+}

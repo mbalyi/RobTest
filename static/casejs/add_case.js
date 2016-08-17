@@ -379,7 +379,7 @@ $(function(){
         return;
 	});
 	$("body").on("click","a",function(event) {
-		if( $(event.target).attr('class') == "case"){
+		if( $(event.target).attr('class') == "case"  && actualModul == "case"){
 			loadCase($(event.target).attr('data-dbid'),"loadCase");
 		}
 		if( event.target.id == "newCase"){

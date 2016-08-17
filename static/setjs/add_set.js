@@ -159,7 +159,7 @@ function toggleSetFileCont(){
 
 $(function(){
 	$("body").on("click","a",function(event) {
-		if( $(event.target).attr('class') == "set"){
+		if( $(event.target).attr('class') == "set"  && actualModul == "set"){
 			loadSet($(event.target).attr('data-dbid'), "loadSet");
             $(".newSet").empty().append(newSetDis);
 	        $(".saveSet").empty().append(saveSetEn);

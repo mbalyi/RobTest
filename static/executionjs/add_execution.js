@@ -173,7 +173,7 @@ function toggleExeFileCont(){
 
 $(function(){
 	$("body").on("click","a",function(event) {
-		if( $(event.target).attr('class') == "execution"){
+		if( $(event.target).attr('class') == "execution" && actualModul == "exe"){
 			loadExecution($(event.target).attr('data-dbid'), "loadExe");
 		}
 		if( event.target.id == "saveExe"){

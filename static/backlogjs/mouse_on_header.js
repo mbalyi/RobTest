@@ -1,6 +1,6 @@
 var DivForm="<div class='divContainer' style='width:100%;height:100%'></div>";
 var buttonSetup="<div class='buttonSetup' style='width:100%;'></div>";
-
+var actualModul="default";
 function requestHeader(options, callback){
     $.ajax({ url: "/home",
         data: options,
@@ -63,6 +63,7 @@ function testareaDesign(){
 }
 
 function navCase(){
+    actualModul="case";
     $("#nav-col-md-9").empty().append(designNavbar);
     $("#nav-design-col-md-9").empty().append(DivForm);
     $("#nav-design-col-md-9").prepend(buttonSetup);
@@ -74,6 +75,7 @@ function navCase(){
 }
 
 function navExecution(){
+    actualModul="exe";
     $("#nav-col-md-9").empty().append(designNavbar50);
     $("#nav-design-col-md-9").empty().append(DivForm);
     $("#nav-design-col-md-9").prepend(buttonSetup);
@@ -88,6 +90,7 @@ function navExecution(){
 }
 
 function navSet(){
+    actualModul="set";
     $("#nav-col-md-9").empty().append(designNavbar50);
     $("#nav-design-col-md-9").empty().append(DivForm);
     $("#nav-design-col-md-9").prepend(buttonSetup);
@@ -101,6 +104,7 @@ function navSet(){
 }
 
 function navObject(){
+    actualModul="object";
     $("#nav-col-md-9").empty().append(designNavbar);
     $("#nav-design-col-md-9").empty().append(DivForm);
     $("#nav-design-col-md-9").prepend(buttonSetup);

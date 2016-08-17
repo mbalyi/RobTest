@@ -139,7 +139,7 @@ function toggleObjectFileCont(){
 
 $(function(){
 	$("body").on("click","a",function(event) {
-		if( $(event.target).attr('class') == "object"){
+		if( $(event.target).attr('class') == "object"  && actualModul == "object"){
 			loadObject(event.target.id,"loadObject");
 			requestObject();
 		}

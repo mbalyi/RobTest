@@ -491,7 +491,7 @@ class Database:
 	def updateExecution(self,**kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("UPDATE Execution SET ExeName=?,ProjectId=?,UserId=? WHERE ExecutionId=?",[kwargs['name'],kwargs['projectId'],kwargs['exeId'],kwargs['userId']])
+		c.execute("UPDATE Execution SET ExeName=?,ProjectId=?,UserId=? WHERE ExecutionId=?",[kwargs['name'],kwargs['projectId'],kwargs['userId'],kwargs['exeId']])
 		conn.commit()
 		c.execute("UPDATE Exe_Object SET ObjectId=? WHERE ExecutionId=?",[kwargs['testObject'],kwargs['exeId']])
 		conn.commit()

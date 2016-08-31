@@ -1113,6 +1113,7 @@ def historyCase(setId):
 		res=DB.get_case_name(caseId=k[0])
 		cases.append([k[0],res[0]])
 		it1=it1+1
+	print(cases)
 	return render_template('caseHistory.html', resultDiagrams=result,exes=exes,cases=caseIds)
 
 @app.route('/loadCaseHistory/<int:caseId>', methods=['GET'])	

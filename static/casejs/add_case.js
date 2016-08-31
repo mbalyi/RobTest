@@ -406,9 +406,7 @@ $(function(){
 		if( $(event.target).attr('name') == "deleteCase"){
 			deleteCase(event.target.id);
 		}
-	});
-	$("body").on("click",".btn",function(){
-		if($(event.target).attr('name')=="edit_case"){
+        if($(event.target).attr('name')=="edit_case"){
 			loadCase($(event.target).attr('id'),"editCase");
 			getStep($(event.target).attr('id'),"editStep");
 			$(".newCase").empty().append(newCaseDis);

@@ -413,14 +413,8 @@ class Database:
 	def getSetCases(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT CaseId FROM Set_Case WHERE SetId=?",[kwargs['id']])
-		result=c.fetchall()
-		conn.commit()
-		cases = []
-		for k in result:
-			c.execute("SELECT * FROM Cases WHERE CaseId=?",[k[0]])
-			cases.append(c.fetchone())
-			conn.commit()
+		c.execute("SELECT CA.* FROM Set_Case AS SC LEFT JOIN Cases AS CA ON CA.CaseId=SC.CaseId WHERE SC.SetId=? ORDER BY SC.Id ASC",[kwargs['id']])
+		cases=c.fetchall()
 		return cases
 	
 	def deleteSet(self, **kwargs):

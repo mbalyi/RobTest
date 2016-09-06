@@ -157,6 +157,28 @@ function toggleSetFileCont(){
         $(".uploadContent").slideToggle();
 }
 
+function addSetToExe(ev){
+    if($(".incExeCases") != [] && $(".btn.btn-default.btn-sm.disabled#saveExe") != []){
+        draggedElement=ev.target.parentElement;
+        if(draggedElement.className == "set"){
+			$.get("/load_set/"+draggedElement.dataset.dbid+"/"+"exeCasesBySet",
+				function(data,status){
+					if(status){
+						draggedElement=draggedElement.cloneNode(true);
+                        $(".incExeCases")[0].innerHTML+=data;
+					};
+				}
+			);
+		}
+		else{
+			$(".incExeCases").appendChild(draggedElement.cloneNode(true));
+		}
+    }
+    else{
+        return;
+    }
+}
+
 $(function(){
 	$("body").on("click","a",function(event) {
 		if( $(event.target).attr('class') == "set"  && actualModul == "set"){

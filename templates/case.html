@@ -15,7 +15,7 @@
     <div class="panel-body panel-case" id="elementBody">
         <div class='caseList'>
             {% for k in cases%}
-                <div class='elementOfCaseList' data-dbid='case{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+                <div class='elementOfCaseList' data-dbid='case{{k[0]}}' id="dragCase{{k[0]}}" draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
                     <a href='#' data-dbid='{{k[0]}}' id='{{k[0]}}' class='case'>{{k[1]}}</a>
                 </div>
             {% endfor %}

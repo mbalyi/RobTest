@@ -61,9 +61,8 @@ def downloadBackup():
 	
 @app.route('/home', methods=['GET', 'POST'])
 def login_form():
-	if request.method == 'POST':
-		session['username'] = request.form['user']
 	log = DB.login_querry(title=request.form["user"],pw=request.form["password"])
+	session['username'] = request.form['user']
 	if log == 1 and 'username' in session:
 		projects = DB.getProjects()
 		projectId = DB.getSelectedProject(user=request.form['user'])

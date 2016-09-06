@@ -15,8 +15,13 @@
     <div class="panel-body panel-set" id="elementBody">
         <div class='setList'>
         {% for k in set %}
-            <div data-dbid='set{{k[0]}}' draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)">
+            <div data-dbid='set{{k[0]}}' name="dragSet{{k[0]}}" draggable="true" ondragstart="drag(event)" ondragover="dragHover(event)" style="float:left;width:95%;">
                 <a href='#' data-dbid='{{k[0]}}' class='set' id='{{k[0]}}'>{{k[1]}}</a>
+            </div>
+            <div style="float:right;">
+                <a href='#' data-dbid='{{k[0]}}' class='set' id='{{k[0]}}' onclick='addSetToExe(event)'>
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
             </div>
         {% endfor %}
         </div>
@@ -395,6 +400,11 @@
                     </td>
                     <td>
                         <a href='#' data-dbid='{{k[0]}}' class='case' id="no-dec-link">{{k[1]}}</a>
+                    </td>
+                    <td style="float:right;">
+                        <a href='#' data-dbid='{{k[0]}}' class='case' id="no-dec-link" onclick="deleteCaseFrom(event)" style="color:#d9534f;">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
                     </td>
                 </tr>
             </table>

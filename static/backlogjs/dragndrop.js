@@ -19,25 +19,18 @@ function drag(ev) {
 
 function drop(ev) {
     ev.preventDefault();
-	//var tmp=document.createElement("div");
-	//tmp.appendChild(draggedElement.cloneNode(true))
 	if( draggedElement.parentNode.ondrop == undefined ){
 		if(draggedElement.childNodes[1].className == "set"){
 			$.get("/load_set/"+draggedElement.childNodes[1].dataset.dbid+"/"+"exeCasesBySet",
 				function(data,status){
 					if(status){
 						draggedElement=draggedElement.cloneNode(true);
-						//draggedElement.innerHTML=data;
-						//ev.target.appendChild(draggedElement)
                         ev.target.innerHTML+=data;
 					};
 				}
 			);
-			//cases = loadSet(draggedElement.childNodes[1].dataset.dbid,"exeCasesBySet");
 		}
 		else{
-			//draggedElement=draggedElement.cloneNode(true);
-			//draggedElement.innerHTML="<div><h1>JEEEEEEEEEEEEEEEE</h1></div>"
 			ev.target.appendChild(draggedElement.cloneNode(true));
 		}
 	}
@@ -66,9 +59,7 @@ function dropRemove(ev){
         $(".incCases").children()[iterator].remove();
         console.log('Remove IT');
         return;
-    } /*else {
-        //console.log('Skip it');
-    }*/
+    }
 }
 
 function dropRemoveExe(ev){
@@ -85,4 +76,8 @@ function dropRemoveExe(ev){
         console.log('Remove IT');
         return;
     }
+}
+
+function deleteCaseFrom(event){
+   return event.target.closest("div").remove();
 }

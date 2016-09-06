@@ -1650,6 +1650,7 @@ def deleteAllTemplates():
 app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 		
 if __name__ == "__main__":
-	app.debug = True
+	#app.debug = True
 	#toolbar = DebugToolbarExtension(app)
-	app.run()
+	app.run(host= '0.0.0.0')
+	#app.run()

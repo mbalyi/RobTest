@@ -533,7 +533,7 @@ class Database:
 				c.execute("SELECT Title FROM Cases WHERE CaseId=?",[k])
 				title=c.fetchone()
 				conn.commit()
-				c.execute("INSERT INTO Case_Execution (ExecutionId,CaseId,Result,title,) VALUES (?,?)",[k,kwargs['exeId'],"NOTRUN",title[0]])
+				c.execute("INSERT INTO Case_Execution (ExecutionId,CaseId,Result,title) VALUES (?,?,?,?)",[k,kwargs['exeId'],"NOTRUN",title[0]])
 				conn.commit()
 		for j in temp:
 			if allCases.count(j) == 0:

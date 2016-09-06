@@ -53,13 +53,13 @@ class Backend:
 		return driver
 	
 	def currentDate():
-		today = datetime.datetime.now()
+		today = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 		return str(today)
 	
 class TestMenu(unittest.TestCase):
 	def setUp(self):
-		#self.driver = webdriver.Chrome('C:\Program Files (x86)\Google\Chrome\chromedriver.exe')
-		self.driver = webdriver.Firefox()
+		self.driver = webdriver.Chrome('C:\Program Files (x86)\Google\Chrome\chromedriver.exe')
+		#self.driver = webdriver.Firefox()
 		self.driver.set_window_size(1920, 1000)
 		time.sleep(2)
 	
@@ -67,14 +67,16 @@ class TestMenu(unittest.TestCase):
 		driver = Backend.Login(self.driver)
 		driver = Backend.NavigateToObject(driver)
 		driver.find_element_by_id('newObject').click()
+		time.sleep(0.2)
 		title = driver.find_element_by_name('name')
 		title.clear()
-		name = 'Test Management Tool - '+Backend.currentDate() 
+		name = 'ILMS GUI Test - '+Backend.currentDate() 
 		title.send_keys(name)
+		time.sleep(0.2)
 		version = driver.find_element_by_name('version')
 		version.clear()
 		version.send_keys('v2.1')
-		driver.find_element_by_xpath("//input[@data-dbid='37']").click()
+		driver.find_element_by_xpath("//input[@data-dbid='38']").click()
 		driver.find_element_by_id('saveObject').click()
 		self.driver = driver
 	
@@ -97,18 +99,8 @@ class TestMenu(unittest.TestCase):
 		select.select_by_visible_text("AutoTest")
 		#element = driver.find_element_by_link_text('Unit Test')
 		
-		element = driver.find_element_by_name('dragSet77')
-		print(element.text)
-		target = driver.find_element_by_name("targetDragExe")
-		print(target.text)
-		action_chains = ActionChains(driver)
-		print(action_chains)
-		#action_chains.click_and_hold(element).move_to_element(target).release().perform()
-		action_chains.move_to_element(target)
-		time.sleep(3)
-		action_chains.move_to_element(element)
-		time.sleep(3)
-		#action_chains.drag_and_drop(element,target).perform()
+		driver.find_element_by_css_selector("[data-clickid='addSet77']").click()
+		time.sleep(0.5)
 	
 		driver.find_element_by_id('saveExe').click()
 		self.driver = driver

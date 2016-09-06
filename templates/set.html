@@ -19,7 +19,7 @@
                 <a href='#' data-dbid='{{k[0]}}' class='set' id='{{k[0]}}'>{{k[1]}}</a>
             </div>
             <div style="float:right;">
-                <a href='#' data-dbid='{{k[0]}}' class='set' id='{{k[0]}}' onclick='addSetToExe(event)'>
+                <a href='#' data-dbid='{{k[0]}}' data-clickid="addSet{{k[0]}}" class='set' id='{{k[0]}}' onclick='addSetToExe(event)'>
                     <span class="glyphicon glyphicon-chevron-right"></span>
                 </a>
             </div>
@@ -402,7 +402,7 @@
                         <a href='#' data-dbid='{{k[0]}}' class='case' id="no-dec-link">{{k[1]}}</a>
                     </td>
                     <td style="float:right;">
-                        <a href='#' data-dbid='{{k[0]}}' class='case' id="no-dec-link" onclick="deleteCaseFrom(event)" style="color:#d9534f;">
+                        <a href='#' id="no-dec-link" onclick="deleteCaseFrom(event)" style="color:#d9534f;">
                             <span class="glyphicon glyphicon-remove"></span>
                         </a>
                     </td>

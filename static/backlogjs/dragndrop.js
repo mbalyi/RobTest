@@ -72,7 +72,10 @@ function dropRemoveExe(ev){
                 iterator=i;
             }
         }
-        $(".incExeCases").children()[iterator].remove();
+        if($(".incExeCases") != [])
+            $(".incExeCases").children()[iterator].remove();
+        if($(".incCases") != []) 
+            $(".incCases").children()[iterator].remove();
         console.log('Remove IT');
         return;
     }

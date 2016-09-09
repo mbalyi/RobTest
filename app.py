@@ -9,6 +9,7 @@ from docx import Document
 from docx.shared import Inches
 import pdfkit
 import xlsxwriter
+import ast
 #from PIL import Image
 
 """ 
@@ -1645,12 +1646,27 @@ def deleteAllTemplates():
 		os.remove(k[1])
 	temps=UP.getTemplates()
 	return render_template("exportimport.html", templatesFile=temps)
+
+#-----Unit Test Input----
+@app.route('/GetAreas/<int:id>', methods=['GET'])
+def GetAreas(id):
+	return json.dumps(DB.getAreas(projectId=id))
+
+@app.route('/ObjectInput', methods=['POST'])	
+def ObjectInput():
+	print(ast.literal_eval(request.data.decode("utf-8")))
+	data = ast.literal_eval(request.data.decode("utf-8"))
+	print(data["name"])
+	ID=DB.save_object(name=data["name"],hardware=data["hardware"],desc=data["desc"],
+		version=data["version"],projectId=data["projectId"],areas=data['areaBox'])
+	return json.dumps(ID)
+
 	
 # set the secret key.  keep this really secret:
-app.secret_key = os.urandom(24) #'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+app.secret_key = os.urandom(24)
 		
 if __name__ == "__main__":
-	#app.debug = True
+	app.debug = True
 	#toolbar = DebugToolbarExtension(app)
 	app.run(host= '0.0.0.0')
 	#app.run()

@@ -1,4 +1,4 @@
-function requestExportImport(){
+function requestExportImport(event){
      $.get("/getAdminNav",
          function(data,status){
             $("#nav-col-md-9").empty().append(data);
@@ -273,5 +273,64 @@ function refreshAllFiles(){
     $.get("/downloadFiles",function(data,status){
         $("#downloadFiles").empty().append(data);
         $(".glyphicon.glyphicon-refresh").removeAttr("id");
+    });
+}
+
+function saveEmail(){
+    var D = 0;
+    var W = 0;
+    var U = 0;
+    if ($("input[name=D]:checked")[0] != undefined){
+        D = 1;
+    }
+    if ($("input[name=W]:checked")[0] != undefined){
+        W = 1;
+    }
+    if ($("input[name=U]:checked")[0] != undefined){
+        U = 1;
+    }
+    var sendData = "name="+$('input#emailName').val()+"&user="+$('select#userSelector').find(":selected").attr('data-dbid').toString()+"&D="+D.toString()+"&W="+W.toString()+"&U="+U.toString();
+    $.post("/saveEmail", sendData,
+		function(data,status){
+			if(status){
+                $('.emailContainer').empty().append(data);
+			};
+		}
+	); 
+}
+
+function deleteEmail(emailId){
+    $.get("/deleteEmail/"+emailId,function(data,status){
+        $('tr[data-emailid='+emailId+']').remove();
+    });
+}
+
+function setEmailConfig(){
+    var data = "email="+$("input#emailSender").val()+"&smtp="+$("input#SMTP").val()+"&port="+$("input#port").val()
+    $.post("/updateEmailConfig",data);
+}
+
+function sendEmail(type,obid){
+    $.get("/sendEmail/"+type+"/"+obid,function(data,status){
+        if(data=="ok"){
+            $("#emailSent").show(5000);
+            setTimeout(function() 
+              {
+                $("#emailSent").hide()
+              }, 5000);
+        }
+        else{
+            $("#emailNotSent").show(5000);
+            setTimeout(function() 
+              {
+                $("#emailNotSent").hide()
+              }, 5000);
+        }
+    }).fail(function() {
+        $("#emailNotSent").show();
+        setTimeout(function() 
+          {
+            $("#emailNotSent").hide()
+          }, 5000);
     });
 }

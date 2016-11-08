@@ -1,5 +1,6 @@
 from upload import UP
 from dbinterface import DB
+from messenger import Messenger
 from reportinterface import Report
 import json, os, base64, sys
 from flask import Flask, render_template, session, redirect, url_for, escape, request, jsonify, Response, send_from_directory
@@ -987,14 +988,17 @@ def projectActive():
 	DB.projectActive(projectId=request.form['projectId'],projectStatus=request.form['status'])
 	return render_template('admin.html', projectStatus=request.form['status'])
 	
-@app.route('/deleteProject', methods=['POST'])	
+@app.route('/deleteProject', methods=['POST'])
 def deleteProject():
 	DB.deleteProject(projectId=request.form['projectId'])
+	DB.DeleteEmailConfig(projectId=request.form['projectId'])
 	return "OK"
 	
 @app.route('/saveProject', methods=['POST'])	
 def saveProject():
-	return str(DB.saveProject(projectName=request.form['projectName']))
+	id = DB.saveProject(projectName=request.form['projectName'])
+	DB.CreateEmailConfig(projectId=id)
+	return str(id)
 
 @app.route('/saveVariable', methods=['POST'])	
 def saveVariable():
@@ -1031,7 +1035,12 @@ def getExportImport():
 	templates=UP.getTemplates()
 	dbtables=DB.getTablesFromDB()
 	files=DB.getDownloadFiles(projectId=projectSession())
-	return render_template('exportimport.html', exportimport=True,cases=cases,sets=sets,exes=executions,objects=objects,tables=dbtables,files=files,templates=templates)
+	emails = DB.getEmails(projectId=projectSession())
+	users= DB.getUsers(projectId=projectSession())
+	email_config = DB.GetEmailConfig(projectId=projectSession())
+	return render_template('exportimport.html', exportimport=True,cases=cases,sets=sets,exes=executions, \
+		objects=objects,tables=dbtables,files=files,templates=templates,emails=emails, \
+		users=users,email_config=email_config)
 
 @app.route('/deleteTag', methods=['POST'])	
 def deleteTag():
@@ -1431,15 +1440,12 @@ def exportResultToPDF(id,templateid):
 			""")
 		print(exc_type, fname, exc_tb.tb_lineno)
 		return False
-	try:
-		path=bytes(r'D:\ManagementTool\RobTest\wkhtmltopdf\bin\wkhtmltopdf.exe','utf-8')
-		config = pdfkit.configuration(wkhtmltopdf=path)
-		pdfkit.from_string(html, filename, configuration=config)
-	except:
-		print("""
-			Unexpected error: Unexcepted error occured during the pdf writing method in exportResultToPDF
-			""")
-		return False
+	
+	path=bytes(r'wkhtmltopdf/bin/wkhtmltopdf.exe','utf-8')
+	#path=bytes(r'wkhtmltopdf/bin/wkhtmltopdf.exe','utf-8')
+	config = pdfkit.configuration(wkhtmltopdf=path)
+	pdfkit.from_string(html, filename, configuration=config)
+	
 	return filename
 
 @app.route('/exportResultToXLSX/<int:id>', methods=['GET'])
@@ -1647,6 +1653,52 @@ def deleteAllTemplates():
 	temps=UP.getTemplates()
 	return render_template("exportimport.html", templatesFile=temps)
 
+#----- Email ----
+@app.route('/saveEmail', methods=['POST'])
+def SaveEmail():
+	result = DB.SaveEmail(name=request.form['name'],userId=request.form['user'],D=request.form['D'],W=request.form['W'],U=request.form['U'],projectId=projectSession())
+	result = DB.getEmails(projectId=projectSession())
+	user = DB.getUsers()
+	return render_template("exportimport.html", emailtable=result, user=user)
+	
+@app.route('/editEmail/<int:id>', methods=['POST'])
+def EditEmail(id):
+	DB.EditEmail(id=id,name=request.form['name'],userId=request.form['user'],D=request.form['D'],W=request.form['W'],U=request.form['U'])
+	result = DB.getEmails(projectId=projectSession())
+	user = DB.getUsers()
+	return render_template("exportimport.html", emailtable=result, user=user)
+	
+@app.route('/deleteEmail/<int:id>', methods=['GET'])
+def DeleteEmail(id):
+	DB.DeleteEmail(id=id)
+	return "OK"
+	
+#----- Email ----
+@app.route('/updateEmailConfig', methods=['POST'])
+def UpdateEmailConfig():
+	DB.UpdateEmailConfig(email=request.form['email'],smtp=request.form['smtp'], \
+			port=request.form['port'],projectId=projectSession())
+	return "Ok"
+	
+@app.route('/sendEmail/<type>/<obid>', methods=['GET'])
+def SendEmail(type,obid):
+	if obid == 'latest':
+		obid = DB.getLatestObject()
+	if type == 'D':
+		result = DB.getDailyReportToSend(obid=obid,projectId=projectSession())
+		html = render_template("sendDaily.html",daily=result)
+		address = DB.getEmailAddress(D=1,W=0,U=0,projectId=projectSession())
+		config = DB.GetEmailConfig(projectId=projectSession())
+		return html
+		#Messenger.EmailSender(config[1],config[2],config[3],address,html)
+	if type == 'W':
+		result = DB.getWeeklyReportToSend(projectId=projectSession())
+		address = DB.getEmailAddress(D=0,W=1,U=0,projectId=projectSession())
+		config = DB.GetEmailConfig(projectId=projectSession())
+		html = render_template("sendWeekly.html",weekly=result)
+		Messenger.EmailSender(config[1],config[2],config[3],address,html)
+	return "Ok"
+	
 #-----Unit Test Input----
 @app.route('/GetAreas/<int:id>', methods=['GET'])
 def GetAreas(id):
@@ -1661,6 +1713,45 @@ def ObjectInput():
 		version=data["version"],projectId=data["projectId"],areas=data['areaBox'])
 	return json.dumps(ID)
 
+@app.route('/UnitGetSet', methods=['POST'])	
+def UnitGetSet():
+	data = ast.literal_eval(request.data.decode("utf-8"))
+	return json.dumps(DB.getSetCases(id=
+			DB.getSetByName(name=data['name'],projectId=data['projectId']
+			,active=1,update=0)[0][0]))
+
+@app.route('/UnitUser', methods=['POST'])	
+def UnitUser():
+	data = ast.literal_eval(request.data.decode("utf-8"))
+	return json.dumps(DB.getUSerByName(name=data['name']))
+	
+@app.route('/UnitNewExe', methods=['POST'])
+def UnitNewExe():
+	data = ast.literal_eval(request.data.decode("utf-8"))
+	print(data)
+	exeId=DB.saveExe(name=data["title"],testObject=data["TO"],projectId=data['projectId'],
+					areas=data['areaBox'],userId=data["userId"],
+					dynamic=data['dynamicArea'])
+	DB.saveCaseExe(ID=data['ID'],exeID=exeId)
+	return json.dumps(exeId)
+
+@app.route('/UnitCaseExeId', methods=['POST'])
+def UnitCaseExeId():
+	data = ast.literal_eval(request.data.decode("utf-8"))
+	caseExeId=DB.unitGetCaseExeId(exeId=data["exeId"],caseName=data["caseName"])
+	return json.dumps(caseExeId)
+	
+@app.route('/UnitStepIdByCaseName', methods=['POST'])
+def UnitStepIdByCaseName():
+	data = ast.literal_eval(request.data.decode("utf-8"))
+	stepIds=DB.UnitStepIdByCaseName(exeId=data["exeId"],caseName=data["caseName"])
+	return json.dumps(stepIds)
+	
+@app.route('/UnitCaseIdByCaseName', methods=['POST'])
+def UnitCaseIdByCaseName():
+	data = ast.literal_eval(request.data.decode("utf-8"))
+	stepIds=DB.UnitCaseIdByCaseName(exeId=data["exeId"],caseName=data["caseName"])
+	return json.dumps(stepIds)
 	
 # set the secret key.  keep this really secret:
 app.secret_key = os.urandom(24)

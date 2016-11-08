@@ -2,16 +2,19 @@
 	<div class="form-group" id="fullSize">
         <ul class="nav nav-tabs" id="exportImportTab" role="tablist" style="margin-top: 10px;margin-left:15px;">
           <li role="presentation" class="active">
-              <a href="#caseSet" role="tab" data-toggle="tab" onclick="exportImportTab()">Case/Set</a>
+              <a href="#caseSet" role="tab" data-toggle="tab" onclick="exportImportTab(event)">Case/Set</a>
             </li>
           <li role="presentation">
-              <a href="#testResult" role="tab" data-toggle="tab" onclick="exportImportTab()">Test Results</a>
+              <a href="#testResult" role="tab" data-toggle="tab" onclick="exportImportTab(event)">Test Results</a>
             </li>
           <li role="presentation">
-              <a href="#databases" role="tab" data-toggle="tab" onclick="exportImportTab()">Database</a>
+              <a href="#databases" role="tab" data-toggle="tab" onclick="exportImportTab(event)">Database</a>
             </li>
           <li role="presentation">
-              <a href="#templates" role="tab" data-toggle="tab" onclick="exportImportTab()">Templates</a>
+              <a href="#templates" role="tab" data-toggle="tab" onclick="exportImportTab(event)">Templates</a>
+            </li>
+          <li role="email">
+              <a href="#email" role="tab" data-toggle="tab" onclick="exportImportTab(event)">Emails</a>
             </li>
         </ul>
         
@@ -456,6 +459,224 @@
                         <!-- /.panel -->
                 </div>
             </div>
+            <div role="tabpanel" class="tab-pane" id="email" style="width:100%;height:100%;">
+                <div class="col-lg-12" style="margin-top: 2%;">
+                    <div class="col-lg-6" style="height:100%%;width:50%;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Email Managing</div>
+                                <div  style="float:right;padding-top:8px;padding-right:2px;">
+                                    <button class="btn btn-default btn-xs" type="button" onclick="sendEmail('U','latest')" style="float:left;" disabled>U</button>
+                                </div>
+                                <div  style="float:right;padding-top:8px;padding-right:2px;">
+                                    <button class="btn btn-default btn-xs" type="button" onclick="sendEmail('W','latest')" style="float:left;">W</button>
+                                </div>
+                                <div  style="float:right;padding-top:8px;padding-right:2px;">
+                                    <button class="btn btn-default btn-xs" type="button" onclick="sendEmail('D','latest')" style="float:left;">D</button>
+                                </div>
+                                <div  style="float:right;padding-top:10px;padding-right:2px;">
+                                    Export:
+                                </div>
+                                <div  style="float:right;padding-top:10px;padding-right:2px;">
+                                    <div hidden id="emailSent" style="color:#5cb85c;" >
+                                        <span class="glyphicon glyphicon-ok"></span>
+                                    </div>
+                                    <div hidden id="emailNotSent" style="color:#d9534f;">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                    <p>Email sending possibilities:</p>
+                                    <ul>
+                                        <li>Email sending is only for sending done execution results.</li>
+                                        <li>You can choose from 3 reports:</li>
+                                            <ul>
+                                                <li>Report from the latest/selected execution. (Feature: regression list.)</li>
+                                                <li>Weekly comparision report in email.</li>
+                                                <li>Feature: dinamic email.</li>
+                                            </ul>
+                                    </ul>
+                                    <p>These reports are from html templates. Feature: user is able to give templates to generate emails.</p>
+                                </div>
+                            <!-- /.panel-body -->
+                        </div>
+                    </div>
+                    <div class="col-lg-6" style="height:100%%;width:50%;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Email Settings</div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                {% if email_config[1] == 'default' or email_config[1] == '' %}
+                                    <div>Email: <input type="text" class="form-control" placeholder='{{email_config[1]}}' id="emailSender" style="width: 90%;display: inline-block;margin-left: 0.8%;"></div>
+                                {% else %}
+                                    <div>Email: <input type="text" class="form-control" value='{{email_config[1]}}' id="emailSender" style="width: 90%;display: inline-block;margin-left: 0.8%;"></div>
+                                {% endif %}
+                                {% if email_config[2] == 'default.server' or email_config[2] == '' %}
+                                    <div>SMTP: <input type="text" class="form-control" placeholder='{{email_config[2]}}' id="SMTP" style="width: 90%;display: inline-block;"></div>
+                                {% else %}
+                                    <div>SMTP: <input type="text" class="form-control" value='{{email_config[2]}}' id="SMTP" style="width: 90%;display: inline-block;"></div>
+                                {% endif %}
+                                <div>Port: <input type="text" class="form-control" value='{{email_config[3]}}' id="port" style="width: 20%;display: inline-block;margin-left: 2.4%;"></div>
+                                <div><button type="button" class="btn btn-success" onclick="setEmailConfig()" style="margin-top:2%;">Set</button></div>
+                                </div>
+                            <!-- /.panel-body -->
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="col-lg-12" style="height:60%;margin-bottom:20px;margin-top: 1%;">
+                    <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;" id="emailHeader">
+                                <div style="float:left;padding-top:10px;">Emails</div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body emailContainer" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <table class="table table-hover" id="emailTable">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Email</th>
+                                        <th>User</th>
+                                        <th>
+                                            <span class="select-header-email daily">D</span>
+                                            <span class="select-header-email weekly">W</span>
+                                            <span class="select-header-email user">U</span>
+                                        </th>
+                                        <th>Edit</th>
+                                        <th>Del</th>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <th>
+                                            <input type="text" class="form-control" placeholder="email" id="emailName">
+                                        </th>
+                                        <th>
+                                            <select class="form-control" id="userSelector">
+                                                    <option data-dbid="0">None</option>
+                                                {% for k in users %}
+                                                    <option data-dbid="{{k[0]}}">{{k[1]}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </th>
+                                        <th>
+                                            <input type="checkbox" class="select-header-email" name="D">
+                                            <input type="checkbox" class="select-header-email" name="W">
+                                            <input type="checkbox" class="select-header-email" name="U">
+                                        </th>
+                                        <th></th>
+                                        <th>
+                                            <button class="btn btn-default" onclick="saveEmail()">Save</button>
+                                        </th>
+                                    </tr>
+                                {% for k in emails %}
+                                    <tr data-emailid="{{k[0]}}">
+                                        <td>{{loop.index}}</td>
+                                        <td>{{k[1]}}</td>
+                                        <td>{{k[2]}}</td>
+                                        <td>
+                                            {% if k[3] == 1 %}
+                                                <span class="select-email daily glyphicon glyphicon-ok"></span>
+                                            {% else %}
+                                                <span class="select-email daily"></span>
+                                            {% endif %}
+                                            {% if k[4] == 1 %}
+                                                <span class="select-email weekly glyphicon glyphicon-ok"></span>
+                                            {% else %}
+                                                <span class="select-email weekly"></span>
+                                            {% endif %}
+                                            {% if k[5] == 1 %}
+                                                <span class="select-email user glyphicon glyphicon-ok"></span>
+                                            {% else %}
+                                                <span class="select-email user"></span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="#" data-dbid="{{k[0]}}" style="color:#5cb85c; text-decoration: none;" onclick="editEmail({{k[0]}})">
+                                                <span class="glyphicon glyphicon-pencil"></span>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="#" data-dbid="{{k[0]}}" style="color:#d9534f; text-decoration: none;" onclick="deleteEmail({{k[0]}})">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </table>
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                </div>
+                <!---<div class="col-lg-6" style="height:60%;margin-bottom:20px;margin-top: 1%;">
+                     <div class="setManage col-lg-12" style="height:48%;margin-bottom:2%;padding-left: 8px;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Templates</div>
+                                <div  style="float:right;padding-top:5px;">
+                                    <a href="#" role="button" class="btn btn-danger btn-sm" onclick="deleteAllTemplates()">Delete All</a>
+                                </div>
+                                <div  style="float:right;padding-top:3px;">
+                                    <div  style="float:right;padding-top:10px;padding-right:2px;" id="insertcircleTemplates">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pdfTemplates panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <table class="table table-hover" id="templatesTable">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Download</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                {% for k in templates %}
+                                    <tr data-templateid="{{k[0]}}">
+                                        <td>{{loop.index}}</td>
+                                        <td>{{k[2]}}</td>
+                                        <td>
+                                            <a href="{{k[1]}}" download>Download</a>
+                                        </td>
+                                        <td>
+                                            {% if k[4] != 0 %}
+                                            <a href="#" data-dbid="{{k[0]}}" style="color:#d9534f; text-decoration: none;" onclick="deleteTemplateDownload({{k[0]}})">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </a>
+                                            {% else %}
+                                            Default Template.
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </table>
+                            </div>
+                        </div>
+                    </div>--->
+                    <div class="caseManage col-lg-12" style="height:48%;padding-left: 8px;">
+                        <div class="panel panel-default" id="fullSize">
+                            <div class="panel-heading" style="height:41px;padding-top:0px;">
+                                <div style="float:left;padding-top:10px;">Upload Template</div>
+                                <div  style="float:right;padding-top:3px;">
+                                    <div  style="float:right;padding-top:10px;padding-right:2px;" id="insertcircleTemplatesUpload">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.panel-heading -->
+                            <div class="panel-body" style="height:calc(100% - 41px);overflow-y:auto;" id="fullWidth">
+                                <form class="form-group"  method="post" enctype="multipart/form-data" style="width:100%;">
+                                    Select file to upload:
+                                    <input type="file" name="templateToUpload" id="templateToUpload" multiple>
+                                    <button class="btn btn-default btn-xs" type="button" onclick="uploadTemplate()" style="width:50%; float:left;">Upload</button>
+                                </form>
+                            </div>
+                            <!-- /.panel-body -->
+                        </div>
+                        <!-- /.panel -->
+                    </div>
+                </div>
+            </div>
         </div>
 	</div>
 {% endif %}
@@ -641,5 +862,114 @@
     </tr>
     {% endfor %}
 
+</table>
+{% endif %}
+
+{% if newEmail %}
+<tr data-emailid="{{newEmail[0]}}">
+    <td>#</td>
+    <td>{{newEmail[1]}}</td>
+    <td>{{newEmail[2]}}</td>
+    <td>
+        {% if newEmail[3] == 1 %}
+            <span class="select-email daily glyphicon glyphicon-ok"></span>
+        {% else %}
+            <span class="select-email daily"></span>
+        {% endif %}
+        {% if newEmail[4] == 1 %}
+            <span class="select-email weekly glyphicon glyphicon-ok"></span>
+        {% else %}
+            <span class="select-email weekly"></span>
+        {% endif %}
+        {% if newEmail[5] == 1 %}
+            <span class="select-email user glyphicon glyphicon-ok"></span>
+        {% else %}
+            <span class="select-email user"></span>
+        {% endif %}
+    </td>
+    <td>
+        <a href="#" data-dbid="{{newEmail[0]}}" style="color:#5cb85c; text-decoration: none;" onclick="editEmail({{newEmail[0]}})">
+            <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+    </td>
+    <td>
+        <a href="#" data-dbid="{{newEmail[0]}}" style="color:#d9534f; text-decoration: none;" onclick="deleteEmail({{newEmail[0]}})">
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+    </td>
+</tr>
+{% endif %}
+
+{% if emailtable %}
+<table class="table table-hover" id="emailTable">
+    <tr>
+        <th>#</th>
+        <th>Email</th>
+        <th>User</th>
+        <th>
+            <span class="select-header-email daily">D</span>
+            <span class="select-header-email weekly">W</span>
+            <span class="select-header-email user">U</span>
+        </th>
+        <th>Edit</th>
+        <th>Del</th>
+    </tr>
+    <tr>
+        <th></th>
+        <th>
+            <input type="text" class="form-control" placeholder="email" id="emailName">
+        </th>
+        <th>
+            <select class="form-control" id="userSelector">
+                    <option data-dbid="0">None</option>
+                {% for k in users %}
+                    <option data-dbid="{{k[0]}}">{{k[1]}}</option>
+                {% endfor %}
+            </select>
+        </th>
+        <th>
+            <input type="checkbox" class="select-header-email" name="D">
+            <input type="checkbox" class="select-header-email" name="W">
+            <input type="checkbox" class="select-header-email" name="U">
+        </th>
+        <th></th>
+        <th>
+            <button class="btn btn-default" onclick="saveEmail()">Save</button>
+        </th>
+    </tr>
+{% for k in emailtable %}
+    <tr data-emailid="{{k[0]}}">
+        <td>{{loop.index}}</td>
+        <td>{{k[1]}}</td>
+        <td>{{k[2]}}</td>
+        <td>
+            {% if k[3] == 1 %}
+                <span class="select-email daily glyphicon glyphicon-ok"></span>
+            {% else %}
+                <span class="select-email daily"></span>
+            {% endif %}
+            {% if k[4] == 1 %}
+                <span class="select-email weekly glyphicon glyphicon-ok"></span>
+            {% else %}
+                <span class="select-email weekly"></span>
+            {% endif %}
+            {% if k[5] == 1 %}
+                <span class="select-email user glyphicon glyphicon-ok"></span>
+            {% else %}
+                <span class="select-email user"></span>
+            {% endif %}
+        </td>
+        <td>
+            <a href="#" data-dbid="{{k[0]}}" style="color:#5cb85c; text-decoration: none;" onclick="editEmail({{k[0]}})">
+                <span class="glyphicon glyphicon-pencil"></span>
+            </a>
+        </td>
+        <td>
+            <a href="#" data-dbid="{{k[0]}}" style="color:#d9534f; text-decoration: none;" onclick="deleteEmail({{k[0]}})">
+                <span class="glyphicon glyphicon-remove"></span>
+            </a>
+        </td>
+    </tr>
+{% endfor %}
 </table>
 {% endif %}

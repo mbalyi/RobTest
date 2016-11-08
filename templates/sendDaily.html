@@ -1,0 +1,74 @@
+{% if daily %}
+<html lang="en">
+    <head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Balyi">
+
+    <title>Test Management Tool Report</title>
+    
+    <style>
+        table, tr, td, th {
+            border-bottom: 1px solid #ffffff;
+            color:#ffffff;
+        }
+        
+        #header, #table, #errors {
+            width:98%;
+            margin-left:1%;
+        }
+        h1 {
+            margin-bottom: 0%;
+        }
+    </style>
+    
+</head>
+    <body>
+        <div id="wrapper" style="width:90%;margin-left:5%;background-color:#363f46;color:#ffffff;">
+            <div id="header" style="border-bottom:1px solid #ffffff;">
+                <h1>Test Management Tool - Daily report</h1>
+            </div>
+            
+            <div id="table" style="width:100%;color:#ffffff;">
+                <h2>Daily Object Result:</h2>
+                <table style="width:100%; ">
+                    <tr  style="width:100%;">
+                        <th></th>
+                        <th colspan=3>{{daily[0][1]}}</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th>Passed</th>
+                        <th>Failed</th>
+                        <th>All run</th>
+                    </tr>
+                    {% for data in daily %}
+                    <tr>
+                        <th>{{data[0]}}</th>
+                        <th>{{data[2]}}</th>
+                        <th>{{data[3]}}</th>
+                        <th>{{data[4]}}</th>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            
+            <div id="errors">
+                <h2>Failed cases in object:</h2>
+                {% for data in daily %}
+                <h3>{{data[0]}}</h3>
+                <ul>
+                    {% for fail in data[5] %}
+                    <li>{{fail}}</li>
+                    {% endfor %}
+                </ul>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- /#wrapper -->
+    </body>
+</html>
+{% endif %}

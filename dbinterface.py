@@ -329,6 +329,14 @@ class Database:
 		conn.commit()
 		return result
 	
+	def getSetByName(self, **kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT SetId,SetName FROM Sets WHERE SetName=? AND ProjectId=? AND Active=? AND SetUpdated=? ORDER BY SetId DESC",[kwargs['name'],kwargs['projectId'],kwargs['active'],kwargs['update']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
 	def save_set(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
@@ -825,6 +833,33 @@ class Database:
 			conn.commit()
 		return
 	
+	def unitGetCaseExeId(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT Id FROM Case_Execution WHERE ExecutionId=? AND title LIKE ?",[kwargs['exeId'],kwargs['caseName']])
+		id=c.fetchone()
+		conn.commit()
+		return id[0]
+	
+	def UnitStepIdByCaseName(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT Id FROM Case_Execution WHERE ExecutionId=? AND title LIKE ?",[kwargs['exeId'],kwargs['caseName']])
+		id=c.fetchone()
+		print(id)
+		conn.commit()
+		c.execute("SELECT StepId FROM Step_Execution WHERE Case_ExecutionId=?",[id[0]])
+		ids=c.fetchall()
+		conn.commit()
+		return ids
+	
+	def UnitCaseIdByCaseName(self, **kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT CaseId FROM Case_Execution WHERE ExecutionId=? AND title LIKE ?",[kwargs['exeId'],kwargs['caseName']])
+		id=c.fetchone()
+		conn.commit()
+		return id[0]
 	
 	#-----Jenkins----
 	def getJenkinsData(self, **kwargs):
@@ -1250,7 +1285,17 @@ class Database:
 			""")
 		result=c.fetchall()
 		conn.commit()
-		return result;
+		return result
+	
+	def getUSerByName(self, **kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT UserId FROM Users WHERE UserName=?
+			""",[kwargs['name']])
+		result=c.fetchone()
+		conn.commit()
+		return result
 	
 	def getRoles(self,**kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
@@ -1681,5 +1726,141 @@ class Database:
 			""",[kwargs['id']])
 		conn.commit()
 		return result[1]
+		
+	def SaveEmail(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+					INSERT INTO Email (Address,UserId,D,W,U,ProjectId) 
+					VALUES (?,?,?,?,?,?)
+				""",[kwargs['name'],kwargs['userId'],kwargs['D'],kwargs['W'],kwargs['U'],kwargs['projectId']])
+		conn.commit()
+		c.execute("""
+					SELECT * FROM Email 
+					WHERE Address=? AND UserId=? AND D=? AND W=? AND U=? AND ProjectId=?
+				""",[kwargs['name'],kwargs['userId'],kwargs['D'],kwargs['W'],kwargs['U'],kwargs['projectId']])
+		result=c.fetchone()
+		conn.commit()
+		return result[1]
+		
+	def EditEmail(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+					UPDATE Email SET Address=?,UserId=?,D=?,W=?,U=? 
+					WHERE EmailId=?
+				""",[kwargs['name'],kwargs['userId'],kwargs['D'],kwargs['W'],kwargs['U'],kwargs['id']])
+		conn.commit()
+		return
+		
+	def getEmails(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT Em.EmailId,Em.Address,Us.UserName,Em.D,Em.W,Em.U,Em.projectId FROM Email AS Em
+			LEFT JOIN Users AS Us ON Em.UserId = Us.UserId
+			WHERE Em.ProjectId=?
+			""",[kwargs['projectId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def getEmailAddress(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT Address FROM Email WHERE
+			D=? AND W=? AND U=? AND projectId=?
+			""",[kwargs['D'],kwargs['W'],kwargs['U'],kwargs['projectId']])
+		result=c.fetchall()
+		conn.commit()
+		return result
+	
+	def DeleteEmail(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			DELETE FROM Email
+			WHERE EmailId=?
+			""",[kwargs['id']])
+		conn.commit()
+		return
+		
+	def CreateEmailConfig(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+					INSERT INTO Email_Config (Email,SMTP,Port,ProjectId) 
+					VALUES (?,?,?,?,?,?)
+				""",['default','default.server',22,kwargs['projectId']])
+		conn.commit()
+	
+	def DeleteEmailConfig(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			DELETE FROM Email_Config
+			WHERE ProjectId=?
+			""",[kwargs['projectId']])
+		conn.commit()
+		return
+	
+	def UpdateEmailConfig(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+					UPDATE Email_Config SET Email=?,SMTP=?,Port=?
+					WHERE ProjectId=?
+				""",[kwargs['email'],kwargs['smtp'],kwargs['port'],kwargs['projectId']])
+		conn.commit()
+		return
+		
+	def GetEmailConfig(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT * FROM Email_Config
+			WHERE ProjectId=?
+			""",[kwargs['projectId']])
+		result=c.fetchone()
+		conn.commit()
+		return result
+	
+	def getDailyReportToSend(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("""
+			SELECT EO.ExecutionId,EX.ExeName,OB.ObjectVersion FROM Exe_Object AS EO
+			LEFT JOIN Execution AS EX ON Ex.ExecutionId=EO.ExecutionId
+			LEFT JOIN Objects AS OB ON EO.ObjectId=OB.ObjectId
+			WHERE EO.ObjectId=?
+			""",[kwargs['obid']])
+		exeids=c.fetchall()
+		conn.commit()
+		result = []
+		for exes in exeids:
+			c.execute("SELECT * FROM Case_Execution WHERE ExecutionId=?",[exes[0]])
+			all = len(c.fetchall())
+			conn.commit()
+			c.execute("SELECT * FROM Case_Execution WHERE ExecutionId=? AND Result=?",[exes[0],'RUN'])
+			runs = len(c.fetchall())
+			conn.commit()
+			c.execute("SELECT * FROM Case_Execution WHERE ExecutionId=? AND Result=?",[exes[0],'FAILED'])
+			failed = c.fetchall()
+			conn.commit()
+			fails = len(failed)
+			result.append([exes[1],exes[2],runs,failes,all,failed])
+		return result
+		
+	def getWeeklyReportToSend(self,**kwargs):
+		return "not implemented"
+		
+	def getLatestObject(self,**kwargs):
+		conn= sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		c.execute("SELECT ObjectId FROM Objects ORDER BY ObjectId DESC LIMIT 1")
+		obid=c.fetchone()
+		conn.commit()
+		return obid[0]
 	
 DB = Database()

@@ -97,6 +97,7 @@ function enableObjectForm(){
     $("input[type=text][name=version]").removeAttr('readonly');
     $("#newObject").attr('disabled', true);
     $("#saveObject").attr('disabled', false);
+    $(".uploadContent").css('display','block');
 }
 
 function objectHideShow(){

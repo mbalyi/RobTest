@@ -283,6 +283,8 @@ function enableForm(){
     $("#stepContainer").css('height','65%');
     $("input[name=dynamicArea]").removeAttr('disabled');
     //testareaDesign();
+    $(".uploadContainer > form").css('display','block');
+    $('[data-formid="newCaseFile"]').css('display','block');
     textEditorEnabler();
 }
 

@@ -87,7 +87,7 @@
         <div class="uploadContent" style='widt:100%;display: none;'>
             <div style="width:100%;min-height:75px">
                 <div style="width:50%; float:left;" class="fileContainer">
-                    <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data" id="fullWidth">
+                    <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data" id="fullWidth" style="display:none;">
                         Select file to upload:
                         <input type="file" name="fileToUpload" id="fileUploadCase" multiple>
                     </form>
@@ -146,20 +146,18 @@
                             </tr>
                         </table>
                     </div>
-                    <!--
                     <div class="uploadContainer">
-                        <form class="form-group" data-formid='newStepActionFile'  method="post" enctype="multipart/form-data" id="fullSize" onchange="loadFiles(event,'action')">
+                        <form class="form-group" data-formid='newStepActionFile'  method="post" enctype="multipart/form-data" id="fullSize" onchange="loadFiles(event,'action')" style="display:none;">
                             <input type="file" name="fileToUploadStepAction" id="fileUploadStepAction" multiple>
                         <ul></ul>
                         </form>
                     </div>
                     <div class="uploadContainer">
-                        <form class="form-group" data-formid='newStepResultFile'  method="post" enctype="multipart/form-data" id="fullSize" onchange="loadFiles(event,'result')">
+                        <form class="form-group" data-formid='newStepResultFile'  method="post" enctype="multipart/form-data" id="fullSize" onchange="loadFiles(event,'result')" style="display:none;">
                             <input type="file" name="fileToUploadStepResult" id="fileUploadStepResult" multiple>
                         <ul></ul>
                         </form>
                     </div>
-                    -->
                 </div>
             </div>
         </div>

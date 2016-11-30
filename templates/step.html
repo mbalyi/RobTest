@@ -42,6 +42,18 @@
                         </td>
                     </tr>
                 </table>
+                <div class="uploadContainer">
+                        <form class="form-group" data-formid='newStepActionFile'  method="post" enctype="multipart/form-data" id="fullSize" onchange="loadFiles(event,'action')" style="display:none;">
+                            <input type="file" name="fileToUploadStepAction" id="fileUploadStepAction" multiple>
+                        <ul></ul>
+                        </form>
+                    </div>
+                    <div class="uploadContainer">
+                        <form class="form-group" data-formid='newStepResultFile'  method="post" enctype="multipart/form-data" id="fullSize" onchange="loadFiles(event,'result')" style="display:none;">
+                            <input type="file" name="fileToUploadStepResult" id="fileUploadStepResult" multiple>
+                        <ul></ul>
+                        </form>
+                    </div>
             </div>
             <!--
             <div style='height:30px;width:50%;padding-top:2px;float:left;'>

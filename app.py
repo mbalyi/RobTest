@@ -2,7 +2,7 @@ from upload import UP
 from dbinterface import DB
 from messenger import Messenger
 from reportinterface import Report
-import json, os, base64, sys
+import json, os, base64, sys, linecache
 from flask import Flask, render_template, session, redirect, url_for, escape, request, jsonify, Response, send_from_directory
 from werkzeug.utils import secure_filename
 #from flask_debugtoolbar import DebugToolbarExtension
@@ -260,13 +260,24 @@ def exportCaseToPDF(ID,templateid):
 			""")
 		return False
 	try:
-		path=bytes(r'D:\ManagementTool\RobTest\wkhtmltopdf\bin\wkhtmltopdf.exe','utf-8')
+		path=bytes(r'./wkhtmltopdf/bin/wkhtmltopdf.exe','utf-8')
+		dir = os.path.dirname(__file__)
+		pdf_driver = os.path.join(os.path.realpath(__file__), '/wkhtmltopdf/bin/wkhtmltopdf.exe')
 		config = pdfkit.configuration(wkhtmltopdf=path)
-		pdfkit.from_string(html, filename, configuration=config)
+		pdfkit.from_string(html, filename, configuration = config)
+		print(pdf_driver)
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the pdf writing method in exportCaseToPDF
 			""")
+		exc_type, exc_obj, exc_tb = sys.exc_info()
+		fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+		f = exc_tb.tb_frame
+		lineno = exc_tb.tb_lineno
+		linecache.checkcache(fname)
+		line = linecache.getline(fname, lineno, f.f_globals)
+		print(exc_type, fname, lineno)
+		print(line)
 		return False
 	return filename
 

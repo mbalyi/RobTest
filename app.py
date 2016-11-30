@@ -261,11 +261,8 @@ def exportCaseToPDF(ID,templateid):
 		return False
 	try:
 		path=bytes(r'./wkhtmltopdf/bin/wkhtmltopdf.exe','utf-8')
-		dir = os.path.dirname(__file__)
-		pdf_driver = os.path.join(os.path.realpath(__file__), '/wkhtmltopdf/bin/wkhtmltopdf.exe')
 		config = pdfkit.configuration(wkhtmltopdf=path)
 		pdfkit.from_string(html, filename, configuration = config)
-		print(pdf_driver)
 	except:
 		print("""
 			Unexpected error: Unexcepted error occured during the pdf writing method in exportCaseToPDF
@@ -511,7 +508,7 @@ def exportSetToPDF(ID,templateid):
 		print(exc_type, fname, exc_tb.tb_lineno)
 		return False
 	try:
-		path=bytes(r'D:\ManagementTool\RobTest\wkhtmltopdf\bin\wkhtmltopdf.exe','utf-8')
+		path=bytes(r'./wkhtmltopdf/bin/wkhtmltopdf.exe','utf-8')
 		config = pdfkit.configuration(wkhtmltopdf=path)
 		pdfkit.from_string(html, filename, configuration=config)
 	except:
@@ -1127,13 +1124,16 @@ def historyCase(setId):
 	caseIds=DB.getSetCases(id=setId)
 	exes=DB.getExeOBLimit(projectId=projectSession(),caseIds=caseIds,limit=5)
 	result=DB.getResultCases(exes=exes)
+	print(result)
 	it1=0
 	cases=[]
 	for k in caseIds:
 		res=DB.get_case_name(caseId=k[0])
 		cases.append([k[0],res[0]])
 		it1=it1+1
-	print(cases)
+	print(len(result))
+	print(len(caseIds))
+	print(len(exes))
 	return render_template('caseHistory.html', resultDiagrams=result,exes=exes,cases=caseIds)
 
 @app.route('/loadCaseHistory/<int:caseId>', methods=['GET'])	
@@ -1452,8 +1452,7 @@ def exportResultToPDF(id,templateid):
 		print(exc_type, fname, exc_tb.tb_lineno)
 		return False
 	
-	path=bytes(r'wkhtmltopdf/bin/wkhtmltopdf.exe','utf-8')
-	#path=bytes(r'wkhtmltopdf/bin/wkhtmltopdf.exe','utf-8')
+	path=bytes(r'./wkhtmltopdf/bin/wkhtmltopdf.exe','utf-8')
 	config = pdfkit.configuration(wkhtmltopdf=path)
 	pdfkit.from_string(html, filename, configuration=config)
 	

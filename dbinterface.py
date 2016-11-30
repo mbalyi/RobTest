@@ -694,7 +694,7 @@ class Database:
 			WHERE OB.Active=1 
 			AND EX.ProjectId=? 
 			AND CE.CaseId=? 
-			ORDER BY OB.ObjectId 
+			ORDER BY OB.ObjectId DESC 
 			LIMIT """+str(kwargs['limit'])
 		c.execute(query,[kwargs['projectId'],kwargs['caseIds'][0][0]])
 		result=c.fetchall()

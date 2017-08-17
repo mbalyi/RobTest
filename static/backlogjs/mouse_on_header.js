@@ -142,7 +142,8 @@ function navDashboard(){
     jenkinsRadiator(".allJenkinsRad",10);
     dashboardButtonPanel();
     $('body').on('slid.bs.carousel','#carousel-example-generic', function (){
-        lineChart.render();
+        if (lineChart != undefined)
+            lineChart.render();
     });
 }
 
@@ -170,13 +171,13 @@ $(function(){
         
     });
 	$("#submenu").empty().append("<li><a href='#' id='report'>Report</a></li>")
-    requestHeader(
+    /*requestHeader(
         { active:true, filter:"" },
 
         function(res){
             $(".header-script").append(GenerateHeader(res));
         }
-    );
+    );*/
 	
 	/*$("#admin").on("click",function(){
 		requestAdmin(

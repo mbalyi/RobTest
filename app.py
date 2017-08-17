@@ -708,7 +708,7 @@ def projectSession():
 @app.route('/requestChart/<type>/<int:projectId>/<int:limit>', methods=['GET'])
 def requestChart(type,projectId,limit):
 	if type=="line":
-		return chartReload(type,"All",0,0,"All",limit,0)
+		return chartReload(type,"All",0,0,"All",limit,0,projectId)
 	else:
 		query = DB.getDataForCharts(projectId=projectId,interval=limit)
 		passed=0
@@ -741,14 +741,14 @@ def chartExeReload(obId):
 	query = DB.reloadChartFilterData(obId=obId,projectId=projectSession())
 	return render_template('chartFilter.html',reloadExe=query)
 	
-@app.route('/chartReload/<type>/<interval>/<int:obId>/<int:areaId>/<status>/<int:limit>/<int:exeId>', methods=['GET'])
-def chartReload(type,interval,obId,areaId,status,limit,exeId):
+@app.route('/chartReload/<type>/<interval>/<int:obId>/<int:areaId>/<status>/<int:limit>/<int:exeId>/<int:projectId>', methods=['GET'])
+def chartReload(type,interval,obId,areaId,status,limit,exeId,projectId):
 	passed=0
 	failed=0
 	skipped=0
 	notimp=0
 	all=0
-	result = DB.getFilteredPar(objectId=obId,areaId=areaId,status=status,interval=limit,exeId=exeId)
+	result = DB.getFilteredPar(objectId=obId,areaId=areaId,status=status,interval=limit,exeId=exeId,projectId=projectId)
 	render=""
 	if result:
 		if type == "pie":
@@ -821,119 +821,120 @@ def chartReload(type,interval,obId,areaId,status,limit,exeId):
 def jenkinsRadiator(limit):
 	query = DB.getJenkinsData(projectId=projectSession(),limit=limit)
 	cases = DB.getJenkinsCaseResult(data=query,projectId=projectSession())
-	default = [cases[0]]
-	temp = []
-	sorting = []
-	for k in cases:
-		if k[0] == default[0][0]:
-			if k != default[0]:
-				default.append(k)
-		else:
-			temp.append(default)
-			default = [k]
-	temp.append(default)
-	default = [k]
-	all=0
-	passed=0
-	skipped=0
-	failed=0
-	iterator=0
 	rendered = render_template('jenkinsRadiator.html')
-	for k in temp:
-		for j in k:
-			if j[1] == 'RUN':
-				passed+=1
-			if j[1] == 'SKIPPED':
-				skipped+=1
-			if j[1] == 'NOTRUN':
-				skipped+=1
-			if j[1] == 'FAILED':
-				failed+=1
-			all+=1
-		rate = []
-		rate.append(passed)
-		rate.append(skipped)
-		rate.append(failed)
-		rate.append(all)
-		for l in temp[iterator]:
-			tupList=list(l)
-			tupList[3]=tupList[3].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
-			l=tuple(tupList)
-		tupList=list(query[iterator])
-		tupList[1]=tupList[1].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
-		tupList[2]=tupList[2].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
-		tupList[4]=tupList[4].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
-		query[iterator]=tuple(tupList)
-		if passed/all >= 0.8:
-			#rendered += render_template('jenkinsRadiator.html', mode='success', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
-			sorting.append(('success',temp[iterator],query[iterator],iterator,rate))
-		else:
-			if failed/all > 0:
-				#rendered += render_template('jenkinsRadiator.html', mode='danger', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
-				sorting.append(('danger',temp[iterator],query[iterator],iterator,rate))
-			else:
-				#rendered += render_template('jenkinsRadiator.html', mode='warning', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
-				sorting.append(('warning',temp[iterator],query[iterator],iterator,rate))
-		all=0
-		passed=0
-		iterator+=1
-		skipped=0
-		failed=0
-	temp = []
-	iterator=0
-	b=0
-	default1=[]
-	boolen = "false"
-	for k in sorting:
+	if len(cases) > 0:
+		default = [cases[0]]
 		temp = []
-		temp.append(k)
-		default=k[2][0]
-		for l in sorting:
-			if l[2][0] == default:
-				if l[2] != k[2]:
-					temp.append(l)
-					index=sorting.index(l)
-					sorting.pop(index)
-					sorting.insert(index,('default','default',('default','default')))
-					#default1=l
-					boolen="true"
+		sorting = []
+		for k in cases:
+			if k[0] == default[0][0]:
+				if k != default[0]:
+					default.append(k)
+			else:
+				temp.append(default)
+				default = [k]
+		temp.append(default)
+		default = [k]
+		all=0
 		passed=0
 		skipped=0
 		failed=0
-		all=0
-		for o in temp:
-			if o[0] != "default":
-				passed+=o[4][0]
-				skipped+=o[4][1]
-				failed+=o[4][2]
-				all+=o[4][3]
-		rate=[]
-		rate.append(passed)
-		rate.append(skipped)
-		rate.append(failed)
-		rate.append(all)
-		if boolen == "false":
-			index=sorting.index(k)
-			sorting.pop(index)
-			sorting.insert(index,('default','default',('default','default')))
-		else:
-			boolen = "false"
-		if temp[0][0] != "default":
-			rendered+=render_template('jenkinsRadiator.html', objectExe=temp, iterator=iterator, rate=rate)
-		sorting.pop(0)
-		sorting.insert(0,('default','default',('default','default')))
-		iterator+=1
-	if len(sorting) == 1 and sorting[0][0] != "default":
-		passed=sorting[0][4][0]
-		skipped=sorting[0][4][1]
-		failed=sorting[0][4][2]
-		all=sorting[0][4][3]
-		rate=[]
-		rate.append(passed)
-		rate.append(skipped)
-		rate.append(failed)
-		rate.append(all)
-		rendered+=render_template('jenkinsRadiator.html', objectExe=sorting, iterator=iterator, rate=rate)
+		iterator=0
+		for k in temp:
+			for j in k:
+				if j[1] == 'RUN':
+					passed+=1
+				if j[1] == 'SKIPPED':
+					skipped+=1
+				if j[1] == 'NOTRUN':
+					skipped+=1
+				if j[1] == 'FAILED':
+					failed+=1
+				all+=1
+			rate = []
+			rate.append(passed)
+			rate.append(skipped)
+			rate.append(failed)
+			rate.append(all)
+			for l in temp[iterator]:
+				tupList=list(l)
+				tupList[3]=tupList[3].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+				l=tuple(tupList)
+			tupList=list(query[iterator])
+			tupList[1]=tupList[1].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+			tupList[2]=tupList[2].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+			tupList[4]=tupList[4].encode('ascii', 'backslashreplace').decode("utf-8", "replace")
+			query[iterator]=tuple(tupList)
+			if passed/all >= 0.8:
+				#rendered += render_template('jenkinsRadiator.html', mode='success', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+				sorting.append(('success',temp[iterator],query[iterator],iterator,rate))
+			else:
+				if failed/all > 0:
+					#rendered += render_template('jenkinsRadiator.html', mode='danger', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+					sorting.append(('danger',temp[iterator],query[iterator],iterator,rate))
+				else:
+					#rendered += render_template('jenkinsRadiator.html', mode='warning', param=temp[iterator], data=query[iterator], iterator=iterator, rate=rate)
+					sorting.append(('warning',temp[iterator],query[iterator],iterator,rate))
+			all=0
+			passed=0
+			iterator+=1
+			skipped=0
+			failed=0
+		temp = []
+		iterator=0
+		b=0
+		default1=[]
+		boolen = "false"
+		for k in sorting:
+			temp = []
+			temp.append(k)
+			default=k[2][0]
+			for l in sorting:
+				if l[2][0] == default:
+					if l[2] != k[2]:
+						temp.append(l)
+						index=sorting.index(l)
+						sorting.pop(index)
+						sorting.insert(index,('default','default',('default','default')))
+						#default1=l
+						boolen="true"
+			passed=0
+			skipped=0
+			failed=0
+			all=0
+			for o in temp:
+				if o[0] != "default":
+					passed+=o[4][0]
+					skipped+=o[4][1]
+					failed+=o[4][2]
+					all+=o[4][3]
+			rate=[]
+			rate.append(passed)
+			rate.append(skipped)
+			rate.append(failed)
+			rate.append(all)
+			if boolen == "false":
+				index=sorting.index(k)
+				sorting.pop(index)
+				sorting.insert(index,('default','default',('default','default')))
+			else:
+				boolen = "false"
+			if temp[0][0] != "default":
+				rendered+=render_template('jenkinsRadiator.html', objectExe=temp, iterator=iterator, rate=rate)
+			sorting.pop(0)
+			sorting.insert(0,('default','default',('default','default')))
+			iterator+=1
+		if len(sorting) == 1 and sorting[0][0] != "default":
+			passed=sorting[0][4][0]
+			skipped=sorting[0][4][1]
+			failed=sorting[0][4][2]
+			all=sorting[0][4][3]
+			rate=[]
+			rate.append(passed)
+			rate.append(skipped)
+			rate.append(failed)
+			rate.append(all)
+			rendered+=render_template('jenkinsRadiator.html', objectExe=sorting, iterator=iterator, rate=rate)
 	return rendered #render_template('jenkinsRadiator.html', jenkins=rendered)	
 
 	
@@ -1124,16 +1125,12 @@ def historyCase(setId):
 	caseIds=DB.getSetCases(id=setId)
 	exes=DB.getExeOBLimit(projectId=projectSession(),caseIds=caseIds,limit=5)
 	result=DB.getResultCases(exes=exes)
-	print(result)
 	it1=0
 	cases=[]
 	for k in caseIds:
 		res=DB.get_case_name(caseId=k[0])
 		cases.append([k[0],res[0]])
 		it1=it1+1
-	print(len(result))
-	print(len(caseIds))
-	print(len(exes))
 	return render_template('caseHistory.html', resultDiagrams=result,exes=exes,cases=caseIds)
 
 @app.route('/loadCaseHistory/<int:caseId>', methods=['GET'])	
@@ -1727,7 +1724,7 @@ def ObjectInput():
 def UnitGetSet():
 	data = ast.literal_eval(request.data.decode("utf-8"))
 	return json.dumps(DB.getSetCases(id=
-			DB.getSetByName(name=data['name'],projectId=data['projectId']
+			DB.getSetByName(sets=data['sets'],projectId=data['projectId']
 			,active=1,update=0)[0][0]))
 
 @app.route('/UnitUser', methods=['POST'])	

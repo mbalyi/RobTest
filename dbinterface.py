@@ -332,7 +332,17 @@ class Database:
 	def getSetByName(self, **kwargs):
 		conn = sqlite3.connect("ROB_2016.s3db")
 		c = conn.cursor()
-		c.execute("SELECT SetId,SetName FROM Sets WHERE SetName=? AND ProjectId=? AND Active=? AND SetUpdated=? ORDER BY SetId DESC",[kwargs['name'],kwargs['projectId'],kwargs['active'],kwargs['update']])
+		setNames = ""
+		for index,name in enumerate(kwargs['sets']):
+			if index == 0:
+				setNames += "("
+			setNames += " SetName = "+ name
+			if index != len(kwargs['sets']) - 1:
+				setNames += " OR"
+			else:
+				setNames += ") AND "
+		query = "SELECT SetId,SetName FROM Sets WHERE "+ setNames +" ProjectId=? AND Active=? AND SetUpdated=? ORDER BY SetId DESC"
+		c.execute(query, kwargs['projectId'],kwargs['active'],kwargs['update'])
 		result=c.fetchall()
 		conn.commit()
 		return result
@@ -1031,6 +1041,8 @@ class Database:
 			query+=str(kwargs['areaId'])
 		query+=" AND OB.ObjectId>="
 		query+=str(objectId[0])
+		query+=" AND OB.ProjectId="
+		query+=str(kwargs['projectId'])
 		if kwargs['exeId'] != 0:
 			query+=" AND CE.ExecutionId="
 			query+=str(kwargs['exeId'])

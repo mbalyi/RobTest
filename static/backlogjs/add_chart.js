@@ -78,83 +78,89 @@ var allPieChart;
 var allLineChart;
 
 function createLineChart(template,direction,chartt){
-	var chart = {renderTo: direction,type: 'column'};
-    var title = {text: 'All Results'};
-    var xAxis = template[0].xAxis;
-    var yAxis = {
-            min: 0,
-            title: {
-                text: 'No. Cases'
-            }
-        };
-    var tooltip = {
-            headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
-            footerFormat: '</table>',
-            shared: true,
-            useHTML: true
-        };
-    var plotOptions = {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-            }
-        };
-    var series = template[1].series;
-    var Chart={};
-    Chart.chart=chart;
-    Chart.title=title;
-    Chart.xAxis=xAxis;
-    Chart.yAxis=yAxis;
-    Chart.tooltip=tooltip;
-    Chart.plotOptions=plotOptions;
-    Chart.series=series;
-    line= new Highcharts.Chart(Chart);
-    line.renderTo;
-    if(chartt=="line")
-        lineChart=line;
-    else
-        allLineChart=line;
+    if (template != undefined &&
+        template[1] != undefined &&
+        template[1].series != undefined) {
+        var chart = {renderTo: direction,type: 'column'};
+        var title = {text: 'All Results'};
+        var xAxis = template[0].xAxis;
+        var yAxis = {
+                min: 0,
+                title: {
+                    text: 'No. Cases'
+                }
+            };
+        var tooltip = {
+                headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                    '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+                footerFormat: '</table>',
+                shared: true,
+                useHTML: true
+            };
+        var plotOptions = {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            };
+        var series = template[1].series;
+        var Chart={};
+        Chart.chart=chart;
+        Chart.title=title;
+        Chart.xAxis=xAxis;
+        Chart.yAxis=yAxis;
+        Chart.tooltip=tooltip;
+        Chart.plotOptions=plotOptions;
+        Chart.series=series;
+        line= new Highcharts.Chart(Chart);
+        line.renderTo;
+        if(chartt=="line")
+            lineChart=line;
+        else
+            allLineChart=line;
+    }
 }
 
 function createPieChart(template,direction,chartt){
-    var chart = {
-        plotBackgroundColor: null,
-        plotBorderWidth: null,
-        plotShadow: false,
-        renderTo: direction,
-        type: 'pie'
-    };
-    var title = {text: 'All Results'};
-    var tooltip = {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-            };
-    var plotOptions = {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    size:'100%',
-                    dataLabels: {
-                        enabled: true
-                    },
-                    showInLegend: true
-                }
-            };
-    var series = template;
-    var Chart={};
-    Chart.chart=chart;
-    Chart.title=title;
-    Chart.tooltip=tooltip;
-    Chart.plotOptions=plotOptions;
-    Chart.series=series;
-    pie = new Highcharts.Chart(Chart);
-    pie.renderTo;
+    if (template != undefined) {
+        var chart = {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            renderTo: direction,
+            type: 'pie'
+        };
+        var title = {text: 'All Results'};
+        var tooltip = {
+                    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                };
+        var plotOptions = {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        size:'100%',
+                        dataLabels: {
+                            enabled: true
+                        },
+                        showInLegend: true
+                    }
+                };
+        var series = template;
+        var Chart={};
+        Chart.chart=chart;
+        Chart.title=title;
+        Chart.tooltip=tooltip;
+        Chart.plotOptions=plotOptions;
+        Chart.series=series;
+        pie = new Highcharts.Chart(Chart);
+        pie.renderTo;
         if(chartt=="pie"){
             pieChart=pie;
         }
         else
             allPieChart=pie;
+    }
 }
 
 function pieExeReload(type){
@@ -176,7 +182,7 @@ function lineExeReload(type){
 }
 
 function pieReload(type){
- $.get("/chartReload/"+type+"/"+$('[data-selectorid="pieInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="pieVersion"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieArea"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieStatus"]').find(":selected").attr('data-status')+"/"+$('[data-selectorid="pieInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="pieExecution"]').find(":selected").attr('data-dbid'),
+ $.get("/chartReload/"+type+"/"+$('[data-selectorid="pieInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="pieVersion"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieArea"]').find(":selected").attr('data-dbid')+"/"+$('[data-selectorid="pieStatus"]').find(":selected").attr('data-status')+"/"+$('[data-selectorid="pieInterval"]').find(":selected").attr('data-interval')+"/"+$('[data-selectorid="pieExecution"]').find(":selected").attr('data-dbid')+"/"+$(".projectSelector").find(":selected").attr('data-dbid'),
 		function(data,status){
 			if(status){
                 if(type=="pie"){
@@ -209,7 +215,8 @@ function pieReload(type){
                     Chart.tooltip=tooltip;
                     Chart.plotOptions=plotOptions;
                     Chart.series=series;
-                    pieChart.destroy();
+                    if (pieChart != undefined)
+                        pieChart.destroy();
                     pieChart = new Highcharts.Chart(Chart);
                     pieChart.renderTo;
                 }
@@ -255,7 +262,8 @@ function lineReload(type){
                     Chart.tooltip=tooltip;
                     Chart.plotOptions=plotOptions;
                     Chart.series=series;
-                    lineChart.destroy();
+                    if (lineChart != undefined)
+                        lineChart.destroy();
                     lineChart= new Highcharts.Chart(Chart);
                     lineChart.renderTo;
                 }

@@ -168,6 +168,7 @@
 {% if loadcase %}
 	<a name='edit_case' id='{{loadcase[0][0]}}' class='btn btn-default btn-sm' href='#' role='button'>Edit</a>
 	<a name='deleteCase' id='{{loadcase[0][0]}}' class='btn btn-danger btn-sm' href='#' role='button'>Delete</a>
+    <a name='copyCase' id='{{loadcase[0][0]}}' class='btn btn-success btn-sm' href='#' role='button' onclick="copyCase({{loadcase[0][0]}})">Copy</a>
 	<br>
 	<div class='case_header'>
 		<table id="fullWidth">
@@ -317,6 +318,139 @@
 		<tr>
 			<th>Data:</th>
 			<th><input type='text' name='data' value='{{editablecase[0][3]}}' class='form-control'></th>
+		</tr>
+	</table>
+    <div class='AreaField' id="fullWidth">
+        <h3>Tags: </h3>
+        <table>
+            {% for k in areas %}
+                {% if loop.index == 1 %}
+                    <tr>
+                {% endif %}
+                        <td id="td-20">
+                            {% if k[1] == "checked" %}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}' checked>{{k[0][1]}}
+                                {% for l in dynArea %}
+                                    {% if l[0]==k[0][0] %}
+                                        {% if k[2] != None %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="{{k[2]}}">
+                                        {% else %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="...">
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                            <input type="checkbox" name="areaBox" data-dbid='{{k[0][0]}}'>{{k[0][1]}}
+                                {% for l in dynArea %}
+                                    {% if l[0]==k[0][0] %}
+                                        {% if k[2] != None %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="{{k[2]}}">
+                                        {% else %}
+                            <input type="text" class='form-control' name="dynamicArea" data-dbid='{{k[0]}}' style="width:50px;display: inherit;height:25px;" value="...">
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                {% if (loop.index%5 == 0) and (loop.index!=count) %}
+                    </tr>
+                    <tr>
+                {% endif %}
+                {% if (loop.index%5 == 0) and (loop.index==count) %}
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    <div class="FileUpload" id="fullWidth">
+        <div class="uploadHeader" id="fullWidth">
+            <h3>
+                <a href="#" onclick="toggleCaseFileCont()" id="no-dec-link">
+                    Files: 
+                </a>
+            </h3>
+        </div>
+        <div class="uploadContent">
+            <div style="width:100%;min-height:75px;float:left;">
+                <div id="fullWidth">
+                    <form class="form-group" data-formid='newCaseFile'  method="post" enctype="multipart/form-data" id="fullWidth">
+                        Select file to upload:
+                        <input type="file" name="fileToUpload" id="fileUploadCase" multiple>
+                    </form>
+                </div>
+                <div id="cont-50-left" class="fileContainer">
+                    <table class="caseFiles" id="fullWidth">
+                        {% if files != "empty" %}
+                        {% for k in files %}
+                            <tr data-fileid='{{k[0]}}'>
+                                <td>
+                                    <a href="{{ url_for('uploads',filename='case/'+k[3]) }}" download>
+                                        {% if k[4] == "txt" or k[4] == "pdf" or k[4] == "log" or k[4] == "doc" or k[4] == "docx" or k[4] == "xls" or k[4] == "xlsx" or k[4] == "csv" or k[4] == "xlt" %}
+                                        <span class="glyphicon glyphicon-file"></span>
+                                        {% elif k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                                        <span class="glyphicon glyphicon-picture"></span>
+                                        {% elif k[4] == "avi" or k[4] == "mp4" %}
+                                        <span class="glyphicon glyphicon-film"></span>
+                                        {% else %}
+                                        <span class="glyphicon glyphicon-cog"></span>
+                                        {% endif %}
+                                    </a>
+                                    <!--</button>-->
+                                </td>
+                                <td>
+                                    {{k[3]}}
+                                </td>
+                                <td>
+                                    <a href="#" onclick="deleteFileCase({{k[0]}})" style="color:red;">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+            <div class="imgFiles" id="fullWidth">
+                {% for k in files %}
+                {% if k[4] == "jpg" or k[4] == "jpeg" or k[4] == "png" %}
+                    <div class="responsive" data-fileid='{{k[0]}}' id="img">
+                      <div class="img">
+                        <a target="_blank" href="{{ url_for('uploads',filename='case/'+k[3]) }}" download>
+                          <img src="{{ url_for('uploads',filename='case/'+k[3]) }}" width="300" height="200">
+                        </a>
+                        <div class="desc">{{k[3]}} 
+                            <a href="#" onclick="deleteFileCase({{k[0]}})" style="color:red;">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                          </div>
+                      </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+	<div id="stepContainer">
+        
+	</div>
+</div>
+{% endif %}
+
+{% if copycase %}
+<div class='case_header'>
+	<table class='copycase' data-dbid='{{copycase[0][0]}}' id="fullWidth">
+		<tr>
+			<th>Title:</th>
+			<th><input type='text' name='title' value='{{copycase[0][1]}} - Copy' class='form-control' id='{{copycase[0][0]}}'></th>
+		</tr>
+		<tr>
+			<th>Priority:</th>
+			<th><input type='number' name='priority' value='{{copycase[0][2]}}' class='form-control'></th>
+		</tr>
+		<tr>
+			<th>Data:</th>
+			<th><input type='text' name='data' value='{{copycase[0][3]}}' class='form-control'></th>
 		</tr>
 	</table>
     <div class='AreaField' id="fullWidth">

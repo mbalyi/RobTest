@@ -131,6 +131,8 @@ def load_case(ID,mode):
 		return render_template('case.html', loadcase=query, areaInCase=areaInCase,areas=temp,count=len(areas),files=files)
 	elif mode == "editCase":
 		return render_template('case.html', editablecase=query, areaInCase=areaInCase,areas=temp,count=len(areas),files=files,dynArea=dynArea)	
+	elif mode == "copy":
+		return render_template('case.html', copycase=query, areaInCase=areaInCase,areas=temp,count=len(areas),files=files,dynArea=dynArea)	
 
 @app.route('/get_step/<int:ID>/<mode>', methods=['GET'])
 def get_step(ID,mode):

@@ -113,12 +113,14 @@ function loadCase(caseId,mode){
 		function(data,status){
 			if(status){
 				$(".divContainer").empty().append(data);
+                if(mode == "loadCase"){
+                    getStep(caseId,"get_step");
+                } else {
+                    getStep(caseId,"editStep");
+                }
 			};
 		}
 	);
-	if(mode == "loadCase"){
-		getStep(caseId,"get_step");
-	}
 }
 
 function getStep(caseId,mode){
@@ -372,6 +374,13 @@ function deleteStep(){
         $(selectedStepEvent).closest('.stepDragg').remove();
         selectedStepEvent=false;
     }
+}
+
+function copyCase(caseId) {
+    loadCase(caseId,'copy');
+    $(".newCase").empty().append(newCaseDis);
+    $("#newCase").attr('disabled', true);
+    $(".saveCase").empty().append(saveCaseEn1+"newCase"+saveCaseEn2);
 }
 
 $(function(){

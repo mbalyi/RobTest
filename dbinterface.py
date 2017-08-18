@@ -336,13 +336,13 @@ class Database:
 		for index,name in enumerate(kwargs['sets']):
 			if index == 0:
 				setNames += "("
-			setNames += " SetName = "+ name
+			setNames += " SetName = '"+ name + "' "
 			if index != len(kwargs['sets']) - 1:
 				setNames += " OR"
 			else:
 				setNames += ") AND "
 		query = "SELECT SetId,SetName FROM Sets WHERE "+ setNames +" ProjectId=? AND Active=? AND SetUpdated=? ORDER BY SetId DESC"
-		c.execute(query, kwargs['projectId'],kwargs['active'],kwargs['update'])
+		c.execute(query, [kwargs['projectId'],kwargs['active'],kwargs['update']])
 		result=c.fetchall()
 		conn.commit()
 		return result

@@ -434,6 +434,19 @@ class Database:
 		c.execute("SELECT CA.* FROM Set_Case AS SC LEFT JOIN Cases AS CA ON CA.CaseId=SC.CaseId WHERE SC.SetId=? ORDER BY SC.Id ASC",[kwargs['id']])
 		cases=c.fetchall()
 		return cases
+
+	def getSetsCases(self, **kwargs):
+		conn = sqlite3.connect("ROB_2016.s3db")
+		c = conn.cursor()
+		partQuery = ""
+		for index,sets in enumerate(kwargs["sets"]):
+			partQuery += "SC.SetId = "+ str(sets[0]) +" "
+			if index != len(kwargs["sets"]) -1:
+				partQuery += "OR "
+		query = "SELECT CA.* FROM Set_Case AS SC LEFT JOIN Cases AS CA ON CA.CaseId=SC.CaseId WHERE "+ partQuery +" ORDER BY SC.Id ASC"
+		c.execute(query,[])
+		cases=c.fetchall()
+		return cases
 	
 	def deleteSet(self, **kwargs):
 		conn= sqlite3.connect("ROB_2016.s3db")
@@ -856,7 +869,6 @@ class Database:
 		c = conn.cursor()
 		c.execute("SELECT Id FROM Case_Execution WHERE ExecutionId=? AND title LIKE ?",[kwargs['exeId'],kwargs['caseName']])
 		id=c.fetchone()
-		print(id)
 		conn.commit()
 		c.execute("SELECT StepId FROM Step_Execution WHERE Case_ExecutionId=?",[id[0]])
 		ids=c.fetchall()

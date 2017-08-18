@@ -1725,9 +1725,8 @@ def ObjectInput():
 @app.route('/UnitGetSet', methods=['POST'])	
 def UnitGetSet():
 	data = ast.literal_eval(request.data.decode("utf-8"))
-	return json.dumps(DB.getSetCases(id=
-			DB.getSetByName(sets=data['sets'],projectId=data['projectId']
-			,active=1,update=0)[0][0]))
+	sets = DB.getSetByName(sets=data['sets'],projectId=data['projectId'],active=1,update=0)
+	return json.dumps(DB.getSetsCases(sets=sets))
 
 @app.route('/UnitUser', methods=['POST'])	
 def UnitUser():
@@ -1737,7 +1736,6 @@ def UnitUser():
 @app.route('/UnitNewExe', methods=['POST'])
 def UnitNewExe():
 	data = ast.literal_eval(request.data.decode("utf-8"))
-	print(data)
 	exeId=DB.saveExe(name=data["title"],testObject=data["TO"],projectId=data['projectId'],
 					areas=data['areaBox'],userId=data["userId"],
 					dynamic=data['dynamicArea'])

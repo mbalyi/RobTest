@@ -49,3 +49,7 @@ Temporary Items
 \.vscode/settings\.json
 
 *.pyc
+
+ROB_2016\.s3db
+
+*.s3db
